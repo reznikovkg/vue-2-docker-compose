@@ -19,5 +19,23 @@
 </script>
 
 <style>
-@import "styles/store.less";
+
+.element {
+  padding-top: 60px;
+}
+.element_first {
+  margin-top: 85px;
+  margin-left: 20px;
+  font-size: 12px;
+}
+
+.home {
+  transition: 0.3s;
+  cursor: pointer;
+
+  &:hover {
+    color: black!important;
+    font-weight: 700;
+  }
+}
 </style>

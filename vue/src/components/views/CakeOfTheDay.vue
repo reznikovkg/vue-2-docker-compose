@@ -36,5 +36,136 @@
 </script>
 
 <style scoped lang="less">
-@import "styles/cakeOfTheDay.less";
+.desk {
+  font-size: 18px;
+  color: #FF5D42;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.heading {
+  font-size: 40px;
+  font-weight: 700;
+  text-transform: capitalize;
+  line-height: 1.2;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.buy-row {
+  &__price {
+    color: #FF5D42;
+    font-weight: 700;
+    font-size: 36px;
+  }
+}
+
+.topbanner {
+  &__button {
+    border: none;
+    border-radius: 15px;
+    padding: 15px 40px 15px 40px;
+    background: linear-gradient(to right, #FE847E, #FF5D42);
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 40px;
+    transition: 0.5s;
+    cursor: pointer;
+  }
+
+  &__button:hover {
+    background: white;
+    outline: 1px solid #FF5D42;
+    color: #FF5D42;
+  }
+}
+
+.info {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.circle-image {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  position: absolute;
+  left: 0;
+
+  
+  &:nth-child(1) {
+    left: 40px;
+    z-index: 1;
+  }
+
+  &:nth-child(2) {
+    left: 80px;
+    z-index: 2;
+  }
+
+  &:nth-child(3) {
+    left: 120px;
+    z-index: 3;
+  }
+}
+
+.content-3 {
+  display: flex;
+}
+
+.top-rated {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0px 0px 20px gray;
+  width: 220px;
+  position: absolute;
+  bottom: 0;
+  right: 80px;
+
+  &__images {
+    height: 70px;
+  }
+
+  &__heading {
+    padding-bottom: 15px;
+    font-weight: 700;
+  }
+}
+
+.clients {
+  &__desc {
+    &__moreinfo {
+      padding-top: 15px;
+      align-items: center;
+
+      &__star {
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      &__number {
+        color: rgb(44, 62, 80);
+        font-weight: 700;
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+.left-block {
+  width: 50%;
+  position: relative;
+  padding: 20px;
+  background-image: url('@/assets/images/d1.png');
+  background-size: 70%;
+  background-repeat: no-repeat;
+}
+
+.right-block {
+  width: 50%;
+  padding: 20px;
+}
 </style>

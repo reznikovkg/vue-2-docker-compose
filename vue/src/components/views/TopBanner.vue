@@ -61,5 +61,139 @@
 </template>
 
 <style scoped lang="less">
-@import "styles/topBanner.less";
+.content-1 {
+  display: flex;
+  justify-content: space-between;
+}
+
+.left-block,
+.right-block {
+  width: 45%;
+  padding-top: 10%;
+}
+
+.topbanner {
+  &__heading {
+    font-size: 72px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  &__desc {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  &__button {
+    border: none;
+    border-radius: 15px;
+    padding: 15px 40px 15px 40px;
+    background: linear-gradient(to right, #FE847E, #FF5D42);
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 40px;
+    transition: 0.5s;
+    cursor: pointer;
+
+    &:hover {
+      background: white;
+      outline: 1px solid #FF5D42;
+      color: #FF5D42;
+    }
+  }
+
+  &__clients {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.clients {
+  &__desc {
+    &__moreinfo {
+      display: flex;
+      align-items: center;
+    }
+
+    &__star {
+      margin: 0 10px 0 10px;
+    }
+
+    &__number,
+    &__reviews {
+      font-size: 12px;
+      color: gray;
+    }
+  }
+
+  &__heading {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+  }
+}
+
+.right-block {
+  background: url('@/assets/images/newprev.png');
+  background-size: cover;
+  display: flex;
+}
+
+.carousel-box {
+  align-self: flex-end;
+}
+
+.image-stack {
+  width: 160px;
+  height: 70px;
+  position: relative;
+  display: inline-block;
+}
+
+.circle-image {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  position: absolute;
+
+  
+  &:nth-child(1) {
+    left: 40px;
+    z-index: 1;
+  }
+
+  &:nth-child(2) {
+    left: 80px;
+    z-index: 2;
+  }
+}
+
+.content-1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dots-block {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dote {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: rgb(219, 219, 219);
+  margin: 5px;
+}
+
+.actv {
+  background-color: rgb(255, 100, 100);
+  box-shadow: 0 0 10px rgb(255, 100, 100);
+}
 </style>

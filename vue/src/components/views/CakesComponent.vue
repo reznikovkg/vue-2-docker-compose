@@ -104,5 +104,180 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "styles/cakesComponent.less";
+.content-5 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.heading-block {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.heading {
+  font-weight: 700;
+  font-size: 36px;
+  padding-left: 20px;
+}
+
+.sorted {
+  display: flex;
+  align-items: center;
+
+  &__icon {
+    background-color: rgb(248, 248, 248);
+    box-shadow: 0px 5px 10px rgb(182, 182, 182);
+    border-radius: 5px;
+    padding: 5px 5px 0px 5px;
+  }
+
+  &__select {
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: rgb(248, 248, 248);
+  }
+
+  &_name {
+    color: rgb(116, 116, 116);
+    font-size: 14px;
+  }
+}
+
+.cakes {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.button {
+  border: none;
+  border-radius: 5px;
+  padding: 10px 25px 10px 25px;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 40px;
+  transition: 0.5s;
+  cursor: pointer;
+  background: white;
+  outline: 1px solid #FF5D42;
+  color: #FF5D42;
+
+  &:hover {
+    background: #FF5D42;
+    outline: 1px solid #ffffff;
+    color: #ffffff;
+  }
+}
+
+.item {
+  margin: 25px;
+  border-radius: 15px;
+  transition: 0.3s;
+
+
+  &:hover {
+    box-shadow: 0 0 25px rgb(117, 117, 117);
+  }
+}
+
+.item-card {
+  width: 250px;
+  background-color: #FFF;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgb(221, 221, 221);
+}
+
+.item-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+}
+
+.card-info {
+  width: 100%;
+  padding: 15px;
+}
+
+.client {
+  &__desc {
+
+    &__moreinfo {
+      width: 100%;
+    }
+
+    &__number {
+      font-weight: 700;
+    }
+
+    &__star {
+      margin: 0 5px 0 5px;
+    }
+  }
+}
+
+.buy-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  .buy-row__bag-container {
+    background-color: #FE7D79;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      background-color: #fd504a;
+    }
+  }
+
+  &__inshop {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgb(70, 221, 156);
+  }
+
+  &__inshop_not {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgb(165, 165, 165);
+  }
+
+  &__info {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+
+    &__additional {
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .item:hover &__additional {
+      opacity: 1;
+    }
+
+    &__stock {
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .item:hover &__stock {
+      opacity: 0;
+    }
+  }
+
+  &__info>* {
+    grid-area: 1/1/1/1;
+  }
+}
 </style>

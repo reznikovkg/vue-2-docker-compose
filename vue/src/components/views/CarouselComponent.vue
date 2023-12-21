@@ -75,5 +75,125 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import "styles/carouselComponent.less";
+.full-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.carousel-wrapper {
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+.carousel-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.carousel {
+  display: flex;
+  transition: transform 0.5s ease;
+  max-width: 420px;
+  height: 300px;
+  align-items: flex-end;
+}
+
+.carousel-item {
+  flex: 0 0 auto;
+  width: 200px;
+  box-sizing: border-box;
+  border-radius: 15px;
+  margin: 5px;
+  padding: 5px;
+  box-shadow: 0 0 7px rgb(224, 224, 224);
+  background-color: #FFF;
+  max-height: 150px;
+}
+
+button {
+  margin-top: 10px;
+}
+
+.circle-button {
+  width: 40px;
+  height: 40px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: 20px;
+  box-shadow: 0px 0px 10px #666666;
+}
+
+.arrow {
+  padding-top: 7px;
+}
+
+.clients {
+  &__desc {
+    &__moreinfo {
+      display: flex;
+      align-items: center;
+      width: 150px;
+
+      &__star {
+        margin: 0 5x 0 5px;
+      }
+
+      &__number,
+      &__reviews {
+        font-size: 12px;
+        color: gray;
+      }
+    }
+
+    &__heading {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1;
+    }
+  }
+}
+
+.item-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: visible;
+
+  &__image {
+    width: 70px;
+    height: 70px;
+    border: 3px solid #FFF;
+    border-radius: 50%;
+    margin-top: -40px;
+  }
+}
+
+.buy-row {
+  width: 150px;
+  display: flex;
+  justify-content: space-between;
+
+  .buy-row__bag-container {
+    background-color: #FE7D79;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      background-color: #fd504a;
+    }
+  }
+
+  &__price {
+    color: red;
+    font-weight: 700;
+    font-size: 20px;
+  }
+}
 </style>

@@ -16,5 +16,15 @@
 </script>
 
 <style scoped lang="less">
-@import "styles/home.less";
+.element {
+  padding-bottom: 120px;
+}
+
+.element_last {
+  padding-bottom: 40px;
+}
+
+.element_first {
+  padding-top: 40px;
+}
 </style>
