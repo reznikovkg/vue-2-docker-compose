@@ -1,12 +1,10 @@
 <template>
   <PageLayout>
-    <MainSlider />
-    <ProductTypes />
-    <Products :title='"Top rated"' :items="top" />
-    <Products :title='"Special products"' :items="special" />
-    <SpecialCards />
-    <News :items="news" title="From the Blog" />
-    <Contacts />
+    <ContentContainer class="container">
+      <h1 class="title">{{el.title}}</h1>
+      <img class="img" :src="`${el.img}`" />
+      <div class="caption">{{el.caption}}</div>
+    </ContentContainer>
   </PageLayout>
 </template>
 
@@ -19,14 +17,13 @@ import Products from '../parts/Products.vue'
 import SpecialCards from '../parts/SpecialCards.vue'
 import Contacts from '../parts/Contacts.vue'
 import { helpModal } from "@/mixins/modals";
-import {newsModel, productsModel} from "@/components/mock";
-import News from "@/components/parts/News.vue";
+import {newsModel, productsModel, productTypesModel} from "@/components/mock";
+import ContentContainer from "@/components/parts/Container.vue";
 
 export default {
-  name: 'HomePage',
-  mixins: [helpModal],
+  name: 'NewsPage',
   components: {
-    News,
+    ContentContainer,
     PageLayout,
     MainSlider,
     ProductTypes,
@@ -37,13 +34,24 @@ export default {
   },
   data() {
     return {
-      top: productsModel.getTop(),
-      special: productsModel.getSales(),
-      news: newsModel.getList()
+      el: newsModel.getOne(this.$route.params.id)
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+  .container {
+    min-height: calc(100vh - 180px - 258px);
+  }
+  .title {
+    font-size: 40px;
+    text-transform: uppercase;
+  }
+  .caption {
+    margin-top: 20px;
+  }
+  .img {
+    max-width: 100%;
+  }
 </style>
