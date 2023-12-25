@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper">
-    <div class="badge">{{badge}}</div>
+    <div class="badge" :class="{ badge_sale: badge==='sale' }">{{badge}}</div>
     <a :href="`/products/${id}`" class="img" :style="`background-image: url(${img})`" />
     <div class="content">
-      <div class="price">{{price}}</div>
-      <div class="caption">{{ caption }}</div>
+      <Price :discount-price="discountPrice" :price="price" />
+      <div class="caption">{{ title }}</div>
       <button class="button"><unicon name="shopping-cart" fill="white"></unicon> Add to cart</button>
       <div class="reviews">
         <div class="rating">
@@ -21,9 +21,12 @@
 </template>
 
 <script lang="ts">
+  import Price from "@/components/parts/shared/Price.vue";
+
   export default {
     name: 'ProductCard',
-    props: ['price', 'img', 'id', 'badge', 'rating', 'reviews', 'caption', 'img']
+    components: {Price},
+    props: ['price', 'img', 'id', 'badge', 'rating', 'reviews', 'caption', 'img', 'discountPrice', 'title']
   }
 </script>
 
@@ -46,6 +49,10 @@
     color: white;
     width: min-content;
     padding: 1px 12px;
+
+    &_sale {
+      background: #D94E67;
+    }
   }
   .img {
     display: block;
@@ -57,11 +64,36 @@
     background-size: cover;
     background-position: center;
   }
-  .price {
-    color: gray;
+  .priceWrapper {
+    display: flex;
+    align-items: flex-end;
+    column-gap: 12px;
     margin-top: 28px;
     margin-bottom: 8px;
+  }
+  .price {
+    color: gray;
     font-size: 26px;
+
+    &_new {
+      color: #8C2B3D;
+    }
+
+    &_old {
+      position: relative;
+      font-size: 16px;
+      color: gray;
+      padding-bottom: 2px;
+
+      &:before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        background: currentColor;
+        top: calc(50% - 2px);
+      }
+    }
   }
   .button {
     background: black;
@@ -86,5 +118,13 @@
   .icons {
     height: 12px;
     background: black;
+  }
+  .caption {
+    display:inline-block;
+    text-overflow: ellipsis;
+    max-width: 70%;
+    height: 1.2em;
+    white-space: nowrap;
+    overflow: hidden;
   }
 </style>

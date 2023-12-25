@@ -2,12 +2,16 @@
   <ContentContainer>
     <div class="title">{{ title }}</div>
     <div class="grid">
-      <ProductCard v-for="item in items" :title="item.title" :img="item.img" :id="item.id"
+      <ProductCard v-for="item in items"
+                   :title="item.title"
+                   :img="item.img"
+                   :id="item.id"
                    :caption="item.caption"
                    :badge="item.badge"
                    :rating="item.rating"
                    :reviews="item.reviews"
                    :price="item.price"
+                   :discountPrice="item.discountPrice"
       />
     </div>
   </ContentContainer>

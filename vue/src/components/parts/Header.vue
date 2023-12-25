@@ -5,12 +5,20 @@
         <div>Default welcome message!</div>
         <div class="links">
           <router-link to="/account" class="link">
-            <unicon name="user" fill="gray"></unicon>
+            <unicon name="user" fill="currentColor"></unicon>
             My Account
           </router-link>
           <router-link to="/wish-list" class="link">
-            <unicon name="user" fill="gray"></unicon>
+            <unicon name="heart" fill="currentColor"></unicon>
             My Wish List
+          </router-link>
+          <router-link to="/create-account" class="link">
+            <unicon name="user-plus" fill="currentColor"></unicon>
+            Create an Account
+          </router-link>
+          <router-link to="/create-account" class="link">
+            <unicon name="signin" fill="currentColor"></unicon>
+            Sign In
           </router-link>
         </div>
       </div>
@@ -21,7 +29,7 @@
           <div class="logo__caption">Spare Parts</div>
         </div>
         <router-link to="/wish-list" class="link">
-          <unicon name="shopping-cart" fill="grey"></unicon>
+          <unicon name="shopping-cart" fill="currentColor"></unicon>
           My Cart <div class="counter">0</div>
         </router-link>
       </div>
@@ -58,7 +66,7 @@ export default {
   .links {
     display: flex;
     align-items: center;
-    column-gap: 12px;
+    column-gap: 18px;
   }
 
   .link {
@@ -67,8 +75,13 @@ export default {
     column-gap: 8px;
     cursor: pointer;
     font-family: Arial,serif;
-    color: #022E40;
+    color: gray;
     font-size: 14px;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #022E40;
+    }
   }
 
   .logo {

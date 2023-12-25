@@ -2,7 +2,8 @@
   <div class="wrapper">
     <div class="card">
       <div class="title"><span v-for="item in title.split(' ')">{{item}}</span></div>
-      <a :href="`/parts/${id}`">view more <unicon name="arrow-right" width="16" height="16" fill="white"></unicon></a>
+      <div class="caption">{{caption}}</div>
+      <a :href="`/parts/${id}`">view more <unicon class="icon" name="arrow-right" width="16" height="16" fill="currentColor"></unicon></a>
       <img class="img" :src="`${img}`" />
     </div>
   </div>
@@ -11,7 +12,7 @@
 <script lang="ts">
   export default {
     name: 'ProductTypeCard',
-    props: ['title', 'img', 'id']
+    props: ['title', 'img', 'id', 'caption']
   }
 </script>
 
@@ -67,6 +68,21 @@
       font-weight: 200;
       font-size: 26px;
     }
+  }
+  .caption {
+    margin-top: 20px;
+    font-size: 12px;
+  }
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    height: 20px;
+    width: 20px;
+    color: gray;
+    border-radius: 50%;
+    margin-left: 8px;
   }
   .img {
     position: absolute;
