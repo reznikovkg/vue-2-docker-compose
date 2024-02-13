@@ -1,24 +1,21 @@
 <template>
   <PageLayout>
     <ContentContainer class="container">
-      <h1 class="title">{{el.title}}</h1>
-      <div class="caption">{{el.caption}}</div>
-      <img class="img" :src="`${el.img}`" />
-      <Price :price="el.price" :discount-price="el.discountPrice" />
+      <div class="layout">
+        <div class="info">
+          <h1 class="title">{{el.title}}</h1>
+          <div class="caption">{{el.caption}}</div>
+          <Price :price="el.price" :discount-price="el.discountPrice" />
+        </div>
+        <img class="img" :src="`${el.img}`" />
+      </div>
     </ContentContainer>
   </PageLayout>
 </template>
 
 <script>
 import PageLayout from '../parts/PageLayout'
-import MainSlider from '../parts/MainSlider.vue'
-import ProductTypes from '../parts/ProductTypes.vue'
-import ProductCard from '../parts/ProductCard.vue'
-import Products from '../parts/Products.vue'
-import SpecialCards from '../parts/SpecialCards.vue'
-import Contacts from '../parts/Contacts.vue'
-import { helpModal } from "@/mixins/modals";
-import {productsModel, productTypesModel} from "@/components/mock";
+import {productsModel} from "@/components/mock";
 import ContentContainer from "@/components/parts/Container.vue";
 import Price from "@/components/parts/shared/Price.vue";
 
@@ -27,13 +24,7 @@ export default {
   components: {
     Price,
     ContentContainer,
-    PageLayout,
-    MainSlider,
-    ProductTypes,
-    Contacts,
-    ProductCard,
-    Products,
-    SpecialCards
+    PageLayout
   },
   data() {
     return {
@@ -44,6 +35,19 @@ export default {
 </script>
 
 <style scoped>
+  .layout {
+    padding-block: 60px;
+    display: flex;
+    justify-content: space-between;
+    column-gap: 40px;
+  }
+  .info {
+    display: flex;
+    flex-direction: column;
+  }
+  .img {
+    max-width: 50%;
+  }
   .container {
     min-height: calc(100vh - 180px - 258px);
   }

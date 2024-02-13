@@ -1,22 +1,39 @@
 <template>
-  <CustomSlider :title="title" :items="items" :component="NewsCard" :items-in-row="3" />
+  <div>
+    <div class="head">
+      <div class="title">{{ title }}</div>
+      <div class="controls">
+        <button class="arrow" @click="toPrev" :disabled="index === 0">
+          <unicon name="angle-left-b" fill="currentColor"></unicon>
+        </button>
+        <button class="arrow" @click="toNext" :disabled="index + itemsInRow === items.length">
+          <unicon name="angle-right-b" fill="currentColor"></unicon>
+        </button>
+      </div>
+    </div>
+    <div class="grid">
+      <component v-bind:is="component" v-for="item in items.slice(index, index + itemsInRow)" v-bind:key="item.id" v-bind="item" />
+    </div>
+  </div>
 </template>
 
 <script>
-  import CustomSlider from "@/components/parts/CustomSlider.vue";
-  import NewsCard from "@/components/parts/NewsCard.vue";
-
   export default {
-    name: 'ProductsList',
-    computed: {
-      NewsCard() {
-        return NewsCard
+    name: 'CustomSlider',
+    data: () => {
+      return {
+        index: 0
       }
     },
-    components: {
-      CustomSlider
+    methods: {
+      toNext() {
+        this.index += 1;
+      },
+      toPrev() {
+        this.index -= 1;
+      }
     },
-    props: ['items', 'title'],
+    props: ['items', 'title', 'itemsInRow', 'component'],
   }
 </script>
 

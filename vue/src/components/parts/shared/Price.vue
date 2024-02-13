@@ -7,7 +7,7 @@
 
 <script lang="ts">
   export default {
-    name: 'Price',
+    name: 'PriceComponent',
     props: ['price', 'discountPrice']
   }
 </script>

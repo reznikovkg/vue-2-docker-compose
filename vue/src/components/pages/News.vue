@@ -10,27 +10,14 @@
 
 <script>
 import PageLayout from '../parts/PageLayout'
-import MainSlider from '../parts/MainSlider.vue'
-import ProductTypes from '../parts/ProductTypes.vue'
-import ProductCard from '../parts/ProductCard.vue'
-import Products from '../parts/Products.vue'
-import SpecialCards from '../parts/SpecialCards.vue'
-import Contacts from '../parts/Contacts.vue'
-import { helpModal } from "@/mixins/modals";
-import {newsModel, productsModel, productTypesModel} from "@/components/mock";
+import {newsModel} from "@/components/mock";
 import ContentContainer from "@/components/parts/Container.vue";
 
 export default {
   name: 'NewsPage',
   components: {
     ContentContainer,
-    PageLayout,
-    MainSlider,
-    ProductTypes,
-    Contacts,
-    ProductCard,
-    Products,
-    SpecialCards
+    PageLayout
   },
   data() {
     return {
@@ -45,6 +32,7 @@ export default {
     min-height: calc(100vh - 180px - 258px);
   }
   .title {
+    margin-block: 40px 20px;
     font-size: 40px;
     text-transform: uppercase;
   }

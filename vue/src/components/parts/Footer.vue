@@ -2,39 +2,40 @@
   <div class="footer">
     <ContentContainer>
       <div class="footer__top">
-        <div class="logo">
-          <img src="../../assets/logo.png">
+        <a href="/" class="logo">
+          <img src="../../assets/redlogo.png">
           <div class="logo__header">MAGETIQUE</div>
           <div class="logo__caption">Spare Parts</div>
-        </div>
+        </a>
         <div class="links">
           <div class="links__row">
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
+            <a href="/">Shopping & Delivery</a>
+            <a href="/">Secure payment</a>
+            <a href="/">Support</a>
+            <a href="/">Guarantee</a>
+            <a href="/">Terms & Conditions</a>
           </div>
           <div class="links__row">
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
+            <a href="/">About Us</a>
+            <a href="/">Customer Service</a>
+            <a href="/">Template Setting</a>
           </div>
           <div class="links__row">
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
-            <a href="/">Test link</a>
+            <a href="/">Privacy Policy</a>
+            <a href="/">Search Terms</a>
+            <a href="/">Contact Us</a>
+            <a href="/">Orders and Returns</a>
+            <a href="/">Advanced Search</a>
+            <a href="/">Newsletter Subscription</a>
           </div>
         </div>
       </div>
       <div class="footer__bottom">
         <div class="social">
-          <button class="social__button"><unicon name="user" width="16" height="16" fill="gray"></unicon></button>
-          <button class="social__button"><unicon name="user" width="16" height="16" fill="gray"></unicon></button>
-          <button class="social__button"><unicon name="user" width="16" height="16" fill="gray"></unicon></button>
-          <button class="social__button"><unicon name="user" width="16" height="16" fill="gray"></unicon></button>
+          <button class="social__button"><unicon name="facebook-f" width="16" height="16" fill="gray"></unicon></button>
+          <button class="social__button"><unicon name="twitter" width="16" height="16" fill="gray"></unicon></button>
+          <button class="social__button"><unicon name="google" width="16" height="16" fill="gray"></unicon></button>
+          <button class="social__button"><unicon name="instagram" width="16" height="16" fill="gray"></unicon></button>
         </div>
         <div class="copyright">@ 2017 Magetro Spareparts Spare Parts</div>
       </div>
@@ -79,7 +80,7 @@ export default {
      grid-row: 1;
      text-transform: uppercase;
      font-weight: bold;
-     color: #022E40;
+     color: #0e1416;
      font-family: Arial, sans-serif;
      font-size: 24px;
    }
@@ -99,6 +100,7 @@ export default {
    flex-direction: column;
    align-items: flex-end;
    row-gap: 12px;
+   font-size: 12px;
 
    &__row {
      display: flex;
@@ -131,6 +133,11 @@ export default {
      border: 1px solid gray;
      background: transparent;
      color: gray;
+     cursor: pointer;
+
+     > div {
+       display: flex;
+     }
    }
  }
 

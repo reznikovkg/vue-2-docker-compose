@@ -6,12 +6,8 @@
     <el-header class="dark-header">
       <MenuComponent />
     </el-header>
-<!--    <el-main>-->
-<!--      <div class="content">-->
-        <slot />
-<!--      </div>-->
-<!--    </el-main>-->
-  <FooterComponent />
+    <slot />
+    <FooterComponent />
   </el-container>
 </template>
 
@@ -34,13 +30,11 @@ export default {
     MenuComponent,
     ElContainer: ElementUI.Container,
     ElHeader: ElementUI.Header,
-    ElFooter: ElementUI.Footer,
-    // ElMain: ElementUI.Main,
   },
 };
 </script>
 
-<style scoped lang="less">
+<style scoped>
 * {
   font-family: Arial, sans-serif;
 }
@@ -48,7 +42,7 @@ export default {
   background: white;
 }
 .dark-header {
-  background: #022E40;
+  background: #0e1416;
   color: #FAFAFA;
 }
 .content {

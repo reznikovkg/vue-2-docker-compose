@@ -3,29 +3,30 @@
     <div class="card">
       <div class="content">
         <div class="title">
-          <div>suspension</div>
-          <div>parts</div>
-          <div>20 % off</div>
+          <div class="title__bold">suspension</div>
+          <div class="title__light">parts</div>
+          <div class="title__sale">20 % off</div>
         </div>
         <button class="button">shop now</button>
       </div>
     </div>
     <div style="background-image: url('/car2.jpg')" class="card">
+      <div class="shadow" />
       <div class="content">
         <div class="title">
-          <div>suspension</div>
-          <div>parts</div>
-          <div>20 % off</div>
+          <div class="title__bold">auto</div>
+          <div class="title__light">lighting</div>
         </div>
         <button class="button">shop now</button>
       </div>
     </div>
     <div style="background-image: url('/car1.jpg')" class="card">
+      <div class="shadow" />
       <div class="content">
         <div class="title">
-          <div>suspension</div>
-          <div>parts</div>
-          <div>20 % off</div>
+          <div class="title__bold">car</div>
+          <div class="title__light">spoilers</div>
+          <div class="title__sale">50 % off</div>
         </div>
         <button class="button">shop now</button>
       </div>
@@ -34,13 +35,8 @@
 </template>
 
 <script>
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import ProductCard from "@/components/parts/ProductCard.vue";
-import {Carousel, CarouselItem} from "element-ui";
-import ContentContainer from "@/components/parts/Container.vue";
-
 import 'swiper/css';
-import ProductTypeCard from "@/components/parts/ProductTypeCard.vue";
+
 export default {
   name: 'SpecialCards',
 }
@@ -60,8 +56,42 @@ export default {
     background-size: cover;
 
     &:first-child {
-      background: #41b883;
+      background: var(--brand);
     }
+    &:nth-child(2) {
+      .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        row-gap: 20px;
+      }
+      .title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &__bold {
+          font-size: 54px;
+        }
+      }
+    }
+    &:last-child {
+      .title__sale {
+        color: var(--brand);
+      }
+      .button {
+        background: black;
+      }
+    }
+  }
+  .shadow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    opacity: 0.5;
   }
   .content {
     position: absolute;
@@ -72,21 +102,21 @@ export default {
     color: white;
 
     .title {
-      text-transform: uppercase;
       width: 100%;
-      div {
-        &:first-child {
-          font-size: 46px;
-          font-weight: bold;
-        }
-        &:nth-child(2) {
-          font-size: 52px;
-          font-weight: 100;
-        }
-        &:nth-child(3) {
-          font-size: 80px;
-          font-weight: bold;
-        }
+
+      &__bold {
+        font-size: 46px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      &__light {
+        font-size: 48px;
+        font-weight: 100;
+        text-transform: uppercase;
+      }
+      &__sale {
+        font-size: 80px;
+        font-weight: bold;
       }
     }
 

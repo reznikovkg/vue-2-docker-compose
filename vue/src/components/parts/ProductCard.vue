@@ -16,6 +16,10 @@
         </div>
         {{ reviews }} Reviews
       </div>
+      <div class="buttons">
+        <unicon class="icon" name="heart" fill="currentColor"></unicon>
+        <unicon class="icon" name="balance-scale" fill="currentColor"></unicon>
+      </div>
     </div>
   </div>
 </template>
@@ -26,7 +30,7 @@
   export default {
     name: 'ProductCard',
     components: {Price},
-    props: ['price', 'img', 'id', 'badge', 'rating', 'reviews', 'caption', 'img', 'discountPrice', 'title']
+    props: ['price', 'img', 'id', 'badge', 'rating', 'reviews', 'caption', 'discountPrice', 'title']
   }
 </script>
 
@@ -54,9 +58,23 @@
       background: #D94E67;
     }
   }
+  .buttons {
+    margin-top: 8px;
+    display: flex;
+    color: lightgray;
+    column-gap: 20px;
+
+    .icon {
+      transition: 0.1s color;
+      cursor: pointer;
+
+      &:hover {
+        color: gray;
+      }
+    }
+  }
   .img {
     display: block;
-    //position: absolute;
     width: 100%;
     height: 50%;
     top: 20px;

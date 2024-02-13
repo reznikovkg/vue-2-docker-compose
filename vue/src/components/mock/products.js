@@ -7,7 +7,7 @@ export const productsModel = {
       reviews: 4,
       title: 'tbeyound excellence',
       caption: 'the quality is beyound excellence',
-      img: '/engine.png',
+      img: '/car-filter.png',
       price: '$650.00',
       discountPrice: '$250.00',
     },
@@ -18,7 +18,7 @@ export const productsModel = {
       reviews: 4,
       title: 'tbeyound excellence',
       caption: 'the quality is beyound excellence',
-      img: '/engine.png',
+      img: '/part1.png',
       price: '650$'
     },
     {
@@ -28,7 +28,7 @@ export const productsModel = {
       reviews: 4,
       title: 'tbeyound excellence',
       caption: 'the quality is beyound excellence',
-      img: '/engine.png',
+      img: '/oil.png',
       price: '650$'
     },
     {
@@ -38,7 +38,7 @@ export const productsModel = {
       reviews: 4,
       title: 'tbeyound excellence',
       caption: 'the quality is beyound excellence',
-      img: '/engine.png',
+      img: '/steering.png',
       price: '650$'
     },
     {
@@ -48,7 +48,7 @@ export const productsModel = {
       reviews: 4,
       title: 'tbeyound excellence',
       caption: 'the quality is beyound excellence',
-      img: '/engine.png',
+      img: '/headlight.png',
       price: '$650.00',
       discountPrice: '$250.00',
     },
@@ -59,7 +59,7 @@ export const productsModel = {
       reviews: 4,
       title: 'tbeyound excellence',
       caption: 'the quality is beyound excellence',
-      img: '/engine.png',
+      img: '/headlight2.png',
       price: '650$'
     },
     {
@@ -69,7 +69,7 @@ export const productsModel = {
       reviews: 4,
       title: 'tbeyound excellence',
       caption: 'the quality is beyound excellence',
-      img: '/engine.png',
+      img: '/front_bumper.png',
       price: '650$'
     },
     {
@@ -77,11 +77,31 @@ export const productsModel = {
       badge: 'top',
       rating: 0.6,
       reviews: 4,
+      title: 'filter excellence',
+      caption: 'the quality is beyound excellence',
+      img: '/filter.png',
+      price: '650$'
+    },
+    {
+      id: '9',
+      badge: 'top',
+      rating: 0.6,
+      reviews: 4,
+      title: 'filter excellence',
+      caption: 'the quality is beyound excellence',
+      img: '/oil.png',
+      price: '650$'
+    },
+    {
+      id: '10',
+      badge: 'sale',
+      rating: 0.6,
+      reviews: 4,
       title: 'tbeyound excellence',
       caption: 'the quality is beyound excellence',
-      img: '/engine.png',
+      img: '/headlight.png',
       price: '650$'
-    }
+    },
   ],
   getTop: () => productsModel.getList().filter(el => el.badge === 'top'),
   getSales: () => productsModel.getList().filter(el => el.badge === 'sale'),

@@ -20,7 +20,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import ContentContainer from "./Container.vue";
 
 export default {
-  name: "Contacts",
+  name: "ContactsComponent",
   components: {ContentContainer},
 };
 </script>
@@ -28,7 +28,7 @@ export default {
 <style scoped lang="scss">
  .contacts {
    margin-top: 60px;
-   background: #41b883;
+   background: var(--brand);;
    padding-block: 60px;
    color: white;
  }

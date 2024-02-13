@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="card">
-      <div class="title"><span v-for="item in title.split(' ')">{{item}}</span></div>
+      <div class="title"><span v-for="item in title.split(' ')" v-bind:key="item">{{item}}</span></div>
       <div class="caption">{{caption}}</div>
       <a :href="`/parts/${id}`">view more <unicon class="icon" name="arrow-right" width="16" height="16" fill="currentColor"></unicon></a>
       <img class="img" :src="`${img}`" />
@@ -26,11 +26,11 @@
     overflow: hidden;
 
     &:first-child, &:nth-child(7) {
-      background: #41b883;
+      background: var(--brand);;
     }
 
     &:nth-child(2), &:nth-child(4), &:nth-child(5) {
-      background: #022E40;
+      background: #0e1416;
     }
   }
   .card {
@@ -89,6 +89,6 @@
     width: 80%;
     bottom: 0;
     right: 0;
-    transform: translate(20%, 20%);
+    transform: translate(45%, 20%);
   }
 </style>

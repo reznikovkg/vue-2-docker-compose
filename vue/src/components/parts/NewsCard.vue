@@ -5,18 +5,20 @@
       <div class="title">{{ title }}</div>
       <div class="caption">{{ caption }}</div>
 
+      <div class="info">
+        <div class="info__part"><unicon name="schedule" fill="currentColor"></unicon>{{date}}</div>
+        <div class="info__part"><unicon name="user" fill="currentColor"></unicon>by {{user}}</div>
+        <div class="info__part"><unicon name="comment" fill="currentColor"></unicon>{{comments}}</div>
+      </div>
       <a :href="`/news/${id}`" class="button">Read more</a>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  import Price from "@/components/parts/shared/Price.vue";
-
   export default {
     name: 'NewsCard',
-    components: {Price},
-    props: ['price', 'img', 'id', 'badge', 'rating', 'reviews', 'caption', 'img', 'discountPrice', 'title']
+    props: ['img', 'id', 'caption', 'title', 'date', 'user', 'comments']
   }
 </script>
 
@@ -26,7 +28,7 @@
     flex-direction: column;
     padding-top: 20px;
     position: relative;
-    width: 285px;
+    width: calc((1200px - 40px) / 3);
     overflow: hidden;
     color: black;
   }
@@ -58,6 +60,22 @@
     column-gap: 8px;
     margin-block: 8px;
     width: fit-content;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 12px;
+  }
+  .info {
+    display: flex;
+    align-items: center;
+    column-gap: 12px;
+    color: gray;
+    margin-block: 14px;
+
+    &__part {
+      display: flex;
+      align-items: center;
+      column-gap: 4px;
+    }
   }
   .title {
     font-size: 24px;

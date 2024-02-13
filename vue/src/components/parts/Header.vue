@@ -23,11 +23,11 @@
         </div>
       </div>
       <div class="header__bottom">
-        <div class="logo">
-          <img src="../../assets/logo.png">
+        <a href="/" class="logo">
+          <img src="../../assets/redlogo.png">
           <div class="logo__header">MAGETIQUE</div>
           <div class="logo__caption">Spare Parts</div>
-        </div>
+        </a>
         <router-link to="/wish-list" class="link">
           <unicon name="shopping-cart" fill="currentColor"></unicon>
           My Cart <div class="counter">0</div>
@@ -80,7 +80,7 @@ export default {
     transition: color 0.3s;
 
     &:hover {
-      color: #022E40;
+      color: #0e1416;
     }
   }
 
@@ -99,7 +99,7 @@ export default {
       grid-row: 1;
       text-transform: uppercase;
       font-weight: bold;
-      color: #022E40;
+      color: #0e1416;
       font-family: Arial, sans-serif;
       font-size: 24px;
     }
