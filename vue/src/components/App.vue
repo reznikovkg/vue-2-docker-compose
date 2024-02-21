@@ -1,16 +1,19 @@
 <template>
   <div>
-    <RouterView />
-    <ModalContainer />
+    <FifthButton />
+    <FifthButton class="green"/>
+    <FifthButton class="red"/>
+    <FifthButton class="orange"/>
+    <FifthButton class="black"/>
   </div>
 </template>
 
 <script>
-import ModalContainer from "@/components/parts/ModalContainer";
+import FifthButton from "@/components/ui/buttons/FifthButton.vue";
 
 export default {
   components: {
-    ModalContainer
+    FifthButton
   }
 }
 </script>
@@ -87,5 +90,17 @@ h2 {
       cursor: wait;
     }
   }
+}
+.green .btn5 {
+  background: #7fb534;
+}
+.red .btn5 {
+  background: #cd2f31;
+}
+.orange .btn5 {
+  background: #ea452c;
+}
+.black .btn5 {
+  background: #28304b;
 }
 </style>
