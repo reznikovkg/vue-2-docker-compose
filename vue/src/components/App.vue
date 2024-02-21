@@ -1,16 +1,24 @@
 <template>
-  <div>
-    <RouterView />
-    <ModalContainer />
+  <div class="body">
+    <CustomButton/>
+    <CustomButton class="red">
+      HALLO
+    </CustomButton>
+    <custom-button class="blue">
+      MARHABAN
+    </custom-button>
+    <custom-button class="purple">
+      NI HAO
+    </custom-button>
   </div>
 </template>
 
 <script>
-import ModalContainer from "@/components/parts/ModalContainer";
+import CustomButton from "@/components/CustomButton.vue";
 
 export default {
   components: {
-    ModalContainer
+    CustomButton
   }
 }
 </script>
@@ -87,5 +95,21 @@ h2 {
       cursor: wait;
     }
   }
+}
+
+.body{
+  margin-top: 50px;
+}
+
+.red::after{
+  background: #dc4d4e;
+}
+
+.blue::after{
+  background: #539fe0;
+}
+
+.purple::after{
+  background: #b96ee7;
 }
 </style>
