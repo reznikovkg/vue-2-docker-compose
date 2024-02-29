@@ -1,3 +1,4 @@
+<!--
 <template>
   <ModalComponent>
     <div>
@@ -59,3 +60,4 @@ export default {
 <style scoped>
 
 </style>
+-->
