@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="img-container">
-      <img :src="imgUrl" class="card__img" />
+      <img :src="cardImg" class="card__img" />
     </div>
     <div v-if="isEdit" class="info-container">
       <input class="card__title-edit" ref="userTitle" />
@@ -29,13 +29,16 @@ export default {
     },
     title: { type: String, default: "Название" },
     desc: { type: String, default: "Описание или рецепт" },
-    isEditable: { type: Boolean, default: true },
+    isEditable: { type: Boolean, default: false },
   },
   data() {
     return {
       cardTitle: this.title,
       cardDesc: this.desc,
-      cardImg: this.imgUrl,
+      cardImg:
+        this.imgUrl.length > 0
+          ? this.imgUrl
+          : "https://pho-hoai-vietnamese.com/img/placeholders/grey_fork_and_knife.png?clckid=8abfa2cc",
       isEdit: false,
     };
   },
@@ -67,7 +70,7 @@ export default {
   box-sizing: border-box;
 }
 .card {
-  max-width: 300px;
+  width: 300px;
   border-radius: 9px;
   border: 1px solid #eee;
   font: 600 22px / 26px "sf pro display";
