@@ -1,4 +1,5 @@
 export enum RouteNames {
   HOME = "HOME",
-  CREATE = 'CREATE',
+  CREATE = "CREATE",
+  DETAILS = "RecipeLayout",
 }

@@ -5,6 +5,7 @@
       <Card
         v-for="card in displayedCards"
         :key="card.id"
+        :id="card.id+''"
         :title="card.title"
         :imgUrl="card.imgUrl"
         :desc="card.desc" />

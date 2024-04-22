@@ -1,27 +1,30 @@
 <template>
-  <div class="card">
-    <div class="img-container">
-      <img :src="cardImg" class="card__img" />
+  <router-link :to="`/catalog/${id}`">
+    <div class="card">
+      <div class="img-container">
+        <img :src="cardImg" class="card__img" />
+      </div>
+      <div v-if="isEdit" class="info-container">
+        <input class="card__title-edit" ref="userTitle" />
+        <textarea class="card__desc-edit" ref="userDesc"></textarea>
+        <button @click="closeEditMode">Отмена</button>
+        <button @click="saveEdit">Сохранить изменения</button>
+      </div>
+      <div v-else class="info-container">
+        <div class="card__title">{{ cardTitle.toUpperCase() }}</div>
+        <div class="card__desc">{{ cardDesc }}</div>
+        <button @click="showEditMode" v-if="isEditable">Редактировать</button>
+        <button @click="addCard" v-if="isEditable">Добавить блюдо</button>
+      </div>
     </div>
-    <div v-if="isEdit" class="info-container">
-      <input class="card__title-edit" ref="userTitle" />
-      <textarea class="card__desc-edit" ref="userDesc"></textarea>
-      <button @click="closeEditMode">Отмена</button>
-      <button @click="saveEdit">Сохранить изменения</button>
-    </div>
-    <div v-else class="info-container">
-      <div class="card__title">{{ cardTitle.toUpperCase() }}</div>
-      <div class="card__desc">{{ cardDesc }}</div>
-      <button @click="showEditMode" v-if="isEditable">Редактировать</button>
-      <button @click="addCard" v-if="isEditable">Добавить блюдо</button>
-    </div>
-  </div>
+  </router-link>
 </template>
 
 <script>
 export default {
   name: "CardComponent",
   props: {
+    id: {type: String, required: true},
     imgUrl: {
       type: String,
       default:

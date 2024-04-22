@@ -1,4 +1,4 @@
-import { data } from '../components/catalog/mockData';
+import { data } from "../components/catalog/mockData";
 
 export default {
   state: {
@@ -6,6 +6,7 @@ export default {
   },
   getters: {
     getCards: (state) => state.cards,
+    getCardById: (state) => (id) => state.cards.find((card) => card.id == id),
   },
   mutations: {
     setCards: (state, newCards) => {
@@ -17,7 +18,7 @@ export default {
   },
   actions: {
     async fetchMockData({ commit }) {
-      commit('setCards', data);
+      commit("setCards", data);
     },
   },
 };
