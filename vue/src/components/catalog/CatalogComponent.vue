@@ -2,23 +2,29 @@
   <div class="catalog-wrapper">
     <Search :sortFunction="sortCards" />
     <div class="catalog">
-      <Card
+      <router-link
         v-for="card in displayedCards"
         :key="card.id"
-        :id="card.id+''"
-        :title="card.title"
-        :imgUrl="card.imgUrl"
-        :desc="card.desc" />
+        :to="`/catalog/${card.id}`"
+      >
+        <Card
+          :key="card.id"
+          :id="card.id + ''"
+          :title="card.title"
+          :imgUrl="card.imgUrl"
+          :desc="card.desc"
+        />
+      </router-link>
     </div>
   </div>
 </template>
 
 <script>
-import Card from '../card/CardComponent';
-import Search from '../searchbar/SearchBar.vue';
+import Card from "../card/CardComponent";
+import Search from "../searchbar/SearchBar.vue";
 
 export default {
-  name: 'CatalogComponent',
+  name: "CatalogComponent",
   data: () => {
     return {
       cards: [],
@@ -34,7 +40,7 @@ export default {
     },
   },
   beforeMount() {
-    this.$store.dispatch('fetchMockData');
+    this.$store.dispatch("fetchMockData");
     const cardsFromStor = this.$store.getters.getCards;
     this.cards = cardsFromStor;
     this.displayedCards = cardsFromStor;
@@ -50,8 +56,8 @@ export default {
 .catalog-wrapper {
   display: flex;
   flex-direction: column;
- align-items: center;
- gap: 25px;
+  align-items: center;
+  gap: 25px;
 }
 .catalog {
   display: flex;
