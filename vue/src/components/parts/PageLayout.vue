@@ -1,14 +1,20 @@
 <template>
   <div>
     <div class="content">
-      <slot />
+      <HeaderComponent />
+        <slot />
     </div>
   </div>
 </template>
 
 <script>
+import HeaderComponent from '@/components/ui/HeaderComponent.vue'
+
 export default {
   name: 'PageLayout',
+  components: {
+    HeaderComponent,
+  },
   props: {
     loading: {
       type: Boolean,
@@ -20,12 +26,9 @@ export default {
 
 <style scoped lang="less">
 .content {
+  padding: 0;
   margin: 0 auto;
-  padding: 20px 34px;
-  min-height: 100vh;
-  max-height: 100vh;
-  overflow: auto;
   box-sizing: border-box;
-  max-width: 1000px;
+  max-width: 1920px;
 }
 </style>
