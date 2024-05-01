@@ -33,6 +33,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: @cBaseTwo;
+  font-family: @alte-reg;
 }
 
 a {
@@ -55,7 +56,7 @@ h2,
 h3,
 h4,
 h5 {
-  font-family: @ffOne;
+  font-family: @alte-bold;
   color: @cBaseThree;
   margin: 0;
 }
