@@ -24,7 +24,7 @@ export default {
 
 <style lang="less" scoped>
 .searchBar {
-  width: 55%;
+  width: 100%;
   position: relative;
   &__input {
     width: 100%;

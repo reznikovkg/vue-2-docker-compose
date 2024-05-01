@@ -6,14 +6,22 @@
     <div v-if="isEdit">
       <input class="card__title-edit" ref="userTitle" />
       <textarea class="card__desc-edit" ref="userDesc"></textarea>
-      <button class="btn" @click="closeEditMode">Cancel</button>
-      <button class="btn" @click="saveEdit">Save changes</button>
+      <div class="edit-btns">
+        <button class="btn" @click="closeEditMode">Cancel</button>
+        <button class="btn" @click="saveEdit">Save changes</button>
+      </div>
     </div>
     <div v-else class="info-container">
       <div class="card__title">{{ cardTitle }}</div>
       <div class="card__desc" v-if="isEditable">{{ cardDesc }}</div>
-      <button class="btn" @click="showEditMode" v-if="isEditable">Edit</button>
-      <button class="btn" @click="addCard" v-if="isEditable">Add Recipe</button>
+      <div class="edit-btns">
+        <button class="btn" @click="showEditMode" v-if="isEditable">
+          Edit
+        </button>
+        <button class="btn" @click="addCard" v-if="isEditable">
+          Add Recipe
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -127,6 +135,12 @@ export default {
         outline: none;
       }
     }
+  }
+
+  .edit-btns {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
   }
 }
 </style>
