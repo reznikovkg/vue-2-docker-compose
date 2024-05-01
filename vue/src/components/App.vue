@@ -18,8 +18,8 @@ export default {
   data() {
     return {
       links: [
-        { to: "/", title: "Главная" },
-        { to: "/create", title: "Создать блюдо" },
+        { to: "/", title: "Recipes" },
+        { to: "/create", title: "Create recipe" },
       ],
     };
   },

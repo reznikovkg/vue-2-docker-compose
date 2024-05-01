@@ -25,6 +25,7 @@ li {
 }
 .nav {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  gap: 35px;
 }
 </style>
