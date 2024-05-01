@@ -26,6 +26,6 @@ export default {
   max-height: 100vh;
   overflow: auto;
   box-sizing: border-box;
-  max-width: 1000px;
+  max-width: 1320px;
 }
 </style>

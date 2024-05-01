@@ -29,3 +29,12 @@
   background-color: #e7e8de;
   color: black;
 }
+
+a {
+  font-family: "AlteHaasGrotesk-Bold";
+}
+
+a:link,
+a:visited {
+  color: black;
+}

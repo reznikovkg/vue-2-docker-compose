@@ -3,7 +3,7 @@
     <div class="img-container">
       <img :src="cardImg" class="card__img" />
     </div>
-    <div v-if="isEdit" class="info-container">
+    <div v-if="isEdit">
       <input class="card__title-edit" ref="userTitle" />
       <textarea class="card__desc-edit" ref="userDesc"></textarea>
       <button class="btn" @click="closeEditMode">Cancel</button>
@@ -71,8 +71,11 @@ export default {
 }
 .card {
   width: 300px;
-  border-radius: 9px;
-  border: 1px solid #eee;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
   &:hover {
     cursor: pointer;
   }
@@ -80,14 +83,11 @@ export default {
     transform: scale(1.04);
   }
   .img-container {
-    max-width: 300px;
-    height: 200px;
-    border-radius: 6px;
+    max-width: 220px;
+    height: 220px;
+    border: 3px solid black;
     transition: 0.4s;
     overflow: hidden;
-  }
-  .info-container {
-    padding: 16px 20px;
   }
   &__img {
     width: 100%;
