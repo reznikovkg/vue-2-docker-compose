@@ -6,14 +6,14 @@
     <div v-if="isEdit" class="info-container">
       <input class="card__title-edit" ref="userTitle" />
       <textarea class="card__desc-edit" ref="userDesc"></textarea>
-      <button @click="closeEditMode">Отмена</button>
-      <button @click="saveEdit">Сохранить изменения</button>
+      <button class="btn" @click="closeEditMode">Cancel</button>
+      <button class="btn" @click="saveEdit">Save changes</button>
     </div>
     <div v-else class="info-container">
       <div class="card__title">{{ cardTitle }}</div>
       <div class="card__desc" v-if="isEditable">{{ cardDesc }}</div>
-      <button @click="showEditMode" v-if="isEditable">Edit</button>
-      <button @click="addCard" v-if="isEditable">Add Recipe</button>
+      <button class="btn" @click="showEditMode" v-if="isEditable">Edit</button>
+      <button class="btn" @click="addCard" v-if="isEditable">Add Recipe</button>
     </div>
   </div>
 </template>

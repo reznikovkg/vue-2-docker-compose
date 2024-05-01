@@ -12,3 +12,20 @@
   box-sizing: border-box;
   max-width: 1000px;
 }
+
+.btn {
+  background-color: black;
+  color: #e7e8de;
+  padding: 5px 16px;
+  border-radius: 13px;
+  border: none;
+  letter-spacing: 1px;
+  font-family: "AlteHaasGrotesk-Regular";
+  transition: 0.3s;
+}
+
+.btn:hover {
+  cursor: pointer;
+  background-color: #e7e8de;
+  color: black;
+}
