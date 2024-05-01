@@ -38,7 +38,6 @@ export default {
   gap: 20px;
   justify-content: center;
   padding: 25px;
-  font-family: "Jost", sans-serif;
 }
 .img-container {
   max-width: 500px;

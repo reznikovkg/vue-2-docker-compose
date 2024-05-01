@@ -1,4 +1,9 @@
-@import './less/fonts.css';
+@import "./less/fonts.css";
+
+* {
+  padding: 0;
+  margin: 0;
+}
 
 .container {
   margin: 0 auto;

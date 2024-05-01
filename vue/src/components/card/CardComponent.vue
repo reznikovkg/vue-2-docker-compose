@@ -10,10 +10,10 @@
       <button @click="saveEdit">Сохранить изменения</button>
     </div>
     <div v-else class="info-container">
-      <div class="card__title">{{ cardTitle.toUpperCase() }}</div>
-      <div class="card__desc">{{ cardDesc }}</div>
-      <button @click="showEditMode" v-if="isEditable">Редактировать</button>
-      <button @click="addCard" v-if="isEditable">Добавить блюдо</button>
+      <div class="card__title">{{ cardTitle }}</div>
+      <div class="card__desc" v-if="isEditable">{{ cardDesc }}</div>
+      <button @click="showEditMode" v-if="isEditable">Edit</button>
+      <button @click="addCard" v-if="isEditable">Add Recipe</button>
     </div>
   </div>
 </template>
@@ -27,8 +27,8 @@ export default {
       default:
         "https://pho-hoai-vietnamese.com/img/placeholders/grey_fork_and_knife.png?clckid=8abfa2cc",
     },
-    title: { type: String, default: "Название" },
-    desc: { type: String, default: "Описание или рецепт" },
+    title: { type: String, default: "Title" },
+    desc: { type: String, default: "Description" },
     isEditable: { type: Boolean, default: false },
   },
   data() {
@@ -73,7 +73,6 @@ export default {
   width: 300px;
   border-radius: 9px;
   border: 1px solid #eee;
-  font: 600 22px / 26px "sf pro display";
   &:hover {
     cursor: pointer;
   }
@@ -97,6 +96,9 @@ export default {
     object-position: center;
     transition: 0.4s;
   }
+  &__title {
+    text-transform: capitalize;
+  }
   &__title-edit {
     width: 100%;
     border-radius: 9px;
@@ -109,7 +111,6 @@ export default {
   &__desc {
     margin: 3px 0 0 0;
     color: rgba(0, 0, 0, 0.4);
-    font: 15px / 18px "sf pro display";
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;

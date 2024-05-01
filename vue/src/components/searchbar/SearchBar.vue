@@ -28,7 +28,6 @@ export default {
   &__input {
     width: 100%;
     background: rgba(196, 196, 196, 0.1);
-    font: 17px / 20px 'sf pro display';
     height: 29px;
     border-radius: 19px;
     border: 1px solid rgba(0, 0, 0, 0.08);
