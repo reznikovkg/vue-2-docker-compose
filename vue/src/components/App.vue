@@ -32,7 +32,7 @@ export default {
 body {
   margin: 0;
   padding: 0;
-  background-color: @cBaseTwo;
+  background-color: #E7E8DE;
   font-family: @alte-reg;
 }
 
@@ -41,7 +41,7 @@ a {
 }
 
 section {
-  background-color: @cBaseOne;
+  background-color: #E7E8DE;
   margin-bottom: 20px;
   border-radius: 2px;
   box-sizing: border-box;

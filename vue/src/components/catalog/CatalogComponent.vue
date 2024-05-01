@@ -1,5 +1,9 @@
 <template>
   <div class="catalog-wrapper">
+    <h1>
+      This is what
+      <div><span>we</span> eat.</div>
+    </h1>
     <Search :sortFunction="sortCards" />
     <div class="catalog">
       <router-link
@@ -53,16 +57,30 @@ export default {
 </script>
 
 <style lang="less" scoped>
+h1 {
+  color: black;
+  & span {
+    position: relative;
+    &::after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 125%;
+      border-bottom: 3px solid;
+      bottom: 0;
+    }
+  }
+}
+
 .catalog-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 25px;
 }
 .catalog {
   display: flex;
   flex-wrap: wrap;
   gap: 25px;
-  justify-content: space-evenly;
+  justify-content: space-between;
 }
 </style>

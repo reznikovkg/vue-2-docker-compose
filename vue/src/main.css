@@ -1,8 +1,10 @@
 @import "./less/fonts.css";
+@import "./less/queries.css";
 
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
 
 .container {
@@ -37,4 +39,9 @@ a {
 a:link,
 a:visited {
   color: black;
+}
+
+.input {
+  border: 3px solid black;
+  padding: 20px;
 }

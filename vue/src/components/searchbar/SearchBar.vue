@@ -2,20 +2,21 @@
   <div class="searchBar">
     <input
       @input="() => sortFunction(this.userText.trim())"
+      placeholder="Search all recipes..."
       v-model="userText"
       type="text"
-      class="searchBar__input" />
-    <i class="searchBar__icon"></i>
+      class="searchBar__input input"
+    />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'SearchBar',
-  props: ['sortFunction'],
+  name: "SearchBar",
+  props: ["sortFunction"],
   data: () => {
     return {
-      userText: '',
+      userText: "",
     };
   },
 };
@@ -23,30 +24,21 @@ export default {
 
 <style lang="less" scoped>
 .searchBar {
-  max-width: 280px;
+  width: 55%;
   position: relative;
   &__input {
     width: 100%;
-    background: rgba(196, 196, 196, 0.1);
     height: 29px;
-    border-radius: 19px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    padding-left: 15px;
     transition: all 200ms;
+    background-color: #E7E8DE;
     &:focus {
       outline: none;
     }
-    &:hover {
-      border: 1px solid rgba(0, 0, 0, 0.179);
+    &::placeholder {
+      letter-spacing: 1.3px;
+      color: #5f5f5d;
+      font-weight: 600;
     }
-  }
-  &__icon {
-    width: 28px;
-    height: 28px;
-    position: absolute;
-    top: 2px;
-    right: -14px;
-    background: url('../../assets/search.svg') no-repeat 50% 50%;
   }
 }
 </style>
