@@ -2,9 +2,9 @@
   <div class="catalog-wrapper">
     <div class="head">
       <div class="head__left">
-        <h1>
+        <h1 class="head__title">
           This is what
-          <div><span>we</span> eat.</div>
+          <div><span class="head__title-span">we</span> eat.</div>
         </h1>
         <Search :sortFunction="sortCards" />
       </div>
@@ -64,9 +64,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-h1 {
+.head__title {
   color: black;
-  & span {
+  &-span {
     position: relative;
     &::after {
       content: "";

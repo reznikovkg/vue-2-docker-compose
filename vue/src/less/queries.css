@@ -1,4 +1,4 @@
-h1 {
+.head__title {
   font-size: 80px;
 }
 
@@ -28,7 +28,7 @@ h1 {
   }
 }
 @media screen and (max-width: 600px) {
-  h1 {
+  .head__title {
     font-size: 65px;
   }
   .catalog-wrapper {
@@ -36,12 +36,12 @@ h1 {
   }
 }
 @media screen and (max-width: 503px) {
-  h1 {
+  .head__title {
     font-size: 35px;
   }
 }
 @media screen and (max-width: 335px) {
-  h1 {
+  .head__title {
     font-size: 25px;
   }
 }
