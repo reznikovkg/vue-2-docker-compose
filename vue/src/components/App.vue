@@ -18,8 +18,8 @@ export default {
   data() {
     return {
       links: [
-        { to: "/", title: "Главная" },
-        { to: "/create", title: "Создать блюдо" },
+        { to: "/", title: "Recipes" },
+        { to: "/create", title: "Create recipe" },
       ],
     };
   },
@@ -32,7 +32,8 @@ export default {
 body {
   margin: 0;
   padding: 0;
-  background-color: @cBaseTwo;
+  background-color: #E7E8DE;
+  font-family: @alte-reg;
 }
 
 a {
@@ -40,7 +41,7 @@ a {
 }
 
 section {
-  background-color: @cBaseOne;
+  background-color: #E7E8DE;
   margin-bottom: 20px;
   border-radius: 2px;
   box-sizing: border-box;
@@ -55,7 +56,7 @@ h2,
 h3,
 h4,
 h5 {
-  font-family: @ffOne;
+  font-family: @alte-bold;
   color: @cBaseThree;
   margin: 0;
 }

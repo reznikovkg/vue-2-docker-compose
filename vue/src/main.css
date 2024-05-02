@@ -1,7 +1,47 @@
+@import "./less/fonts.css";
+@import "./less/queries.css";
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 .container {
   margin: 0 auto;
   padding: 20px 34px;
   overflow: auto;
   box-sizing: border-box;
   max-width: 1000px;
+}
+
+.btn {
+  background-color: black;
+  color: #e7e8de;
+  padding: 5px 16px;
+  border-radius: 13px;
+  border: none;
+  letter-spacing: 1px;
+  font-family: "AlteHaasGrotesk-Regular";
+  transition: 0.3s;
+}
+
+.btn:hover {
+  cursor: pointer;
+  background-color: #e7e8de;
+  color: black;
+}
+
+a {
+  font-family: "AlteHaasGrotesk-Bold";
+}
+
+a:link,
+a:visited {
+  color: black;
+}
+
+.input {
+  border: 3px solid black;
+  padding: 20px;
 }

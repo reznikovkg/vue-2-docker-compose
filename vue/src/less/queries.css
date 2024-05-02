@@ -1,0 +1,47 @@
+h1 {
+  font-size: 80px;
+}
+
+.head__left {
+  width: 58%;
+}
+
+.catalog-wrapper {
+  gap: 150px;
+}
+
+.catalog {
+  justify-content: space-between;
+}
+
+@media screen and (max-width: 1024px) {
+  .lorem {
+    opacity: 0;
+  }
+  .head__left {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 824px) {
+  .catalog {
+    justify-content: space-around;
+  }
+}
+@media screen and (max-width: 600px) {
+  h1 {
+    font-size: 65px;
+  }
+  .catalog-wrapper {
+    gap: 80px;
+  }
+}
+@media screen and (max-width: 503px) {
+  h1 {
+    font-size: 35px;
+  }
+}
+@media screen and (max-width: 335px) {
+  h1 {
+    font-size: 25px;
+  }
+}

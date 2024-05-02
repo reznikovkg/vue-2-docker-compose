@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'AlteHaasGrotesk-Bold';
+    src: url(../assets/fonts/AlteHaasGrotesk-Bold.ttf);
+    font-weight: 700;
+}
+@font-face {
+    font-family: 'AlteHaasGrotesk-Regular';
+    src: url(../assets/fonts/AlteHaasGrotesk-Regular.ttf);
+    font-weight: 400;
+}

@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="to"> {{ title }} </router-link>
+  <router-link :to="to" class="link"> {{ title }} </router-link>
 </template>
 
 <script>
@@ -9,4 +9,21 @@ export default {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.link {
+  letter-spacing: 1px;
+  position: relative;
+  transition: 0.2s;
+  &::after {
+    content: "";
+    display: block;
+    border-bottom: 1px solid;
+    position: absolute;
+    width: 100%;
+    bottom: 1px;
+  }
+  &:hover {
+    color: #5f5f5d;
+  }
+}
+</style>

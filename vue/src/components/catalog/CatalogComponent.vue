@@ -1,6 +1,15 @@
 <template>
   <div class="catalog-wrapper">
-    <Search :sortFunction="sortCards" />
+    <div class="head">
+      <div class="head__left">
+        <h1>
+          This is what
+          <div><span>we</span> eat.</div>
+        </h1>
+        <Search :sortFunction="sortCards" />
+      </div>
+      <LoremBlock class="head__right" />
+    </div>
     <div class="catalog">
       <router-link
         v-for="card in displayedCards"
@@ -22,6 +31,7 @@
 <script>
 import Card from "../card/CardComponent";
 import Search from "../searchbar/SearchBar.vue";
+import LoremBlock from "../parts/LoremBlock.vue";
 
 export default {
   name: "CatalogComponent",
@@ -48,21 +58,53 @@ export default {
   components: {
     Card,
     Search,
+    LoremBlock,
   },
 };
 </script>
 
 <style lang="less" scoped>
+h1 {
+  color: black;
+  & span {
+    position: relative;
+    &::after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 125%;
+      border-bottom: 3px solid;
+      bottom: 0;
+    }
+  }
+}
+
 .catalog-wrapper {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 25px;
+  position: relative;
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    flex-wrap: wrap;
+    position: relative;
+    &__left {
+      display: flex;
+      flex-direction: column;
+      gap: 35px;
+    }
+    &__right {
+      position: absolute;
+      top: 40%;
+      right: 0;
+    }
+  }
 }
 .catalog {
   display: flex;
   flex-wrap: wrap;
   gap: 25px;
-  justify-content: space-evenly;
 }
+
 </style>
