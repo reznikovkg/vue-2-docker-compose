@@ -23,7 +23,6 @@ export default {
   margin: 0 auto;
   padding: 20px 34px;
   min-height: 100vh;
-  max-height: 100vh;
   overflow: auto;
   box-sizing: border-box;
   max-width: 1320px;

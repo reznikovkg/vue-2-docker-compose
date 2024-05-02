@@ -18,6 +18,7 @@ export default {
   flex-direction: column;
   gap: 15px;
   max-width: 360px;
+  transition: 0.3s;
   &__p {
     letter-spacing: 1px;
     color: black;

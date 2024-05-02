@@ -82,7 +82,6 @@ h1 {
 .catalog-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 150px;
   position: relative;
   .head {
     display: flex;
@@ -91,7 +90,6 @@ h1 {
     flex-wrap: wrap;
     position: relative;
     &__left {
-      width: 58%;
       display: flex;
       flex-direction: column;
       gap: 35px;
@@ -107,9 +105,6 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 25px;
-  justify-content: space-between;
 }
 
-.lorem-body {
-}
 </style>
