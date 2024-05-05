@@ -7,7 +7,7 @@
       <input ref="userTitle" class="card__title-edit" />
       <textarea ref="userDesc" class="card__desc-edit"></textarea>
       <div class="edit-btns">
-        <button class="btn" @click="closeEditMode">Cancel</button>
+        <button class="btn" @click="() => (this.isEdit = false)">Cancel</button>
         <button class="btn" @click="saveEdit">Save changes</button>
       </div>
     </div>
@@ -15,7 +15,11 @@
       <div class="card__title">{{ cardTitle }}</div>
       <div v-if="isEditable" class="card__desc">{{ cardDesc }}</div>
       <div class="edit-btns">
-        <button v-if="isEditable" class="btn" @click="showEditMode">
+        <button
+          v-if="isEditable"
+          class="btn"
+          @click="() => (this.isEdit = true)"
+        >
           Edit
         </button>
         <button v-if="isEditable" class="btn" @click="addCard">
@@ -51,13 +55,6 @@ export default {
     };
   },
   methods: {
-    showEditMode() {
-      this.isEdit = true;
-      console.log("some");
-    },
-    closeEditMode() {
-      this.isEdit = false;
-    },
     saveEdit() {
       this.cardTitle = this.$refs.userTitle.value;
       this.cardDesc = this.$refs.userDesc.value;
@@ -78,6 +75,7 @@ export default {
 * {
   box-sizing: border-box;
 }
+
 .card {
   width: 300px;
   width: fit-content;
