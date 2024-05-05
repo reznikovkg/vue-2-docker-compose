@@ -17,8 +17,8 @@
         :to="`/catalog/${card.id}`"
       >
         <Card
-          :key="card.id"
           :id="card.id + ''"
+          :key="card.id"
           :title="card.title"
           :imgUrl="card.imgUrl"
           :desc="card.desc"
