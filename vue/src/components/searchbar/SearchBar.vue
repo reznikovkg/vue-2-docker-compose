@@ -1,11 +1,11 @@
 <template>
   <div class="searchBar">
     <input
-      @input="() => sortFunction(this.userText.trim())"
-      placeholder="Search all recipes..."
       v-model="userText"
+      placeholder="Search all recipes..."
       type="text"
       class="searchBar__input input"
+      @input="() => sortFunction(this.userText.trim())"
     />
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div v-if="showModalContainer" class="modal-container">
-    <component v-for="i in getModals" :key="i.hash" :is="i.component" :params="i.params" @close="() => removeModal(i.hash)" />
+    <component :is="i.component" v-for="i in getModals" :key="i.hash" :params="i.params" @close="() => removeModal(i.hash)" />
   </div>
 </template>
 

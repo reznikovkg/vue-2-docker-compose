@@ -40,17 +40,6 @@ a {
   text-decoration: none;
 }
 
-section {
-  background-color: #E7E8DE;
-  margin-bottom: 20px;
-  border-radius: 2px;
-  box-sizing: border-box;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
 h1,
 h2,
 h3,
@@ -61,44 +50,8 @@ h5 {
   margin: 0;
 }
 
-h2 {
-  font-size: 32px;
-}
-
 .p-16 {
   padding: 16px;
 }
 
-.d-flex {
-  display: flex;
-}
-
-.rcms {
-  &-divider {
-    &-h {
-      width: 100%;
-      height: @sizeBorderDefault;
-      background-color: @cBaseTwo;
-    }
-
-    &-v {
-    }
-  }
-
-  &-loading {
-    position: relative;
-
-    &::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background: rgba(100, 100, 100, 0.5);
-      cursor: wait;
-    }
-  }
-}
 </style>

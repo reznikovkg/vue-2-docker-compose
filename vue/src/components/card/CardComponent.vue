@@ -4,21 +4,25 @@
       <img :src="cardImg" class="card__img" />
     </div>
     <div v-if="isEdit">
-      <input class="card__title-edit" ref="userTitle" />
-      <textarea class="card__desc-edit" ref="userDesc"></textarea>
+      <input ref="userTitle" class="card__title-edit" />
+      <textarea ref="userDesc" class="card__desc-edit"></textarea>
       <div class="edit-btns">
-        <button class="btn" @click="closeEditMode">Cancel</button>
+        <button class="btn" @click="() => (this.isEdit = false)">Cancel</button>
         <button class="btn" @click="saveEdit">Save changes</button>
       </div>
     </div>
     <div v-else class="info-container">
       <div class="card__title">{{ cardTitle }}</div>
-      <div class="card__desc" v-if="isEditable">{{ cardDesc }}</div>
+      <div v-if="isEditable" class="card__desc">{{ cardDesc }}</div>
       <div class="edit-btns">
-        <button class="btn" @click="showEditMode" v-if="isEditable">
+        <button
+          v-if="isEditable"
+          class="btn"
+          @click="() => (this.isEdit = true)"
+        >
           Edit
         </button>
-        <button class="btn" @click="addCard" v-if="isEditable">
+        <button v-if="isEditable" class="btn" @click="addCard">
           Add Recipe
         </button>
       </div>
@@ -51,12 +55,6 @@ export default {
     };
   },
   methods: {
-    showEditMode() {
-      this.isEdit = true;
-    },
-    closeEditMode() {
-      this.isEdit = false;
-    },
     saveEdit() {
       this.cardTitle = this.$refs.userTitle.value;
       this.cardDesc = this.$refs.userDesc.value;
@@ -77,6 +75,7 @@ export default {
 * {
   box-sizing: border-box;
 }
+
 .card {
   width: 300px;
   width: fit-content;
