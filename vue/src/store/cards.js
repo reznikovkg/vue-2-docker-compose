@@ -26,6 +26,7 @@ export default {
         price: 100,
         dateCreated: '23.04.2024',
         images: [
+          'https://i.pinimg.com/564x/38/71/33/3871331c0fb20896b548ab30d35600aa.jpg',
           'https://img01.ztat.net/article/spp-media-p1/dc0fb6b0392842f9b6996616345da55c/5b08f667d8174cc2889f3334cb79a999.jpg?imwidth=1800&filter=packshot',
           'https://img01.ztat.net/article/spp-media-p1/d0b0c1ac4115455b999587e62435a26e/68f98a196f1c49d680ef4171acbe2f84.jpg?imwidth=1800',
           'https://img01.ztat.net/article/spp-media-p1/58a20ccb264b4e59b94630900954e032/4ed8dc189f3744e7a3deb01dcfe6ff42.jpg?imwidth=1800',
@@ -34,7 +35,8 @@ export default {
         sizes: ['40', '41', '42', '43', '44', '45'],
         colors: ['Black', 'White', 'Red', 'Blue'],
         material: 'Synthetic',
-        stock: 50
+        stock: 50,
+        sellingPercentage: 10
       },
       {
         id: 2,
@@ -46,6 +48,7 @@ export default {
         price: 120,
         dateCreated: '24.04.2024',
         images: [
+          'https://www.jordan2u.com/image/cache/catalog/products/women-air-jordan-12-22676-300x300.jpg',
           'https://img01.ztat.net/article/spp-media-p1/f577dd69b91f4de6b7fe5641d9d6909c/49c15f58b2304157abb19662e0f87079.jpg?imwidth=1800&filter=packshot',
           'https://img01.ztat.net/article/spp-media-p1/2c57517385fd456d952d12c170f19ad2/ff826e1821c948b39a057da7442d9f30.jpg?imwidth=1800',
           'https://img01.ztat.net/article/spp-media-p1/2e3fc7fe8fdd4cb7afa05baf1ba5cceb/6189495dcdcf4c5ebe5dfc909a249597.jpg?imwidth=1800',
@@ -55,7 +58,8 @@ export default {
         sizes: ['40', '41', '42', '43', '44', '45'],
         colors: ['Black', 'White', 'Red', 'Blue'],
         material: 'Textile',
-        stock: 60
+        stock: 60,
+        sellingPercentage: -25
       },
       {
         id: 3,
@@ -67,6 +71,7 @@ export default {
         price: 90,
         dateCreated: '25.04.2024',
         images: [
+          'https://www.jordan2u.com/image/cache/catalog/products/women-nike-free-run-2-21397-b-1080x1080.jpg',
           'https://img01.ztat.net/article/spp-media-p1/72df5e3f15af4b6988b8b3a640fc87ae/da10563fd4cf48f89788f679dc5c9669.jpg?imwidth=1800&filter=packshot',
           'https://img01.ztat.net/article/spp-media-p1/7153f39389f141c8b2c389210eae79a6/bb12dd4f1dc0456aa16c789cbe26914b.jpg?imwidth=1800',
           'https://img01.ztat.net/article/spp-media-p1/2889542147064724a24d63653c8b6c2b/8042d60c504041e7acd36d3c00ad8799.jpg?imwidth=1800',
@@ -76,7 +81,8 @@ export default {
         sizes: ['40', '41', '42', '43', '44', '45'],
         colors: ['Black', 'White', 'Red', 'Blue'],
         material: 'Synthetic',
-        stock: 70
+        stock: 70,
+        sellingPercentage: 10
       },
       {
         id: 4,
@@ -88,6 +94,7 @@ export default {
         price: 110,
         dateCreated: '26.04.2024',
         images: [
+          'https://www.jordan2u.com/image/cache/catalog/products/women-air-jordan-13-5002-300x300.jpg',
           'https://img01.ztat.net/article/spp-media-p1/26fa9ca09fc14769aa315098e03e3344/d27de6d816eb46af96dfde51d8cef612.jpg?imwidth=1800&filter=packshot',
           'https://img01.ztat.net/article/spp-media-p1/8d01eb6dfc3d4228aea4a5c8393a08cf/d675c03a9e444b4ea5dad1a66310c89e.jpg?imwidth=1800',
           'https://img01.ztat.net/article/spp-media-p1/294a98d72835448785cdfbdfa3f4c462/224e8bf40c0047cc86d1da05d6577e0e.jpg?imwidth=1800',
@@ -97,7 +104,8 @@ export default {
         sizes: ['40', '41', '42', '43', '44', '45'],
         colors: ['Green', 'White', 'Red', 'Blue'],
         material: 'Textile',
-        stock: 80
+        stock: 80,
+        sellingPercentage: 10
       },
       {
         id: 5,
@@ -109,6 +117,7 @@ export default {
         price: 130,
         dateCreated: '27.04.2024',
         images: [
+          'https://www.jordan2u.com/image/cache/catalog/products/women-air-jordan-future-11-22339-200x200.jpg',
           'https://img01.ztat.net/article/spp-media-p1/08014038fb9f446790b1759a9e5bf5fc/0576096bfcd9417db3a78da69f9fb3c6.jpg?imwidth=1800&filter=packshot',
           'https://img01.ztat.net/article/spp-media-p1/6ad8545f179946a4849476263b25eec0/a5fd47247d80496f9aac62701ef01fd7.jpg?imwidth=1800',
           'https://img01.ztat.net/article/spp-media-p1/cf6e47ff876042bd963a6f3327f3bf3d/8ca013b462f542fb9ae1c272793291a0.jpg?imwidth=1800',
@@ -119,7 +128,8 @@ export default {
         sizes: ['40', '41', '42', '43', '44', '45'],
         colors: ['Black', 'White', 'Red', 'Blue'],
         material: 'Synthetic',
-        stock: 90
+        stock: 90,
+        sellingPercentage: 10
       },
       {
         id: 6,
@@ -140,7 +150,8 @@ export default {
         sizes: ['40', '41', '42', '43', '44', '45'],
         colors: ['red', 'White', 'black', 'Blue'],
         material: 'Textile',
-        stock: 100
+        stock: 100,
+        sellingPercentage: 10
       },
       {
         id: 7,
@@ -162,7 +173,8 @@ export default {
         sizes: ['40', '41', '42', '43', '44', '45'],
         colors: ['Black', 'White', 'Red', 'Blue'],
         material: 'Synthetic',
-        stock: 110
+        stock: 110,
+        sellingPercentage: 10
       },
       {
         id: 8,
@@ -183,7 +195,8 @@ export default {
         sizes: ['40', '41', '42', '43', '44', '45'],
         colors: ['Black', 'White', 'Red', 'Blue'],
         material: 'Textile',
-        stock: 120
+        stock: 120,
+        sellingPercentage: 10
       }
       ,
       {
@@ -205,7 +218,8 @@ export default {
         sizes: ['40', '41', '42', '43', '44', '45'],
         colors: ['Black', 'White', 'Red', 'Blue'],
         material: 'Textile',
-        stock: 120
+        stock: 120,
+        sellingPercentage: 10
       }
     ],
     categoryProperties: {

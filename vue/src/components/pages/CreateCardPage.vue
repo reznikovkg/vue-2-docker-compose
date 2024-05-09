@@ -35,7 +35,8 @@ export default {
         sizes: '',
         colors: '',
         material: '',
-        stock: ''
+        stock: '',
+        sellingPercentage: ''
       }
     }
   },

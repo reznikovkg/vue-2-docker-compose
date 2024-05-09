@@ -3,10 +3,26 @@
     <div class="product-card">
       <img class="product-card__img" :src="card.images[0]" alt="">
       <div class="product-card__content">
-        <span class="product-card__content__title">{{ card.title }}</span>
-        <span class="product-card__content__subtitle">{{ card.subtitle }}</span>
+        <div class="title-container">
+          <span class="product-card__content__title">{{ card.title }}</span>
+        </div>
+        <div v-if="card.sellingPercentage >= 0" class="selling-container">
+          <div>
+            <img :src="icons.UpArrowIcon" alt="Up"> 
+            <span :style="{ color: 'green' }">{{ card.sellingPercentage }}%</span>
+            <span :style="{ color: 'black' }">up from last week</span>
+          </div>
+          <img :src="icons.MetricsIcon" alt="Metrics" class="metrics-img">
+        </div>
+        <div v-else class="selling-container">
+          <div>
+            <img :src="icons.DownArrowIcon" alt="Down"> 
+            <span :style="{ color: 'red' }">{{ -card.sellingPercentage }}%</span>
+            <span :style="{ color: 'black' }">down from last week</span>
+          </div>
+          <img :src="icons.MetricsIcon" alt="Metrics" class="metrics-img">
+        </div>        
       </div>
-      <div class="product-card__price">€ {{ card.price }}</div> 
       <router-link
         class="product-card__edit"
         :to="{name: 'EDIT', params: { id: card.id }}"
@@ -20,12 +36,18 @@
 
 <script>
 import { mapState } from 'vuex';
+import * as Icons from '@/assets/icons/icons.js';
 export default {
   name: 'ProductCard',
   props: {
     card: {
       type: Object,
       required: true
+    }
+  },
+  data () {
+    return {
+      icons: Icons
     }
   },
   methods: {
@@ -47,19 +69,22 @@ export default {
   box-sizing: border-box;
   padding: 0;
   position: relative;
-  background-color: #f1f1f1;  
+  background-color: white;
+  padding: 20px;
+  border-radius: 4px;
+  display: flex;   
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 20px;
-  width: 250px;
+  width: 300px;
   border: 1px solid lightgrey;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
+  color: black;
   &__img {
-    width:100%;
-    height: 100%;
+    width:70%;
+    height: 70%;
     object-fit: contain;
-    border-bottom: 1px solid lightgrey; 
   }
   &__info {
     width: 100%;
@@ -73,10 +98,9 @@ export default {
     text-align: left;
     width: 100%;
     gap: 10px;
-    padding-left: 10px;
     &__title {
-      font-size: 20px;
-      font-weight: 600;
+      font-size: 18px;
+      font-weight: 100;
       color: black;
       white-space: nowrap;
       overflow: hidden;
@@ -108,5 +132,21 @@ export default {
   &__edit:hover {
     color: grey;
   }
+}
+.title-container {
+  border-bottom: 1px solid rgb(226, 226, 226);
+  display: flex;
+  padding-bottom: 20px;
+}
+.selling-container {
+  justify-content: space-between;
+  display: flex;
+}
+.selling-container img {
+  width: 20px;
+  height: 20px;
+}
+.metrics-img:hover {
+  filter: brightness(50%);
 }
 </style>

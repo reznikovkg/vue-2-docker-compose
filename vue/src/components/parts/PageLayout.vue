@@ -66,6 +66,6 @@ export default {
   width: 93%;
   height: calc(100% - 60px);
   overflow: auto;
-  background-color:#f5f6f8;
+  background-color: #f5f6f7;
 }
 </style>

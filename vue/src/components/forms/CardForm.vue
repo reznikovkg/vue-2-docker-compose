@@ -11,6 +11,7 @@
     <ElInput v-model="material" placeholder="Material" clearable />
     <ElInput v-model="stock" placeholder="Stock" clearable />
     <ElInput v-model="images" placeholder="Links to images" clearable />
+    <ElInput v-model="sellingPercentage" placeholder="Selling percentage" clearable />
   </div>
 </template>
 
@@ -114,6 +115,14 @@ export default {
       },
       set (value) {
         this.emitFormData({ stock: value })
+      }
+    },
+    sellingPercentage: {
+      get () {
+        return this.value.sellingPercentage
+      },
+      set (value) {
+        this.emitFormData({ sellingPercentage: value })
       }
     },
   },

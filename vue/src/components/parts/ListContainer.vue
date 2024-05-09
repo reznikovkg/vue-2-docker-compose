@@ -25,7 +25,7 @@ export default {
 .list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 80px;
+  gap: 30px;
   padding: 50x;
 }
 </style>

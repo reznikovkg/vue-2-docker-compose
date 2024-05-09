@@ -36,6 +36,7 @@ export default {
         images: '',
         size: '',
         stock: 0,
+        sellingPercentage: 0
       }
     }
   },
