@@ -7,17 +7,17 @@
           <span class="product-card__content__title">{{ card.title }}</span>
         </div>
         <div v-if="card.sellingPercentage >= 0" class="selling-container">
+          <img class="selling-container__img" :src="icons.UpArrowIcon" alt="Up"> 
           <div>
-            <img :src="icons.UpArrowIcon" alt="Up"> 
-            <span :style="{ color: 'green' }">{{ card.sellingPercentage }}%</span>
+            <span :style="{ color: 'green' }">{{ card.sellingPercentage }}% </span>
             <span :style="{ color: 'black' }">up from last week</span>
           </div>
           <img :src="icons.MetricsIcon" alt="Metrics" class="metrics-img">
         </div>
         <div v-else class="selling-container">
+          <img class="selling-container__img" :src="icons.DownArrowIcon" alt="Down"> 
           <div>
-            <img :src="icons.DownArrowIcon" alt="Down"> 
-            <span :style="{ color: 'red' }">{{ -card.sellingPercentage }}%</span>
+            <span :style="{ color: 'red' }">{{ -card.sellingPercentage }}% </span>
             <span :style="{ color: 'black' }">down from last week</span>
           </div>
           <img :src="icons.MetricsIcon" alt="Metrics" class="metrics-img">
@@ -141,12 +141,16 @@ export default {
 .selling-container {
   justify-content: space-between;
   display: flex;
+  &__img {
+    width: 20px;
+    height: 20px;
+  }
 }
-.selling-container img {
+.metrics-img {
   width: 20px;
   height: 20px;
-}
-.metrics-img:hover {
-  filter: brightness(50%);
+  &:hover {
+    filter: brightness(50%);
+  }
 }
 </style>
