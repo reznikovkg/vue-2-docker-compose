@@ -67,9 +67,9 @@ h2 {
       background-color: @cBaseTwo;
     }
 
-    &-v {
+    // &-v {
 
-    }
+    // }
   }
 
   &-loading {

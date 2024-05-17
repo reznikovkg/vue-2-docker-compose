@@ -1,9 +1,6 @@
 <template>
   <PageLayout>
-    <section class="p-16">
-      Homepage
-      <button @click="() => openHelpModal()">Open modal</button>
-    </section>
+    
   </PageLayout>
 </template>
 
@@ -16,6 +13,14 @@ export default {
   mixins: [helpModal],
   components: {
     PageLayout
+  },
+  methods: {
+    redirectToStorePage () {
+      this.$router.push({ name: 'STORE' })
+    }
+  },
+  mounted () {
+    this.redirectToStorePage()
   }
 }
 </script>
