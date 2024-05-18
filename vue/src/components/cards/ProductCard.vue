@@ -78,7 +78,7 @@ export default {
   align-items: center;
   gap: 20px;
   width: 300px;
-  border: 1px solid lightgrey;
+  //border: 1px solid lightgrey;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
   color: black;
   &__img {
@@ -119,7 +119,7 @@ export default {
   }
   &:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    transform: scale(1.15);
+    //transform: scale(1.15);
   }
   &__edit {
     position: absolute;
