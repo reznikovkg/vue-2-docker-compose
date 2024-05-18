@@ -17,7 +17,7 @@
         :to="`/catalog/${card.id}`"
       >
         <Card
-          :id="card.id + ''"
+          :id="card.id"
           :key="card.id"
           :title="card.title"
           :imgUrl="card.imgUrl"
@@ -49,7 +49,7 @@ export default {
       );
     },
   },
-  beforeMount() {
+  mounted() {
     this.$store.dispatch("fetchMockData");
     const cardsFromStor = this.$store.getters.getCards;
     this.cards = cardsFromStor;

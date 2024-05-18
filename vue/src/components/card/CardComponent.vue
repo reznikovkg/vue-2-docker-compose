@@ -62,6 +62,7 @@ export default {
     },
     addCard() {
       this.$emit("addCard", {
+        id: this.$store.getters.generateId,
         title: this.cardTitle,
         desc: this.cardDesc,
         imgUrl: this.cardImg,

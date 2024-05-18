@@ -20,7 +20,7 @@ import NavLink from "../parts/NavLink.vue";
 export default {
   name: "RecipeDetails",
   props: {
-    id: { type: Number, required: true },
+    id: { type: String, required: true },
     title: { type: String, required: true },
     desc: { type: String, required: true },
     imgUrl: { type: String, required: true },

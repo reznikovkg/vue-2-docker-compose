@@ -1,6 +1,6 @@
 export const data = [
   {
-    id: 1,
+    id: "1",
     title: "tom yam veggy",
     imgUrl:
       "https://cdn.foodpicasso.com/assets/2024/01/26/fb3a6e53900180561f9b3b6ddd31a6d1---jpg_1100_1e6e0_convert.webp",
@@ -8,7 +8,7 @@ export const data = [
     type: ['soup']
   },
   {
-    id: 2,
+    id: "2",
     title: "tom yam kai",
     imgUrl:
       "https://cdn.foodpicasso.com/assets/2024/01/26/f11734a0598e98721149b5a6d64170f2---jpg_786x486_79755_convert.webp",
@@ -16,7 +16,7 @@ export const data = [
     type: ['soup']
   },
   {
-    id: 3,
+    id: "3",
     title: "tom yam kung",
     imgUrl:
       "https://cdn.foodpicasso.com/assets/2024/01/26/57338fda0290eec115f74e5d8ab06057---jpg_786x486_79755_convert.webp",
@@ -24,7 +24,7 @@ export const data = [
     type: ['soup']
   },
   {
-    id: 4,
+    id: "4",
     title: "shrimp ebi ramen",
     imgUrl:
       "https://cdn.foodpicasso.com/assets/2024/01/26/a5a7056b30867744ac4b6d7ef7f0393b---jpg_786x486_79755_convert.webp",
@@ -32,7 +32,7 @@ export const data = [
     type: ['ramen']
   },
   {
-    id: 5,
+    id: "5",
     title: "fo bo",
     imgUrl:
       "https://cdn.foodpicasso.com/assets/2024/01/26/12e6b46d7448cde23e051187906c4049---jpg_786x486_79755_convert.webp",
@@ -40,7 +40,7 @@ export const data = [
     type: ['soup']
   },
   {
-    id: 6,
+    id: "6",
     title: "tom kha kai",
     imgUrl:
       "https://cdn.foodpicasso.com/assets/2024/01/26/0d0dc98ad154ca37a4cd7c6552c491ce---jpg_786x486_79755_convert.webp",
@@ -48,7 +48,7 @@ export const data = [
     type: ['soup']
   },
   {
-    id: 7,
+    id: "7",
     title: "tom kha kung",
     imgUrl:
       "https://cdn.foodpicasso.com/assets/2024/01/26/0cbab9aa8b3a8665cd70b06b64d4229c---jpg_786x486_79755_convert.webp",
@@ -56,7 +56,7 @@ export const data = [
     type: ['soup']
   },
   {
-    id: 8,
+    id: "8",
     title: "spicy duck ramen",
     imgUrl:
       "https://cdn.foodpicasso.com/assets/2024/01/26/e556925edcc561253d6f16d89d0cd241---jpg_786x486_79755_convert.webp",
@@ -64,7 +64,7 @@ export const data = [
     type: ['ramen']
   },
   {
-    id: 9,
+    id: "9",
     title: "pork shio ramen",
     imgUrl:
       "https://cdn.foodpicasso.com/assets/2024/01/26/bfafbf1e352b37dc1affcdd8efec4c2c---jpg_786x486_79755_convert.webp",
@@ -72,7 +72,7 @@ export const data = [
     type: ['ramen']
   },
   {
-    id: 10,
+    id: "10",
     title: "seiyu beef ramen",
     imgUrl: "https://cdn.foodpicasso.com/assets/2024/01/26/1958d36d6102fb9ffa03dc19902c6c8a---jpg_786x486_79755_convert.webp",
     desc: "Soup on chicken broth with noodles, egg and beef. Ingredients: chicken broth, thin noodles, pickled egg, Ajitama, pastrami beef, green onions, nori, bamboo shoots, hondashi, kombu, bonito, shoyu sauce.  Stored at t 18-24 C° for 3 hours.",

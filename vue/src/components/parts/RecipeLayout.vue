@@ -1,7 +1,7 @@
 <template>
   <div>
     <RecipeDetails
-      :id="+cardData.id"
+      :id="cardData.id"
       :title="cardData.title"
       :desc="cardData.desc"
       :imgUrl="cardData.imgUrl"
@@ -21,7 +21,7 @@ export default {
   },
   components: { RecipeDetails },
 
-  beforeMount() {
+  mounted() {
     const arrPath = this.$router.currentRoute.path.split("/");
     const findestId = arrPath[arrPath.length - 1];
 
