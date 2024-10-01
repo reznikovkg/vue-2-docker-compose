@@ -1,91 +1,72 @@
 <template>
-  <div>
-    <RouterView />
-    <ModalContainer />
+  <div id="app">
+    <div class="search-wrapper">
+      <input type="text" v-model="search" placeholder="Search title.."/>
+    </div>
+    <nav>
+      <RouterLink :to="{ name: ROUTES.HOME }">Главная</RouterLink> |
+      <RouterLink :to="{ name: ROUTES.ALL_RECIPES }">Все рецепты</RouterLink> |
+      <RouterLink :to="{ name: ROUTES.ALL_INGREDIENTS }">Все ингредиенты</RouterLink> |
+    </nav>
+    <RouterView/>
   </div>
 </template>
 
 <script>
-import ModalContainer from "@/components/parts/ModalContainer";
+import { ROUTES } from '@/router/routes';
 
 export default {
-  components: {
-    ModalContainer
-  }
+  computed: {
+    ROUTES () {
+      return ROUTES
+    }
+  },
 }
 </script>
 
 <style lang="less">
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
 
-body {
-  margin: 0;
-  padding: 0;
-  background-color: @cBaseTwo;
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
 
-a {
-  text-decoration: none;
-}
+nav {
+  padding: 30px;
 
-section {
-  background-color: @cBaseOne;
-  margin-bottom: 20px;
-  border-radius: 2px;
-  box-sizing: border-box;
+  a {
+    font-weight: bold;
+    color: #2c3e50;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-h1, h2, h3, h4, h5 {
-  font-family: @ffOne;
-  color: @cBaseThree;
-  margin: 0;
-}
-
-h2 {
-  font-size: 32px;
-}
-
-.p-16 {
-  padding: 16px;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.rcms {
-
-  &-divider {
-
-    &-h {
-      width: 100%;
-      height: @sizeBorderDefault;
-      background-color: @cBaseTwo;
-    }
-
-    &-v {
-
+    &.router-link-exact-active {
+      color: #42b983;
     }
   }
+}
 
-  &-loading {
+.search-wrapper {
     position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background: rgba(100, 100, 100, 0.5);
-      cursor: wait;
+    input {
+      padding: 4px 12px;
+      color: rgba(0,0,0,.70);
+      border: 1px solid rgba(0,0,0,.12);
+      transition: .15s all ease-in-out;
+      background: white;
+      line-height: 18px;
+      &:focus {
+        outline: none;
+        transform: scale(1.05);
+      }
+      &::-webkit-input-placeholder {
+          font-size: 14px;
+          color: rgba(0,0,0,.50);
+          font-weight: 100;
+      }
     }
   }
-}
+
 </style>
