@@ -1,0 +1,25 @@
+{
+    "Carts": [
+        {
+            "id": "111",
+            "name": "Футболка",
+            "brand": "Nike",
+            "price": {
+                "currentPrice": "9000",
+                "discount": "10%",
+                "originalPrice": "10000"
+            },
+            "count": "100",
+            "images": [
+                {
+                    "url": "https://cdn1.ozone.ru/s3/multimedia-r/c600/6855038235.jpg",
+                    "type": "main"
+                },
+                {
+                    "url": "https://media.gq.com/photos/5e6944f74d6be70008ac16c2/master/w_2000,h_1333,c_limit/Uniqlo-U-crew-neck-short-sleeve-T-shirt.jpg",
+                    "type": "secondary"
+                }
+            ]
+        }
+    ]
+}
