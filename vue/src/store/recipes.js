@@ -1,5 +1,3 @@
-import ingredients from "./ingredients"
-
 export default {
   namespaced: true,
   state: {
