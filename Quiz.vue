@@ -4,28 +4,28 @@
 
     <div v-if="currentQuestionIndex < questions.length" class="question-section">
       <h3 class="question-text">{{ questions[currentQuestionIndex].question }}</h3>
+      
       <ul class="answers-list">
         <li
           v-for="(answer, index) in questions[currentQuestionIndex].answers"
           :key="index"
+          :class="{'selected-answer': userAnswers[currentQuestionIndex] === index}"
           class="answer-item"
+          @click="selectAnswer(index)"
         >
-          <input
-            type="radio"
-            :name="'question' + currentQuestionIndex"
-            :value="index"
-            v-model="userAnswers[currentQuestionIndex]"
-            class="answer-input"
-          />
           {{ answer }}
         </li>
       </ul>
-      <button @click="nextQuestion" class="next-button">Next</button>
+
+      <div class="navigation-buttons">
+        <button @click="prevQuestion" :disabled="currentQuestionIndex === 0" class="nav-button">Предыдущий</button>
+        <button @click="nextQuestion" :disabled="userAnswers[currentQuestionIndex] === null" class="nav-button">Следующий</button>
+      </div>
     </div>
 
     <div v-else class="result-section">
       <h2 class="score-text">Your Score: {{ calculateScore }}%</h2>
-      <button @click="restartQuiz" class="restart-button">Restart</button>
+      <button @click="restartQuiz" class="restart-button">Перезапуск</button>
     </div>
   </div>
 </template>
@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       currentQuestionIndex: 0,
-      userAnswers: [],
+      userAnswers: Array(this.questions.length).fill(null), // Инициализируем массив ответов значениями null
     };
   },
   computed: {
@@ -56,16 +56,25 @@ export default {
     },
   },
   methods: {
+    selectAnswer(index) {
+      // Обновляем выбранный ответ для текущего вопроса
+      this.userAnswers.splice(this.currentQuestionIndex, 1, index); // Используем splice для правильного обновления массива
+    },
     nextQuestion() {
-      if (this.userAnswers[this.currentQuestionIndex] !== undefined) {
+      if (this.userAnswers[this.currentQuestionIndex] !== null) {
         this.currentQuestionIndex++;
       } else {
-        alert("Please select an answer!");
+        alert('Please select an answer to proceed.');
+      }
+    },
+    prevQuestion() {
+      if (this.currentQuestionIndex > 0) {
+        this.currentQuestionIndex--;
       }
     },
     restartQuiz() {
       this.currentQuestionIndex = 0;
-      this.userAnswers = [];
+      this.userAnswers = Array(this.questions.length).fill(null); // Сбрасываем ответы
     },
   },
 };
@@ -98,14 +107,28 @@ export default {
 
 .answer-item {
   margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
 }
 
-.answer-input {
-  margin-right: 10px;
+.answer-item:hover {
+  background-color: #f0f0f0;
 }
 
-.next-button {
+.selected-answer {
+  background-color: #d0f0d0;
+}
+
+.navigation-buttons {
   margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-button {
   padding: 10px 20px;
   font-size: 14px;
 }
@@ -124,4 +147,3 @@ export default {
   font-size: 14px;
 }
 </style>
-  
