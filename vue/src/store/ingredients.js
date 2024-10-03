@@ -1,43 +1,9 @@
+import ingredients from '@/data/ingredients_data'
+
 export default {
   namespaced: true,
   state: {
-    ingredients: [
-      {
-        id: 1,
-        name: 'ингредиент 1',
-        cover: '*img*',
-        description: 'описание ингредиента 1',
-        measure_unit: 'кг'
-      },
-      {
-        id: 2,
-        name: 'ингредиент 2',
-        cover: '*img*',
-        description: 'описание ингредиента 2',
-        measure_unit: 'мл'
-      },
-      {
-        id: 3,
-        name: 'ингредиент 3',
-        cover: '*img*',
-        description: 'описание ингредиента 3',
-        measure_unit: 'шт.'
-      },
-      {
-        id: 4,
-        name: 'ингредиент 4',
-        cover: '*img*',
-        description: 'описание ингредиента 4',
-        measure_unit: 'г'
-      },
-      {
-        id: 5,
-        name: 'ингредиент 5',
-        cover: '*img*',
-        description: 'описание ингредиента 5',
-        measure_unit: 'ч.л.'
-      },
-    ]
+    ingredients: ingredients
   },
   getters: {
     getIngredients: (state) => state.ingredients,
@@ -46,12 +12,17 @@ export default {
   mutations: {
     SET_INGREDIENTS: (state, payload) => {
       state.ingredients = payload
+    },
+    ADD_INGREDIENT: (state, payload) => {
+      state.ingredients.push(payload)
     }
   },
   actions: {
-    loadIngredients: (store, payload = null) => {
-      const { commit } = store
-      commit('SET_INGREDIENTS', payload)
+    loadIngredients: (context, payload = null) => {
+      context.commit('SET_INGREDIENTS', payload)
+    },
+    addIngredient: (context, payload) => {
+      context.commit('ADD_INGREDIENT', payload)
     }
   }
 }
