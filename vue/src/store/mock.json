@@ -2,7 +2,7 @@
   "itemList": [
     {
       "id": "111",
-      "name": "Футболка",
+      "name": "Футболка 1",
       "brand": "Nike",
       "description": "Лучшая футблока в твоей жизни",
       "information": [
@@ -27,6 +27,10 @@
         },
         {
           "url": "https://media.gq.com/photos/5e6944f74d6be70008ac16c2/master/w_2000,h_1333,c_limit/Uniqlo-U-crew-neck-short-sleeve-T-shirt.jpg",
+          "type": "secondary"
+        },
+        {
+          "url": "https://cdn1.ozone.ru/s3/multimedia-t/c600/6826885913.jpg",
           "type": "secondary"
         }
       ],
@@ -54,8 +58,8 @@
       ]
     },
     {
-      "id": "111",
-      "name": "Футболка",
+      "id": "222",
+      "name": "Футболка 2",
       "brand": "Nike",
       "description": "Лучшая футблока в твоей жизни",
       "information": [
@@ -76,11 +80,11 @@
       "images": [
         {
           "url": "https://cdn1.ozone.ru/s3/multimedia-r/c600/6855038235.jpg",
-          "type": "main"
+          "type": "secondary"
         },
         {
           "url": "https://media.gq.com/photos/5e6944f74d6be70008ac16c2/master/w_2000,h_1333,c_limit/Uniqlo-U-crew-neck-short-sleeve-T-shirt.jpg",
-          "type": "secondary"
+          "type": "main"
         }
       ],
       "count": "100",
@@ -107,8 +111,8 @@
       ]
     },
     {
-      "id": "111",
-      "name": "Футболка",
+      "id": "333",
+      "name": "Футболка 3",
       "brand": "Nike",
       "description": "Лучшая футблока в твоей жизни",
       "information": [
@@ -160,8 +164,8 @@
       ]
     },
     {
-      "id": "111",
-      "name": "Футболка",
+      "id": "444",
+      "name": "Футболка 4",
       "brand": "Nike",
       "description": "Лучшая футблока в твоей жизни",
       "information": [

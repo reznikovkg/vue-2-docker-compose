@@ -1,5 +1,5 @@
 <template>
-    <div class="catalog-card">
+    <div class="catalog-card" @click="() => openItemPage()">
         <div class="image-cnt">
             <img class="image" :src="getImage" alt="" />
         </div>
@@ -27,6 +27,11 @@ export default {
         getImage() {
             return this.item.images.find((image) => image.type === 'main').url
         }
+    },
+    methods: {
+        openItemPage() {
+            this.$router.push({ path: `/item:${this.item.id}` })
+        }
     }
 }
 </script>
@@ -35,7 +40,6 @@ export default {
 .catalog-card {
     aspect-ratio: 2 / 3;
     position: relative;
-    font-size: 12px;
 
     display: flex;
     flex-direction: column;
@@ -75,7 +79,7 @@ export default {
 
     .name {
         text-align: center;
-        font-size: 100%;
+        font-size: 12px;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-line-clamp: 3;
@@ -85,8 +89,8 @@ export default {
 
     .prices {
         position: absolute;
-        bottom: -10px;
-        right: -10px; // TODO make it adaptive. now for 200 300
+        bottom: -3.33%;
+        right: -5%;
 
         display: flex;
         align-items: center;
@@ -99,7 +103,7 @@ export default {
 
     .current-price,
     .original-price {
-        font-size: 110%;
+        font-size: 13px;
         color: @cBaseFour;
         font-family: @ffTwo;
     }

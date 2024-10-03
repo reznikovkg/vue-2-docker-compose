@@ -1,7 +1,7 @@
 <template>
     <PageLayout>
         <section class="catalog-page">
-            <CatalogCard v-for="(item, index) in getCatalog" :key="index" :item=item />
+            <CatalogCard v-for="(item) in getCatalog" :key="item.id" :item=item />
         </section>
     </PageLayout>
 </template>
@@ -19,7 +19,7 @@ export default {
     computed: {
         ...mapGetters('catalog', [
             'getCatalog'
-        ])
+        ]),
     },
     components: {
         PageLayout,
@@ -28,7 +28,7 @@ export default {
     methods: {
         ...mapMutations('catalog', [
             'readCatalog'
-        ])
+        ]),
     }
 }
 </script>
