@@ -3,7 +3,6 @@
     {
       "id": "111",
       "name": "Футболка 1",
-      "brand": "Nike",
       "description": "Лучшая футблока в твоей жизни",
       "information": [
         {
@@ -17,7 +16,6 @@
       ],
       "price": {
         "currentPrice": "9000",
-        "discount": "10%",
         "originalPrice": "10000"
       },
       "images": [
@@ -54,13 +52,27 @@
               "value": "M"
             }
           ]
+        },
+        {
+          "title": "color palette",
+          "values": [
+            {
+              "id": "1",
+              "name": "red & white",
+              "value": "redAndWhite"
+            },
+            {
+              "id": "2",
+              "name": "blue, green and black",
+              "value": "blueAndBlackAndWhite"
+            }
+          ]
         }
       ]
     },
     {
       "id": "222",
       "name": "Футболка 2",
-      "brand": "Nike",
       "description": "Лучшая футблока в твоей жизни",
       "information": [
         {
@@ -74,7 +86,6 @@
       ],
       "price": {
         "currentPrice": "9000",
-        "discount": "10%",
         "originalPrice": "10000"
       },
       "images": [
@@ -113,7 +124,6 @@
     {
       "id": "333",
       "name": "Футболка 3",
-      "brand": "Nike",
       "description": "Лучшая футблока в твоей жизни",
       "information": [
         {
@@ -127,7 +137,6 @@
       ],
       "price": {
         "currentPrice": "10000",
-        "discount": "0%",
         "originalPrice": "10000"
       },
       "images": [
@@ -166,7 +175,6 @@
     {
       "id": "444",
       "name": "Футболка 4",
-      "brand": "Nike",
       "description": "Лучшая футблока в твоей жизни",
       "information": [
         {
@@ -180,7 +188,6 @@
       ],
       "price": {
         "currentPrice": "9000",
-        "discount": "10%",
         "originalPrice": "10000"
       },
       "images": [

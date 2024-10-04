@@ -20,14 +20,20 @@
                     </div>
                 </div>
                 <hr class="separator" />
-                <div class="select" v-for="(option) in item.options" :key="option.title">
-                    <p>{{ option.title }}: </p>
-                    <select>
-                        <option v-for="(optionValue) in option.values" :key="optionValue.id" :value="optionValue.value">{{ optionValue.name }}</option>
-                    </select>
+                <div class="options-block">
+                    <div class="option-row" v-for="(option) in item.options" :key="option.title">
+                        <p class="option-row-title">{{ option.title }}: </p>
+                        <select class="option-row-select" @change="(e) => setOptionValue(option.title, e.target.value)">
+                            <option v-for="(optionValue) in option.values" :key="optionValue.id"
+                                :value="optionValue.value">
+                                {{ optionValue.name }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
                 <hr class="separator" />
-                <button class="add-to-cart">В корзину</button>
+                <button class="add-to-cart" @click="handleAddToCartClick">В корзину</button>
+                <!-- todo командой вынесем кнопки в компонент после мёрджа -->
                 <p class="quantity-left">Осталось {{ item.count }}</p>
             </div>
         </section>
@@ -45,6 +51,14 @@ export default {
         PageLayout,
         ImageSlider,
     },
+    data() {
+        return {
+            selectedOptions: [],
+        }
+    },
+    mounted() {
+        this.selectedOptions = [...this.item.options.map(option => ({ title: option.title, value: option.values[0].value }))]
+    },
     computed: {
         ...mapGetters('catalog', [
             'getItemFromCatalogById'
@@ -59,6 +73,15 @@ export default {
             return this.item.images.find((image) => image.type === 'main').url
         }
     },
+    methods: {
+        handleAddToCartClick() {
+            console.log('Товар добавлен в корзину с опциями:', ...this.selectedOptions.map(option => option.title + ': ' + option.value));
+        },
+        setOptionValue(optionTitle, optionValue) {
+            const option = this.selectedOptions.find(option => option.title === optionTitle)
+            option.value = optionValue
+        }
+    }
 }
 </script>
 
@@ -71,6 +94,7 @@ export default {
 
     .image-slider-cnt {
         flex: 1;
+        aspect-ratio: 1 / 1;
     }
 
     .info-block {
@@ -129,7 +153,6 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
-
         gap: 5%;
     }
 
@@ -141,20 +164,41 @@ export default {
         width: 60%;
     }
 
-    .select {
+    .options-block {
+        width: 75%;
         display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 7px;
+    }
+
+    .option-row {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .option-row-title {
+        width: 35%;
+        font-size: 14px;
+    }
+
+    .option-row-select {
+        width: 60%;
+        font-size: 14px;
     }
 
     .add-to-cart {
         margin-top: 4%;
         width: 60%;
-        border-radius: 15px;
+        border-radius: 4px;
         border: 1px solid @cBaseFive;
         height: 30px;
 
         color: @cBaseFour;
         font-weight: 700;
         transition: background-color 0.3s linear;
+        cursor: pointer;
 
         &:hover {
             border: 1px solid @cBaseThree;

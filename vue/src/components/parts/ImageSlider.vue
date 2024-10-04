@@ -5,8 +5,8 @@
                 <img class="image" :src=image.url alt="" />
             </div>
         </div>
-        <div class="prev-btn" v-if="isPrevAvailable" @click="handlePrevClick"></div>
-        <div class="next-btn" v-if="isNextAvailable" @click="handleNextClick"></div>
+        <div class="prev-btn" v-show="isPrevAvailable" @click="handlePrevClick"></div>
+        <div class="next-btn" v-show="isNextAvailable" @click="handleNextClick"></div>
     </div>
 </template>
 
@@ -50,7 +50,7 @@ export default {
 .image-slider {
     position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1;
+    height: 100%;
     border: 1px solid @cBaseThree;
     border-radius: 5%;
 

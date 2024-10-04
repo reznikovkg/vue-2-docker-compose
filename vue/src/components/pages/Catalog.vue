@@ -9,13 +9,10 @@
 <script>
 import PageLayout from '../parts/PageLayout'
 import CatalogCard from '../parts/CatalogCard'
-import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'CatalogPage',
-    mounted() {
-        this.readCatalog()
-    },
     computed: {
         ...mapGetters('catalog', [
             'getCatalog'
@@ -25,11 +22,6 @@ export default {
         PageLayout,
         CatalogCard,
     },
-    methods: {
-        ...mapMutations('catalog', [
-            'readCatalog'
-        ]),
-    }
 }
 </script>
 
