@@ -1,7 +1,12 @@
 <template>
     <div>
-        <h1> Корзина </h1>
-        <div class = "row"> </div>
+        <div class = "item-in-cart">
+            <img class="image" :src="getImage"/> 
+            <div class ="name"> {{item.name}} </div>
+            <div class ="brand"> {{item.brand}} </div>  
+            <div class ="prices"> {{item.price.currentPrice}} </div> 
+            <div class ="count">  {{item.count}} </div>
+        </div>
     </div>
 </template>
 
@@ -14,9 +19,13 @@
             
         computed: {
 
-            // getImage() {
-            //     // this.item.
-            // }
+            getImage() {
+                return this.item.images.find((image) => image.type === "main").url
+            }
         }
     }
 </script>
+
+<style>
+
+</style>
