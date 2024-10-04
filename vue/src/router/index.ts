@@ -44,7 +44,7 @@ const routes = [
     component: CreateIngredientPage
   },
   {
-    path: '/search/:search',
+    path: '/search',
     name: ROUTES.SEARCH_RESULT,
     component: SearchResultPage
   },
