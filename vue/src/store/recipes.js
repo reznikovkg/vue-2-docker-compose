@@ -7,7 +7,32 @@ export default {
   },
   getters: {
     getRecipes: (state) => state.recipes,
-    getRecipeById: (state) => (id) => state.recipes.find(i => i.id === id)
+    getRecipeById: (state) => (id) => state.recipes.find(i => i.id === id),
+    getRecipesByIngredients: (state) => ({includeList, excludeList}) => {
+      let result = state.recipes
+      
+      if (includeList.length > 0) {
+        result = result.filter(recipe => {
+          return (recipe.ingredients.map(ingredient =>
+            includeList.includes(ingredient.ingredient_id)))
+            .reduce(
+              (acc, curr) => acc || curr
+            )
+        })
+      }
+
+      if (excludeList.length > 0) {
+        result = result.filter(recipe => {
+          return (recipe.ingredients.map(ingredient =>
+            !excludeList.includes(ingredient.ingredient_id)))
+            .reduce(
+              (acc, curr) => acc && curr
+            )
+        })
+      }
+
+      return result
+    }
   },
   mutations: {
     SET_RECIPES: (state, payload) => {
