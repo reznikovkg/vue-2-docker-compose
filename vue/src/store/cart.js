@@ -1,36 +1,33 @@
 export default {
     namespaced: true,
     state: {
-        cart: []
+        cart: JSON.parse(localStorage.getItem("cart")) ?? []
     },
     getters: {
         getCart: (state) => state.cart
     },
+
     mutations: {
-        addItemToCart: (state, item) => { 
-            //console.log(state.cart)
+        addItemToCart: (state, item) => {
             state.cart.push(item);
-            //this.setCartToLocalStorage(state)
-            //this.commit('setCartToLocalStorage');
+            localStorage.setItem("cart", JSON.stringify(state.cart));
         },
 
-        removeItemToCart: (state, item) => { 
+        removeItemFromCart: (state, item) => {
             const index = state.cart.findIndex(cartItem => cartItem.options.every(
                 option => item.options.find(itemOption => itemOption.title === option.title).value === option.value
             ))
 
-            if (index !== -1)
-            {
+            if (index !== -1) {
                 state.cart.splice(index, 1);
+                localStorage.setItem("cart", JSON.stringify(state.cart));
             }
+
         },
 
-        setCartToLocalStorage: (state) => {
+        removeAllItemsFromCart: (state) => {
+            state.cart = [];
             localStorage.setItem("cart", JSON.stringify(state.cart));
-        },
-
-        getCartFromLocalStorage: (state) => {
-            state.cart = JSON.parse(localStorage.getItem("cart")) ?? [];
-        },
+        }
     }
 }

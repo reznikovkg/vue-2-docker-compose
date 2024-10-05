@@ -3,8 +3,8 @@
         <section class="p-16">
             <h1> Корзина </h1>
             <p> Общая сумма заказа {{ calculatingAmount }} </p>
+            <button @click="removeAllItemsFromCart"> Удалить все </button>
             <CartModule v-for="(item, index) in getCart" :key="index" :item=item />
-
         </section>
     </PageLayout>
 </template>
@@ -48,7 +48,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations("cart", ["removeItemToCart", "addItemToCart"])
+        ...mapMutations("cart", [ "addItemToCart", "removeAllItemsFromCart"])
     },
 
     computed: {
@@ -56,7 +56,6 @@ export default {
         ...mapGetters("cart", ["getCart"]),
 
         calculatingAmount() {
-            //console.log(this.getCart)
             const products = this.getCart
             return products.reduce((sum, product) => sum + Number(product.price.currentPrice), 0)
         },
