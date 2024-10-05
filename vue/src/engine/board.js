@@ -5,11 +5,11 @@ export class Board {
   secondLineCards = [];
 
   getFirstLineScore() {
-    return this.firstLineCards.reduce((score, card) => score + card.score);
+    return this.firstLineCards.reduce((score, card) => score + card.score, 0);
   }
 
   getSecondLineScore() {
-    return this.secondLineCards.reduce((score, card) => score + card.score);
+    return this.secondLineCards.reduce((score, card) => score + card.score, 0);
   }
 
   getTotalScore() {
