@@ -1,3 +1,5 @@
 export enum RouteNames {
-  HOME = "HOME"
+  HOME = "home",
+  START_MENU = "start-menu",
+  LEVEL_MENU = "level-menu"
 }
