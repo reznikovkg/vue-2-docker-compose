@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import GameGrid from "../parts/GameGrid.vue";
 
 export default {
@@ -16,8 +17,15 @@ export default {
   props: {
     levelNumber: {
       type: Number,
-      required: false,
+      required: true,
     },
+  },
+  mounted() {
+    this.loadLevel(this.levelNumber);
+    console.log('mount')
+  },
+  methods: {
+    ...mapActions('game', ['loadLevel'])
   }
 };
 </script>

@@ -1,20 +1,11 @@
 import Vue from "vue";
+import levels from '@/assets/levels.json';
 
 export default {
   namespaced: true,
   state: {
-    grid: [
-      [1, 2, 3, 4, 2],
-      [4, 3, 2, 1, 3],
-      [1, 2, 3, 4, 4],
-      [4, 3, 2, 1, 1],
-    ],
-    selectedGrid: [
-      [false, false, false, false, false],
-      [false, false, false, false, false],
-      [false, false, false, false, false],
-      [false, false, false, false, false],
-    ],
+    grid: [],
+    selectedGrid: [],
     cellTypes: [1, 2, 3, 4],
   },
   getters: {
@@ -23,6 +14,12 @@ export default {
     cellTypes: (state) => state.cellTypes,
   },
   mutations: {
+    setGrid(state, grid) {
+      state.grid = grid;
+    },
+    setSelectedGrid(state, selectedGrid) {
+      state.selectedGrid = selectedGrid;
+    },
     updateCell(state, { row, col, cellType }) {
       state.grid[row][col] = cellType;
     },
@@ -31,6 +28,18 @@ export default {
     },
   },
   actions: {
+    loadLevel({ commit }, levelNumber) {
+      try {
+        const levelData = levels.levels[levelNumber];
+        if (levelData) {
+          commit('setGrid', levelData);
+          const emptySelectedGrid = levelData.map(row => row.map(() => false));
+          commit('setSelectedGrid', emptySelectedGrid);
+        }
+      } catch (error) {
+        console.error("Failed to load level:", error);
+      }
+    },
     updateCell({ commit }, payload) {
       commit("updateCell", payload);
     },
