@@ -33,6 +33,13 @@
           >
             {{ key }}: {{ value }}
           </li>
+          <li
+            v-for="(value, key) in removedFields"
+            :key="'removed-' + key"
+            class="removed"
+          >
+            {{ key }}: {{ value }}
+          </li>
         </ul>
       </div>
     </div>
@@ -66,6 +73,11 @@ export default {
     filteredUpdated() {
       return this.filterExceptions(this.updated);
     },
+    removedFields() {
+      return Object.fromEntries(
+        Object.entries(this.original).filter(([key]) => !(key in this.updated)),
+      );
+    },
   },
   methods: {
     filterExceptions(obj) {
@@ -74,7 +86,10 @@ export default {
       );
     },
     getOriginalClass(key) {
-      if (!(key in this.updated)) return "removed";
+      // Если поле отсутствует в обновленном объекте, не отображаем его
+      if (!(key in this.updated)) {
+        return "hidden"; // Не показывать в исходном объекте
+      }
       if (this.original[key] !== this.updated[key]) return "changed";
       return this.showUnchanged ? "unchanged" : "hidden";
     },
@@ -128,7 +143,7 @@ li {
 }
 
 .removed {
-  color: red;
+  color: red; /* Красный цвет для удаленных полей */
 }
 
 .changed {
