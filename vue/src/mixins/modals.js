@@ -6,7 +6,7 @@ export const helpModal = {
     ...mapMutations('modals', [
       'openModal'
     ]),
-    openHelpModal (params = {}) {
+    openHelpModal(params = {}) {
       this.openModal({
         component: HelpModal,
         params
