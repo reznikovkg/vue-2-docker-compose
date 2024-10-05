@@ -28,9 +28,9 @@
         <CustomButton type="delete" @click="() => onItemDelete(index)" />
       </div>
     </div>
-    <CustomButton class="add-button" @click="onAdd"
-      >Добавить значение</CustomButton
-    >
+    <CustomButton class="add-button" @click="onAdd">
+      Добавить значение
+    </CustomButton>
   </div>
 </template>
 
@@ -44,20 +44,20 @@ export default {
     CustomInput,
     CustomButton,
   },
-  props: ["option", "optionChange", "delete"],
+  props: { option: Object, optionChange: Function, delete: Function },
   methods: {
-    onNameChange(event) {
-      this.$emit("optionChange", { ...this.option, title: event.target.value });
+    onNameChange(value) {
+      this.$emit("optionChange", { ...this.option, title: value });
     },
-    onItemNameChange(event, index) {
-      const updatedValues = this.option.values.map((value, i) =>
-        i === index ? { ...value, name: event.target.value } : value
+    onItemNameChange(value, index) {
+      const updatedValues = this.option.values.map((optionValue, i) =>
+        i === index ? { ...optionValue, name: value } : optionValue
       );
       this.$emit("optionChange", { ...this.option, values: updatedValues });
     },
-    onItemValueChange(event, index) {
-      const updatedValues = this.option.values.map((value, i) =>
-        i === index ? { ...value, value: event.target.value } : value
+    onItemValueChange(value, index) {
+      const updatedValues = this.option.values.map((optionValue, i) =>
+        i === index ? { ...optionValue, value: value } : optionValue
       );
       this.$emit("optionChange", { ...this.option, values: updatedValues });
     },

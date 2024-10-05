@@ -6,7 +6,7 @@
       name="input"
       :placeholder="placeholder"
       :value="value"
-      @input="onInputChange"
+      @input="onInputChange($event.target.value)"
       rows="5"
     />
   </div>
@@ -15,7 +15,7 @@
 <script>
 export default {
   name: "CustomTextarea",
-  props: ["label", "placeholder", "value", "input"],
+  props: { label: String, placeholder: String, value: String, input: Function },
   methods: {
     onInputChange(event) {
       this.$emit("input", event);

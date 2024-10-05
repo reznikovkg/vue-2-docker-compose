@@ -8,23 +8,20 @@
         <CustomInput
           label="Название"
           placeholder="Введите название"
-          :value="name"
-          @input="onNameChange"
+          v-model="name"
           class="small-input"
         />
         <CustomInput
           label="Бренд"
           placeholder="Введите бренд"
-          :value="brand"
-          @input="onBrandChange"
+          v-model="brand"
           class="small-input"
         />
       </div>
       <CustomTextarea
         label="Описание"
         placeholder="Введите описание"
-        :value="description"
-        @input="onDescriptionChange"
+        v-model="description"
       />
       <h4>Характеристики</h4>
       <InformationField
@@ -42,14 +39,13 @@
         type="number"
         label="Цена"
         placeholder="Введите цену"
-        :value="originalPrice"
-        @input="onOriginalPriceChange"
+        v-model="originalPrice"
         class="small-input"
       />
       <CustomInput
         type="number"
         :label="
-          currentPrice > originalPrice
+          currentPrice >= originalPrice
             ? 'Цена по скидке не может быть больше оригинальной цены'
             : 'Цена со скидкой'
         "
@@ -62,8 +58,7 @@
         type="number"
         label="Количество"
         placeholder="Введите количество"
-        :value="count"
-        @input="onCountChange"
+        v-model="count"
         class="small-input"
       />
       <h4>Фотографии</h4>
@@ -92,7 +87,7 @@
       <h4>Опции</h4>
       <OptionField
         v-for="(option, index) in options"
-        :key="'OptionField' + option.id"
+        :key="'OptionField' + option.id + index"
         :option="option"
         @optionChange="(value) => onOptionChange(index, value)"
         @delete="() => onOptionDelete(index)"
@@ -180,15 +175,6 @@ export default {
     };
   },
   methods: {
-    onNameChange(event) {
-      this.name = event.target.value;
-    },
-    onBrandChange(event) {
-      this.brand = event.target.value;
-    },
-    onDescriptionChange(event) {
-      this.description = event.target.value;
-    },
     onInfoChange(index, value) {
       this.information = this.information.map((info, i) =>
         i === index ? value : info
@@ -206,17 +192,11 @@ export default {
         },
       ];
     },
-    onCurrentPriceChange(event) {
+    onCurrentPriceChange(value) {
       this.currentPrice =
-        this.currentPrice <= this.originalPrice
-          ? event.target.value
+        Number(this.currentPrice) <= Number(this.originalPrice)
+          ? value
           : this.originalPrice;
-    },
-    onOriginalPriceChange(event) {
-      this.originalPrice = event.target.value;
-    },
-    onCountChange(event) {
-      this.count = event.target.value;
     },
     onFileUpload(file) {
       this.images = [

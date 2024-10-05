@@ -20,7 +20,7 @@ export default {
     CustomInput,
     CustomButton,
   },
-  props: ["category", "categoryChange", "delete"],
+  props: { category: String, categoryChange: Function, delete: Function },
   methods: {
     onValueChange(event) {
       this.$emit("categoryChange", event.target.value);

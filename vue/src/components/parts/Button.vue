@@ -13,7 +13,7 @@
 <script>
 export default {
   name: "CustomButton",
-  props: ["click", "type"],
+  props: { click: Function, type: String },
   methods: {
     onClick() {
       this.$emit("click");

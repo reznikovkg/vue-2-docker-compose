@@ -6,7 +6,7 @@
       name="input"
       :placeholder="placeholder"
       :value="value"
-      @input="onInputChange"
+      @input="onInputChange($event.target.value)"
       v-bind="$props"
     />
   </div>
@@ -15,7 +15,13 @@
 <script>
 export default {
   name: "CustomInput",
-  props: ["label", "placeholder", "value", "input", "type"],
+  props: {
+    label: String,
+    placeholder: String,
+    value: String,
+    input: Function,
+    type: String,
+  },
   methods: {
     onInputChange(event) {
       this.$emit("input", event);

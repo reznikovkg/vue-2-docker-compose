@@ -28,18 +28,18 @@ export default {
     CustomInput,
     CustomButton,
   },
-  props: ["info", "changeInfo", "delete"],
+  props: { info: Object, changeInfo: Function, delete: Function },
   methods: {
-    onTitleChange(event) {
+    onTitleChange(value) {
       this.$emit("changeInfo", {
-        title: event.target.value,
+        title: value,
         value: this.info.value,
       });
     },
-    onValueChange(event) {
+    onValueChange(value) {
       this.$emit("changeInfo", {
         title: this.info.title,
-        value: event.target.value,
+        value: value,
       });
     },
     onDelete() {

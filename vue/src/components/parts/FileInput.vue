@@ -1,14 +1,19 @@
 <template>
   <label class="file-wrapper">
     Загрузить файл...
-    <input type="file" name="photo" id="upload-photo" @change="onInputChange" />
+    <input
+      type="file"
+      name="photo"
+      class="upload-photo"
+      @change="onInputChange"
+    />
   </label>
 </template>
 
 <script>
 export default {
   name: "CustomFileInput",
-  props: ["upload"],
+  props: { upload: Function },
   methods: {
     onInputChange(event) {
       this.$emit("upload", event.target.files[0]);
@@ -30,7 +35,7 @@ export default {
   cursor: pointer;
 }
 
-#upload-photo {
+.upload-photo {
   opacity: 0;
   position: absolute;
   z-index: -1;
