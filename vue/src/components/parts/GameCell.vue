@@ -1,14 +1,21 @@
 <template>
   <div class="game-cell">
-    <div class="game-cell__body" :class="'game-cell__body--' + cellType"></div>
+    <div class="game-cell__body" :class="'game-cell__body--' + getCellTypeName"></div>
   </div>
 </template>
 
 <script>
+import CellTypeMap from '../../GameEngine/CellTypes'
+
 export default {
   props: {
     cellType: Number,
   },
+  computed: {
+    getCellTypeName () {
+      return CellTypeMap[this.cellType];
+    }
+  }
 };
 </script>
 
@@ -22,19 +29,19 @@ export default {
     width: 100%;
     height: 100%;
     border-radius: 20px;
-    &--1 {
+    &--air {
       background-color: rgba(255, 255, 255, 0);
     }
 
-    &--2 {
+    &--blue {
       background-color: rgb(0, 0, 255);
     }
 
-    &--3 {
+    &--purple {
       background-color: rgb(230, 0, 255);
     }
 
-    &--4 {
+    &--green {
       background-color: rgb(13, 255, 0);
     }
   }
