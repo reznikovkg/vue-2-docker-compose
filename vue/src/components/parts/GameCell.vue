@@ -23,12 +23,12 @@ export default {
 .game-cell {
   margin: 5px;
   box-sizing: border-box;
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   &__body {
     width: 100%;
     height: 100%;
-    border-radius: 20px;
+    border-radius: 10%;
     &--air {
       background-color: rgba(255, 255, 255, 0);
     }

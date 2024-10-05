@@ -22,7 +22,6 @@ export default {
   },
   mounted() {
     this.loadLevel(this.levelNumber);
-    console.log('mount')
   },
   methods: {
     ...mapActions('game', ['loadLevel'])
