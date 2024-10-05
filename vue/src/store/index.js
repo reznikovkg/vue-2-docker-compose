@@ -1,11 +1,10 @@
-import modals from './modals'
+import ingredients from './ingredients'
+import recipes from './recipes'
 
-export default {
+export default{
   namespaced: true,
-  state: {},
-  getters: {},
-  mutations: {},
   modules: {
-    modals
+    recipes,
+    ingredients
   }
 }

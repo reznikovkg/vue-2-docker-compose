@@ -1,16 +1,43 @@
 <template>
-  <div>
+  <div id="app">
+    <div class="search-wrapper">
+      <input 
+        v-model="search" 
+        class="search-input" 
+        type="text" 
+        placeholder="Искать рецепт..."
+        @keyup.enter="() => findByName()" />
+
+      <button class="search-button" @click="() => findByName()">Найти</button>
+    </div>
+    <nav class="top-nav">
+      <RouterLink :to="{ name: ROUTES.HOME }">Главная</RouterLink> |
+      <RouterLink :to="{ name: ROUTES.ALL_RECIPES }">Все рецепты</RouterLink> |
+      <RouterLink :to="{ name: ROUTES.ALL_INGREDIENTS }">Все ингредиенты</RouterLink> |
+    </nav>
     <RouterView />
-    <ModalContainer />
   </div>
 </template>
 
 <script>
-import ModalContainer from "@/components/parts/ModalContainer";
+import router from '@/router';
+import { ROUTES } from '@/router/routes';
 
 export default {
-  components: {
-    ModalContainer
+  computed: {
+    ROUTES() {
+      return ROUTES
+    }
+  },
+  data() {
+    return {
+      search: ''
+    }
+  },
+  methods: {
+    findByName() {
+      router.push({ name: ROUTES.SEARCH_RESULT, query: { search: this.search } })
+    }
   }
 }
 </script>
@@ -19,73 +46,88 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
 
 body {
-  margin: 0;
-  padding: 0;
-  background-color: @cBaseTwo;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
 
-a {
-  text-decoration: none;
-}
+.top-nav {
+  padding: 30px;
 
-section {
-  background-color: @cBaseOne;
-  margin-bottom: 20px;
-  border-radius: 2px;
-  box-sizing: border-box;
+  a {
+    font-weight: bold;
+    color: #2c3e50;
 
-  &:last-child {
-    margin-bottom: 0;
+    &.router-link-exact-active {
+      color: #42b983;
+    }
   }
 }
 
-h1, h2, h3, h4, h5 {
-  font-family: @ffOne;
-  color: @cBaseThree;
-  margin: 0;
-}
-
-h2 {
-  font-size: 32px;
-}
-
-.p-16 {
-  padding: 16px;
-}
-
-.d-flex {
+.search-wrapper {
+  position: relative;
   display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-around;
+  width: 630px;
+  margin: auto;
 }
 
-.rcms {
+.search-input {
+  padding: 4px 12px;
+  color: rgba(0, 0, 0, .70);
+  border: 1px solid rgba(0, 0, 0, .12);
+  transition: .15s all ease-in-out;
+  background: white;
+  line-height: 22px;
+  font-size: 18px;
+  min-width: 500px;
 
-  &-divider {
-
-    &-h {
-      width: 100%;
-      height: @sizeBorderDefault;
-      background-color: @cBaseTwo;
-    }
-
-    &-v {
-
-    }
+  &:focus {
+    outline: none;
   }
 
-  &-loading {
-    position: relative;
+  &::-webkit-input-placeholder {
+    font-size: 18px;
+    color: rgba(0, 0, 0, .50);
+    font-weight: 100;
+  }
+}
 
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background: rgba(100, 100, 100, 0.5);
-      cursor: wait;
-    }
+.search-button {
+  background-color: #9bdfc0;
+  border: 1px solid #82b9a0;
+  border-radius: .5rem;
+  box-sizing: border-box;
+  color: #111827;
+  font-family: "Inter var", ui-sans-serif, system-ui, -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1rem;
+  padding: .75rem 1rem;
+  text-align: center;
+  text-decoration: none #D1D5DB solid;
+  text-decoration-thickness: auto;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+
+  &:hover {
+    background-color: #7dc7a6;
+  }
+
+  &:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+
+  &:focus-visible {
+    box-shadow: none;
   }
 }
 </style>

@@ -8,7 +8,6 @@ import { sync } from "vuex-router-sync";
 Vue.use(Vuex)
 Vue.config.productionTip = false
 
-
 const store = new Vuex.Store(storeRoot)
 sync(store, router);
 

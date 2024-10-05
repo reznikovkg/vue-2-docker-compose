@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
     "target": "esnext",
     "strict": true,
     "module": "es2015",
@@ -12,6 +13,9 @@
         "src/*"
       ]
     }
-  }
+  },
+  "exclude": [
+    "./dist/**/*"
+]
 }
 
