@@ -1,6 +1,6 @@
 <template>
   <div class="object-comparator">
-    <div class="toggle">
+    <div class="object-comparator__toggle">
       <label>
         <input
           type="checkbox"
@@ -10,33 +10,33 @@
         Показать поля без изменений
       </label>
     </div>
-    <div class="comparator">
-      <div class="left">
+    <div class="object-comparator__comparator">
+      <div class="object-comparator__left">
         <h3>Исходный объект</h3>
-        <ul>
+        <ul class=".object-comparator__list">
           <li
             v-for="(item, key) in comparisonResult.original"
             :key="key"
-            :class="item.class"
+            :class="`object-comparator__item object-comparator__item--${item.class}`"
           >
             {{ key }}: {{ item.value }}
           </li>
         </ul>
       </div>
-      <div class="right">
+      <div class="object-comparator__right">
         <h3>Новый объект</h3>
-        <ul>
+        <ul class="object-comparator__list">
           <li
             v-for="(item, key) in comparisonResult.updated"
             :key="key"
-            :class="item.class"
+            :class="`object-comparator__item object-comparator__item--${item.class}`"
           >
             {{ key }}: {{ item.value }}
           </li>
           <li
             v-for="(item, key) in comparisonResult.removed"
             :key="'removed-' + key"
-            class="removed"
+            class="object-comparator__item object-comparator__item--removed"
           >
             {{ key }}: {{ item.value }}
           </li>
@@ -139,47 +139,47 @@ export default {
   flex-direction: column;
 }
 
-.toggle {
+.object-comparator__toggle {
   margin-bottom: 20px;
 }
 
-.comparator {
+.object-comparator__comparator {
   display: flex;
 }
 
-.left,
-.right {
+.object-comparator__left,
+.object-comparator__right {
   width: 50%;
   padding: 10px;
   border: 1px solid #ccc;
 }
 
-ul {
+.object-comparator__list {
   list-style-type: none;
   padding: 0;
 }
 
-li {
+.object-comparator__item {
   margin: 5px 0;
 }
 
-.added {
+.object-comparator__item--added {
   color: green;
 }
 
-.removed {
+.object-comparator__item--removed {
   color: red;
 }
 
-.changed {
+.object-comparator__item--changed {
   background-color: yellow;
 }
 
-.unchanged {
+.object-comparator__item--unchanged {
   color: gray;
 }
 
-.hidden {
+.object-comparator__item--hidden {
   display: none;
 }
 </style>
