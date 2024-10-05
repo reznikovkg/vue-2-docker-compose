@@ -28,6 +28,15 @@ export class GameEngine {
     this.performOpponentActions();
   }
 
+  playCard(cardIndex) {
+    if (this.currentTurn !== TurnStates.PLAYER) {
+      return;
+    }
+
+    this.player.playCard(cardIndex);
+    this.endPlayerTurn(false);
+  }
+
   endOpponentTurn(passed) {
     if (passed) {
       if (this.player.passed) {
