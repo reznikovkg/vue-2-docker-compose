@@ -30,7 +30,7 @@ export default {
     },
     methods: {
         openItemPage() {
-            this.$router.push({ path: `/item:${this.item.id}` })
+            this.$router.push({ path: `/item/:${this.item.id}` })
         }
     }
 }

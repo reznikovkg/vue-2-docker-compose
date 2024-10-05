@@ -1,7 +1,7 @@
 <template>
     <PageLayout>
         <section class="catalog-page">
-            <CatalogCard v-for="(item) in getCatalog" :key="item.id" :item=item />
+            <CatalogCard v-for="(item) in getCatalog" :key="item.id" :item="item" />
         </section>
     </PageLayout>
 </template>
@@ -13,14 +13,14 @@ import { mapGetters } from 'vuex';
 
 export default {
     name: 'CatalogPage',
+    components: {
+        PageLayout,
+        CatalogCard,
+    },
     computed: {
         ...mapGetters('catalog', [
             'getCatalog'
         ]),
-    },
-    components: {
-        PageLayout,
-        CatalogCard,
     },
 }
 </script>

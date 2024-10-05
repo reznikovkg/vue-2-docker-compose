@@ -13,7 +13,7 @@ const routes = [
     component: CatalogPage
   },
   {
-    path: '/item:itemId',  
+    path: '/item/:itemId',  
     name: RouteNames.ITEM,
     component: ItemPage
   }

@@ -2,7 +2,7 @@
     <div class="image-slider">
         <div class="images" ref="scroll">
             <div class="image-cnt" v-for="(image) in images" :key="image.url">
-                <img class="image" :src=image.url alt="" />
+                <img class="image" :src="image.url" alt="" />
             </div>
         </div>
         <div class="prev-btn" v-show="isPrevAvailable" @click="handlePrevClick"></div>
