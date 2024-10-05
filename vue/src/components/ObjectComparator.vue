@@ -15,11 +15,11 @@
         <h3>Исходный объект</h3>
         <ul>
           <li
-            v-for="(value, key) in filteredOriginal"
+            v-for="(item, key) in comparisonResult.original"
             :key="key"
-            :class="getOriginalClass(key)"
+            :class="item.class"
           >
-            {{ key }}: {{ value }}
+            {{ key }}: {{ item.value }}
           </li>
         </ul>
       </div>
@@ -27,18 +27,18 @@
         <h3>Новый объект</h3>
         <ul>
           <li
-            v-for="(value, key) in filteredUpdated"
+            v-for="(item, key) in comparisonResult.updated"
             :key="key"
-            :class="getUpdatedClass(key)"
+            :class="item.class"
           >
-            {{ key }}: {{ value }}
+            {{ key }}: {{ item.value }}
           </li>
           <li
-            v-for="(value, key) in removedFields"
+            v-for="(item, key) in comparisonResult.removed"
             :key="'removed-' + key"
             class="removed"
           >
-            {{ key }}: {{ value }}
+            {{ key }}: {{ item.value }}
           </li>
         </ul>
       </div>
@@ -67,40 +67,65 @@ export default {
     },
   },
   computed: {
-    filteredOriginal() {
-      return this.filterExceptions(this.original);
-    },
-    filteredUpdated() {
-      return this.filterExceptions(this.updated);
-    },
-    removedFields() {
-      return Object.fromEntries(
-        Object.entries(this.original).filter(([key]) => !(key in this.updated)),
-      );
+    comparisonResult() {
+      const originalResult = {};
+      const updatedResult = {};
+      const removedResult = {};
+
+      const compareClasses = (originalClass, updatedClass) => {
+        return JSON.stringify(originalClass) === JSON.stringify(updatedClass);
+      };
+
+      for (const key in this.original) {
+        if (this.exceptions[key]) continue;
+
+        if (key in this.updated) {
+          if (!compareClasses(this.original[key], this.updated[key])) {
+            originalResult[key] = {
+              value: this.original[key],
+              class: "changed",
+            };
+            updatedResult[key] = {
+              value: this.updated[key],
+              class: "changed",
+            };
+          } else {
+            originalResult[key] = {
+              value: this.original[key],
+              class: this.showUnchanged ? "unchanged" : "hidden",
+            };
+            updatedResult[key] = {
+              value: this.updated[key],
+              class: this.showUnchanged ? "unchanged" : "hidden",
+            };
+          }
+        } else {
+          removedResult[key] = {
+            value: this.original[key],
+            class: "removed",
+          };
+        }
+      }
+
+      for (const key in this.updated) {
+        if (this.exceptions[key]) continue;
+
+        if (!(key in this.original)) {
+          updatedResult[key] = {
+            value: this.updated[key],
+            class: "added",
+          };
+        }
+      }
+
+      return {
+        original: originalResult,
+        updated: updatedResult,
+        removed: removedResult,
+      };
     },
   },
   methods: {
-    filterExceptions(obj) {
-      return Object.fromEntries(
-        Object.entries(obj).filter(([key]) => !this.exceptions[key]),
-      );
-    },
-    getOriginalClass(key) {
-      // Если поле отсутствует в обновленном объекте, не отображаем его
-      if (!(key in this.updated)) {
-        return "hidden"; // Не показывать в исходном объекте
-      }
-      if (this.original[key] !== this.updated[key]) return "changed";
-      return this.showUnchanged ? "unchanged" : "hidden";
-    },
-    getUpdatedClass(key) {
-      if (key in this.original) {
-        if (this.original[key] !== this.updated[key]) return "changed";
-      } else {
-        return "added";
-      }
-      return this.showUnchanged ? "unchanged" : "hidden";
-    },
     toggleUnchanged() {
       this.$emit("update:showUnchanged", !this.showUnchanged);
     },
@@ -143,7 +168,7 @@ li {
 }
 
 .removed {
-  color: red; /* Красный цвет для удаленных полей */
+  color: red;
 }
 
 .changed {

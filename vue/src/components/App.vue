@@ -21,19 +21,26 @@ export default {
     return {
       originalObject: {
         a: 1,
-        b: 2,
+        b: {
+          color: "Зеленый",
+          code: "#00FF00",
+        },
         c: 3,
         f: 4,
+        e: "Желтый",
       },
       updatedObject: {
         a: 10,
-        b: 2,
+        b: {
+          weight: 69,
+          height: 170,
+        },
         c: 4,
         d: 5,
-        e: 8,
+        e: "Желтый",
       },
       exceptions: {
-        c: true,
+        a: true,
       },
       showUnchanged: false,
     };
