@@ -2,12 +2,11 @@
   <div class="home">
     <StartScreen>
       <div class="home__buttons">
-        <router-link to="/menu" class="home__button-link">
+        <RouterLink to="/menu" class="home__button-link">
           <CustomButton type="menu">Начать игру</CustomButton>
-        </router-link>
+        </RouterLink>
       </div>
     </StartScreen>
-    />
   </div>
 </template>
 
