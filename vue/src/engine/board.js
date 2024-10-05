@@ -1,4 +1,4 @@
-import { MAX_CARDS_PER_LINE } from "@/engine/constants";
+import { CardType, MAX_CARDS_PER_LINE } from '@/engine/constants';
 
 export class Board {
   firstLineCards = [];
@@ -31,6 +31,21 @@ export class Board {
     }
 
     return false;
+  }
+
+  addCard(card) {
+    switch (card.type) {
+      case CardType.MELEE:
+        this.addFirstLineCard(card);
+        break;
+
+      case CardType.RANGE:
+        this.addSecondLineCard(card);
+        break;
+
+      default:
+        console.error('Invalid cardType: ', card);
+    }
   }
 
   reset() {

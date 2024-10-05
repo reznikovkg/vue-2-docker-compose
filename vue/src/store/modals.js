@@ -1,14 +1,11 @@
-export const randomInteger = (min, max) => {
-  const rand = min + Math.random() * (max - min);
-  return Math.round(rand);
-}
+import { randomInteger } from '@/utils/utils';
 
 export const genHash = (length = 32) => {
-  let hash = "";
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let hash = '';
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
   for (let i = 0; i < length; i++) {
-    hash += chars[randomInteger(0, chars.length-1)]
+    hash += chars[randomInteger(0, chars.length - 1)]
   }
 
   return hash + Date.now();
