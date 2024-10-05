@@ -1,24 +1,24 @@
 export const MAX_CARDS_PER_LINE = 7;
 
 export const GamePhases = {
-  MULLIGAN: 1,
-  ROUND_IN_PROGRESS: 2,
-  END: 3,
+  MULLIGAN: 'MULLIGAN',
+  ROUND_IN_PROGRESS: 'ROUND_IN_PROGRESS',
+  END: 'END',
 };
 
 export const TurnStates = {
-  PLAYER: 1,
-  OPPONENT: 2,
+  PLAYER: 'PLAYER',
+  OPPONENT: 'OPPONENT',
 };
 
 export const Winners = {
-  PLAYER: 1,
-  OPPONENT: 2,
+  PLAYER: 'PLAYER',
+  OPPONENT: 'OPPONENT',
 }
 
 export const CardType = {
-  MELEE: 1,
-  RANGE: 2,
+  MELEE: 'MELEE',
+  RANGE: 'RANGE',
 };
 
 export const CARDS_IN_DECK_QUANTITY = 30;
