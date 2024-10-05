@@ -4,7 +4,7 @@
       <label>
         <input
           type="checkbox"
-          :checked="showUnchanged"
+          v-model="localShowUnchanged"
           @change="toggleUnchanged"
         />
         Показать поля без изменений
@@ -66,6 +66,19 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      localShowUnchanged: this.showUnchanged,
+    };
+  },
+  watch: {
+    showUnchanged(newValue) {
+      this.localShowUnchanged = newValue;
+    },
+    localShowUnchanged(newValue) {
+      this.$emit("update:showUnchanged", newValue);
+    },
+  },
   computed: {
     comparisonResult() {
       const originalResult = {};
@@ -125,11 +138,7 @@ export default {
       };
     },
   },
-  methods: {
-    toggleUnchanged() {
-      this.$emit("update:showUnchanged", !this.showUnchanged);
-    },
-  },
+  methods: {},
 };
 </script>
 
