@@ -1,29 +1,29 @@
 <template>
     <PageLayout>
         <section class="item-page">
-            <div class="image-slider-cnt">
+            <div class="item-page__image-slider-cnt">
                 <ImageSlider :images="item.images" />
             </div>
-            <div class="info-block">
-                <div class="name-cnt">
-                    <h2 class="name">{{ item.name }}</h2>
+            <div class="item-page__info-block">
+                <div class="item-page__name-cnt">
+                    <h2 class="item-page__name">{{ item.name }}</h2>
                 </div>
-                <hr class="separator" />
-                <p class="description">
+                <hr class="item-page__separator" />
+                <p class="item-page__description">
                     {{ item.description }}
                 </p>
-                <hr class="separator" />
-                <div class="info-list">
-                    <div class="info-row" v-for="(infoRow) in item.information" :key="infoRow.title">
-                        <h4 class="info-row-title">{{ infoRow.title }}: </h4>
-                        <h4 class="info-row-value">{{ infoRow.value }}</h4>
+                <hr class="item-page__separator" />
+                <div class="item-page__info-list">
+                    <div class="item-page__info-row" v-for="(infoRow) in item.information" :key="infoRow.title">
+                        <h4 class="item-page__info-row-title">{{ infoRow.title }}: </h4>
+                        <h4 class="item-page__info-row-value">{{ infoRow.value }}</h4>
                     </div>
                 </div>
-                <hr class="separator" />
-                <div class="options-block">
-                    <div class="option-row" v-for="(option) in item.options" :key="option.title">
-                        <p class="option-row-title">{{ option.title }}: </p>
-                        <select class="option-row-select" @change="(e) => setOptionValue(option.title, e.target.value)">
+                <hr class="item-page__separator" />
+                <div class="item-page__options-block">
+                    <div class="item-page__option-row" v-for="(option) in item.options" :key="option.title">
+                        <p class="item-page__option-row-title">{{ option.title }}: </p>
+                        <select class="item-page__option-row-select" @change="(e) => setOptionValue(option.title, e.target.value)">
                             <option v-for="(optionValue) in option.values" :key="optionValue.id"
                                 :value="optionValue.value">
                                 {{ optionValue.name }}
@@ -31,10 +31,10 @@
                         </select>
                     </div>
                 </div>
-                <hr class="separator" />
-                <button class="add-to-cart" @click="handleAddToCartClick">В корзину</button>
+                <hr class="item-page__separator" />
+                <button class="item-page__add-to-cart" @click="handleAddToCartClick">В корзину</button>
                 <!-- todo командой вынесем кнопки в компонент после мёрджа -->
-                <p class="quantity-left">Осталось {{ item.count }}</p>
+                <p class="item-page__quantity-left">Осталось {{ item.count }}</p>
             </div>
         </section>
     </PageLayout>
@@ -92,12 +92,12 @@ export default {
     font-size: 12px;
     padding: 5%;
 
-    .image-slider-cnt {
+    &__image-slider-cnt {
         flex: 1;
         aspect-ratio: 1 / 1;
     }
 
-    .info-block {
+    &__info-block {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -108,7 +108,7 @@ export default {
         border-radius: 10%;
     }
 
-    .name-cnt {
+    &__name-cnt {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -118,7 +118,7 @@ export default {
         width: 80%;
     }
 
-    .name {
+    &__name {
         font-size: 22px;
         text-align: center;
         text-overflow: ellipsis;
@@ -128,11 +128,11 @@ export default {
         overflow: hidden;
     }
 
-    .separator {
+    &__separator {
         width: 80%;
     }
 
-    .description {
+    &__description {
         font-size: 16px;
         width: 80%;
         display: flex;
@@ -142,29 +142,29 @@ export default {
         text-align: justify;
     }
 
-    .info-list {
+    &__info-list {
         display: flex;
         flex-direction: column;
         gap: 7px;
         width: 75%;
     }
 
-    .info-row {
+    &__info-row {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
         gap: 5%;
     }
 
-    .info-row-title {
+    &__info-row-title {
         width: 35%;
     }
 
-    .info-row-value {
+    &__info-row-value {
         width: 60%;
     }
 
-    .options-block {
+    &__options-block {
         width: 75%;
         display: flex;
         flex-direction: column;
@@ -172,23 +172,23 @@ export default {
         gap: 7px;
     }
 
-    .option-row {
+    &__option-row {
         width: 100%;
         display: flex;
         justify-content: space-between;
     }
 
-    .option-row-title {
+    &__option-row-title {
         width: 35%;
         font-size: 14px;
     }
 
-    .option-row-select {
+    &__option-row-select {
         width: 60%;
         font-size: 14px;
     }
 
-    .add-to-cart {
+    &__add-to-cart {
         margin-top: 4%;
         width: 60%;
         border-radius: 4px;
@@ -211,7 +211,7 @@ export default {
         }
     }
 
-    .quantity-left {
+    &__quantity-left {
         opacity: 0.6;
     }
 }

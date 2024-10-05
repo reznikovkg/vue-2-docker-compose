@@ -1,14 +1,14 @@
 <template>
     <div class="catalog-card" @click="() => openItemPage()">
-        <div class="image-cnt">
-            <img class="image" :src="getImage" alt="" />
+        <div class="catalog-card__image-cnt">
+            <img class="catalog-card__image" :src="getImage" alt="" />
         </div>
-        <div class="name-cnt">
-            <h2 class="name">{{ item.name }}</h2>
+        <div class="catalog-card__name-cnt">
+            <h2 class="catalog-card__name">{{ item.name }}</h2>
         </div>
-        <div class="prices">
-            <p v-if="showPricesChange" class="original-price">{{ item.price.originalPrice }}</p>
-            <p class="current-price">{{ item.price.currentPrice }}</p>
+        <div class="catalog-card__prices">
+            <p v-if="showPricesChange" class="catalog-card__original-price">{{ item.price.originalPrice }}</p>
+            <p class="catalog-card__current-price">{{ item.price.currentPrice }}</p>
         </div>
     </div>
 </template>
@@ -50,7 +50,7 @@ export default {
     background-color: @cBaseSeven;
     border-radius: 5%;
 
-    .image-cnt {
+    &__image-cnt {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -59,7 +59,7 @@ export default {
         width: 90%;
     }
 
-    .image {
+    &__image {
         max-width: 100%;
         max-height: 100%;
 
@@ -68,7 +68,7 @@ export default {
         border: 1px solid @cBaseThree;
     }
 
-    .name-cnt {
+    &__name-cnt {
         height: 18%;
         width: 80%;
         display: flex;
@@ -77,7 +77,7 @@ export default {
         align-items: center;
     }
 
-    .name {
+    &__name {
         text-align: center;
         font-size: 12px;
         text-overflow: ellipsis;
@@ -87,7 +87,7 @@ export default {
         overflow: hidden;
     }
 
-    .prices {
+    &__prices {
         position: absolute;
         bottom: -3.33%;
         right: -5%;
@@ -101,14 +101,14 @@ export default {
         border-radius: 10px;
     }
 
-    .current-price,
-    .original-price {
+    &__current-price,
+    &__original-price {
         font-size: 13px;
         color: @cBaseFour;
         font-family: @ffTwo;
     }
 
-    .current-price {
+    &__current-price {
         font-weight: 700;
 
         &::after {
@@ -116,7 +116,7 @@ export default {
         }
     }
 
-    .original-price {
+    &__original-price {
         font-weight: 400;
         opacity: 0.7;
         margin-right: 10px;
