@@ -73,7 +73,8 @@ export class GameEngine {
 
     if (!winner) {
       this.round++;
-      return;
+    } else {
+      this.currentPhase = GamePhases.END;
     }
 
     this.player.prepareToRound();
