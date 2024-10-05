@@ -30,7 +30,7 @@ export class Player {
 
   playCard(cardIndex) {
     const card = this.cards[cardIndex];
-    this.deck.splice(cardIndex, 1);
+    this.cards.splice(cardIndex, 1);
     return this.board.addCard(card);
   }
 
