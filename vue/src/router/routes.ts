@@ -1,4 +1,5 @@
 export enum RouteNames {
-  HOME = "HOME",
+  CATALOG = "CATALOG",
+  ITEM = "ITEM",
   ADD_ITEM = "ADD_ITEM",
 }

@@ -2,8 +2,179 @@
   "itemList": [
     {
       "id": "111",
-      "name": "Футболка",
-      "brand": "Nike",
+      "name": "Футболка 1",
+      "description": "Лучшая футблока в твоей жизни",
+      "information": [
+        {
+          "title": "Производитель",
+          "value": "Nike"
+        },
+        {
+          "title": "Материалы",
+          "value": "Хлопок 90%, Любовь 10%"
+        }
+      ],
+      "price": {
+        "currentPrice": "9000",
+        "originalPrice": "10000"
+      },
+      "images": [
+        {
+          "url": "https://cdn1.ozone.ru/s3/multimedia-r/c600/6855038235.jpg",
+          "type": "main"
+        },
+        {
+          "url": "https://media.gq.com/photos/5e6944f74d6be70008ac16c2/master/w_2000,h_1333,c_limit/Uniqlo-U-crew-neck-short-sleeve-T-shirt.jpg",
+          "type": "secondary"
+        },
+        {
+          "url": "https://cdn1.ozone.ru/s3/multimedia-t/c600/6826885913.jpg",
+          "type": "secondary"
+        }
+      ],
+      "count": "100",
+      "category": [
+        "Одежда",
+        "Футблоки"
+      ],
+      "options": [
+        {
+          "title": "sizes",
+          "values": [
+            {
+              "id": "1",
+              "name": "S",
+              "value": "S"
+            },
+            {
+              "id": "2",
+              "name": "M",
+              "value": "M"
+            }
+          ]
+        },
+        {
+          "title": "color palette",
+          "values": [
+            {
+              "id": "1",
+              "name": "red & white",
+              "value": "redAndWhite"
+            },
+            {
+              "id": "2",
+              "name": "blue, green and black",
+              "value": "blueAndBlackAndWhite"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "222",
+      "name": "Футболка 2",
+      "description": "Лучшая футблока в твоей жизни",
+      "information": [
+        {
+          "title": "Производитель",
+          "value": "Nike"
+        },
+        {
+          "title": "Материалы",
+          "value": "Хлопок 90%, Любовь 10%"
+        }
+      ],
+      "price": {
+        "currentPrice": "9000",
+        "originalPrice": "10000"
+      },
+      "images": [
+        {
+          "url": "https://cdn1.ozone.ru/s3/multimedia-r/c600/6855038235.jpg",
+          "type": "secondary"
+        },
+        {
+          "url": "https://media.gq.com/photos/5e6944f74d6be70008ac16c2/master/w_2000,h_1333,c_limit/Uniqlo-U-crew-neck-short-sleeve-T-shirt.jpg",
+          "type": "main"
+        }
+      ],
+      "count": "100",
+      "category": [
+        "Одежда",
+        "Футблоки"
+      ],
+      "options": [
+        {
+          "title": "sizes",
+          "values": [
+            {
+              "id": "1",
+              "name": "S",
+              "value": "S"
+            },
+            {
+              "id": "2",
+              "name": "M",
+              "value": "M"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "333",
+      "name": "Футболка 3",
+      "description": "Лучшая футблока в твоей жизни",
+      "information": [
+        {
+          "title": "Производитель",
+          "value": "Nike"
+        },
+        {
+          "title": "Материалы",
+          "value": "Хлопок 90%, Любовь 10%"
+        }
+      ],
+      "price": {
+        "currentPrice": "10000",
+        "originalPrice": "10000"
+      },
+      "images": [
+        {
+          "url": "https://cdn1.ozone.ru/s3/multimedia-r/c600/6855038235.jpg",
+          "type": "main"
+        },
+        {
+          "url": "https://media.gq.com/photos/5e6944f74d6be70008ac16c2/master/w_2000,h_1333,c_limit/Uniqlo-U-crew-neck-short-sleeve-T-shirt.jpg",
+          "type": "secondary"
+        }
+      ],
+      "count": "100",
+      "category": [
+        "Одежда",
+        "Футблоки"
+      ],
+      "options": [
+        {
+          "title": "sizes",
+          "values": [
+            {
+              "id": "1",
+              "name": "S",
+              "value": "S"
+            },
+            {
+              "id": "2",
+              "name": "M",
+              "value": "M"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "444",
+      "name": "Футболка 4",
       "description": "Лучшая футблока в твоей жизни",
       "information": [
         {
@@ -30,7 +201,10 @@
         }
       ],
       "count": "100",
-      "category": ["Одежда", "Футблоки"],
+      "category": [
+        "Одежда",
+        "Футблоки"
+      ],
       "options": [
         {
           "title": "sizes",
