@@ -20,6 +20,7 @@
 <script>
 import StartScreen from "../parts/PageBackground.vue";
 import CustomButton from "../parts/CustomButton.vue";
+import levels from "../../assets/levels.json";
 
 export default {
   name: "StartMenuView",
@@ -29,7 +30,7 @@ export default {
   },
   data() {
     return {
-      levelsCount: 5,
+      levelsCount: Object.keys(levels.levels).filter(key => key !== "editor").length,
     };
   },
   computed: {
