@@ -2,21 +2,31 @@
     <PageLayout>
         <section class="p-16">
             <h1> Корзина </h1>
-            <p> Общая сумма заказа {{ calculatingAmount }} </p>
-            <button @click="removeAllItemsFromCart"> Удалить все </button>
-            <CartModule v-for="(item, index) in getCart" :key="index" :item=item />
+            
+            <div class="cart">
+                <div class="cart__item"> 
+                    <CartItem v-for="(item, index) in getCart" :key="index" :item=item />
+                </div>
+
+                <div class="cart__information">
+                    <p> Общая сумма заказа {{ calculatingAmount }}  </p>
+                    <p> Количество товаров {{ calculatingCount }}  </p>
+                    <button @click="removeAllItemsFromCart"> Удалить все </button>
+                </div>
+                
+            </div>
+            
         </section>
     </PageLayout>
 </template>
 
 <script>
 import PageLayout from '../parts/PageLayout.vue';
-import CartModule from '../parts/CartModule.vue';
+import CartItem from '../parts/CartItem.vue';
 import { mapGetters, mapMutations } from 'vuex';
 
 export default {
     name: 'CartPage',
-
     mounted() {
         this.addItemToCart({
             "id": "111",
@@ -46,24 +56,40 @@ export default {
             ]
         })
     },
-
     methods: {
-        ...mapMutations("cart", [ "addItemToCart", "removeAllItemsFromCart"])
+        ...mapMutations("cart", ["addItemToCart", "removeAllItemsFromCart"])
     },
-
     computed: {
-
         ...mapGetters("cart", ["getCart"]),
-
         calculatingAmount() {
             const products = this.getCart
             return products.reduce((sum, product) => sum + Number(product.price.currentPrice), 0)
         },
+        calculatingCount() {
+            const products = this.getCart;
+            return products.length
+        }
     },
     components: {
         PageLayout,
-        CartModule,
+        CartItem,
     }
 }
-
 </script>
+
+<style scoped lang="less">
+.cart{
+    display: flex;
+    flex-direction: row;
+
+    &__item {
+        height: 100%;
+        width: 70%;
+    }
+
+    &__information {
+        display: flex;
+        flex-direction: column;
+    }
+}
+</style>
