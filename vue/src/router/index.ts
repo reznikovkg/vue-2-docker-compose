@@ -1,29 +1,40 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomePage from '../components/pages/Home.vue'
-import CartPage from '../components/pages/Cart.vue'
 import { RouteNames } from './routes'
+import AddItemPage from "../components/pages/AddItem.vue"
+import CatalogPage from '@/components/pages/Catalog.vue'
+import ItemPage from '@/components/pages/Item.vue'
+import CartPage from '../components/pages/Cart.vue'
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    name: RouteNames.HOME,
-    component: HomePage
+    name: RouteNames.CATALOG,
+    component: CatalogPage
   },
-
+  {
+    path: '/item/:itemId',  
+    name: RouteNames.ITEM,
+    component: ItemPage
+  },
+  {
+    path: "/add-item",
+    name: RouteNames.ADD_ITEM,
+    component: AddItemPage,
+  },
   {
     path: '/cart',
     name: RouteNames.CART,
     component: CartPage
-  }
-]
+  },
+];
 
 const router = new VueRouter({
-  mode: 'history',
-  base: '/',
-  routes
-})
+  mode: "history",
+  base: "/",
+  routes,
+});
 
-export default router
+export default router;
