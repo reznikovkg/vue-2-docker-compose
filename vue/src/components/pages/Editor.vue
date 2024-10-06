@@ -19,7 +19,7 @@ export default {
     DropdownSelect,
     GridDimention,
   },
-  mounted() {
+  beforeMount() {
     this.loadLevel("editor");
   },
   methods: {

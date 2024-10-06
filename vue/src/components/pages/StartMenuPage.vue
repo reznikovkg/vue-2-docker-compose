@@ -8,7 +8,7 @@
         <RouterLink to="/levels" class="menu__button-link">
           <CustomButton type="menu">Выбрать уровень</CustomButton>
         </RouterLink>
-        <RouterLink to="/" class="menu__button-link">
+        <RouterLink to="/editor" class="menu__button-link">
           <CustomButton type="menu">Открыть редактор</CustomButton>
         </RouterLink>
       </div>
