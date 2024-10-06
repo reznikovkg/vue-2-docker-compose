@@ -1,4 +1,5 @@
 export enum RouteNames {
   CATALOG = "CATALOG",
-  ITEM = "ITEM"
+  ITEM = "ITEM",
+  ADD_ITEM = "ADD_ITEM",
 }
