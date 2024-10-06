@@ -1,91 +1,83 @@
 <template>
   <div>
-    <RouterView />
-    <ModalContainer />
+    <BirdModel
+      :birdPosition="birdHeight"
+      @update:birdPosition="updateBirdHeight"
+    />
+    <div v-for="(pipe, index) in pipes" :key="index">
+      <PipeModel
+        class="pipe"
+        :direction="pipe.direction"
+        :height="pipe.height"
+      />
+      <PipeModel
+        class="pipe"
+        :direction="pipe.direction === 'up' ? 'down' : 'up'"
+        :height="640 - pipe.height"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import ModalContainer from "@/components/parts/ModalContainer";
+import BirdModel from "../components/BirdModel.vue";
+import PipeModel from "../components/PipeModel.vue";
 
 export default {
-  components: {
-    ModalContainer
-  }
-}
+  name: "App",
+  components: { BirdModel, PipeModel },
+  data() {
+    return {
+      birdHeight: 300,
+      pipes: [],
+    };
+  },
+  mounted() {
+    document.addEventListener("keyup", this.handleKeyup);
+    this.startPipeGeneration();
+    this.startGameLoop();
+  },
+  beforeDestroy() {
+    clearInterval(this.pipeInterval);
+    clearInterval(this.gameInterval);
+  },
+  methods: {
+    handleKeyup(event) {
+      if (event.key === " ") {
+        this.birdHeight -= 150;
+      }
+    },
+    startPipeGeneration() {
+      this.pipeInterval = setInterval(() => {
+        const direction = Math.random() < 0.5 ? "up" : "down";
+        const height = this.getRandomInt(200, 600);
+        this.pipes.push({ direction, height });
+      }, 1500);
+    },
+    startGameLoop() {
+      this.gameInterval = setInterval(() => {
+        this.updateGame();
+      }, 100);
+    },
+    updateGame() {
+      if (this.birdHeight + 185 < window.outerHeight) {
+        this.birdHeight += 20;
+      }
+    },
+    getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min)) + min;
+    },
+  },
+};
 </script>
 
-<style lang="less">
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: @cBaseTwo;
-}
-
-a {
-  text-decoration: none;
-}
-
-section {
-  background-color: @cBaseOne;
-  margin-bottom: 20px;
-  border-radius: 2px;
-  box-sizing: border-box;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-h1, h2, h3, h4, h5 {
-  font-family: @ffOne;
-  color: @cBaseThree;
-  margin: 0;
-}
-
-h2 {
-  font-size: 32px;
-}
-
-.p-16 {
-  padding: 16px;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.rcms {
-
-  &-divider {
-
-    &-h {
-      width: 100%;
-      height: @sizeBorderDefault;
-      background-color: @cBaseTwo;
-    }
-
-    &-v {
-
-    }
-  }
-
-  &-loading {
-    position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background: rgba(100, 100, 100, 0.5);
-      cursor: wait;
-    }
-  }
+<style scoped>
+h1 {
+  font-size: 6em;
+  position: fixed;
+  top: 45vh;
+  left: 0;
+  right: 0;
+  text-align: center;
 }
 </style>
