@@ -11,6 +11,14 @@
 
         <div class="item__prices"> {{ item.price.currentPrice }} </div>
 
+        <div class="item__count">  
+            <button @click="$emit('changeCount', -1)"> - </button>
+            <input :value ="item.selectCount" type="number" readonly> 
+            <button @click="$emit('changeCount', 1)"> + </button>
+        </div>
+
+        <div class="item__all-prices"> {{ amountGoods }} </div>
+
         <button @click="() => removeItemFromCart(item)"> удалить </button>
     </div>
 </template>
@@ -23,13 +31,17 @@ export default {
     props: {
         item: Object,
     },
+    emits: ['changeCount'],
     computed: {
         getImage() {
             return this.item.images.find((image) => image.type === "main").url
+        },
+        amountGoods() {
+            return Number(this.item.price.currentPrice * this.item.selectCount)
         }
     },
     methods: {
-        ...mapMutations("cart", ["removeItemFromCart"])
+        ...mapMutations("cart", ["removeItemFromCart"]),
     }
 }
 </script>
@@ -52,14 +64,24 @@ export default {
     }
 
     &__image img {
-        width: 30%;
-        height: 30%;
+        width: 100%;
+        height: 100%;
     }
 
     &__description {
         padding-top: 10px;
         margin-right: 60px;
         width: 115px;
+    }
+
+    &__count {
+        display: flex;
+    }
+
+    &__count input {
+        width: 32px;
+        font-size: 16px;
+        font-weight: 300;
     }
 }
 </style>

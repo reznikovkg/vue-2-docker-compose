@@ -5,7 +5,11 @@
             
             <div class="cart">
                 <div class="cart__item"> 
-                    <CartItem v-for="(item, index) in getCart" :key="index" :item=item />
+                    <CartItem v-for="(item, index) in getCart" 
+                        :key="index" 
+                        :item=item
+                        @changeCount="(value) => onChangeCount(item, value)"
+                    />
                 </div>
 
                 <div class="cart__information">
@@ -47,7 +51,8 @@ export default {
                     "type": "secondary"
                 }
             ],
-            "count": "2",
+            "count": "5",
+            "selectCount": "2",
             "options": [
                 {
                     "title": "sizes",
@@ -57,13 +62,19 @@ export default {
         })
     },
     methods: {
-        ...mapMutations("cart", ["addItemToCart", "removeAllItemsFromCart"])
+        ...mapMutations("cart", ["addItemToCart", "removeAllItemsFromCart"]),
+        onChangeCount(item, value) { 
+            const count = Number(item.selectCount) + Number(value);
+            if (count <= item.count && count > 0) {
+                item.selectCount = count;
+            }
+        },
     },
     computed: {
         ...mapGetters("cart", ["getCart"]),
         calculatingAmount() {
             const products = this.getCart
-            return products.reduce((sum, product) => sum + Number(product.price.currentPrice), 0)
+            return products.reduce((sum, product) => sum + Number(product.price.currentPrice * product.selectCount), 0)
         },
         calculatingCount() {
             const products = this.getCart;
