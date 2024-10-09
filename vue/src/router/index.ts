@@ -4,6 +4,7 @@ import { RouteNames } from './routes'
 import AddItemPage from "../components/pages/AddItem.vue"
 import CatalogPage from '@/components/pages/Catalog.vue'
 import ItemPage from '@/components/pages/Item.vue'
+import CartPage from '../components/pages/Cart.vue'
 
 Vue.use(VueRouter);
 
@@ -22,6 +23,11 @@ const routes = [
     path: "/add-item",
     name: RouteNames.ADD_ITEM,
     component: AddItemPage,
+  },
+  {
+    path: '/cart',
+    name: RouteNames.CART,
+    component: CartPage
   },
 ];
 

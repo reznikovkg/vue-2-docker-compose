@@ -1,5 +1,6 @@
 import modals from "./modals";
 import catalog from "./catalog";
+import cart from "./cart";
 
 export default {
   namespaced: true,
@@ -9,5 +10,6 @@ export default {
   modules: {
     modals,
     catalog,
+    cart,
   },
 };
