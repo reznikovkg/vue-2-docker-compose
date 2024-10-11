@@ -10,6 +10,6 @@ RUN npm install
 
 COPY ./ ./
 
-EXPOSE 8080
+EXPOSE 5173
 
-ENTRYPOINT npm run serve
+ENTRYPOINT npm run dev

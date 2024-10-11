@@ -1,24 +1,8 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "strict": true,
-    "module": "es2015",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
+      "@/*": ["./src/*"]
+    }
   },
-  "include": [
-    "*"
-  ]
+  "exclude": ["node_modules", "dist"]
 }
