@@ -10,24 +10,6 @@
 export default {
   name: "BirdModel",
   props: ["birdPosition"],
-  data() {
-    return {
-      gravity: 20,
-    };
-  },
-  mounted() {
-    this.gravityEffect = setInterval(() => {
-      this.$emit("update:birdPosition", this.birdPosition + this.gravity);
-    }, 100);
-  },
-  beforeDestroy() {
-    clearInterval(this.gravityEffect);
-  },
-  methods: {
-    fly() {
-      this.$emit("update:birdPosition", this.birdPosition - 150);
-    },
-  },
 };
 </script>
 

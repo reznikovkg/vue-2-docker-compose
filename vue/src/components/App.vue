@@ -1,14 +1,12 @@
 <template>
   <div>
-    <BirdModel
-      :birdPosition="birdHeight"
-      @update:birdPosition="updateBirdHeight"
-    />
+    <BirdModel :birdPosition="birdHeight" />
   </div>
 </template>
 
 <script>
 import BirdModel from "../components/BirdModel.vue";
+import BirdEngine from "../engine/birdEngine";
 
 export default {
   name: "App",
@@ -16,43 +14,30 @@ export default {
   data() {
     return {
       birdHeight: 300,
-      pipes: [],
+      birdEngine: null,
     };
   },
   mounted() {
+    this.birdEngine = new BirdEngine();
+
+    // Подписываемся на обновления положения птички
+    this.birdEngine.onUpdate((newHeight) => {
+      this.birdHeight = newHeight;
+    });
+
     document.addEventListener("keyup", this.handleKeyup);
-    this.startPipeGeneration();
-    this.startGameLoop();
+
+    // Запускаем игровой цикл
+    this.birdEngine.startGameLoop();
   },
   beforeDestroy() {
-    clearInterval(this.pipeInterval);
-    clearInterval(this.gameInterval);
+    this.birdEngine.stopGameLoop();
   },
   methods: {
     handleKeyup(event) {
       if (event.key === " ") {
-        this.birdHeight -= 150;
+        this.birdEngine.birdFly();
       }
-    },
-    startPipeGeneration() {
-      this.pipeInterval = setInterval(() => {
-        const direction = Math.random() < 0.5 ? "up" : "down";
-        const height = this.getRandomInt(200, 600);
-        this.pipes.push({ direction, height });
-      }, 1500);
-    },
-    startGameLoop() {
-      this.gameInterval = setInterval(() => {
-        this.updateGame();
-      }, 100);
-    },
-    updateGame() {
-      if (this.birdHeight + 185 < window.outerHeight) {
-        this.birdHeight += 20;
-      }
-    },
-    getRandomInt(min, max) {
-      return Math.floor(Math.random() * (max - min)) + min;
     },
   },
 };
