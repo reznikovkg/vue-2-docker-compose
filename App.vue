@@ -17,18 +17,20 @@ export default {
       questions: [
         {
           question: "Какой город является столицей России?",
-            answers: ["Москва", "Калининград", "Воронеж", "Санкт-Петербург"],
+          type: "single",
+          answers: ["Москва", "Калининград", "Воронеж", "Санкт-Петербург"],
           correctAnswer: 0,
         },
         {
-          question: "Сколько будет 2 + 2?",
-            answers: ["3", "4", "5", "6"],
-          correctAnswer: 1,
+          question: "Какое животные фигурируют в китайском зодиаке?",
+          type: "multiple",
+          answers: ["Дракон", "Кролик", "Слон", "Бык"],
+          correctAnswers: [0, 1, 3],
         },
         {
-          question: "Какая команда отвечает за вывод информации на экран?",
-            answers: ["print", "for", "if", "while"],
-          correctAnswer: 0,
+          question: "Чему равен квадратный корень из 144?",
+          type: "text",
+          correctAnswer: "12",
         },
       ],
     };
