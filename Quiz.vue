@@ -4,28 +4,47 @@
 
     <div v-if="currentQuestionIndex < questions.length" class="question-section">
       <h3 class="question-text">{{ questions[currentQuestionIndex].question }}</h3>
-      
-      <ul class="answers-list">
+
+      <!-- Если тип вопроса - выбор одного варианта -->
+      <ul v-if="questions[currentQuestionIndex].type === 'single'" class="answers-list">
         <li
           v-for="(answer, index) in questions[currentQuestionIndex].answers"
           :key="index"
           :class="{'selected-answer': userAnswers[currentQuestionIndex] === index}"
           class="answer-item"
-          @click="selectAnswer(index)"
+          @click="selectSingleAnswer(index)"
         >
           {{ answer }}
         </li>
       </ul>
 
+      <!-- Если тип вопроса - выбор нескольких вариантов -->
+      <ul v-if="questions[currentQuestionIndex].type === 'multiple'" class="answers-list">
+        <li
+          v-for="(answer, index) in questions[currentQuestionIndex].answers"
+          :key="index"
+          :class="{'selected-answer': userAnswers[currentQuestionIndex]?.includes(index)}"
+          class="answer-item"
+          @click="toggleMultipleAnswer(index)"
+        >
+          {{ answer }}
+        </li>
+      </ul>
+
+      <!-- Если тип вопроса - текстовое поле -->
+      <div v-if="questions[currentQuestionIndex].type === 'text'" class="text-answer-section">
+        <textarea v-model="userAnswers[currentQuestionIndex]" placeholder="Type your answer..." class="text-answer"></textarea>
+      </div>
+
       <div class="navigation-buttons">
         <button @click="prevQuestion" :disabled="currentQuestionIndex === 0" class="nav-button">Предыдущий</button>
-        <button @click="nextQuestion" :disabled="userAnswers[currentQuestionIndex] === null" class="nav-button">Следующий</button>
+        <button @click="nextQuestion" :disabled="!isAnswered" class="nav-button">Следующий</button>
       </div>
     </div>
 
     <div v-else class="result-section">
       <h2 class="score-text">Your Score: {{ calculateScore }}%</h2>
-      <button @click="restartQuiz" class="restart-button">Перезапуск</button>
+      <button @click="restartQuiz" class="restart-button">Перезапустить</button>
     </div>
   </div>
 </template>
@@ -41,30 +60,72 @@ export default {
   data() {
     return {
       currentQuestionIndex: 0,
-      userAnswers: Array(this.questions.length).fill(null), // Инициализируем массив ответов значениями null
+      userAnswers: Array(this.questions.length).fill(null), 
     };
   },
   computed: {
     calculateScore() {
       let correctCount = 0;
-      this.userAnswers.forEach((answer, index) => {
-        if (answer === this.questions[index].correctAnswer) {
-          correctCount++;
+
+      this.questions.forEach((question, index) => {
+        const userAnswer = this.userAnswers[index];
+        if (question.type === 'single') {
+          
+          if (userAnswer === question.correctAnswer) {
+            correctCount++;
+          }
+        } else if (question.type === 'multiple') {
+          
+          if (Array.isArray(userAnswer) && this.arraysEqual(userAnswer, question.correctAnswers)) {
+            correctCount++;
+          }
+        } else if (question.type === 'text') {
+
+          if (userAnswer && userAnswer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase()) {
+            correctCount++;
+          }
         }
       });
+
       return Math.round((correctCount / this.questions.length) * 100);
+    },
+    isAnswered() {
+      const currentAnswer = this.userAnswers[this.currentQuestionIndex];
+      const currentQuestion = this.questions[this.currentQuestionIndex];
+
+      if (currentQuestion.type === 'single') {
+        return currentAnswer !== null;
+      } else if (currentQuestion.type === 'multiple') {
+        return Array.isArray(currentAnswer) && currentAnswer.length > 0;
+      } else if (currentQuestion.type === 'text') {
+        return currentAnswer && currentAnswer.trim() !== ''; 
+      }
+      return false;
     },
   },
   methods: {
-    selectAnswer(index) {
-      // Обновляем выбранный ответ для текущего вопроса
-      this.userAnswers.splice(this.currentQuestionIndex, 1, index); // Используем splice для правильного обновления массива
+    selectSingleAnswer(index) {
+      this.userAnswers[this.currentQuestionIndex] = index;
+    },
+    toggleMultipleAnswer(index) {
+      let answers = this.userAnswers[this.currentQuestionIndex];
+
+      if (!Array.isArray(answers)) {
+        answers = [];
+      }
+      if (answers.includes(index)) {
+        answers = answers.filter(answer => answer !== index);
+      } else {
+        answers.push(index);
+      }
+
+      this.userAnswers[this.currentQuestionIndex] = answers;
     },
     nextQuestion() {
-      if (this.userAnswers[this.currentQuestionIndex] !== null) {
+      if (this.currentQuestionIndex < this.questions.length - 1) {
         this.currentQuestionIndex++;
       } else {
-        alert('Please select an answer to proceed.');
+        this.currentQuestionIndex++;
       }
     },
     prevQuestion() {
@@ -74,7 +135,10 @@ export default {
     },
     restartQuiz() {
       this.currentQuestionIndex = 0;
-      this.userAnswers = Array(this.questions.length).fill(null); // Сбрасываем ответы
+      this.userAnswers = Array(this.questions.length).fill(null); 
+    },
+    arraysEqual(arr1, arr2) {
+      return JSON.stringify(arr1.sort()) === JSON.stringify(arr2.sort());
     },
   },
 };
@@ -120,6 +184,16 @@ export default {
 
 .selected-answer {
   background-color: #d0f0d0;
+}
+
+.text-answer-section {
+  margin-top: 20px;
+}
+
+.text-answer {
+  width: 100%;
+  height: 100px;
+  font-size: 16px;
 }
 
 .navigation-buttons {
