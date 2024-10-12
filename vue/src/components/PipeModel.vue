@@ -5,23 +5,18 @@
 <script>
 export default {
   name: "PipeModel",
-  props: ["direction", "height"],
-  data() {
-    return {
-      positionX: 100,
-    };
-  },
-  mounted() {
-    this.startMoving();
-  },
-  beforeDestroy() {
-    clearInterval(this.movementInterval);
-  },
-  methods: {
-    startMoving() {
-      this.movementInterval = setInterval(() => {
-        this.positionX -= 3;
-      }, 300);
+  props: {
+    direction: {
+      type: String,
+      required: true,
+    },
+    height: {
+      type: Number,
+      required: true,
+    },
+    positionX: {
+      type: Number,
+      required: true,
     },
   },
   computed: {
@@ -46,6 +41,6 @@ export default {
     rgba(0, 113, 23, 1) 75%,
     rgba(0, 255, 53, 1) 100%
   );
-  transition: left 300ms;
+  transition: left 0.3s linear; /* Плавное движение труб */
 }
 </style>
