@@ -1,21 +1,28 @@
 <template>
-    <div class="catalog-card" @click="() => openItemPage()">
-        <div class="catalog-card__image-cnt">
-            <img class="catalog-card__image" :src="getImage" alt="" />
+    <div class="card-item" @click="() => openItemPage()">
+        
+        <div class="card-item__image-cnt">
+            <div class="card-item__like">
+                <button @click="changeLike(item)" class="card-item__button-like">
+                    <img class="card-item__icon-like" src="@/assets/icon-like.png" />
+                </button>
+            </div>
+            <img class="card-item__image" :src="getImage" alt="" />
         </div>
-        <div class="catalog-card__name-cnt">
-            <h2 class="catalog-card__name">{{ item.name }}</h2>
+        <div class="card-item__name-cnt">
+            <h2 class="card-item__name">{{ item.name }}</h2>
         </div>
-        <div class="catalog-card__prices">
-            <p v-if="showPricesChange" class="catalog-card__original-price">{{ item.price.originalPrice }}</p>
-            <p class="catalog-card__current-price">{{ item.price.currentPrice }}</p>
+        <div class="card-item__prices">
+            <p v-if="showPricesChange" class="card-item__original-price">{{ item.price.originalPrice }}</p>
+            <p class="card-item__current-price">{{ item.price.currentPrice }}</p>
         </div>
+        <button class="card-item__to-cart"> В корзину </button>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'CatalogCard',
+    name: 'CartItem',
     props: {
         item: Object,
     },
@@ -37,7 +44,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-.catalog-card {
+.card-item {
     aspect-ratio: 2 / 3;
     position: relative;
 
@@ -57,6 +64,25 @@ export default {
 
         height: 60%;
         width: 90%;
+    }
+
+    &__like {
+        position: absolute;
+        right: 5%;
+        top: 5%;
+        z-index: 5;
+    }
+
+    &__button-like {
+        display: flex;
+        justify-content: center;
+    }
+
+    &__icon-like {
+        width: 24px;
+        height: 24px;
+        fill: none;
+        background-color: rgb(255,0,0);
     }
 
     &__image {
