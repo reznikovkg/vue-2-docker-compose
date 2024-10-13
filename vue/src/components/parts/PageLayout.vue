@@ -9,12 +9,6 @@
 <script>
 export default {
   name: "PageLayout",
-  props: {
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-  },
 };
 </script>
 
@@ -23,7 +17,6 @@ export default {
   margin: 0 auto;
   padding: 20px 34px;
   height: 100vh;
-  box-sizing: border-box;
   max-width: 1000px;
 }
 </style>

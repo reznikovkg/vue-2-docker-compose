@@ -1,12 +1,7 @@
 <template>
   <label class="file-wrapper">
     Загрузить файл...
-    <input
-      type="file"
-      name="photo"
-      class="upload-photo"
-      @change="onInputChange"
-    />
+    <input type="file" name="photo" class="file-wrapper__upload-image-input" @change="onInputChange" />
   </label>
 </template>
 
@@ -24,20 +19,27 @@ export default {
 
 <style scoped lang="less">
 .file-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   height: 40px;
   width: 228px;
-  border: 1px solid black;
+  padding: 8px;
   border-radius: 4px;
-  background-color: white;
-  cursor: pointer;
-}
+  border: 1px solid @cBaseEleven;
 
-.upload-photo {
-  opacity: 0;
-  position: absolute;
-  z-index: -1;
+  font-family: @ffOne;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: center;
+  background: @cBaseEleven;
+  color: @cBaseWhite;
+
+  &:hover {
+    border: 1px solid @cBaseTen;
+    color: @cBaseWhite;
+  }
+
+  &__upload-image-input {
+    display: none;
+  }
 }
 </style>

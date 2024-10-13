@@ -1,14 +1,8 @@
 <template>
-  <div class="input-wrapper">
-    <label v-if="label" for="input">{{ label }}</label>
-    <input
-      :type="type ?? 'text'"
-      name="input"
-      :placeholder="placeholder"
-      :value="value"
-      @input="onInputChange($event.target.value)"
-      v-bind="$props"
-    />
+  <div :class="['input-wrapper', error ? 'input-wrapper_error' : '']">
+    <label v-if="label" for="input" class="input-wrapper__label">{{ label }}</label>
+    <input :type="type ?? 'text'" name="input" :placeholder="placeholder" :value="value"
+      @input="onInputChange($event.target.value)" v-bind="$props" class="input-wrapper__input" />
   </div>
 </template>
 
@@ -21,6 +15,7 @@ export default {
     value: String,
     input: Function,
     type: String,
+    error: Boolean,
   },
   methods: {
     onInputChange(event) {
@@ -34,12 +29,35 @@ export default {
 .input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  & input {
+
+  &__label {
+    font-family: @ffOne;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+
+    color: @cBaseNine;
+
+    .input-wrapper_error & {
+      color: @cBaseFour;
+    }
+  }
+
+  &__input {
     height: 40px;
-    padding: 0px 16px;
     border-radius: 4px;
-    border: 1px solid black;
+    border: 1px solid @cBaseNine;
+    padding: 8px 16px;
+
+    font-family: @ffOne;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+
+    &:focus {
+      border: 1px solid @cBaseBlack;
+    }
   }
 }
 </style>

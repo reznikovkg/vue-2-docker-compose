@@ -1,8 +1,5 @@
 <template>
-  <button
-    :class="['button', type === 'delete' ? 'delete-button' : '']"
-    @click="onClick"
-  >
+  <button :class="['button', type ? `button_${type}` : '', filled ? 'button_filled' : '']" @click="onClick">
     <template v-if="type === 'delete'"> X </template>
     <template v-else>
       <slot />
@@ -13,7 +10,11 @@
 <script>
 export default {
   name: "CustomButton",
-  props: { click: Function, type: String },
+  props: {
+    click: Function,
+    type: String,
+    filled: Boolean
+  },
   methods: {
     onClick() {
       this.$emit("click");
@@ -25,18 +26,35 @@ export default {
 <style scoped lang="less">
 .button {
   height: 40px;
+  padding: 8px;
   border-radius: 4px;
-  background-color: white;
-  border: 1px solid black;
-  cursor: pointer;
+  border: 1px solid @cBaseEleven;
+  background: @cBaseWhite;
+
+  font-family: @ffOne;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: center;
+  color: @cBaseEleven;
+
   &:hover {
-    background-color: #0000000d;
+    border: 1px solid @cBaseTen;
+    color: @cBaseTen;
   }
-  &:focus {
-    background-color: white;
+
+  &_filled {
+    background: @cBaseEleven;
+    color: @cBaseWhite;
+
+    &:hover {
+      border: 1px solid @cBaseTen;
+      color: @cBaseWhite;
+    }
   }
-}
-.delete-button {
-  width: 40px;
+
+  &_delete {
+    width: 40px;
+  }
 }
 </style>
