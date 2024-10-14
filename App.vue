@@ -18,14 +18,24 @@ export default {
         {
           question: "Какой город является столицей России?",
           type: "single",
-          answers: ["Москва", "Калининград", "Воронеж", "Санкт-Петербург"],
+          answers: [
+            { label: "Москва", value: 0 },
+            { label: "Калининград", value: 1 },
+            { label: "Воронеж", value: 2 },
+            { label: "Санкт-Петербург", value: 3 },
+          ],
           correctAnswer: 0,
         },
         {
-          question: "Какое животные фигурируют в китайском зодиаке?",
+          question: "Какие из этих городов находятся в России?",
           type: "multiple",
-          answers: ["Дракон", "Кролик", "Слон", "Бык"],
-          correctAnswers: [0, 1, 3],
+          answers: [
+            { label: "Москва", value: 0 },
+            { label: "Париж", value: 1 },
+            { label: "Казань", value: 2 },
+            { label: "Берлин", value: 3 }
+          ],
+          correctAnswers: [0, 2]
         },
         {
           question: "Чему равен квадратный корень из 144?",
@@ -38,7 +48,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
