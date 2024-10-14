@@ -1,50 +1,36 @@
 <template>
-  <div class="quiz-container">
-    <h1 class="quiz-title">Вопрос</h1>
+  <div class="quiz">
+    <h1 class="quiz__title">Опрос</h1>
 
-    <div v-if="currentQuestionIndex < questions.length" class="question-section">
-      <h3 class="question-text">{{ questions[currentQuestionIndex].question }}</h3>
+    <div class="quiz__question-section" v-if="!isQuizComplete">
+      <p class="quiz__question-text">{{ currentQuestion.question }}</p>
 
-      <!-- Если тип вопроса - выбор одного варианта -->
-      <ul v-if="questions[currentQuestionIndex].type === 'single'" class="answers-list">
-        <li
-          v-for="(answer, index) in questions[currentQuestionIndex].answers"
-          :key="index"
-          :class="{'selected-answer': userAnswers[currentQuestionIndex] === index}"
-          class="answer-item"
-          @click="selectSingleAnswer(index)"
-        >
-          {{ answer }}
+      <!-- Вопросы с выбором одного или нескольких вариантов -->
+      <ul v-if="currentQuestion.type === 'single' || currentQuestion.type === 'multiple'" class="quiz__answers-list">
+        <li v-for="(answer, index) in currentQuestion.answers"
+            :key="index"
+            :class="['quiz__answer-item', { 'quiz__answer-item--selected': selectedAnswers.includes(answer.value) }]"
+            @click="selectAnswer(answer.value)">
+          {{ answer.label }}
         </li>
       </ul>
 
-      <!-- Если тип вопроса - выбор нескольких вариантов -->
-      <ul v-if="questions[currentQuestionIndex].type === 'multiple'" class="answers-list">
-        <li
-          v-for="(answer, index) in questions[currentQuestionIndex].answers"
-          :key="index"
-          :class="{'selected-answer': userAnswers[currentQuestionIndex]?.includes(index)}"
-          class="answer-item"
-          @click="toggleMultipleAnswer(index)"
-        >
-          {{ answer }}
-        </li>
-      </ul>
-
-      <!-- Если тип вопроса - текстовое поле -->
-      <div v-if="questions[currentQuestionIndex].type === 'text'" class="text-answer-section">
-        <textarea v-model="userAnswers[currentQuestionIndex]" placeholder="Type your answer..." class="text-answer"></textarea>
-      </div>
-
-      <div class="navigation-buttons">
-        <button @click="prevQuestion" :disabled="currentQuestionIndex === 0" class="nav-button">Предыдущий</button>
-        <button @click="nextQuestion" :disabled="!isAnswered" class="nav-button">Следующий</button>
+      <!-- Вопрос с текстовым ответом -->
+      <div v-if="currentQuestion.type === 'text'" class="quiz__text-answer-section">
+        <textarea class="quiz__text-answer" v-model="textAnswer"></textarea>
       </div>
     </div>
 
-    <div v-else class="result-section">
-      <h2 class="score-text">Your Score: {{ calculateScore }}%</h2>
-      <button @click="restartQuiz" class="restart-button">Перезапустить</button>
+    <!-- Навигация -->
+    <div class="quiz__navigation-buttons" v-if="!isQuizComplete">
+      <button class="quiz__nav-button" @click="prevQuestion" :disabled="currentQuestionIndex === 0">Предыдущий</button>
+      <button class="quiz__nav-button" @click="nextQuestion" :disabled="!isAnswered">Следующий</button>
+    </div>
+
+    <!-- Результат -->
+    <div v-if="isQuizComplete" class="quiz__result-section">
+      <p class="quiz__score-text">Ваш результат: {{ score }}%</p>
+      <button class="quiz__restart-button" @click="restartQuiz">Начать заново</button>
     </div>
   </div>
 </template>
@@ -52,172 +38,208 @@
 <script>
 export default {
   props: {
-    questions: {
-      type: Array,
-      required: true,
-    },
+    questions: Array,
   },
   data() {
     return {
       currentQuestionIndex: 0,
-      userAnswers: Array(this.questions.length).fill(null), 
+      selectedAnswers: [],
+      textAnswer: '',
+      answers: [],
+      isQuizComplete: false,
     };
   },
   computed: {
-    calculateScore() {
-      let correctCount = 0;
+    currentQuestion() {
+      return this.questions[this.currentQuestionIndex];
+    },
+    isAnswered() {
+      if (this.currentQuestion.type === 'text') {
+        return this.textAnswer.trim() !== '';
+      }
+      return this.selectedAnswers.length > 0;
+    },
+    score() {
+      let correct = 0;
 
       this.questions.forEach((question, index) => {
-        const userAnswer = this.userAnswers[index];
-        if (question.type === 'single') {
-          
-          if (userAnswer === question.correctAnswer) {
-            correctCount++;
+        if (question.type === 'text') {
+          if (this.textAnswer.trim() === question.correctAnswer) {
+            correct++;
           }
-        } else if (question.type === 'multiple') {
-          
-          if (Array.isArray(userAnswer) && this.arraysEqual(userAnswer, question.correctAnswers)) {
-            correctCount++;
-          }
-        } else if (question.type === 'text') {
-
-          if (userAnswer && userAnswer.trim().toLowerCase() === question.correctAnswer.trim().toLowerCase()) {
-            correctCount++;
+        } else if (question.type === 'single' || question.type === 'multiple') {
+          const correctAnswers = Array.isArray(question.correctAnswers) ? question.correctAnswers : [question.correctAnswer];
+          const userAnswers = Array.isArray(this.answers[index]) ? this.answers[index] : [this.answers[index]];
+          if (JSON.stringify(correctAnswers.sort()) === JSON.stringify(userAnswers.sort())) {
+            correct++;
           }
         }
       });
 
-      return Math.round((correctCount / this.questions.length) * 100);
-    },
-    isAnswered() {
-      const currentAnswer = this.userAnswers[this.currentQuestionIndex];
-      const currentQuestion = this.questions[this.currentQuestionIndex];
-
-      if (currentQuestion.type === 'single') {
-        return currentAnswer !== null;
-      } else if (currentQuestion.type === 'multiple') {
-        return Array.isArray(currentAnswer) && currentAnswer.length > 0;
-      } else if (currentQuestion.type === 'text') {
-        return currentAnswer && currentAnswer.trim() !== ''; 
-      }
-      return false;
+      return Math.round((correct / this.questions.length) * 100);
     },
   },
   methods: {
-    selectSingleAnswer(index) {
-      this.userAnswers[this.currentQuestionIndex] = index;
-    },
-    toggleMultipleAnswer(index) {
-      let answers = this.userAnswers[this.currentQuestionIndex];
-
-      if (!Array.isArray(answers)) {
-        answers = [];
-      }
-      if (answers.includes(index)) {
-        answers = answers.filter(answer => answer !== index);
+    selectAnswer(value) {
+      if (this.currentQuestion.type === 'single') {
+        this.selectedAnswers = [value];
       } else {
-        answers.push(index);
-      }
-
-      this.userAnswers[this.currentQuestionIndex] = answers;
-    },
-    nextQuestion() {
-      if (this.currentQuestionIndex < this.questions.length - 1) {
-        this.currentQuestionIndex++;
-      } else {
-        this.currentQuestionIndex++;
+        if (this.selectedAnswers.includes(value)) {
+          this.selectedAnswers = this.selectedAnswers.filter(v => v !== value);
+        } else {
+          this.selectedAnswers.push(value);
+        }
       }
     },
     prevQuestion() {
       if (this.currentQuestionIndex > 0) {
         this.currentQuestionIndex--;
+        this.selectedAnswers = [];
+        this.textAnswer = '';
+      }
+    },
+    nextQuestion() {
+      if (this.currentQuestion.type === 'text') {
+        this.answers[this.currentQuestionIndex] = this.textAnswer.trim();
+      } else {
+        this.answers[this.currentQuestionIndex] = this.selectedAnswers;
+      }
+      if (this.currentQuestionIndex === this.questions.length - 1) {
+        this.isQuizComplete = true;
+      } else {
+        this.currentQuestionIndex++;
+        this.selectedAnswers = [];
+        this.textAnswer = '';
       }
     },
     restartQuiz() {
       this.currentQuestionIndex = 0;
-      this.userAnswers = Array(this.questions.length).fill(null); 
-    },
-    arraysEqual(arr1, arr2) {
-      return JSON.stringify(arr1.sort()) === JSON.stringify(arr2.sort());
+      this.selectedAnswers = [];
+      this.textAnswer = '';
+      this.answers = [];
+      this.isQuizComplete = false;
     },
   },
 };
 </script>
 
 <style lang="less" scoped>
-.quiz-container {
+.quiz {
   max-width: 600px;
   margin: 0 auto;
-}
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
-.quiz-title {
-  font-size: 24px;
-  text-align: center;
-}
+  &__title {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
 
-.question-section {
-  margin-top: 20px;
-}
+  &__question-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
 
-.question-text {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
+  &__question-text {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #444;
+  }
 
-.answers-list {
-  list-style-type: none;
-  padding: 0;
-}
+  &__answers-list {
+    list-style-type: none;
+    padding: 0;
+  }
 
-.answer-item {
-  margin: 10px 0;
-  padding: 10px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.2s;
-}
+  &__answer-item {
+    margin: 10px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    
+    &:hover {
+      background-color: #f0f7ff;
+      transform: scale(1.02);
+    }
+    
+    &--selected {
+      background-color: #cfe9ff;
+      border-color: #2196f3;
+      color: #2196f3;
+      font-weight: bold;
+    }
+  }
 
-.answer-item:hover {
-  background-color: #f0f0f0;
-}
+  &__text-answer-section {
+    margin-top: 20px;
 
-.selected-answer {
-  background-color: #d0f0d0;
-}
+    .quiz__text-answer {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+      outline: none;
+      resize: none;
+    }
+  }
 
-.text-answer-section {
-  margin-top: 20px;
-}
+  &__navigation-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
 
-.text-answer {
-  width: 100%;
-  height: 100px;
-  font-size: 16px;
-}
+    .quiz__nav-button {
+      padding: 10px 25px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background-color: #2196f3;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
 
-.navigation-buttons {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between;
-}
+      &:hover {
+        background-color: #1976d2;
+        transform: translateY(-2px);
+      }
 
-.nav-button {
-  padding: 10px 20px;
-  font-size: 14px;
-}
+      &:disabled {
+        background-color: #bbb;
+        cursor: not-allowed;
+      }
+    }
+  }
 
-.result-section {
-  margin-top: 20px;
-}
+  &__result-section {
+    margin-top: 30px;
+    text-align: center;
 
-.score-text {
-  font-size: 20px;
-}
+    .quiz__score-text {
+      font-size: 24px;
+      color: #333;
+    }
 
-.restart-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 14px;
+    .quiz__restart-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      background-color: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+  }
 }
 </style>
