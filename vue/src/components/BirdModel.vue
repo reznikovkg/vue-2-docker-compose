@@ -1,24 +1,23 @@
 <template>
-  <img
-    src="@/assets/bird.png"
-    alt="bird"
-    :style="'top:' + birdPosition + 'px'"
-  />
+  <img src="@/assets/bird.png" alt="bird" :style="birdStyles" />
 </template>
 
 <script>
 export default {
   name: "BirdModel",
   props: ["birdPosition"],
+  computed: {
+    birdStyles() {
+      return {
+        top: `${this.birdPosition}px`,
+        left: "250px",
+        height: "100px",
+        position: "absolute",
+        transition: "top 300ms",
+      };
+    },
+  },
 };
 </script>
 
-<style scoped>
-img {
-  height: 100px;
-  position: absolute;
-  left: 250px;
-  top: 0;
-  transition: top 300ms;
-}
-</style>
+<style scoped></style>
