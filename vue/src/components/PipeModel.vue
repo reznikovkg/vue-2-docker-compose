@@ -21,8 +21,11 @@ export default {
   },
   computed: {
     pipeStyles() {
-      const topOrBottom = this.direction === "up" ? "top: 0;" : "bottom: 0;";
-      return `height: ${this.height}px; left: ${this.positionX}%; ${topOrBottom}`;
+      return {
+        height: `${this.height}px`,
+        left: `${this.positionX}%`,
+        [this.direction === "up" ? "top" : "bottom"]: "0",
+      };
     },
   },
 };
