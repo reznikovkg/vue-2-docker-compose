@@ -30,8 +30,15 @@ export default [
     {
       id: 5,
       name: 'ингредиент 5',
-      cover: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDI0MDkwOS8zTk1RRlMuanBlZw.webp',
+      cover: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDI0MDYxOS8zWmgzSkwuanBlZw.webp',
       description: 'описание ингредиента 5',
       measure_unit: 'ч.л.'
+    },
+    {
+      id: 6,
+      name: 'ингредиент 6',
+      cover: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDI0MDkwOS8zTk1RRlMuanBlZw.webp',
+      description: 'описание ингредиента 6',
+      measure_unit: 'щепотка'
     },
   ]
