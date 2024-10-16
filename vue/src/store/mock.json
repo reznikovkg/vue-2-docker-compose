@@ -42,11 +42,27 @@
         {
           "url": "https://cdn1.ozone.ru/s3/multimedia-t/c600/6826885913.jpg",
           "type": "secondary"
+        },
+        {
+          "url": "https://media.gq.com/photos/5e6944f74d6be70008ac16c2/master/w_2000,h_1333,c_limit/Uniqlo-U-crew-neck-short-sleeve-T-shirt.jpg",
+          "type": "secondary"
+        },
+        {
+          "url": "https://cdn1.ozone.ru/s3/multimedia-t/c600/6826885913.jpg",
+          "type": "secondary"
+        },
+        {
+          "url": "https://media.gq.com/photos/5e6944f74d6be70008ac16c2/master/w_2000,h_1333,c_limit/Uniqlo-U-crew-neck-short-sleeve-T-shirt.jpg",
+          "type": "secondary"
+        },
+        {
+          "url": "https://cdn1.ozone.ru/s3/multimedia-t/c600/6826885913.jpg",
+          "type": "secondary"
         }
       ],
       "count": "100",
       "category": "Молочка",
-      "subcategory" : "Творог"
+      "subcategory": "Творог"
     }
   ]
 }

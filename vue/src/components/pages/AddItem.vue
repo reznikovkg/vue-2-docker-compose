@@ -15,7 +15,7 @@
         <div class="add-to-catalog-page__information-rows">
           <div class="add-to-catalog-page__information-row" v-for="(info, index) in information"
             :key="'InformationField' + index">
-            <CustomInput :label="info.title" :value="info.value" @click="(e) => onInfoChange(e.target.value, index)" />
+            <CustomInput :label="info.title" :value="info.value" @input="(e) => onInfoChange(e, index)" />
           </div>
         </div>
       </div>
@@ -23,11 +23,12 @@
         <h4 class="add-to-catalog-page__block-title">Цена и количество</h4>
         <div class="add-to-catalog-page__inputs-container">
           <CustomInput type="number" label="Цена" placeholder="Введите цену" v-model="originalPrice"
-            class="add-to-catalog-page__prices-input" />
+            class="add-to-catalog-page__prices-quantity-input" />
           <CustomInput type="number" :label="getTitleForCurrentPrice" :error="checkIsPricesWrong"
-            placeholder="Введите цену со скидкой" v-model="currentPrice" class="add-to-catalog-page__prices-input" />
+            placeholder="Введите цену со скидкой" v-model="currentPrice"
+            class="add-to-catalog-page__prices-quantity-input" />
           <CustomInput type="number" label="Количество" placeholder="Введите количество" v-model="count"
-            class="add-to-catalog-page__prices-input" />
+            class="add-to-catalog-page__prices-quantity-input" />
         </div>
       </div>
 
@@ -37,7 +38,7 @@
           <div class="add-to-catalog-page__images" v-if="images.length">
             <div class="add-to-catalog-page__image-wrapper" v-for="(img, index) in images" :key="'image' + index">
               <img class="add-to-catalog-page__image" :src="img.url" />
-              <CustomButton type="delete" :filled="true" @click="() => onImageDelete(index)" />
+              <CustomButton :type="'delete'" @click="() => onImageDelete(index)" />
             </div>
           </div>
           <CustomFileInput @upload="onFileUpload" />
@@ -54,7 +55,7 @@
         </div>
       </div>
       <div class="add-to-catalog-page__save-wrapper">
-        <CustomButton class="add-to-catalog-page__save" @click="onSave" :filled="true">
+        <CustomButton class="add-to-catalog-page__save" @click="onSave" :type="'filledGreen'">
           Сохранить
         </CustomButton>
       </div>
@@ -68,6 +69,7 @@ import CustomInput from "../parts/Input.vue";
 import CustomButton from "../parts/Button.vue";
 import CustomTextarea from "../parts/Textarea.vue";
 import CustomFileInput from "../parts/FileInput.vue";
+import { mapMutations } from 'vuex';
 
 export default {
   name: "AddItemPage",
@@ -118,29 +120,12 @@ export default {
         },
       ],
       category: "",
-      subcategory: "",
-      options: [
-        {
-          title: "sizes",
-          values: [
-            {
-              id: "1",
-              name: "S",
-              value: "S",
-            },
-            {
-              id: "2",
-              name: "M",
-              value: "M",
-            },
-          ],
-        },
-      ],
+      subcategory: ""
     };
   },
   computed: {
     checkIsPricesWrong() {
-      return Boolean(this.currentPrice && this.originalPrice && this.currentPrice >= this.originalPrice)
+      return Boolean(this.currentPrice && this.originalPrice && Number(this.currentPrice) >= Number(this.originalPrice))
     },
     getTitleForCurrentPrice() {
       return this.checkIsPricesWrong
@@ -149,8 +134,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations("catalog", ["addItemToCatalog"]),
     onInfoChange(value, index) {
-      this.information[index] = value
+      this.information[index].value = value
     },
     onFileUpload(file) {
       this.images = [
@@ -165,10 +151,9 @@ export default {
       this.images = this.images.filter((_, i) => i !== index);
     },
     onSave() {
-      console.log({
+      this.addItemToCatalog({
         id: Date.now(),
         name: this.name,
-        brand: this.brand,
         description: this.description,
         information: this.information,
         price: {
@@ -178,8 +163,9 @@ export default {
         images: this.images,
         count: this.count,
         category: this.category,
-        options: this.options,
-      });
+        subcategory: this.subcategory,
+      })
+      this.$router.replace('/')
     },
   },
 };
@@ -190,6 +176,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 45px;
+  padding-bottom: 50px;
 
   &__inputs-block {
     display: flex;
@@ -202,13 +189,13 @@ export default {
     font-weight: 700;
     line-height: 54px;
     text-align: left;
-
     color: @cBaseTen;
   }
 
   &__inputs-container {
     display: flex;
     gap: 40px;
+    flex-wrap: wrap;
   }
 
   &__name-input {
@@ -229,7 +216,7 @@ export default {
     width: 275px;
   }
 
-  &__prices-input,
+  &__prices-quantity-input,
   &__category-input {
     flex: 1;
   }

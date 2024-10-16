@@ -1,5 +1,5 @@
 <template>
-  <button :class="['button', type ? `button_${type}` : '', filled ? 'button_filled' : '']" @click="onClick">
+  <button :class="['button', getClassForType]" @click="onClick">
     <template v-if="type === 'delete'"> X </template>
     <template v-else>
       <slot />
@@ -13,12 +13,26 @@ export default {
   props: {
     click: Function,
     type: String,
-    filled: Boolean
+  },
+  computed: {
+    getClassForType() {
+      switch (this.type) {
+        case 'delete':
+          return 'button_delete'
+        case 'filledOrange':
+          return 'button_filled-orange'
+        case 'filledGreen':
+          return 'button_filled-green'
+        default:
+          return ''
+      }
+    },
   },
   methods: {
     onClick() {
       this.$emit("click");
     },
+
   },
 };
 </script>
@@ -43,8 +57,20 @@ export default {
     color: @cBaseTen;
   }
 
-  &_filled {
+  &_filled-green {
+    border: none;
     background: @cBaseEleven;
+    color: @cBaseWhite;
+
+    &:hover {
+      border: 1px solid @cBaseTen;
+      color: @cBaseWhite;
+    }
+  }
+
+  &_filled-orange {
+    border: none;
+    background: @cBaseTwelve;
     color: @cBaseWhite;
 
     &:hover {

@@ -1,12 +1,7 @@
 <template>
   <div class="category-wrapper">
-    <CustomInput
-      label="Категория"
-      placeholder="Введите категорию"
-      :value="category"
-      @input="onValueChange"
-    />
-    <CustomButton type="delete" @click="onDelete" />
+    <CustomInput label="Категория" placeholder="Введите категорию" :value="category" @input="onValueChange" />
+    <CustomButton :type="'delete'" @click="onDelete" />
   </div>
 </template>
 

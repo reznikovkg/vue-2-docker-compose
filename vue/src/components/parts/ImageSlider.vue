@@ -1,5 +1,5 @@
 <template>
-    <div class="image-slider">
+    <!-- <div class="image-slider">
         <div class="image-slider__images" ref="scroll">
             <div class="image-slider__image-cnt" v-for="(image) in images" :key="image.url">
                 <img class="image-slider__image" :src="image.url" alt="" />
@@ -7,6 +7,17 @@
         </div>
         <div class="image-slider__prev-btn" v-show="isPrevAvailable" @click="handlePrevClick"></div>
         <div class="image-slider__next-btn" v-show="isNextAvailable" @click="handleNextClick"></div>
+    </div> -->
+    <div class="image-slider">
+        <div class="image-slider__images-cnt">
+            <div class="image-slider__image-cnt" v-for="(image, index) in images" :key="image.url"
+                @click="() => handleImageClick(index)">
+                <img class="image-slider__image" :src="image.url" alt="" />
+            </div>
+        </div>
+        <div class="image-slider__chosen-image-cnt">
+            <img class="image-slider__chosen-image" :src="getCurrentImageUrl" alt="" />
+        </div>
     </div>
 </template>
 
@@ -22,25 +33,13 @@ export default {
         }
     },
     computed: {
-        isPrevAvailable() {
-            return this.currentActive !== 0
-        },
-        isNextAvailable() {
-            return this.currentActive !== this.images.length - 1
+        getCurrentImageUrl() {
+            return this.images[this.currentActive].url
         }
     },
     methods: {
-        handlePrevClick() {
-            if (this.isPrevAvailable) {
-                this.currentActive--
-                this.$refs.scroll.childNodes[this.currentActive].scrollIntoView({ behavior: 'smooth' })
-            }
-        },
-        handleNextClick() {
-            if (this.isNextAvailable) {
-                this.currentActive++
-                this.$refs.scroll.childNodes[this.currentActive].scrollIntoView({ behavior: 'smooth' })
-            }
+        handleImageClick(index) {
+            this.currentActive = index
         },
     }
 }
@@ -48,42 +47,20 @@ export default {
 
 <style scoped lang="less">
 .image-slider {
-    position: relative;
+    display: flex;
     width: 100%;
     height: 100%;
-    border: 1px solid @cBaseThree;
-    border-radius: 5%;
 
-    &__next-btn,
-    &__prev-btn {
-        position: absolute;
-        top: 0px;
-        width: 50%;
-        height: 100%;
-
-        &:hover {
-            background-color: @cBaseSeven;
-            opacity: 0.1;
-        }
-    }
-
-    &__next-btn {
-        border-radius: 0 5% 5% 0;
-        right: 0px;
-    }
-
-    &__prev-btn {
-        border-radius: 5% 0 0 5%;
-        left: 0px;
-    }
-
-    &__images {
+    &__images-cnt {
         display: flex;
-        overflow-x: scroll;
-        scroll-snap-type: x mandatory;
-        width: 100%;
-        height: 100%;
-        border-radius: 5%;
+        flex-direction: column;
+        overflow-y: scroll;
+        padding-right: 16px;
+        width: 11%;
+        box-sizing: content-box;
+
+        scroll-snap-type: y mandatory;
+        gap: 5%;
 
         &::-webkit-scrollbar {
             width: 0;
@@ -97,18 +74,34 @@ export default {
         align-items: center;
         flex-shrink: 0;
         scroll-snap-align: center;
-        background-color: @cBaseSeven;
+        background-color: @cBaseWhite;
+        filter: drop-shadow(3px 3px 3px #00000030);
+        border-radius: 4px;
 
-        height: 100%;
-        width: 100%;
+        height: 16%;
     }
 
     &__image {
         max-width: 100%;
         max-height: 100%;
 
-        background-color: @cBaseEight;
-        border-radius: 5%;
+        background-color: @cBaseWhite;
+    }
+
+    &__chosen-image-cnt {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: @cBaseWhite;
+        filter: drop-shadow(3px 3px 3px #00000030);
+
+        width: calc(100% - 11% - 16px);
+        height: 100%;
+    }
+
+    &__chosen-image {
+        max-width: 100%;
+        max-height: 100%;
     }
 }
 </style>

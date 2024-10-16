@@ -1,20 +1,11 @@
 <template>
   <div class="info-wrapper">
     <div class="fields-wrapper">
-      <CustomInput
-        label="Название свойства"
-        placeholder="Введите название"
-        :value="info.title"
-        @input="onTitleChange"
-      />
-      <CustomInput
-        label="Значение"
-        placeholder="Введите значение"
-        :value="info.value"
-        @input="onValueChange"
-      />
+      <CustomInput label="Название свойства" placeholder="Введите название" :value="info.title"
+        @input="onTitleChange" />
+      <CustomInput label="Значение" placeholder="Введите значение" :value="info.value" @input="onValueChange" />
     </div>
-    <CustomButton type="delete" @click="onDelete" />
+    <CustomButton :type="'delete'" @click="onDelete" />
   </div>
 </template>
 
@@ -55,12 +46,14 @@ export default {
   align-items: center;
   gap: 24px;
 }
+
 .fields-wrapper {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 50%;
 }
+
 .delete-button {
   margin-top: 18px;
 }
