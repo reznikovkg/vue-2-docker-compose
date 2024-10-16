@@ -19,6 +19,7 @@ export default {
     },
     computed: {
         ...mapGetters('catalog', ['getCatalog']),
+        ...mapGetters('favorites', ['getFavorites']),
     }
     
 }
