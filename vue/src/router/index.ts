@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import BirdPage from "../components/pages/BirdPage.vue";
 import { RouteNames } from "./routes";
+import GamePage from "../components/pages/GamePage.vue";
 
 Vue.use(VueRouter);
 
@@ -9,7 +9,7 @@ const routes = [
   {
     path: "/",
     name: RouteNames.HOME,
-    component: BirdPage,
+    component: GamePage,
   },
 ];
 
