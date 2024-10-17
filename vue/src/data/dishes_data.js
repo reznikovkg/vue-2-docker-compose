@@ -3,30 +3,30 @@ export default [
     id: 1,
     name: 'Греческий салат',
     dish_category: 'Салаты',
-    cuisine: 'Интернациональная'
+    cuisine: 'Греческая кухня'
   },
   {
     id: 2,
     name: 'Крем-суп',
     dish_category: 'Первые блюда',
-    cuisine: 'Европейская'
+    cuisine: 'Европейская кухня'
   },
   {
     id: 3,
     name: 'Паста',
     dish_category: 'Изделия из теста',
-    cuisine: 'Итальянская'
+    cuisine: 'Итальянская кухня'
   },
   {
     id: 4,
     name: 'Каша',
     dish_category: 'Завтраки',
-    cuisine: null
+    cuisine: 'Интернациональная кухня'
   },
   {
     id: 5,
     name: 'Шладость',
     dish_category: 'Десерты',
-    cuisine: 'Шладкая'
+    cuisine: 'Другое'
   },
 ]
