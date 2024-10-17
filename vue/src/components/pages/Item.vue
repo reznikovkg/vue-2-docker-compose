@@ -65,7 +65,7 @@ export default {
     },
     methods: {
         handleAddToCartClick() {
-            console.log('Товар добавлен в корзину с опциями:', ...this.selectedOptions.map(option => option.title + ': ' + option.value));
+            console.log('Товар добавлен в корзину');
         }
     }
 }

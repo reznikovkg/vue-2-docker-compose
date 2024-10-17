@@ -1,16 +1,7 @@
 <template>
-    <!-- <div class="image-slider">
-        <div class="image-slider__images" ref="scroll">
-            <div class="image-slider__image-cnt" v-for="(image) in images" :key="image.url">
-                <img class="image-slider__image" :src="image.url" alt="" />
-            </div>
-        </div>
-        <div class="image-slider__prev-btn" v-show="isPrevAvailable" @click="handlePrevClick"></div>
-        <div class="image-slider__next-btn" v-show="isNextAvailable" @click="handleNextClick"></div>
-    </div> -->
     <div class="image-slider">
         <div class="image-slider__images-cnt">
-            <div class="image-slider__image-cnt" v-for="(image, index) in images" :key="image.url"
+            <div class="image-slider__image-cnt" v-for="(image, index) in images" :key="index"
                 @click="() => handleImageClick(index)">
                 <img class="image-slider__image" :src="image.url" alt="" />
             </div>
@@ -49,7 +40,7 @@ export default {
 .image-slider {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 11%);
 
     &__images-cnt {
         display: flex;
