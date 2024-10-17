@@ -1,6 +1,7 @@
 import modals from "./modals";
 import catalog from "./catalog";
 import cart from "./cart";
+import favorites from "./favorites";
 
 export default {
   namespaced: true,
@@ -11,5 +12,6 @@ export default {
     modals,
     catalog,
     cart,
+    favorites,
   },
 };
