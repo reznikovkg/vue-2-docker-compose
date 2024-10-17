@@ -1,54 +1,67 @@
 <template>
-    <div class="card-item" @click="() => openItemPage()">
-        
+    <div class="card-item">
         <div class="card-item__image-cnt">
             <div class="card-item__like">
-                <button @click='() => addToFavorites(item)' class="card-item__button-like">
+                <button @click="clickOnLike" 
+                    class="card-item__button-like" 
+                    :style="{'background-color': buttonLikeStyle ? '#FF6633' : '#fff'}"
+                >
                     <img class="card-item__icon-like" src="@/assets/icon-like.png" />
                 </button>
             </div>
-            <div class="card-item_discount">
-                <p v-if="showDiscount">  </p>
+            <div class="card-item__discount">
+                <p class = "card-item__name-discount" v-if="showDiscount"> -{{ calculatingDiscount() }}% </p>
             </div>
-            <img class="card-item__image" :src="getImage" alt="" />
+            <img class="card-item__image" @click="() => openItemPage()" :src="getImage" alt="" />
         </div>
-
         <div class="card-item__prices">
-            <p v-if="showDiscount" class="card-item__original-price">{{ item.price.originalPrice }}</p>
             <p class="card-item__current-price">{{ item.price.currentPrice }}</p>
+            <p v-if="showDiscount" class="card-item__original-price">{{ item.price.originalPrice }}</p>
         </div>
-
         <div class="card-item__name-cnt">
             <p class="card-item__name">{{ item.name }}</p>
         </div>
-
         <button class="card-item__to-cart" @click='() => addItemToCart(item)'> В корзину </button>
-
     </div>
 </template>
 
 <script>
-import { mapMutations, mapActions } from 'vuex'
+import { mapMutations, mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CartItem',
     props: {
         item: Object,
     },
-    computed: {
-        showDiscount() {
-            return this.item.price.currentPrice !== this.item.price.originalPrice
-        },
-
-        getImage() {
-            return this.item.images.find((image) => image.type === 'main').url
-        }
-    },
     methods: {
         ...mapMutations("cart", ["addItemToCart"]),
         ...mapActions('favorites', ['addToFavorites', 'removeFromFavorites']),
         openItemPage() {
-            //this.$router.push({ path: `/item/:${this.item.id}` })
+            this.$router.push({ path: `/item/:${this.item.id}` })
         },
+        clickOnLike() {
+            const index = this.getIndexFavorites(this.item)
+            if (index !== -1) {
+                this.removeFromFavorites(this.item)
+            } else {
+                this.addToFavorites(this.item)
+            }
+        },
+        calculatingDiscount() {
+            const diff = this.item.price.originalPrice - this.item.price.currentPrice
+            return diff * 100 / this.item.price.originalPrice
+        },
+    },
+    computed: {
+        ...mapGetters('favorites', ["getIndexFavorites"]),
+        showDiscount() {
+            return this.item.price.currentPrice !== this.item.price.originalPrice
+        },
+        getImage() {
+            return this.item.images.find((image) => image.type === 'main').url
+        },
+        buttonLikeStyle() {
+            return this.getIndexFavorites(this.item) !== -1 ? true : false
+        }
     }
 }
 </script>
@@ -56,14 +69,14 @@ export default {
 <style scoped lang="less">
 .card-item {
     aspect-ratio: 2 / 3;
-    //position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 2%;
-    background-color: rgb(230, 230, 230);
-    border-radius: 3px;
+    border-radius: 4px;
+    filter: drop-shadow(3px 3px 3px #00000030);
+    background-color: @cBaseWhite;
 
     &__image-cnt {
         display: flex;
@@ -84,13 +97,32 @@ export default {
     &__button-like {
         display: flex;
         justify-content: center;
-        //background-color: rgb(255, 255, 255); 
+        cursor: pointer; 
+        border-radius: 5px;
+        border: 0px;
+        opacity: 0.5;
+        padding: 2px;
     }
 
     &__icon-like {
         width: 20px;
         height: 20px;
         fill: none;
+    }
+
+    &__discount {
+        position: absolute;
+        left: 5%;
+        top: 80%;
+    }
+
+    &__name-discount {
+        font-size: 15px;
+        border-radius: 5px;
+        font-family: @ffOne;
+        background-color: @cBaseTwelve;
+        color: @cBaseWhite;
+        padding: 3px 5px;
     }
 
     &__image {
@@ -122,6 +154,8 @@ export default {
         display: flex;
         align-items: center;
         width: fit-content;
+        justify-content: space-between;
+        width: 90%;
     }
 
     &__current-price,
@@ -141,24 +175,25 @@ export default {
         font-weight: 400;
         opacity: 0.7;
         margin-right: 10px;
-        text-decoration: line-through;
-        font-style: italic;
+        &::after {
+            content: " ₽";
+        }
     }
 
     &__to-cart {
         height: 35px;
-        width: 70%;
-        border-radius: 5px;
-        color: rgb(23, 207, 106);
-        border: 2px solid rgb(23, 207, 106);
-        background-color: rgb(255, 255, 255);
+        width: 94%;
+        border-radius: 4px;
+        color: @cBaseEleven;
+        border: 1px solid @cBaseEleven;
+        background-color: @cBaseWhite;
         transition-duration: 0.3s;
         cursor: pointer;
         font-family: @ffOne;
         &:hover {
-            background-color: rgb(255, 102, 51);
-            color: rgb(255, 255, 255);
-            border: 2px solid rgb(255, 102, 51);
+            background-color: @cBaseTwelve;
+            color: @cBaseWhite;
+            border: 2px solid @cBaseTwelve;
         }
     }
 }

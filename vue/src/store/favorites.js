@@ -4,15 +4,25 @@ export default {
         favorites: JSON.parse(localStorage.getItem("favorites")) ?? []
     },
     getters: {
-        getFavorites: (state) => state.favorites
+        getFavorites: (state) => state.favorites,
+        getIndexFavorites: (state) => (item) => {
+            return state.favorites.findIndex(fItem => fItem.id === item.id)
+        },
     },
     mutations: {
         addToFavorites: (state, item) => {
-            state.favorites.push(item);
-            localStorage.setItem("favorites", JSON.stringify(state.favorites))
+            const index = state.favorites.findIndex(fItem => fItem.id === item.id)
+            if(index === -1) {
+                state.favorites.push(item);
+                localStorage.setItem("favorites", JSON.stringify(state.favorites))
+            }
         },
         removeFromFavorites: (state, item) => {
-            console.log(item, state); 
+            const index = state.favorites.findIndex(fItem => fItem.id === item.id)
+            if (index !== -1) {
+                state.favorites.splice(index, 1);
+                localStorage.setItem("favorites", JSON.stringify(state.favorites));
+            }
         },
     },
     actions: {
