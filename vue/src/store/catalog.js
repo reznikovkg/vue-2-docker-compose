@@ -10,4 +10,9 @@ export default {
     getItemFromCatalogById: (state) => (itemId) =>
       state.catalog.find((item) => item.id === itemId),
   },
+  mutations: {
+    addItemToCatalog: (state, newItem) => {
+      state.catalog.push(newItem);
+    },
+  },
 };

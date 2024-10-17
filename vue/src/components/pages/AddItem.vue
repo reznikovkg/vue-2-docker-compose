@@ -1,106 +1,65 @@
 <template>
   <PageLayout>
-    <header>
-      <h1>Добавление продукта</h1>
-    </header>
-    <main>
-      <div class="name-wrapper">
-        <CustomInput
-          label="Название"
-          placeholder="Введите название"
-          v-model="name"
-          class="small-input"
-        />
-        <CustomInput
-          label="Бренд"
-          placeholder="Введите бренд"
-          v-model="brand"
-          class="small-input"
-        />
-      </div>
-      <CustomTextarea
-        label="Описание"
-        placeholder="Введите описание"
-        v-model="description"
-      />
-      <h4>Характеристики</h4>
-      <InformationField
-        v-for="(info, index) in information"
-        :key="'InformationField' + index"
-        :info="info"
-        @changeInfo="(value) => onInfoChange(index, value)"
-        @delete="() => onInfoDelete(index)"
-      />
-      <CustomButton class="add-button" @click="onAddInfoClick">
-        Добавить свойство
-      </CustomButton>
-      <h4>Цена</h4>
-      <CustomInput
-        type="number"
-        label="Цена"
-        placeholder="Введите цену"
-        v-model="originalPrice"
-        class="small-input"
-      />
-      <CustomInput
-        type="number"
-        :label="
-          currentPrice >= originalPrice
-            ? 'Цена по скидке не может быть больше оригинальной цены'
-            : 'Цена со скидкой'
-        "
-        placeholder="Введите цену со скидкой"
-        :value="currentPrice"
-        @input="onCurrentPriceChange"
-        class="small-input"
-      />
-      <CustomInput
-        type="number"
-        label="Количество"
-        placeholder="Введите количество"
-        v-model="count"
-        class="small-input"
-      />
-      <h4>Фотографии</h4>
-      <div class="images" v-if="images.length">
-        <div
-          class="img-wrapper"
-          v-for="(img, index) in images"
-          :key="'image' + index"
-        >
-          <img class="photo" :src="img.url" />
-          <CustomButton type="delete" @click="() => onPhotoDelete(index)" />
+    <section class="add-to-catalog-page">
+      <div class="add-to-catalog-page__inputs-block">
+        <h4 class="add-to-catalog-page__block-title">Название и описание</h4>
+        <div class="add-to-catalog-page__inputs-container">
+          <CustomTextarea label="Название" placeholder="Введите название" v-model="name"
+            class="add-to-catalog-page__name-input" />
+          <CustomTextarea label="Описание" placeholder="Введите описание" v-model="description"
+            class="add-to-catalog-page__description-input" />
         </div>
       </div>
-      <CustomFileInput @upload="onFileUpload" />
-      <h4>Категория</h4>
-      <CategoryField
-        v-for="(item, index) in category"
-        :key="'CategoryField' + index"
-        :category="item"
-        @categoryChange="(value) => onCategoryChange(index, value)"
-        @delete="() => onCategoryDelete(index)"
-      />
-      <CustomButton class="add-button" @click="onCategoryAdd">
-        Добавить категорию
-      </CustomButton>
-      <h4>Опции</h4>
-      <OptionField
-        v-for="(option, index) in options"
-        :key="'OptionField' + option.id + index"
-        :option="option"
-        @optionChange="(value) => onOptionChange(index, value)"
-        @delete="() => onOptionDelete(index)"
-      />
-      <CustomButton class="add-button" @click="onOptionAdd">
-        Добавить опцию
-      </CustomButton>
-      <div class="save-wrapper">
-        <CustomButton class="add-button" @click="onSave">
+      <div class="add-to-catalog-page__inputs-block">
+        <h4 class="add-to-catalog-page__block-title">Свойства</h4>
+        <div class="add-to-catalog-page__information-rows">
+          <div class="add-to-catalog-page__information-row" v-for="(info, index) in information"
+            :key="'InformationField' + index">
+            <CustomInput :label="info.title" :value="info.value" @input="(e) => onInfoChange(e, index)" />
+          </div>
+        </div>
+      </div>
+      <div class="add-to-catalog-page__inputs-block">
+        <h4 class="add-to-catalog-page__block-title">Цена и количество</h4>
+        <div class="add-to-catalog-page__inputs-container">
+          <CustomInput type="number" label="Цена" placeholder="Введите цену" v-model="originalPrice"
+            class="add-to-catalog-page__prices-quantity-input" />
+          <CustomInput type="number" :label="getTitleForCurrentPrice" :error="checkIsPricesWrong"
+            placeholder="Введите цену со скидкой" v-model="currentPrice"
+            class="add-to-catalog-page__prices-quantity-input" />
+          <CustomInput type="number" label="Количество" placeholder="Введите количество" v-model="count"
+            class="add-to-catalog-page__prices-quantity-input" />
+        </div>
+      </div>
+
+      <div class="add-to-catalog-page__inputs-block">
+        <h4 class="add-to-catalog-page__block-title">Фотографии</h4>
+        <div class="add-to-catalog-page__inputs-container">
+          <div class="add-to-catalog-page__images" v-if="images.length">
+            <div class="add-to-catalog-page__image-wrapper" v-for="(img, index) in images" :key="'image' + index">
+              <img class="add-to-catalog-page__image" :src="img.url" />
+              <CustomButton :type="'delete'" @click="() => onImageDelete(index)" />
+            </div>
+          </div>
+          <CustomFileInput @upload="onFileUpload" />
+        </div>
+      </div>
+
+      <div class="add-to-catalog-page__inputs-block">
+        <h4 class="add-to-catalog-page__block-title">Категории</h4>
+        <div class="add-to-catalog-page__inputs-container">
+          <CustomInput label="Категория" placeholder="Введите категорию" v-model="category"
+            class="add-to-catalog-page__category-input" />
+          <CustomInput label="Подкатегория" placeholder="Введите подкатегорию" v-model="subcategory"
+            class="add-to-catalog-page__category-input" />
+        </div>
+      </div>
+      <div class="add-to-catalog-page__save-wrapper">
+        <CustomButton class="add-to-catalog-page__save" @click="onSave" :type="'filledGreen'">
           Сохранить
         </CustomButton>
       </div>
-    </main>
+    </section>
   </PageLayout>
 </template>
 
@@ -109,10 +68,8 @@ import PageLayout from "../parts/PageLayout";
 import CustomInput from "../parts/Input.vue";
 import CustomButton from "../parts/Button.vue";
 import CustomTextarea from "../parts/Textarea.vue";
-import InformationField from "../parts/InformationField.vue";
 import CustomFileInput from "../parts/FileInput.vue";
-import CategoryField from "../parts/CategoryField.vue";
-import OptionField from "../parts/OptionField.vue";
+import { mapMutations } from 'vuex';
 
 export default {
   name: "AddItemPage",
@@ -121,25 +78,33 @@ export default {
     CustomInput,
     CustomButton,
     CustomTextarea,
-    InformationField,
     CustomFileInput,
-    OptionField,
-    CategoryField,
   },
   data() {
     return {
       name: "",
-      brand: "",
       description: "",
       information: [
         {
-          title: "Производитель",
-          value: "Nike",
+          "title": "Производитель",
+          "value": ""
         },
         {
-          title: "Материалы",
-          value: "Хлопок 90%, Любовь 10%",
+          "title": "Место производства",
+          "value": ""
         },
+        {
+          "title": "Упаковка",
+          "value": ""
+        },
+        {
+          "title": "Состав",
+          "value": ""
+        },
+        {
+          "title": "Энергетическая ценность",
+          "value": ""
+        }
       ],
       currentPrice: "",
       originalPrice: "",
@@ -154,49 +119,24 @@ export default {
           type: "secondary",
         },
       ],
-      category: ["Одежда", "Футблоки"],
-      options: [
-        {
-          title: "sizes",
-          values: [
-            {
-              id: "1",
-              name: "S",
-              value: "S",
-            },
-            {
-              id: "2",
-              name: "M",
-              value: "M",
-            },
-          ],
-        },
-      ],
+      category: "",
+      subcategory: ""
     };
   },
+  computed: {
+    checkIsPricesWrong() {
+      return Boolean(this.currentPrice && this.originalPrice && Number(this.currentPrice) >= Number(this.originalPrice))
+    },
+    getTitleForCurrentPrice() {
+      return this.checkIsPricesWrong
+        ? 'Цена по скидке больше начальной'
+        : 'Цена со скидкой'
+    }
+  },
   methods: {
-    onInfoChange(index, value) {
-      this.information = this.information.map((info, i) =>
-        i === index ? value : info
-      );
-    },
-    onInfoDelete(index) {
-      this.information = this.information.filter((_, i) => i !== index);
-    },
-    onAddInfoClick() {
-      this.information = [
-        ...this.information,
-        {
-          title: "",
-          value: "",
-        },
-      ];
-    },
-    onCurrentPriceChange(value) {
-      this.currentPrice =
-        Number(this.currentPrice) <= Number(this.originalPrice)
-          ? value
-          : this.originalPrice;
+    ...mapMutations("catalog", ["addItemToCatalog"]),
+    onInfoChange(value, index) {
+      this.information[index].value = value
     },
     onFileUpload(file) {
       this.images = [
@@ -207,37 +147,13 @@ export default {
         },
       ];
     },
-    onPhotoDelete(index) {
+    onImageDelete(index) {
       this.images = this.images.filter((_, i) => i !== index);
     },
-    onCategoryChange(index, value) {
-      this.category = this.category.map((info, i) =>
-        i === index ? value : info
-      );
-    },
-    onCategoryDelete(index) {
-      this.category = this.category.filter((_, i) => i !== index);
-      console.log(this.category);
-    },
-    onCategoryAdd() {
-      this.category = [...this.category, ""];
-    },
-    onOptionChange(index, value) {
-      this.options = this.options.map((option, i) =>
-        i === index ? value : option
-      );
-    },
-    onOptionDelete(index) {
-      this.options = this.options.filter((_, i) => i !== index);
-    },
-    onOptionAdd() {
-      this.options = [...this.options, { title: "", values: [] }];
-    },
     onSave() {
-      console.log({
+      this.addItemToCatalog({
         id: Date.now(),
         name: this.name,
-        brand: this.brand,
         description: this.description,
         information: this.information,
         price: {
@@ -247,55 +163,92 @@ export default {
         images: this.images,
         count: this.count,
         category: this.category,
-        options: this.options,
-      });
+        subcategory: this.subcategory,
+      })
+      this.$router.replace('/')
     },
   },
 };
 </script>
 
 <style scoped lang="less">
-header {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-main {
+.add-to-catalog-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding-bottom: 24px;
-}
-.name-wrapper {
-  display: flex;
-  gap: 24px;
-}
-.small-input {
-  width: 50%;
-}
-.photo {
-  width: 100px;
-  height: 100px;
-  object-fit: scale-down;
-  border-radius: 4px;
-  background-color: white;
-  border: 1px solid black;
-}
-.add-button {
-  width: 200px;
-}
-.images {
-  display: flex;
-  gap: 16px;
-}
-.img-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-}
-.save-wrapper {
-  display: flex;
-  justify-content: center;
+  gap: 45px;
+  padding-bottom: 50px;
+
+  &__inputs-block {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__block-title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 54px;
+    text-align: left;
+    color: @cBaseTen;
+  }
+
+  &__inputs-container {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  &__name-input {
+    flex: 2;
+  }
+
+  &__description-input {
+    flex: 3;
+  }
+
+  &__information-rows {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 40px;
+  }
+
+  &__information-row {
+    width: 275px;
+  }
+
+  &__prices-quantity-input,
+  &__category-input {
+    flex: 1;
+  }
+
+  &__images {
+    display: flex;
+    gap: 16px;
+  }
+
+  &__image-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  &__image {
+    width: 100px;
+    height: 100px;
+    object-fit: scale-down;
+    border-radius: 4px;
+    background-color: white;
+    border: 1px solid black;
+  }
+
+  &__save-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__save {
+    width: 200px;
+  }
 }
 </style>

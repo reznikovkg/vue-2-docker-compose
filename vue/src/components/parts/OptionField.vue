@@ -1,31 +1,14 @@
 <template>
   <div class="option">
     <div class="name-wrapper">
-      <CustomInput
-        label="Название опции"
-        placeholder="Введите название"
-        :value="option.title"
-        @input="onNameChange"
-      />
-      <CustomButton type="delete" @click="onDelete" />
+      <CustomInput label="Название опции" placeholder="Введите название" :value="option.title" @input="onNameChange" />
+      <CustomButton :type="'delete'" @click="onDelete" />
     </div>
     <div class="options-wrapper" v-if="option.values.length">
-      <div
-        class="options-fields"
-        v-for="(item, index) in option.values"
-        :key="index"
-      >
-        <CustomInput
-          placeholder="Название"
-          :value="item.name"
-          @input="(event) => onItemNameChange(event, index)"
-        />
-        <CustomInput
-          placeholder="Значение"
-          :value="item.value"
-          @input="(event) => onItemValueChange(event, index)"
-        />
-        <CustomButton type="delete" @click="() => onItemDelete(index)" />
+      <div class="options-fields" v-for="(item, index) in option.values" :key="index">
+        <CustomInput placeholder="Название" :value="item.name" @input="(event) => onItemNameChange(event, index)" />
+        <CustomInput placeholder="Значение" :value="item.value" @input="(event) => onItemValueChange(event, index)" />
+        <CustomButton :type="'delete'" @click="() => onItemDelete(index)" />
       </div>
     </div>
     <CustomButton class="add-button" @click="onAdd">
@@ -91,21 +74,25 @@ export default {
   flex-direction: column;
   gap: 36px;
 }
+
 .name-wrapper {
   display: flex;
   gap: 16px;
   align-items: flex-end;
 }
+
 .options-wrapper {
   display: flex;
   gap: 24px;
 }
+
 .options-fields {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
 }
+
 .add-button {
   width: 200px;
 }
