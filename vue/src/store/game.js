@@ -1,12 +1,18 @@
 import Vue from "vue";
 import levels from '@/assets/levels.json';
+import { validateFlower, validateWall, validateGround } from "@/GameEngine/GridValidationFunctions"
 
 export default {
   namespaced: true,
   state: {
     grid: [],
     selectedGrid: [],
-    cellTypes: [1, 2, 3, 4],
+    cellTypes: [1, 2, 3, 4, 5],
+    validationResults: {
+      flower: "",
+      wall: "",
+      ground: "",
+    }
   },
   getters: {
     getGrid: (state) => state.grid,
@@ -14,16 +20,19 @@ export default {
     gridColumns: (state) => state.grid[0].length,
     selectedGrid: (state) => state.selectedGrid,
     cellTypes: (state) => state.cellTypes,
+    getValidationResults: (state) => state.validationResults,
   },
   mutations: {
     setGrid(state, grid) {
       state.grid = grid;
+      validateGrid(state)
     },
     setSelectedGrid(state, selectedGrid) {
       state.selectedGrid = selectedGrid;
     },
     updateCell(state, { row, col, cellType }) {
       state.grid[row][col] = cellType;
+      validateGrid(state)
     },
     toggleSelectedCell(state, { row, col }) {
       Vue.set(state.selectedGrid[row], col, !state.selectedGrid[row][col]);
@@ -57,6 +66,8 @@ export default {
         }
         return row;
       });
+
+      validateGrid(state)
     },
   },
   actions: {
@@ -83,3 +94,14 @@ export default {
     },
   },
 };
+
+function validateGrid(state) {
+  const flowerValidation = validateFlower(state.grid);
+  const wallValidation = validateWall(state.grid);
+  const groundValidation = validateGround(state.grid);
+  state.validationResults = {
+    flower: flowerValidation,
+    wall: wallValidation,
+    ground: groundValidation,
+  }
+}

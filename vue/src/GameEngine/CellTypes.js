@@ -3,4 +3,5 @@ export default {
   2: 'blue',
   3: 'purple',
   4: 'green',
+  5: 'brown',
 };

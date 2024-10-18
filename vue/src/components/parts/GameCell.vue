@@ -44,6 +44,10 @@ export default {
     &--green {
       background-color: rgb(13, 255, 0);
     }
+
+    &--brown {
+      background-color: rgb(53, 14, 14);
+    }
   }
 }
 </style>
