@@ -1,4 +1,4 @@
-<template>
+<template> 
   <div class="quiz">
     <h1 class="quiz__title">Опрос</h1>
 
@@ -6,7 +6,7 @@
       <p class="quiz__question-text">{{ currentQuestion.question }}</p>
 
       <!-- Вопросы с выбором одного или нескольких вариантов -->
-      <ul v-if="currentQuestion.type === 'single' || currentQuestion.type === 'multiple'" class="quiz__answers-list">
+      <ul v-if="currentQuestion.type === QUESTION_TYPES.SINGLE || currentQuestion.type === QUESTION_TYPES.MULTIPLE" class="quiz__answers-list">
         <li v-for="(answer, index) in currentQuestion.answers"
             :key="index"
             :class="['quiz__answer-item', { 'quiz__answer-item--selected': selectedAnswers.includes(answer.value) }]"
@@ -16,15 +16,27 @@
       </ul>
 
       <!-- Вопрос с текстовым ответом -->
-      <div v-if="currentQuestion.type === 'text'" class="quiz__text-answer-section">
+      <div v-if="currentQuestion.type === QUESTION_TYPES.TEXT" class="quiz__text-answer-section">
         <textarea class="quiz__text-answer" v-model="textAnswer"></textarea>
       </div>
     </div>
 
     <!-- Навигация -->
     <div class="quiz__navigation-buttons" v-if="!isQuizComplete">
-      <button class="quiz__nav-button" @click="prevQuestion" :disabled="currentQuestionIndex === 0">Предыдущий</button>
-      <button class="quiz__nav-button" @click="nextQuestion" :disabled="!isAnswered">Следующий</button>
+      <button 
+        class="quiz__nav-button" 
+        @click="prevQuestion" 
+        :disabled="currentQuestionIndex === 0"
+      >
+        Предыдущий
+      </button>
+      <button 
+        class="quiz__nav-button" 
+        @click="nextQuestion" 
+        :disabled="!isAnswered"
+      >
+        Следующий
+      </button>
     </div>
 
     <!-- Результат -->
@@ -36,6 +48,12 @@
 </template>
 
 <script>
+const QUESTION_TYPES = {
+  SINGLE: 'single',
+  MULTIPLE: 'multiple',
+  TEXT: 'text',
+};
+
 export default {
   props: {
     questions: Array,
@@ -47,6 +65,7 @@ export default {
       textAnswer: '',
       answers: [],
       isQuizComplete: false,
+      QUESTION_TYPES,
     };
   },
   computed: {
@@ -54,7 +73,7 @@ export default {
       return this.questions[this.currentQuestionIndex];
     },
     isAnswered() {
-      if (this.currentQuestion.type === 'text') {
+      if (this.currentQuestion.type === QUESTION_TYPES.TEXT) {
         return this.textAnswer.trim() !== '';
       }
       return this.selectedAnswers.length > 0;
@@ -63,11 +82,12 @@ export default {
       let correct = 0;
 
       this.questions.forEach((question, index) => {
-        if (question.type === 'text') {
+        if (question.type === QUESTION_TYPES.TEXT) {
           if (this.textAnswer.trim() === question.correctAnswer) {
             correct++;
           }
-        } else if (question.type === 'single' || question.type === 'multiple') {
+        } else if (question.type === QUESTION_TYPES.SINGLE || question.type === QUESTION_TYPES.MULTIPLE) {
+          
           const correctAnswers = Array.isArray(question.correctAnswers) ? question.correctAnswers : [question.correctAnswer];
           const userAnswers = Array.isArray(this.answers[index]) ? this.answers[index] : [this.answers[index]];
           if (JSON.stringify(correctAnswers.sort()) === JSON.stringify(userAnswers.sort())) {
@@ -81,7 +101,7 @@ export default {
   },
   methods: {
     selectAnswer(value) {
-      if (this.currentQuestion.type === 'single') {
+      if (this.currentQuestion.type === QUESTION_TYPES.SINGLE) {
         this.selectedAnswers = [value];
       } else {
         if (this.selectedAnswers.includes(value)) {
@@ -99,11 +119,12 @@ export default {
       }
     },
     nextQuestion() {
-      if (this.currentQuestion.type === 'text') {
+      if (this.currentQuestion.type === QUESTION_TYPES.TEXT) {
         this.answers[this.currentQuestionIndex] = this.textAnswer.trim();
       } else {
         this.answers[this.currentQuestionIndex] = this.selectedAnswers;
       }
+
       if (this.currentQuestionIndex === this.questions.length - 1) {
         this.isQuizComplete = true;
       } else {
