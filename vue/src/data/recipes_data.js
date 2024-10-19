@@ -169,10 +169,10 @@ export default [
     },
     {
       id: 5,
-      name: 'Рецепт со всеми игредиентами',
-      dish_id: 5,
+      name: 'Тест 6',
+      dish_id: 6,
       cover: 'https://sun9-77.userapi.com/impg/4fMiOVKsG5HiHUxtesNs5_M7VHxypnmrHagyTw/Q2T79RYScIw.jpg?size=720x785&quality=96&sign=62a447417312edf97bb8a78a314e9324&type=album',
-      description: 'Экспериментальный рецепт для регулировки порция-игредиент',
+      description: 'Тест 6',
       portions: 1,
       time: 0,
       ingredients: [
@@ -217,5 +217,278 @@ export default [
         }
       ],
       presentation_step: null
+    },
+    {
+      id: 7,
+      name: 'Тест 7',
+      dish_id: 7,
+      cover: 'https://sun9-77.userapi.com/impg/4fMiOVKsG5HiHUxtesNs5_M7VHxypnmrHagyTw/Q2T79RYScIw.jpg?size=720x785&quality=96&sign=62a447417312edf97bb8a78a314e9324&type=album',
+      description: 'Тест 7',
+      portions: 1,
+      time: 0,
+      ingredients: [
+        {
+          ingredient_id: 1,
+          amount: 0.5
+        },
+        {
+          ingredient_id: 2,
+          amount: 200
+        },
+        {
+          ingredient_id: 3,
+          amount: 300
+        },
+        {
+          ingredient_id: 4,
+          amount: 350
+        },
+        {
+          ingredient_id: 5,
+          amount: 2
+        },
+        {
+          ingredient_id: 6,
+          amount: 1
+        }
+      ],
+      preparation_step: 'Have fun',
+      steps: [
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi8zMnpRQkouanBlZw.webp',
+          description: 'Нарежьте кружочками банан. Выложите половину первым слоем в банку.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi9ha2lmaGguanBlZw.webp',
+          description: 'Насыпьте половину овсяных хлопьев, слегка посолите. Залейте половиной йогурта.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi9mQ0Q1eGMuanBlZw.webp',
+          description: 'Повторите слои. Закройте банку крышкой. Уберите в холодильник на 8-12 часов или на ночь.'
+        }
+      ],
+      presentation_step: null
+    },
+    {
+      id: 8,
+      name: 'Тест 8',
+      dish_id: 8,
+      cover: 'https://sun9-77.userapi.com/impg/4fMiOVKsG5HiHUxtesNs5_M7VHxypnmrHagyTw/Q2T79RYScIw.jpg?size=720x785&quality=96&sign=62a447417312edf97bb8a78a314e9324&type=album',
+      description: 'Тест 8',
+      portions: 1,
+      time: 0,
+      ingredients: [
+        {
+          ingredient_id: 1,
+          amount: 0.5
+        },
+        {
+          ingredient_id: 2,
+          amount: 200
+        },
+        {
+          ingredient_id: 3,
+          amount: 300
+        },
+        {
+          ingredient_id: 4,
+          amount: 350
+        },
+        {
+          ingredient_id: 5,
+          amount: 2
+        },
+        {
+          ingredient_id: 6,
+          amount: 1
+        }
+      ],
+      preparation_step: 'Have fun',
+      steps: [
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi8zMnpRQkouanBlZw.webp',
+          description: 'Нарежьте кружочками банан. Выложите половину первым слоем в банку.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi9ha2lmaGguanBlZw.webp',
+          description: 'Насыпьте половину овсяных хлопьев, слегка посолите. Залейте половиной йогурта.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi9mQ0Q1eGMuanBlZw.webp',
+          description: 'Повторите слои. Закройте банку крышкой. Уберите в холодильник на 8-12 часов или на ночь.'
+        }
+      ],
+      presentation_step: null
+    },
+    {
+      id: 9,
+      name: 'Тест 9',
+      dish_id: 9,
+      cover: 'https://sun9-77.userapi.com/impg/4fMiOVKsG5HiHUxtesNs5_M7VHxypnmrHagyTw/Q2T79RYScIw.jpg?size=720x785&quality=96&sign=62a447417312edf97bb8a78a314e9324&type=album',
+      description: 'Тест 9',
+      portions: 1,
+      time: 0,
+      ingredients: [
+        {
+          ingredient_id: 1,
+          amount: 0.5
+        },
+        {
+          ingredient_id: 2,
+          amount: 200
+        },
+        {
+          ingredient_id: 3,
+          amount: 300
+        },
+        {
+          ingredient_id: 4,
+          amount: 350
+        },
+        {
+          ingredient_id: 5,
+          amount: 2
+        },
+        {
+          ingredient_id: 6,
+          amount: 1
+        }
+      ],
+      preparation_step: 'Have fun',
+      steps: [
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi8zMnpRQkouanBlZw.webp',
+          description: 'Нарежьте кружочками банан. Выложите половину первым слоем в банку.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi9ha2lmaGguanBlZw.webp',
+          description: 'Насыпьте половину овсяных хлопьев, слегка посолите. Залейте половиной йогурта.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi9mQ0Q1eGMuanBlZw.webp',
+          description: 'Повторите слои. Закройте банку крышкой. Уберите в холодильник на 8-12 часов или на ночь.'
+        }
+      ],
+      presentation_step: null
+    },
+    {
+      id: 10,
+      name: 'Тест 10',
+      dish_id: 10,
+      cover: 'https://sun9-77.userapi.com/impg/4fMiOVKsG5HiHUxtesNs5_M7VHxypnmrHagyTw/Q2T79RYScIw.jpg?size=720x785&quality=96&sign=62a447417312edf97bb8a78a314e9324&type=album',
+      description: 'Тест 10',
+      portions: 1,
+      time: 0,
+      ingredients: [
+        {
+          ingredient_id: 1,
+          amount: 0.5
+        },
+        {
+          ingredient_id: 2,
+          amount: 200
+        },
+        {
+          ingredient_id: 3,
+          amount: 300
+        },
+        {
+          ingredient_id: 4,
+          amount: 350
+        },
+        {
+          ingredient_id: 5,
+          amount: 2
+        },
+        {
+          ingredient_id: 6,
+          amount: 1
+        }
+      ],
+      preparation_step: 'Have fun',
+      steps: [
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi8zMnpRQkouanBlZw.webp',
+          description: 'Нарежьте кружочками банан. Выложите половину первым слоем в банку.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi9ha2lmaGguanBlZw.webp',
+          description: 'Насыпьте половину овсяных хлопьев, слегка посолите. Залейте половиной йогурта.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy8yMDIzMTIyMi9mQ0Q1eGMuanBlZw.webp',
+          description: 'Повторите слои. Закройте банку крышкой. Уберите в холодильник на 8-12 часов или на ночь.'
+        }
+      ],
+      presentation_step: null
+    },
+    {
+      id: 11,
+      name: 'Тест 11',
+      dish_id: 11,
+      cover: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9yZWNpcGVzLzEyOTA1NS9jb3ZlcnMvM1o3U0FxLmpwZWc.webp',
+      description: 'Тест 11',
+      portions: 2,
+      time: 30,
+      ingredients: [
+        {
+          ingredient_id: 1,
+          amount: 0.5
+        },
+        {
+          ingredient_id: 2,
+          amount: 200
+        },
+      ],
+      preparation_step: 'Промойте помидоры, огурцы, листья салата и перец. Маслины из консервной банки переложите в тару. Достаньте из упаковки сыр и положите в блюдце. В отдельную тару насыпьте соль и орегано сухой. В стакан налейте масло.',
+      steps: [
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9yZWNpcGVzLzEyOTA1NS9zdGVwcy8zTEJHWVkuanBlZw.webp',
+          description: 'Перец, огурцы, помидоры, салат помойте и высушите. Помидоры и огурец нарежьте кусочками, половину перца очистите и нарежьте кубиками.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9yZWNpcGVzLzEyOTA1NS9zdGVwcy8zOWtObVQuanBlZw.webp',
+          description: 'Лук очистите и нарежьте полукольцами. Листья салата порвите руками и выложите на тарелку.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9yZWNpcGVzLzEyOTA1NS9zdGVwcy8zQUhlZTcuanBlZw.webp',
+          description: 'Сверху выложите помидоры, огурцы, сладкий перец и лук, посолите. Разложите между овощами маслины и сыр, посыпьте орегано. Полейте сверху соком и оливковым маслом.'
+        }
+      ],
+      presentation_step: null,
+    },   {
+      id: 12,
+      name: 'Тест 12',
+      dish_id: 12,
+      cover: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9yZWNpcGVzLzEyOTA1NS9jb3ZlcnMvM1o3U0FxLmpwZWc.webp',
+      description: 'Тест 12',
+      portions: 2,
+      time: 30,
+      ingredients: [
+        {
+          ingredient_id: 1,
+          amount: 0.5
+        },
+        {
+          ingredient_id: 2,
+          amount: 200
+        },
+      ],
+      preparation_step: 'Промойте помидоры, огурцы, листья салата и перец. Маслины из консервной банки переложите в тару. Достаньте из упаковки сыр и положите в блюдце. В отдельную тару насыпьте соль и орегано сухой. В стакан налейте масло.',
+      steps: [
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9yZWNpcGVzLzEyOTA1NS9zdGVwcy8zTEJHWVkuanBlZw.webp',
+          description: 'Перец, огурцы, помидоры, салат помойте и высушите. Помидоры и огурец нарежьте кусочками, половину перца очистите и нарежьте кубиками.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9yZWNpcGVzLzEyOTA1NS9zdGVwcy8zOWtObVQuanBlZw.webp',
+          description: 'Лук очистите и нарежьте полукольцами. Листья салата порвите руками и выложите на тарелку.'
+        },
+        {
+          img: 'https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9yZWNpcGVzLzEyOTA1NS9zdGVwcy8zQUhlZTcuanBlZw.webp',
+          description: 'Сверху выложите помидоры, огурцы, сладкий перец и лук, посолите. Разложите между овощами маслины и сыр, посыпьте орегано. Полейте сверху соком и оливковым маслом.'
+        }
+      ],
+      presentation_step: null,
     }
   ]
