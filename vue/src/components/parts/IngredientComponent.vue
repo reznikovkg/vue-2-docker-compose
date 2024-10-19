@@ -35,10 +35,10 @@ export default {
       return this.getIngredientById(id).name
     },
     makeIngredientsList(ingredients) {
-      var ingredientsString = ""
-      var countOfIngredients = ingredients.length-1
+      let ingredientsString = ""
+      const countOfIngredients = ingredients.length-1
 
-      for (var i = 0; i < countOfIngredients; i++){
+      for (let i = 0; i < countOfIngredients; i++){
         ingredientsString += this.getIngredientName(ingredients[i].ingredient_id) + ", ";
       }
 

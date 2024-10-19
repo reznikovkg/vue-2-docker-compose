@@ -1,12 +1,12 @@
 <template>
   <div class="recipe">
     <div class="recipe__image">
-      <img :src="cover"/>
+      <img :src="cover" />
     </div>
     <div class="recipe__content">
       <div class="recipe__content__name">
         <RouterLink :to="{ name: ROUTES.RECIPE, params: { id: id } }">
-          {{name}}
+          {{ name }}
         </RouterLink>
       </div>
       <div class="recipe__content__description">
@@ -15,7 +15,7 @@
       <div class="recipe__content__ingredients">
         <div>
           <span> Продукты: </span>
-            {{ makeIngredientsList(ingredients) }}
+          {{ makeIngredientsList(ingredients) }}
         </div>
       </div>
     </div>
@@ -48,21 +48,19 @@ export default {
       return this.getIngredientById(id).name
     },
     makeIngredientsList(ingredients) {
-      var ingredientsString = ""
-      var countOfIngredients = ingredients.length-1
-      
-      for (var i = 0; i < countOfIngredients; i++){
-        ingredientsString += this.getIngredientName(ingredients[i].ingredient_id) + ", "
-      }
+      let ingredientsString = ""
 
-      ingredientsString += this.getIngredientName(ingredients[ingredients.length-1].ingredient_id) + "."
+      ingredients.forEach(ingredient => {
+        ingredientsString += `${this.getIngredientName(ingredient.ingredient_id)}, `
+      })
+      ingredientsString = ingredientsString.slice(0, ingredientsString.lastIndexOf(',')) + '.'
 
-      return ingredientsString;
+      return ingredientsString
     }
   },
 }
 </script>
-  
+
 <style lang="less" scoped>
 .recipe {
   margin-left: 20px;
@@ -110,4 +108,3 @@ export default {
   }
 }
 </style>
-  

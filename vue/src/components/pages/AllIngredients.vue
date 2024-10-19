@@ -6,11 +6,12 @@
     <RouterView />
     <h2>Страница со всеми ингредиентами</h2>
     <div class="all-ingredients__container">
-      <IngredientComponent v-for="ingredient in ingredients" :key="ingredient.id"
+      <IngredientComponent 
+        v-for="ingredient in ingredients" 
+        :key="ingredient.id" 
         :id="ingredient.id"
-        :name="ingredient.name"
-        :cover="ingredient.cover"
-      />
+        :name="ingredient.name" 
+        :cover="ingredient.cover" />
     </div>
   </div>
 </template>
@@ -29,25 +30,10 @@ export default {
     ROUTES() {
       return ROUTES
     },
-    ...mapGetters('ingredients', [
-      'getIngredients'
-    ]),
-    ingredients() {
-      var ingredients = this.getIngredients || null
-      localStorage.setItem('ingredients', JSON.stringify(ingredients))
-
-      return this.getIngredients || null
-    }
-  },
-  mounted() {
-    if (localStorage.getItem('ingredients')) {
-      try {
-        this.ingredients = JSON.parse(localStorage.getItem('ingredients'));
-      } catch (e) {
-        localStorage.removeItem('ingredients');
-      }
-    }
-  },
+    ...mapGetters('ingredients', {
+      ingredients: 'getIngredients'
+    })
+  }
 }
 </script>
 
