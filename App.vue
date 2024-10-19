@@ -17,18 +17,30 @@ export default {
       questions: [
         {
           question: "Какой город является столицей России?",
-            answers: ["Москва", "Калининград", "Воронеж", "Санкт-Петербург"],
+          type: "single",
+          answers: [
+            { label: "Москва", value: 0 },
+            { label: "Калининград", value: 1 },
+            { label: "Воронеж", value: 2 },
+            { label: "Санкт-Петербург", value: 3 },
+          ],
           correctAnswer: 0,
         },
         {
-          question: "Сколько будет 2 + 2?",
-            answers: ["3", "4", "5", "6"],
-          correctAnswer: 1,
+          question: "Какие из этих городов находятся в России?",
+          type: "multiple",
+          answers: [
+            { label: "Москва", value: 0 },
+            { label: "Париж", value: 1 },
+            { label: "Казань", value: 2 },
+            { label: "Берлин", value: 3 }
+          ],
+          correctAnswers: [0, 2]
         },
         {
-          question: "Какая команда отвечает за вывод информации на экран?",
-            answers: ["print", "for", "if", "while"],
-          correctAnswer: 0,
+          question: "Чему равен квадратный корень из 144?",
+          type: "text",
+          correctAnswer: "12",
         },
       ],
     };
@@ -36,7 +48,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   text-align: center;
