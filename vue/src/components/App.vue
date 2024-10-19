@@ -21,6 +21,8 @@ export default {
 body {
   margin: 0;
   padding: 0;
+  background-color: @cBaseOne;
+
   * {
     box-sizing: border-box;
   }
@@ -41,7 +43,12 @@ section {
   }
 }
 
-h1, h2, h3, h4, h5, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
   font-family: @ffOne;
   color: @cBaseThree;
   margin: 0;

@@ -1,106 +1,169 @@
 <template>
-    <PageLayout>
-        <section class="p-16">
-            <h1> Корзина </h1>
-            
-            <div class="cart">
-                <div class="cart__item"> 
-                    <CartItem v-for="(item, index) in getCart" 
-                        :key="index" 
-                        :item=item
-                        @changeCount="(value) => onChangeCount(item, value)"
-                    />
-                </div>
+  <PageLayout>
+    <h1 class="header">Корзина</h1>
+    <div class="cart">
+      <div class="cart__items">
+        <CartItem
+          v-for="(item, index) in getCart"
+          :key="index"
+          :item="item"
+          @changeCount="(value) => onChangeCount(item, value)"
+        />
+      </div>
+      <div class="cart__information">
+        <div class="cart__information__price">
+          <p class="cart__information__price__info">Товаров: {{ amount }}</p>
+          <p class="cart__information__price__original-sum">
+            {{ sumOriginal }} ₽
+          </p>
+        </div>
+        <div class="cart__information__price" v-if="sumDiscount > 0">
+          <p class="cart__information__price__info">Скидка</p>
+          <p class="cart__information__price__discount-sum">
+            - {{ sumDiscount }} ₽
+          </p>
+        </div>
+        <span class="cart__information__divider" />
+        <div class="cart__information__price">
+          <p class="cart__information__price__info">Итог</p>
+          <p class="cart__information__price__final-sum">
+            {{ calculatingAmount }} ₽
+          </p>
+        </div>
 
-                <div class="cart__information">
-                    <p> Общая сумма заказа {{ calculatingAmount }}  </p>
-                    <p> Количество товаров {{ calculatingCount }}  </p>
-                    <button @click="removeAllItemsFromCart"> Удалить все </button>
-                </div>
-                
-            </div>
-            
-        </section>
-    </PageLayout>
+        <CustomButton @click="removeAllItemsFromCart">Удалить все</CustomButton>
+      </div>
+    </div>
+  </PageLayout>
 </template>
 
 <script>
-import PageLayout from '../parts/PageLayout.vue';
-import CartItem from '../parts/CartItem.vue';
-import { mapGetters, mapMutations } from 'vuex';
+import PageLayout from "../parts/PageLayout.vue";
+import CartItem from "../parts/CartItem.vue";
+import CustomButton from "../parts/Button.vue";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
-    name: 'CartPage',
-    mounted() {
-        this.addItemToCart({
-            "id": "111",
-            "name": "Футболка",
-            "brand": "Nike",
-            "price": {
-                "currentPrice": "9000",
-                "discount": "10%",
-                "originalPrice": "10000"
-            },
-            "images": [
-                {
-                    "url": "https://cdn1.ozone.ru/s3/multimedia-r/c600/6855038235.jpg",
-                    "type": "main"
-                },
-                {
-                    "url": "https://media.gq.com/photos/5e6944f74d6be70008ac16c2/master/w_2000,h_1333,c_limit/Uniqlo-U-crew-neck-short-sleeve-T-shirt.jpg",
-                    "type": "secondary"
-                }
-            ],
-            "count": "5",
-            "selectCount": "2",
-            "options": [
-                {
-                    "title": "sizes",
-                    "value": "S",
-                }
-            ]
-        })
+  name: "CartPage",
+  components: {
+    PageLayout,
+    CartItem,
+    CustomButton,
+  },
+  methods: {
+    ...mapMutations("cart", [
+      "addItemToCart",
+      "removeAllItemsFromCart",
+      "removeItemFromCart",
+      "changeItem",
+    ]),
+    onChangeCount(item, value) {
+      const count = Number(item.selectCount) + Number(value);
+      if (count <= item.count && count > 0) {
+        item.selectCount = count;
+        this.changeItem(item);
+      }
+      if (count === 0) this.removeItemFromCart(item);
     },
-    methods: {
-        ...mapMutations("cart", ["addItemToCart", "removeAllItemsFromCart"]),
-        onChangeCount(item, value) { 
-            const count = Number(item.selectCount) + Number(value);
-            if (count <= item.count && count > 0) {
-                item.selectCount = count;
-            }
-        },
+  },
+  computed: {
+    ...mapGetters("cart", ["getCart"]),
+    amount() {
+      return this.getCart.length;
     },
-    computed: {
-        ...mapGetters("cart", ["getCart"]),
-        calculatingAmount() {
-            const products = this.getCart
-            return products.reduce((sum, product) => sum + Number(product.price.currentPrice * product.selectCount), 0)
-        },
-        calculatingCount() {
-            const products = this.getCart;
-            return products.length
-        }
+    calculatingAmount() {
+      const products = this.getCart;
+      return products.reduce(
+        (sum, product) =>
+          sum +
+          Number((product.price?.currentPrice ?? 0) * product.selectCount),
+        0
+      );
     },
-    components: {
-        PageLayout,
-        CartItem,
-    }
-}
+    sumOriginal() {
+      const products = this.getCart;
+      return products.reduce(
+        (sum, product) =>
+          sum +
+          Number((product.price?.originalPrice ?? 0) * product.selectCount),
+        0
+      );
+    },
+    sumDiscount() {
+      return this.sumOriginal - this.calculatingAmount;
+    },
+  },
+};
 </script>
 
 <style scoped lang="less">
-.cart{
+.header {
+  font-family: Rubik;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 96px;
+  text-align: left;
+  margin-bottom: 60px;
+}
+.cart {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+
+  &__items {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    gap: 24px;
+    height: 470px;
+    width: 896px;
 
-    &__item {
-        height: 100%;
-        width: 70%;
-    }
+    overflow: auto;
+  }
 
-    &__information {
-        display: flex;
-        flex-direction: column;
+  &__information {
+    width: 272px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__divider {
+      height: 2px;
+      background-color: @cDivider;
     }
+    &__price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      &__info {
+        font-family: Rubik;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        color: @cBaseNine;
+      }
+      &__original-sum {
+        font-family: Rubik;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        color: @cBaseTen;
+      }
+      &__discount-sum {
+        font-family: Rubik;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 24px;
+        color: @cBaseTwelve;
+      }
+      &__final-sum {
+        font-family: Rubik;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 36px;
+        text-align: right;
+        color: @cBaseBlack;
+      }
+    }
+  }
 }
 </style>

@@ -26,14 +26,15 @@ export default {
 .button {
   height: 40px;
   border-radius: 4px;
-  background-color: white;
-  border: 1px solid black;
+  background-color: @cBaseTwelve;
+  color: @cBaseWhite;
   cursor: pointer;
+  border: none;
   &:hover {
-    background-color: #0000000d;
+    background-color: @cBaseFour;
   }
-  &:focus {
-    background-color: white;
+  &:active {
+    background-color: @cBaseSix;
   }
 }
 .delete-button {
