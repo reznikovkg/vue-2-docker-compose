@@ -1,8 +1,8 @@
 <template>
   <div class="desk">
     <div>
-      <GameDeskLine :cards="enemyRangeCards" :isMelee="false" />
-      <GameDeskLine :cards="enemyMeleeCards" :isMelee="true" />
+      <GameDeskLine :cards="opponentRangeCards" :isMelee="false" />
+      <GameDeskLine :cards="opponentMeleeCards" :isMelee="true" />
     </div>
     <div class="separator">
       <span class="line" />
@@ -27,31 +27,30 @@ export default {
   props: {
     playerMeleeCards: {
       type: Array,
-      default () {
+      default() {
         return [];
       },
     },
     playerRangeCards: {
       type: Array,
-      default () {
+      default() {
         return [];
       },
     },
-    enemyMeleeCards: {
+    opponentMeleeCards: {
       type: Array,
-      default () {
+      default() {
         return [];
       },
     },
-    enemyRangeCards: {
+    opponentRangeCards: {
       type: Array,
-      default () {
+      default() {
         return [];
       },
     },
   },
 }
-
 </script>
 
 <style scoped lang="less">
