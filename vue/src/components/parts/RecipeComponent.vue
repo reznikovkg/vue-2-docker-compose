@@ -1,21 +1,21 @@
 <template>
   <div class="recipe">
     <div class="recipe__image">
-      <img :src="cover" />
+      <img :src="recipe.cover" />
     </div>
     <div class="recipe__content">
       <div class="recipe__content__name">
-        <RouterLink :to="{ name: ROUTES.RECIPE, params: { id: id } }">
-          {{ name }}
+        <RouterLink :to="{ name: ROUTES.RECIPE, params: { id: recipe.id } }">
+          {{ recipe.name }}
         </RouterLink>
       </div>
       <div class="recipe__content__description">
-        {{ description }}
+        {{ recipe.description }}
       </div>
       <div class="recipe__content__ingredients">
         <div>
           <span> Продукты: </span>
-          {{ makeIngredientsList(ingredients) }}
+          {{ makeIngredientsList(recipe.ingredients) }}
         </div>
       </div>
     </div>
@@ -29,11 +29,7 @@ import { mapGetters } from 'vuex';
 export default {
   name: "RecipeComponent",
   props: {
-    id: Number,
-    name: String,
-    description: String,
-    ingredients: Array,
-    cover: String
+    recipe: Object
   },
   computed: {
     ROUTES() {

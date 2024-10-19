@@ -2,10 +2,10 @@
   <div class="ingredient">
     <div class="ingredient__content">
       <div class="ingredient__content__image">
-        <img :src="cover"/>
+        <img :src="ingredient.cover"/>
       </div>
       <div class="ingredient__content__name">
-        <RouterLink :to="{ name: ROUTES.RECIPE, params: { id:id } }">{{name}}</RouterLink>
+        <RouterLink :to="{ name: ROUTES.RECIPE, params: { id:ingredient.ingredient_id } }">{{ ingredient.name }}</RouterLink>
       </div>
     </div>
   </div>
@@ -13,40 +13,17 @@
   
 <script>
 import { ROUTES } from '@/router/routes';
-import { mapGetters } from 'vuex';
 
 export default {
   name: "IngredientComponent",
   props: {
-    id: Number,
-    name: String,
-    cover: String
+    ingredient: Object
   },
   computed: {
     ROUTES() {
       return ROUTES
-    },
-    ...mapGetters('ingredients', [
-      'getIngredients'
-    ])
-  },
-  methods: {
-    getIngredientName(id) {
-      return this.getIngredientById(id).name
-    },
-    makeIngredientsList(ingredients) {
-      let ingredientsString = ""
-      const countOfIngredients = ingredients.length-1
-
-      for (let i = 0; i < countOfIngredients; i++){
-        ingredientsString += this.getIngredientName(ingredients[i].ingredient_id) + ", ";
-      }
-
-      ingredientsString += this.getIngredientName(ingredients[countOfIngredients].ingredient_id) + ".";
-
-      return ingredientsString;
     }
-  },
+  }
 }
 </script>
   

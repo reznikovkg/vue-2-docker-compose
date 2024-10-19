@@ -9,9 +9,7 @@
       <IngredientComponent 
         v-for="ingredient in ingredients" 
         :key="ingredient.id" 
-        :id="ingredient.id"
-        :name="ingredient.name" 
-        :cover="ingredient.cover" />
+        :ingredient="ingredient" />
     </div>
   </div>
 </template>

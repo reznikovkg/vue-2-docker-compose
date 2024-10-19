@@ -8,12 +8,8 @@
     <div class="recipes-container">
       <RecipeComponent 
         v-for="recipe in recipesToShow" 
-        :key="recipe.id" 
-        :id="recipe.id" 
-        :name="recipe.name"
-        :description="recipe.description" 
-        :cover="recipe.cover" 
-        :ingredients="recipe.ingredients" 
+        :key="recipe.id"
+        :recipe="recipe"
       />
       <RouterView />
     </div>
