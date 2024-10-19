@@ -1,13 +1,19 @@
 import { Player } from '@/engine/player';
-import { GamePhases, INIT_DECK, ROUNDS_TO_WIN, TurnStates, Winners } from '@/engine/constants';
+import { GamePhases, INIT_DECK, ROUNDS_TO_WIN, TurnStates, Winners, TIME_TO_TURN_MS } from '@/engine/constants';
 
 export class GameEngine {
   player = new Player(INIT_DECK);
-  opponent = new Player(INIT_DECK);
+  opponent =  new Player(INIT_DECK);
   currentPhase = GamePhases.MULLIGAN;
   currentTurn = TurnStates.PLAYER;
   round = 1;
   opponentTurnsQuantity = 0;
+
+  constructor() {
+    setTimeout(() => {
+      this.endPlayerTurn();
+    }, TIME_TO_TURN_MS);
+  }
 
   performMulligan(indexesToRemove) {
     this.player.performMulligan(indexesToRemove);
@@ -46,6 +52,10 @@ export class GameEngine {
         this.opponent.pass();
       }
     }
+
+    setTimeout(() => {
+      this.endPlayerTurn();
+    }, TIME_TO_TURN_MS);
 
     this.currentTurn = TurnStates.PLAYER;
   }

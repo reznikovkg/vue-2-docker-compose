@@ -5,4 +5,7 @@ export default {
   state: {
     engine: new GameEngine(),
   },
+  getters: {
+    getGameEngine: (state) => state.engine,
+  },
 }

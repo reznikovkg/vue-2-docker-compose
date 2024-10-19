@@ -17,20 +17,31 @@ export class Board {
   }
 
   addFirstLineCard(card) {
-    return this.addCardToLine(card, this.firstLineCards);
-  }
-
-  addSecondLineCard(card) {
-    return this.addCardToLine(card, this.secondLineCards);
-  }
-
-  addCardToLine(card, line) {
-    if (MAX_CARDS_PER_LINE < line.length) {
-      line.push(card);
+    if (MAX_CARDS_PER_LINE > this.firstLineCards.length) {
+      this.firstLineCards = [...this.firstLineCards, card]
       return true;
     }
 
     return false;
+  }
+
+  addSecondLineCard(card) {
+    if (MAX_CARDS_PER_LINE > this.secondLineCards.length) {
+      this.secondLineCards = [...this.secondLineCards, card]
+      return true;
+    }
+
+    return false;
+  }
+
+  removeCardFromFirstLine(index) {
+    this.firstLineCards.splice(index, 1);
+    this.firstLineCards = [...this.firstLineCards];
+  }
+
+  removeCardFromSecondLine(index) {
+    this.secondLineCards.splice(index, 1);
+    this.secondLineCards = [...this.secondLineCards];
   }
 
   addCard(card) {
