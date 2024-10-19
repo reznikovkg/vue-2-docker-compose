@@ -50,8 +50,8 @@ export default {
       'getRecipes'
     ]),
     recipes() {
-      var recipes = this.getRecipes || null
-      localStorage.setItem('recipes', JSON.stringify(recipes))
+      const recipes = this.getRecipes
+      // localStorage.setItem('recipes', JSON.stringify(recipes))
 
       return recipes
     },
@@ -65,15 +65,15 @@ export default {
       return recipesToReturn
     }
   },
-  mounted() {
-    if (localStorage.getItem('recipes')) {
-      try {
-        this.ingredients = JSON.parse(localStorage.getItem('recipes'))
-      } catch (e) {
-          localStorage.removeItem('recipes')
-      }
-    }
-  },
+  // mounted() {
+  //   if (localStorage.getItem('recipes')) {
+  //     try {
+  //       this.ingredients = JSON.parse(localStorage.getItem('recipes'))
+  //     } catch (e) {
+  //         localStorage.removeItem('recipes')
+  //     }
+  //   }
+  // },
   methods: {
     changePage(page) {
       this.recipesOnPage = this.recipes.slice((page-1) * this.maxItemsPerPage, page * this.maxItemsPerPage)

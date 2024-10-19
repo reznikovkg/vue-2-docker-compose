@@ -145,7 +145,7 @@ export default {
       nameList: [],
       cuisineList: [],
 
-      recipes: [],
+      // recipes: [],
       newRecipe: {
         name: "",
         cover: "",
@@ -182,18 +182,23 @@ export default {
     ...mapGetters('dishes', {
       dishCuisines: 'getDishCuisines'
     }),
+
+    ...mapGetters('recipes', {
+      recipes: 'getRecipes'
+  })
   },
 
-  mounted() {
-    console.log(localStorage.key(0))
-    if (localStorage.getItem('recipes')) {
-      try {
-        this.recipes = JSON.parse(localStorage.getItem('recipes'));
-      } catch(e) {
-        localStorage.removeItem('recipes');
-      }
-    }
-  },
+  // mounted() {
+  //   console.log(localStorage.key(0))
+  //   if (localStorage.getItem('recipes')) {
+  //     try {
+  //       this.recipes = JSON.parse(localStorage.getItem('recipes'));
+  //     } catch(e) {
+  //       localStorage.removeItem('recipes');
+  //     }
+  //   }
+  //   console.log(this.recipes)
+  // },
 
   methods: {
 
@@ -206,6 +211,7 @@ export default {
       this.newRecipe.dishName = this.selectedName;
       this.newRecipe.dishCategory = this.selectedCategory;
       this.newRecipe.ingredients = this.includeList;
+      console.log(this.newRecipe)
       this.recipes.push(Vue.util.extend({}, this.newRecipe));
       this.saveRecipe();
     },
