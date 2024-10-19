@@ -126,7 +126,6 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'CreateRecipePage',
-
     data() {
     return {
 
@@ -319,7 +318,6 @@ export default {
     },
   }
 }
-
 </script>
 
 <style lang="less" scoped></style>
