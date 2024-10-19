@@ -1,5 +1,5 @@
 <template>
-  <div :class="['desk', generateStyleByType('desk')]">
+  <div :class="['desk', generateStyleByType('desk')]" @click="() => $emit('click')">
     <div class="desk__icon">
       <svg v-if="isMelee" :class="['icon', generateStyleByType('icon')]" width="88px" height="88px"
         viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
@@ -31,13 +31,15 @@
       </svg>
     </div>
     <div class="desk__cards">
-      <GameCard v-for="(card, index) in cards" :key="index" :score="card.score" />
+      <GameCard v-for="(card, index) in cards" :key="index" :score="card.score" @click="() => removeCard(index)" />
     </div>
   </div>
 </template>
 
 <script>
 import GameCard from "./Card";
+import { mapGetters } from 'vuex';
+import { TurnStates } from '@/engine/constants';
 
 export default {
   components: {
@@ -46,6 +48,10 @@ export default {
   name: "GameDeskLine",
   props: {
     isMelee: {
+      type: Boolean,
+      required: true,
+    },
+    isOpponent: {
       type: Boolean,
       required: true,
     },
@@ -64,6 +70,22 @@ export default {
     generateStyleByType(parentStyleName) {
       return `${parentStyleName}--${this.isMelee ? 'melee' : 'range'}`;
     },
+    removeCard(index) {
+      if (this.isOpponent || this.getGameEngine.currentTurn !== TurnStates.PLAYER) {
+        return;
+      }
+
+      if (this.isMelee) {
+        this.getGameEngine.player.board.removeCardFromFirstLine(index);
+      } else {
+        this.getGameEngine.player.board.removeCardFromSecondLine(index);
+      }
+    },
+  },
+  computed: {
+    ...mapGetters('gameEngine', [
+      'getGameEngine',
+    ]),
   },
 }
 </script>
