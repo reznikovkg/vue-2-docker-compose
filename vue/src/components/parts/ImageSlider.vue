@@ -1,13 +1,21 @@
 <template>
     <div class="image-slider">
         <div class="image-slider__images-cnt">
-            <div class="image-slider__image-cnt" v-for="(image, index) in images" :key="index"
-                @click="() => handleImageClick(index)">
+            <div
+                v-for="(image, index) in images"
+                :key="index"
+                @click="() => handleImageClick(index)"
+                class="image-slider__image-cnt"
+            >
                 <img class="image-slider__image" :src="image.url" alt="" />
             </div>
         </div>
         <div class="image-slider__chosen-image-cnt">
-            <img class="image-slider__chosen-image" :src="getCurrentImageUrl" alt="" />
+            <img
+                :src="getCurrentImageUrl"
+                class="image-slider__chosen-image"
+                alt=""
+            />
         </div>
     </div>
 </template>
@@ -16,24 +24,24 @@
 export default {
     name: 'ImageSlider',
     props: {
-        images: []
+        images: [],
     },
     data() {
         return {
             currentActive: 0,
-        }
+        };
     },
     computed: {
         getCurrentImageUrl() {
-            return this.images[this.currentActive].url
-        }
+            return this.images[this.currentActive].url;
+        },
     },
     methods: {
         handleImageClick(index) {
-            this.currentActive = index
+            this.currentActive = index;
         },
-    }
-}
+    },
+};
 </script>
 
 <style scoped lang="less">

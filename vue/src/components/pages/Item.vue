@@ -9,40 +9,65 @@
                 <div class="item-page__info-block">
                     <div class="item-page__prices-cnt">
                         <div class="item-page__price-cnt">
-                            <span class="item-page__old-price">{{ item.price.originalPrice }}</span>
-                            <span class="item-page__old-price-hint">Обычная цена</span>
+                            <span class="item-page__old-price">
+                                {{ item.price.originalPrice }}
+                            </span>
+                            <span class="item-page__old-price-hint">
+                                Обычная цена
+                            </span>
                         </div>
                         <div class="item-page__price-cnt">
-                            <span class="item-page__current-price">{{ item.price.currentPrice }}</span>
-                            <span class="item-page__current-price-hint">Цена по скидочной картой</span>
+                            <span class="item-page__current-price">
+                                {{ item.price.currentPrice }}
+                            </span>
+                            <span class="item-page__current-price-hint">
+                                Цена по скидочной картой
+                            </span>
                         </div>
                     </div>
-                    <CustomButton class="item-page__add-to-cart" @click="handleAddToCartClick" :type="'filledOrange'">
+                    <CustomButton
+                        @click="handleAddToCartClick"
+                        class="item-page__add-to-cart"
+                        :type="'filledOrange'"
+                    >
                         <div class="item-page__add-to-cart-child">
-                            <img class="item-page__cart-btn-icon" src="../../assets/shopping-cart.svg" alt="" />
-                            <span class="item-page__cart-btn-text">В корзину</span>
+                            <img
+                                class="item-page__cart-btn-icon"
+                                src="../../assets/shopping-cart.svg"
+                                alt=""
+                            />
+                            <span class="item-page__cart-btn-text">
+                                В корзину
+                            </span>
                         </div>
                     </CustomButton>
                     <p class="item-page__description">
                         {{ item.description }}
                     </p>
                     <div class="item-page__info-list">
-                        <div class="item-page__info-row" v-for="(infoRow) in item.information" :key="infoRow.title">
-                            <span class="item-page__info-row-title">{{ infoRow.title }}</span>
-                            <span class="item-page__info-row-value">{{ infoRow.value }}</span>
+                        <div
+                            v-for="infoRow in item.information"
+                            :key="infoRow.title"
+                            class="item-page__info-row"
+                        >
+                            <span class="item-page__info-row-title">
+                                {{ infoRow.title }}
+                            </span>
+                            <span class="item-page__info-row-value">
+                                {{ infoRow.value }}
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
-
         </section>
     </PageLayout>
 </template>
 
 <script>
-import PageLayout from '../parts/PageLayout'
-import ImageSlider from '../parts/ImageSlider'
-import CustomButton from "../parts/Button.vue";
+import PageLayout from '../parts/PageLayout';
+import ImageSlider from '../parts/ImageSlider';
+import CustomButton from '../parts/Button.vue';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -53,22 +78,22 @@ export default {
         CustomButton,
     },
     computed: {
-        ...mapGetters('catalog', [
-            'getItemFromCatalogById'
-        ]),
+        ...mapGetters('catalog', ['getItemFromCatalogById']),
         item() {
-            return this.getItemFromCatalogById(this.$route.params.itemId.slice(1))
+            return this.getItemFromCatalogById(
+                this.$route.params.itemId.slice(1)
+            );
         },
         getImage() {
-            return this.item.images.find((image) => image.type === 'main').url
-        }
+            return this.item.images.find((image) => image.type === 'main').url;
+        },
     },
     methods: {
         handleAddToCartClick() {
             console.log('Товар добавлен в корзину');
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
 <style scoped lang="less">
@@ -198,7 +223,7 @@ export default {
         padding: 4px 8px;
 
         &:nth-of-type(odd) {
-            background-color: #F3F2F1;
+            background-color: #f3f2f1;
         }
     }
 
