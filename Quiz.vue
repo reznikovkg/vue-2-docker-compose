@@ -87,7 +87,6 @@ export default {
             correct++;
           }
         } else if (question.type === QUESTION_TYPES.SINGLE || question.type === QUESTION_TYPES.MULTIPLE) {
-          
           const correctAnswers = Array.isArray(question.correctAnswers) ? question.correctAnswers : [question.correctAnswer];
           const userAnswers = Array.isArray(this.answers[index]) ? this.answers[index] : [this.answers[index]];
           if (JSON.stringify(correctAnswers.sort()) === JSON.stringify(userAnswers.sort())) {
@@ -124,7 +123,6 @@ export default {
       } else {
         this.answers[this.currentQuestionIndex] = this.selectedAnswers;
       }
-
       if (this.currentQuestionIndex === this.questions.length - 1) {
         this.isQuizComplete = true;
       } else {
@@ -143,7 +141,6 @@ export default {
   },
 };
 </script>
-
 <style lang="less" scoped>
 .quiz {
   max-width: 600px;
