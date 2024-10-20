@@ -49,14 +49,14 @@ export default {
       return Math.ceil(this.items.length / this.maxItemsPerPage)
     },
     paginatedPages() {
-      var pageNumbers = []
-      var pageDifferenceBySides = Math.floor(this.maxVisiblePages / 2)
-      var firstVisiblePage = this.currentPage <= pageDifferenceBySides ? 1 : this.currentPage - pageDifferenceBySides
-      var lastVisiblePage = this.currentPage <= pageDifferenceBySides 
+      const pageNumbers = []
+      const pageDifferenceBySides = Math.floor(this.maxVisiblePages / 2)
+      const firstVisiblePage = this.currentPage <= pageDifferenceBySides ? 1 : this.currentPage - pageDifferenceBySides
+      const lastVisiblePage = this.currentPage <= pageDifferenceBySides 
         ? this.maxVisiblePages 
         : this.currentPage + pageDifferenceBySides
 
-      for (var i = firstVisiblePage; i <= lastVisiblePage; i++) {
+      for (let i = firstVisiblePage; i <= lastVisiblePage; i++) {
         if(i > 0 && i <= this.maxPossiblePages){
           pageNumbers.push(i)
         }

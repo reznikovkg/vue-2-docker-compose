@@ -3,7 +3,7 @@ import ingredients from '@/data/ingredients_data'
 export default {
   namespaced: true,
   state: {
-    ingredients: ingredients
+    ingredients: JSON.parse(localStorage.getItem("ingredients")) ?? ingredients
   },
   getters: {
     getIngredients: (state) => state.ingredients,
@@ -15,6 +15,7 @@ export default {
     },
     ADD_INGREDIENT: (state, payload) => {
       state.ingredients.push(payload)
+      localStorage.setItem('ingredients', JSON.stringify(state.ingredients))
     }
   },
   actions: {

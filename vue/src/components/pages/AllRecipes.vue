@@ -6,20 +6,18 @@
     <RouterView />
     <h2>Страница со всеми рецептами</h2>
     <div class="recipes-container">
-      <RecipeComponent v-for="recipe in recipesToShow" :key="recipe.id"
-        :id="recipe.id"
-        :name="recipe.name"
-        :description="recipe.description"
-        :cover="recipe.cover"
-        :ingredients="recipe.ingredients"
+      <RecipeComponent 
+        v-for="recipe in recipesToShow" 
+        :key="recipe.id"
+        :recipe="recipe"
       />
       <RouterView />
     </div>
     <PaginationComponent 
-      :items="recipes"
-      :maxVisiblePages="5"
+      :items="recipes" 
+      :maxVisiblePages="5" 
       :maxItemsPerPage="this.maxItemsPerPage"
-      @changePage="(page) => changePage(page)"
+      @changePage="(page) => changePage(page)" 
     />
   </div>
 </template>
@@ -46,40 +44,25 @@ export default {
     ROUTES() {
       return ROUTES
     },
-    ...mapGetters('recipes', [
-      'getRecipes'
-    ]),
-    recipes() {
-      var recipes = this.getRecipes || null
-      localStorage.setItem('recipes', JSON.stringify(recipes))
-
-      return recipes
-    },
+    ...mapGetters('recipes', {
+      recipes: 'getRecipes'
+    }),
     recipesToShow() {
-      var recipesToReturn = this.recipesOnPage
+      let recipesToReturn = this.recipesOnPage
 
-      if(this.recipesOnPage.length == 0){
+      if(this.recipesOnPage.length == 0) {
         recipesToReturn = this.recipes.slice(0, this.maxItemsPerPage)
       }
 
       return recipesToReturn
     }
   },
-  mounted() {
-    if (localStorage.getItem('recipes')) {
-      try {
-        this.ingredients = JSON.parse(localStorage.getItem('recipes'))
-      } catch (e) {
-          localStorage.removeItem('recipes')
-      }
-    }
-  },
   methods: {
     changePage(page) {
-      this.recipesOnPage = this.recipes.slice((page-1) * this.maxItemsPerPage, page * this.maxItemsPerPage)
+      this.recipesOnPage = this.recipes.slice((page - 1) * this.maxItemsPerPage, page * this.maxItemsPerPage)
     },
     getRecipesForPage(page) {
-      this.recipesToShow = this.recipes.slice((page-1) * this.maxItemsPerPage, this.maxItemsPerPage)
+      this.recipesToShow = this.recipes.slice((page - 1) * this.maxItemsPerPage, this.maxItemsPerPage)
 
       return this.recipesToShow
     }
