@@ -3,7 +3,7 @@ import recipes from '@/data/recipes_data'
 export default {
   namespaced: true,
   state: {
-    recipes: recipes
+    recipes: JSON.parse(localStorage.getItem("recipes")) ?? recipes
   },
   getters: {
     getRecipes: (state) => state.recipes,
@@ -40,6 +40,7 @@ export default {
     },
     ADD_RECIPE: (state, payload) => {
       state.recipes.push(payload)
+      localStorage.setItem('recipes', JSON.stringify(state.recipes))
     }
   },
   actions: {
