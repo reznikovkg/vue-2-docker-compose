@@ -217,7 +217,6 @@ export default {
     },
     onCategoryDelete(index) {
       this.category = this.category.filter((_, i) => i !== index);
-      console.log(this.category);
     },
     onCategoryAdd() {
       this.category = [...this.category, ""];

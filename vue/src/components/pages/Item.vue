@@ -14,17 +14,36 @@
                 </p>
                 <hr class="item-page__separator" />
                 <div class="item-page__info-list">
-                    <div class="item-page__info-row" v-for="(infoRow) in item.information" :key="infoRow.title">
-                        <h4 class="item-page__info-row-title">{{ infoRow.title }}: </h4>
-                        <h4 class="item-page__info-row-value">{{ infoRow.value }}</h4>
+                    <div
+                        class="item-page__info-row"
+                        v-for="infoRow in item.information"
+                        :key="infoRow.title">
+                        <h4 class="item-page__info-row-title">
+                            {{ infoRow.title }}:
+                        </h4>
+                        <h4 class="item-page__info-row-value">
+                            {{ infoRow.value }}
+                        </h4>
                     </div>
                 </div>
                 <hr class="item-page__separator" />
                 <div class="item-page__options-block">
-                    <div class="item-page__option-row" v-for="(option) in item.options" :key="option.title">
-                        <p class="item-page__option-row-title">{{ option.title }}: </p>
-                        <select class="item-page__option-row-select" @change="(e) => setOptionValue(option.title, e.target.value)">
-                            <option v-for="(optionValue) in option.values" :key="optionValue.id"
+                    <div
+                        class="item-page__option-row"
+                        v-for="option in item.options"
+                        :key="option.title">
+                        <p class="item-page__option-row-title">
+                            {{ option.title }}:
+                        </p>
+                        <select
+                            class="item-page__option-row-select"
+                            @change="
+                                (e) =>
+                                    setOptionValue(option.title, e.target.value)
+                            ">
+                            <option
+                                v-for="optionValue in option.values"
+                                :key="optionValue.id"
                                 :value="optionValue.value">
                                 {{ optionValue.name }}
                             </option>
@@ -32,57 +51,118 @@
                     </div>
                 </div>
                 <hr class="item-page__separator" />
-                <button class="item-page__add-to-cart" @click="handleAddToCartClick">В корзину</button>
-                <!-- todo командой вынесем кнопки в компонент после мёрджа -->
-                <p class="item-page__quantity-left">Осталось {{ item.count }}</p>
+                <CustomButton
+                    class="item-page__add-to-cart"
+                    @click="handleAddToCartClick"
+                    v-if="!cartItem">
+                    В корзину
+                </CustomButton>
+                <div class="item-page__count__amount" v-if="cartItem">
+                    <button
+                        class="item-page__count__amount__button"
+                        @click="() => onChangeCount(-1)">
+                        -
+                    </button>
+                    <div class="item-page__count__amount__number">
+                        {{ cartItem.selectCount }}
+                    </div>
+                    <button
+                        class="item-page__count__amount__button"
+                        @click="() => onChangeCount(1)">
+                        +
+                    </button>
+                </div>
+                <p class="item-page__quantity-left">
+                    Осталось {{ item.count }}
+                </p>
             </div>
         </section>
     </PageLayout>
 </template>
 
 <script>
-import PageLayout from '../parts/PageLayout'
-import ImageSlider from '../parts/ImageSlider'
-import { mapGetters } from 'vuex';
+import PageLayout from '../parts/PageLayout';
+import ImageSlider from '../parts/ImageSlider';
+import CustomButton from '../parts/Button.vue';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: 'ItemPage',
     components: {
         PageLayout,
         ImageSlider,
+        CustomButton,
     },
     data() {
         return {
             selectedOptions: [],
-        }
+        };
     },
     mounted() {
-        this.selectedOptions = [...this.item.options.map(option => ({ title: option.title, value: option.values[0].value }))]
+        this.selectedOptions = [
+            ...this.item.options.map((option) => ({
+                title: option.title,
+                value: option.values[0].value,
+            })),
+        ];
     },
     computed: {
-        ...mapGetters('catalog', [
-            'getItemFromCatalogById'
-        ]),
+        ...mapGetters('catalog', ['getItemFromCatalogById']),
+        ...mapGetters('cart', ['getCart']),
         item() {
-            return this.getItemFromCatalogById(this.$route.params.itemId.slice(1))
+            return this.getItemFromCatalogById(
+                this.$route.params.itemId.slice(1)
+            );
+        },
+        cartItem() {
+            return this.getCart.find((elem) => elem.id === this.item.id);
         },
         showPricesChange() {
-            return this.item.price.currentPrice !== this.item.price.originalPrice
+            return (
+                this.item.price.currentPrice !== this.item.price.originalPrice
+            );
         },
         getImage() {
-            return this.item.images.find((image) => image.type === 'main').url
-        }
+            return this.item.images.find((image) => image.type === 'main').url;
+        },
     },
     methods: {
+        ...mapActions('cart', [
+            'addItemToCart',
+            'removeAllItemsFromCart',
+            'removeItemFromCart',
+            'changeItem',
+        ]),
         handleAddToCartClick() {
-            console.log('Товар добавлен в корзину с опциями:', ...this.selectedOptions.map(option => option.title + ': ' + option.value));
+            this.addItemToCart({
+                id: this.item.id,
+                name: this.item.name,
+                brand: this.item.information[0].value,
+                price: {
+                    currentPrice: this.item.price.currentPrice,
+                    originalPrice: this.item.price.originalPrice,
+                },
+                images: this.item.images,
+                count: this.item.count,
+                selectCount: '1',
+            });
         },
         setOptionValue(optionTitle, optionValue) {
-            const option = this.selectedOptions.find(option => option.title === optionTitle)
-            option.value = optionValue
-        }
-    }
-}
+            const option = this.selectedOptions.find(
+                (option) => option.title === optionTitle
+            );
+            option.value = optionValue;
+        },
+        onChangeCount(value) {
+            const count = Number(this.cartItem.selectCount) + Number(value);
+            if (count <= this.cartItem.count && count > 0) {
+                this.cartItem.selectCount = count;
+                this.changeItem(this.cartItem);
+            }
+            if (count < 1) this.removeItemFromCart(this.cartItem);
+        },
+    },
+};
 </script>
 
 <style scoped lang="less">
@@ -192,27 +272,43 @@ export default {
         margin-top: 4%;
         width: 60%;
         border-radius: 4px;
-        border: 1px solid @cBaseFive;
-        height: 30px;
-
-        color: @cBaseFour;
-        font-weight: 700;
-        transition: background-color 0.3s linear;
-        cursor: pointer;
-
-        &:hover {
-            border: 1px solid @cBaseThree;
-            color: @cBaseThree;
-        }
-
-        &:active {
-            transition: none;
-            background-color: @cBaseFive;
-        }
     }
 
     &__quantity-left {
         opacity: 0.6;
+    }
+
+    &__count {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-left: auto;
+
+        &__amount {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 40px;
+            padding: 8px;
+            background-color: @cBaseEleven;
+            border-radius: 4px;
+            &__button {
+                width: 24px;
+                height: 24px;
+                padding: 0;
+                background-color: @cBaseEleven;
+                color: @cBaseWhite;
+                border: none;
+                cursor: pointer;
+                font-size: 20px;
+                text-align: center;
+            }
+            &__number {
+                background-color: @cBaseEleven;
+                color: @cBaseWhite;
+                border: none;
+            }
+        }
     }
 }
 </style>
