@@ -26,21 +26,30 @@
                         </div>
                     </div>
                     <CustomButton
-                        @click="handleAddToCartClick"
                         class="item-page__add-to-cart"
-                        :type="'filledOrange'"
+                        type="filledOrange"
+                        @click="handleAddToCartClick"
+                        v-if="!cartItem"
                     >
-                        <div class="item-page__add-to-cart-child">
-                            <img
-                                class="item-page__cart-btn-icon"
-                                src="../../assets/shopping-cart.svg"
-                                alt=""
-                            />
-                            <span class="item-page__cart-btn-text">
-                                В корзину
-                            </span>
-                        </div>
+                        В корзину
                     </CustomButton>
+                    <div class="item-page__count__amount" v-if="cartItem">
+                        <button
+                            class="item-page__count__amount__button"
+                            @click="() => onChangeCount(-1)"
+                        >
+                            -
+                        </button>
+                        <div class="item-page__count__amount__number">
+                            {{ cartItem.selectCount }}
+                        </div>
+                        <button
+                            class="item-page__count__amount__button"
+                            @click="() => onChangeCount(1)"
+                        >
+                            +
+                        </button>
+                    </div>
                     <p class="item-page__description">
                         {{ item.description }}
                     </p>
@@ -68,7 +77,7 @@
 import PageLayout from '../parts/PageLayout';
 import ImageSlider from '../parts/ImageSlider';
 import CustomButton from '../parts/Button.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: 'ItemPage',
@@ -79,9 +88,18 @@ export default {
     },
     computed: {
         ...mapGetters('catalog', ['getItemFromCatalogById']),
+        ...mapGetters('cart', ['getCart']),
         item() {
             return this.getItemFromCatalogById(
                 this.$route.params.itemId.slice(1)
+            );
+        },
+        cartItem() {
+            return this.getCart.find((elem) => elem.id === this.item.id);
+        },
+        showPricesChange() {
+            return (
+                this.item.price.currentPrice !== this.item.price.originalPrice
             );
         },
         getImage() {
@@ -89,8 +107,35 @@ export default {
         },
     },
     methods: {
+        ...mapActions('cart', [
+            'addItemToCart',
+            'removeAllItemsFromCart',
+            'removeItemFromCart',
+            'changeItem',
+        ]),
         handleAddToCartClick() {
-            console.log('Товар добавлен в корзину');
+            this.addItemToCart({
+                id: this.item.id,
+                name: this.item.name,
+                brand: this.item.information[0].value,
+                price: {
+                    currentPrice: this.item.price.currentPrice,
+                    originalPrice: this.item.price.originalPrice,
+                },
+                images: this.item.images,
+                count: this.item.count,
+                selectCount: '1',
+            });
+        },
+        onChangeCount(value) {
+            const count = Number(this.cartItem.selectCount) + Number(value);
+            console.log(count, this.cartItem.count, count <= this.cartItem.count);
+            
+            if (count <= this.cartItem.count && count > 0) {
+                this.cartItem.selectCount = count;
+                this.changeItem(this.cartItem);
+            }
+            if (count < 1) this.removeItemFromCart(this.cartItem);
         },
     },
 };
@@ -245,6 +290,41 @@ export default {
         font-weight: 700;
         line-height: 18px;
         text-align: left;
+    }
+
+    &__count {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-left: auto;
+
+        &__amount {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 40px;
+            padding: 8px;
+            background-color: @cBaseEleven;
+            border-radius: 4px;
+
+            &__button {
+                width: 24px;
+                height: 24px;
+                padding: 0;
+                background-color: @cBaseEleven;
+                color: @cBaseWhite;
+                border: none;
+                cursor: pointer;
+                font-size: 20px;
+                text-align: center;
+            }
+
+            &__number {
+                background-color: @cBaseEleven;
+                color: @cBaseWhite;
+                border: none;
+            }
+        }
     }
 }
 </style>

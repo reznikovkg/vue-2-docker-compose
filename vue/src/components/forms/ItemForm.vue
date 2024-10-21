@@ -206,7 +206,7 @@ export default {
         },
         handleSaveData() {
             this.handleParseData({
-                id: Date.now(),
+                id: String(Date.now()),
                 name: this.name,
                 description: this.description,
                 information: this.information,

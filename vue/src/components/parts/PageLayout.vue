@@ -14,9 +14,9 @@ export default {
 
 <style scoped lang="less">
 .content {
-    margin: 0 auto;
-    padding: 20px 34px;
-    height: 100vh;
-    max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 0;
+  height: 100vh;
+  max-width: 1208px;
 }
 </style>
