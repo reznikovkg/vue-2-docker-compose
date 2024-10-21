@@ -1,20 +1,14 @@
 <template>
-  <div>
-    <div class="content">
-      <slot />
+    <div>
+        <div class="content">
+            <slot />
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
 export default {
-  name: "PageLayout",
-  props: {
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-  },
+    name: 'PageLayout',
 };
 </script>
 
