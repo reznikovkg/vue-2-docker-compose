@@ -20,7 +20,7 @@ export default {
     GridDimention,
   },
   beforeMount() {
-    this.loadLevel("editor");
+    this.loadLevel({levelNumber: "editor"});
   },
   methods: {
     ...mapActions('game', ['loadLevel'])
