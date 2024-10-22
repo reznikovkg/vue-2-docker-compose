@@ -24,5 +24,16 @@ export default {
             state.cart = [];
             localStorage.setItem("cart", JSON.stringify(state.cart));
         }
-    }
+    },
+    actions: {
+        addItemToCart: (context, item) => {
+            context.commit('addItemToCart', item)
+        },
+        removeItemFromCart: (context, item) => {
+            context.commit('removeItemFromCart', item)
+        },
+        removeAllItemsFromCart: (context, item) => {
+            context.commit('removeAllItemsFromCart', item)
+        },
+    },
 }

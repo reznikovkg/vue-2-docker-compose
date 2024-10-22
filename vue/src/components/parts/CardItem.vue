@@ -2,12 +2,7 @@
     <div class="card-item">
         <div class="card-item__image-cnt">
             <div class="card-item__like">
-                <button @click="clickOnLike" 
-                    class="card-item__button-like" 
-                    :style="{'background-color': buttonLikeStyle ? '#FF6633' : '#fff'}"
-                >
-                    <img class="card-item__icon-like" src="@/assets/icon-like.png" />
-                </button>
+                <ButtonLike :likeStyle="buttonLikeStyle" @click="() => clickOnLike()" />
             </div>
             <div class="card-item__discount">
                 <p class = "card-item__name-discount" v-if="showDiscount"> -{{ calculatingDiscount() }}% </p>
@@ -15,8 +10,8 @@
             <img class="card-item__image" @click="() => openItemPage()" :src="getImage" alt="" />
         </div>
         <div class="card-item__prices">
-            <p class="card-item__current-price">{{ item.price.currentPrice }}</p>
-            <p v-if="showDiscount" class="card-item__original-price">{{ item.price.originalPrice }}</p>
+            <p class="card-item__current-price">{{ item.price.currentPrice }}₽</p>
+            <p v-if="showDiscount" class="card-item__original-price">{{ item.price.originalPrice }}₽ </p>
         </div>
         <div class="card-item__name-cnt">
             <p class="card-item__name">{{ item.name }}</p>
@@ -26,14 +21,30 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapGetters } from 'vuex'
+import ButtonLike from "../parts/ButtonLike.vue";
+import { mapActions, mapGetters } from 'vuex'
 export default {
     name: 'CartItem',
+    components:{
+        ButtonLike,
+    },
     props: {
         item: Object,
     },
+    computed: {
+        ...mapGetters('favorites', ["getIndexFavorites"]),
+        showDiscount() {
+            return this.item.price.currentPrice !== this.item.price.originalPrice
+        },
+        getImage() {
+            return this.item.images.find((image) => image.type === 'main').url
+        },
+        buttonLikeStyle() {
+            return this.getIndexFavorites(this.item) !== -1 ? true : false
+        }
+    },
     methods: {
-        ...mapMutations("cart", ["addItemToCart"]),
+        ...mapActions("cart", ["addItemToCart"]),
         ...mapActions('favorites', ['addToFavorites', 'removeFromFavorites']),
         openItemPage() {
             this.$router.push({ path: `/item/:${this.item.id}` })
@@ -51,18 +62,6 @@ export default {
             return diff * 100 / this.item.price.originalPrice
         },
     },
-    computed: {
-        ...mapGetters('favorites', ["getIndexFavorites"]),
-        showDiscount() {
-            return this.item.price.currentPrice !== this.item.price.originalPrice
-        },
-        getImage() {
-            return this.item.images.find((image) => image.type === 'main').url
-        },
-        buttonLikeStyle() {
-            return this.getIndexFavorites(this.item) !== -1 ? true : false
-        }
-    }
 }
 </script>
 
@@ -166,18 +165,12 @@ export default {
 
     &__current-price {
         font-weight: 600;
-        &::after {
-            content: " ₽";
-        }
     }
 
     &__original-price {
         font-weight: 400;
         opacity: 0.7;
         margin-right: 10px;
-        &::after {
-            content: " ₽";
-        }
     }
 
     &__to-cart {
