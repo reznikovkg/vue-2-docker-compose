@@ -1,15 +1,15 @@
 <template>
     <div class="add-ingredient">
-      <form>
-        <label>Name:</label>
-        <input type="text" v-model="newIngredient.name"><br>
-        <label>Description:</label>
-        <input type="text" v-model="newIngredient.description"><br>
-        <label>Measure units:</label>
-        <input type="text" v-model="newIngredient.measure_units"><br>
-        <label>Cover:</label>
-        <input @change="loadTextFromFile" class="add-ingredient__input" type="file" accept="image/*"><br><br>
-        <button type="submit" @click="addIngredient">Добавить Ингредиент</button>
+      <form class="add-ingredient__form">
+        <label class="add-ingredient__label">Name:</label>
+        <input class="add-ingredient__input" type="text" v-model="newIngredient.name"><br>
+        <label class="add-ingredient__label">Description:</label>
+        <input class="add-ingredient__input" type="text" v-model="newIngredient.description"><br>
+        <label class="add-ingredient__label">Measure units:</label>
+        <input class="add-ingredient__input" type="text" v-model="newIngredient.measure_units"><br>
+        <label class="add-ingredient__label">Cover:</label>
+        <input class="add-ingredient__input" @change="loadTextFromFile" type="file" accept="image/*"><br><br>
+        <button class="add-ingredient__button" type="submit" @click="addIngredient">Добавить Ингредиент</button>
       </form>
     </div>
 </template>
@@ -76,20 +76,47 @@ export default {
 <style lang="less" scoped>
 
 .add-ingredient {
-  width: 100%;
-  display: inline-flex;
+  box-sizing: content-box;
+  padding: 24px 32px;
 
-  &__pic {
-    width: 255px;
-    height: 255px;
-    border-radius: 4%;
-    object-fit: cover;
+  margin-left: auto;
+  margin-right: auto;
+  width: 575px;
+  height: auto;
+  margin-bottom:30px;
+
+  border: 1px solid #D9D9D9;
+  border-radius: 8px;
+
+  &__title {
+    width: 167.14px;
+    height: 19px;
+    left: 32px;
+    top: 24px;
+    margin-bottom:10px;
+
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    display: flex;
+    align-items: center;
+    color: #000000;
   }
 
-  &__description {
-    margin: 0px 7px 0px 7px;
-    padding: 0px 10px 0px 20px;
+  &__input{
+    padding: 8px 24px;
+    width: 511px;
+    height: auto;
+    left: 32px;
+    top: 55px;
+    margin-bottom:15px;
+
+    background: #ECECEC;
+    border-radius: 8px;
+    border-style: none;
   }
+
 }
 
 </style>
