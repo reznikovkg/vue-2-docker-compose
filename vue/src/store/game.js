@@ -6,7 +6,7 @@ export default {
   state: {
     grid: [],
     selectedGrid: [],
-    cellTypes: [1, 2, 3, 4],
+    cellTypes: [1, 2, 3, 4, 5, 6, 7, 8, 9],
     currentLevel: null,
     isCustomLevel: false,
   },
