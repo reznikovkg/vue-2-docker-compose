@@ -1,29 +1,22 @@
 <template>
-  <div>
-    <div class="content">
-      <slot />
+    <div>
+        <div class="content">
+            <slot />
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
 export default {
-  name: "PageLayout",
-  props: {
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-  },
+    name: 'PageLayout',
 };
 </script>
 
 <style scoped lang="less">
 .content {
   margin: 0 auto;
-  padding: 20px 34px;
+  padding: 20px 0;
   height: 100vh;
-  box-sizing: border-box;
-  max-width: 1000px;
+  max-width: 1208px;
 }
 </style>

@@ -1,218 +1,330 @@
 <template>
     <PageLayout>
         <section class="item-page">
-            <div class="item-page__image-slider-cnt">
-                <ImageSlider :images="item.images" />
-            </div>
-            <div class="item-page__info-block">
-                <div class="item-page__name-cnt">
-                    <h2 class="item-page__name">{{ item.name }}</h2>
+            <h1 class="item-page__name">{{ item.name }}</h1>
+            <div class="item-page__images-and-info-block">
+                <div class="item-page__image-slider-cnt">
+                    <ImageSlider :images="item.images" />
                 </div>
-                <hr class="item-page__separator" />
-                <p class="item-page__description">
-                    {{ item.description }}
-                </p>
-                <hr class="item-page__separator" />
-                <div class="item-page__info-list">
-                    <div class="item-page__info-row" v-for="(infoRow) in item.information" :key="infoRow.title">
-                        <h4 class="item-page__info-row-title">{{ infoRow.title }}: </h4>
-                        <h4 class="item-page__info-row-value">{{ infoRow.value }}</h4>
+                <div class="item-page__info-block">
+                    <div class="item-page__prices-cnt">
+                        <div class="item-page__price-cnt">
+                            <span class="item-page__old-price">
+                                {{ item.price.originalPrice }}
+                            </span>
+                            <span class="item-page__old-price-hint">
+                                Обычная цена
+                            </span>
+                        </div>
+                        <div class="item-page__price-cnt">
+                            <span class="item-page__current-price">
+                                {{ item.price.currentPrice }}
+                            </span>
+                            <span class="item-page__current-price-hint">
+                                Цена по скидочной картой
+                            </span>
+                        </div>
+                    </div>
+                    <CustomButton
+                        class="item-page__add-to-cart"
+                        type="filledOrange"
+                        @click="handleAddToCartClick"
+                        v-if="!cartItem"
+                    >
+                        В корзину
+                    </CustomButton>
+                    <div class="item-page__count__amount" v-if="cartItem">
+                        <button
+                            class="item-page__count__amount__button"
+                            @click="() => onChangeCount(-1)"
+                        >
+                            -
+                        </button>
+                        <div class="item-page__count__amount__number">
+                            {{ cartItem.selectCount }}
+                        </div>
+                        <button
+                            class="item-page__count__amount__button"
+                            @click="() => onChangeCount(1)"
+                        >
+                            +
+                        </button>
+                    </div>
+                    <p class="item-page__description">
+                        {{ item.description }}
+                    </p>
+                    <div class="item-page__info-list">
+                        <div
+                            v-for="infoRow in item.information"
+                            :key="infoRow.title"
+                            class="item-page__info-row"
+                        >
+                            <span class="item-page__info-row-title">
+                                {{ infoRow.title }}
+                            </span>
+                            <span class="item-page__info-row-value">
+                                {{ infoRow.value }}
+                            </span>
+                        </div>
                     </div>
                 </div>
-                <hr class="item-page__separator" />
-                <div class="item-page__options-block">
-                    <div class="item-page__option-row" v-for="(option) in item.options" :key="option.title">
-                        <p class="item-page__option-row-title">{{ option.title }}: </p>
-                        <select class="item-page__option-row-select" @change="(e) => setOptionValue(option.title, e.target.value)">
-                            <option v-for="(optionValue) in option.values" :key="optionValue.id"
-                                :value="optionValue.value">
-                                {{ optionValue.name }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <hr class="item-page__separator" />
-                <button class="item-page__add-to-cart" @click="handleAddToCartClick">В корзину</button>
-                <!-- todo командой вынесем кнопки в компонент после мёрджа -->
-                <p class="item-page__quantity-left">Осталось {{ item.count }}</p>
             </div>
         </section>
     </PageLayout>
 </template>
 
 <script>
-import PageLayout from '../parts/PageLayout'
-import ImageSlider from '../parts/ImageSlider'
-import { mapGetters } from 'vuex';
+import PageLayout from '../parts/PageLayout';
+import ImageSlider from '../parts/ImageSlider';
+import CustomButton from '../parts/Button.vue';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: 'ItemPage',
     components: {
         PageLayout,
         ImageSlider,
-    },
-    data() {
-        return {
-            selectedOptions: [],
-        }
-    },
-    mounted() {
-        this.selectedOptions = [...this.item.options.map(option => ({ title: option.title, value: option.values[0].value }))]
+        CustomButton,
     },
     computed: {
-        ...mapGetters('catalog', [
-            'getItemFromCatalogById'
-        ]),
+        ...mapGetters('catalog', ['getItemFromCatalogById']),
+        ...mapGetters('cart', ['getCart']),
         item() {
-            return this.getItemFromCatalogById(this.$route.params.itemId.slice(1))
+            return this.getItemFromCatalogById(
+                this.$route.params.itemId.slice(1)
+            );
+        },
+        cartItem() {
+            return this.getCart.find((elem) => elem.id === this.item.id);
         },
         showPricesChange() {
-            return this.item.price.currentPrice !== this.item.price.originalPrice
+            return (
+                this.item.price.currentPrice !== this.item.price.originalPrice
+            );
         },
         getImage() {
-            return this.item.images.find((image) => image.type === 'main').url
-        }
+            return this.item.images.find((image) => image.type === 'main').url;
+        },
     },
     methods: {
+        ...mapActions('cart', [
+            'addItemToCart',
+            'removeAllItemsFromCart',
+            'removeItemFromCart',
+            'changeItem',
+        ]),
         handleAddToCartClick() {
-            console.log('Товар добавлен в корзину с опциями:', ...this.selectedOptions.map(option => option.title + ': ' + option.value));
+            this.addItemToCart({
+                id: this.item.id,
+                name: this.item.name,
+                brand: this.item.information[0].value,
+                price: {
+                    currentPrice: this.item.price.currentPrice,
+                    originalPrice: this.item.price.originalPrice,
+                },
+                images: this.item.images,
+                count: this.item.count,
+                selectCount: '1',
+            });
         },
-        setOptionValue(optionTitle, optionValue) {
-            const option = this.selectedOptions.find(option => option.title === optionTitle)
-            option.value = optionValue
-        }
-    }
-}
+        onChangeCount(value) {
+            const count = Number(this.cartItem.selectCount) + Number(value);
+            console.log(count, this.cartItem.count, count <= this.cartItem.count);
+            
+            if (count <= this.cartItem.count && count > 0) {
+                this.cartItem.selectCount = count;
+                this.changeItem(this.cartItem);
+            }
+            if (count < 1) this.removeItemFromCart(this.cartItem);
+        },
+    },
+};
 </script>
 
 <style scoped lang="less">
 .item-page {
     display: flex;
-    gap: 30px;
-    font-size: 12px;
-    padding: 5%;
+    flex-direction: column;
+    gap: 16px;
+
+    &__name {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 36px;
+        text-align: left;
+        color: @cBaseTen;
+    }
+
+    &__images-and-info-block {
+        display: flex;
+        gap: 40px;
+    }
 
     &__image-slider-cnt {
-        flex: 1;
+        flex: 3;
         aspect-ratio: 1 / 1;
     }
 
     &__info-block {
-        flex: 1;
+        flex: 2;
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 1% 0 2% 0;
 
-        background-color: @cBaseSeven;
-        border-radius: 10%;
+        gap: 16px;
     }
 
-    &__name-cnt {
+    &__add-to-cart {
+        width: 100%;
+        height: 60px;
+    }
+
+    &__add-to-cart-child {
         display: flex;
-        flex-direction: column;
         justify-content: center;
         align-items: center;
-
-        height: 6rem;
-        width: 80%;
+        padding: 0 16px;
     }
 
-    &__name {
-        font-size: 22px;
+    &__cart-btn-text {
+        height: 28px;
+        flex-grow: 1;
+
+        font-family: @ffOne;
+        font-size: 24px;
+        font-weight: 400;
         text-align: center;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
-    &__separator {
-        width: 80%;
+    &__cart-btn-icon {
+        width: 32px;
+        height: 32px;
     }
 
-    &__description {
-        font-size: 16px;
-        width: 80%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: justify;
-    }
-
-    &__info-list {
-        display: flex;
-        flex-direction: column;
-        gap: 7px;
-        width: 75%;
-    }
-
-    &__info-row {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 5%;
-    }
-
-    &__info-row-title {
-        width: 35%;
-    }
-
-    &__info-row-value {
-        width: 60%;
-    }
-
-    &__options-block {
-        width: 75%;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 7px;
-    }
-
-    &__option-row {
+    &__prices-cnt {
         width: 100%;
         display: flex;
         justify-content: space-between;
     }
 
-    &__option-row-title {
-        width: 35%;
-        font-size: 14px;
+    &__price-cnt {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
-    &__option-row-select {
-        width: 60%;
-        font-size: 14px;
+    &__old-price {
+        font-family: @ffOne;
+        font-size: 24px;
+        font-weight: 400;
+        line-height: 54px;
+        text-align: left;
+        color: @cBaseEight;
     }
 
-    &__add-to-cart {
-        margin-top: 4%;
-        width: 60%;
-        border-radius: 4px;
-        border: 1px solid @cBaseFive;
-        height: 30px;
+    &__old-price-hint,
+    &__current-price-hint {
+        font-family: @ffOne;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+        text-align: left;
+        color: @cBaseNine;
+    }
 
-        color: @cBaseFour;
+    &__current-price {
+        font-family: @ffOne;
+        font-size: 36px;
         font-weight: 700;
-        transition: background-color 0.3s linear;
-        cursor: pointer;
+        line-height: 54px;
+        text-align: right;
+        color: @cBaseTen;
+    }
 
-        &:hover {
-            border: 1px solid @cBaseThree;
-            color: @cBaseThree;
-        }
+    &__current-price::after,
+    &__old-price::after {
+        content: ' ₽';
+    }
 
-        &:active {
-            transition: none;
-            background-color: @cBaseFive;
+    &__description {
+        font-family: @ffOne;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18px;
+        text-align: center;
+    }
+
+    &__info-list {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    &__info-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5%;
+        padding: 4px 8px;
+
+        &:nth-of-type(odd) {
+            background-color: #f3f2f1;
         }
     }
 
-    &__quantity-left {
-        opacity: 0.6;
+    &__info-row-title {
+        flex: 1;
+
+        font-family: @ffOne;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+        text-align: left;
+    }
+
+    &__info-row-value {
+        flex: 1;
+
+        font-family: @ffTwo;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 18px;
+        text-align: left;
+    }
+
+    &__count {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-left: auto;
+
+        &__amount {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 40px;
+            padding: 8px;
+            background-color: @cBaseEleven;
+            border-radius: 4px;
+
+            &__button {
+                width: 24px;
+                height: 24px;
+                padding: 0;
+                background-color: @cBaseEleven;
+                color: @cBaseWhite;
+                border: none;
+                cursor: pointer;
+                font-size: 20px;
+                text-align: center;
+            }
+
+            &__number {
+                background-color: @cBaseEleven;
+                color: @cBaseWhite;
+                border: none;
+            }
+        }
     }
 }
 </style>

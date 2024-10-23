@@ -1,4 +1,3 @@
-import modals from "./modals";
 import catalog from "./catalog";
 import cart from "./cart";
 import favorites from "./favorites";
@@ -9,7 +8,6 @@ export default {
   getters: {},
   mutations: {},
   modules: {
-    modals,
     catalog,
     cart,
     favorites,

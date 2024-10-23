@@ -1,19 +1,8 @@
 <template>
   <div>
     <RouterView />
-    <ModalContainer />
   </div>
 </template>
-
-<script>
-import ModalContainer from "@/components/parts/ModalContainer";
-
-export default {
-  components: {
-    ModalContainer,
-  },
-};
-</script>
 
 <style lang="less">
 @import url("https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap");
