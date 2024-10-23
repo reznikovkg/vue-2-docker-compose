@@ -32,7 +32,7 @@ export default {
         item: Object,
     },
     computed: {
-        ...mapGetters('favorites', ["getIndexFavorites"]),
+        ...mapGetters('favorites', ["isFavorites"]),
         showDiscount() {
             return this.item.price.currentPrice !== this.item.price.originalPrice
         },
@@ -40,7 +40,7 @@ export default {
             return this.item.images.find((image) => image.type === 'main').url
         },
         buttonLikeStyle() {
-            return this.getIndexFavorites(this.item) !== -1 ? true : false
+            return this.isFavorites(this.item)
         }
     },
     methods: {
@@ -50,8 +50,7 @@ export default {
             this.$router.push({ path: `/item/:${this.item.id}` })
         },
         clickOnLike() {
-            const index = this.getIndexFavorites(this.item)
-            if (index !== -1) {
+            if (this.isFavorites(this.item) === true) {
                 this.removeFromFavorites(this.item)
             } else {
                 this.addToFavorites(this.item)

@@ -5,8 +5,8 @@ export default {
     },
     getters: {
         getFavorites: (state) => state.favorites,
-        getIndexFavorites: (state) => (item) => {
-            return state.favorites.findIndex(fItem => fItem.id === item.id)
+        isFavorites: (state) => (item) => {
+            return state.favorites.findIndex(fItem => fItem.id === item.id) !== -1 ? true : false
         },
     },
     mutations: {
