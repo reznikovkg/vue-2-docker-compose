@@ -1,9 +1,10 @@
 <template>
-  <div class="deck__div">
+  <div class="deck__div vCenter hCenter">
     <CardComponent v-for="(card, index) in getHand" :key="card.id"
       :card="card"
-      :rotation="getRotation(index, getHand.length)"
-      :yShift="getYShift(index, getHand.length)" 
+      :scale="getScaling()"
+      :rotation="getRotation(index)"
+      :yShift="getYShift(index)"
     />
   </div>
 </template>
@@ -20,27 +21,37 @@ export default {
 
   },
   mounted() {
-    console.log("AAAA", this.getHand);
+
   },
   computed: {
-    ...mapGetters("deck", ["getHand"])
+    ...mapGetters("deck", ["getHand"]),
+    
+    handLength() {
+      return this.getHand.length;
+    },
   },
   methods: {
     handleCardClick(card) {
       console.log("Handling Card Click", card);
     },
+
+    getScaling() {
+      return 1;
+    },
     
-    getRotation(index, totalCards) {
-      const maxAngle = 15;
-      const centerIndex = (totalCards - 1) / 2;
-      return maxAngle * ((index - centerIndex) / centerIndex);
+    getRotation(index) {
+      const maxAngle = 20;
+      const centerIndex = (this.handLength - 1) / 2;
+      const scaleFactor = Math.min(1, this.handLength / 5);
+      return maxAngle * ((index - centerIndex) / centerIndex ) * scaleFactor;
     },
 
-    getYShift(index, totalCards) {
-      const centerIndex = (totalCards - 1) / 2;
+    getYShift(index) {
+      const centerIndex = (this.handLength - 1) / 2;
       const maxDrop = 30;
       const distanceFromCenter = Math.abs(index - centerIndex);
-      return maxDrop * (distanceFromCenter / centerIndex) ** 2;
+      const scaleFactor = Math.min(1, this.handLength / 9);
+      return (maxDrop * (distanceFromCenter / centerIndex) ** 2) * 5 * scaleFactor;
     }
   },
 };
@@ -49,11 +60,13 @@ export default {
 <style scoped lang="less">
 .deck {
   &__div {
-    width: 900px;
-    height: 200px;
-    background-color: pink;
     display: flex;
     flex-direction: row;
+
+    height: 300px;
+    width: 1700px;
+
+    background-color: pink; 
   }
 }
 </style>

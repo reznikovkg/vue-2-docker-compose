@@ -1,5 +1,6 @@
 <template>
-	<div class="card__wrapper" :style="applyTransform"  @click="cardClick">
+	<div class="card__wrapper" :style="applyTransform" @mouseover="isHovered = true" @mouseleave="isHovered = false"
+		@click="cardClick">
 		<div class="card__div hCenter">
 			<div class="card-cost hCenter vCenters">
 				<p> {{ this.card.cost }} </p>
@@ -20,17 +21,19 @@
 </template>
 
 <script>
-//import cardEffect from '../common/cardEffect';
+import cardEffect from '../common/cardEffect';
 
 export default {
 	props: {
 		card: Object,
+		scale: Number,
 		rotation: Number,
 		yShift: Number,
 	},
 	data() {
 		return {
 			cardDescription: "",
+			isHovered: false,
 		}
 	},
 	mounted() {
@@ -38,65 +41,96 @@ export default {
 	},
 	computed: {
 		applyTransform() {
-			return {
-				transform: `rotate(${this.rotation}deg) translateY(${this.yShift}px)`,
-				transformOrigin: "center", 
-				
-			};
+			if (this.isHovered)
+				return {
+					transform: `scale(${this.scale + 0.05}) rotate(0deg) translateY(-25px)`,
+					transition: `transform 0.1s ease-out`,
+					zIndex: 100
+				}
+			else
+				return {
+					transform: ` scale(${this.scale}) rotate(${this.rotation}deg) translateY(${this.yShift}px)`,
+					transition: `transform 0.05s ease-in`,
+				};
 		},
-
 	},
 	methods: {
 		cardClick() {
 			this.$emit('cardPressed', this.card);
 			console.log('card emitted cardClick!', this.card)
 		},
+
 		setDescription() {
-			this.cardDescription = "THIS IS A VERY LONG CARD DESCRIPTION";
+			this.cardDescription = "";
 
 			this.card.effects.forEach(effect => {
-				this.cardDescription += this.returnDescriptionString(effect);
+				this.cardDescription += this.returnDescriptionString(effect) + '\n';
 			});
 		},
+
 		returnDescriptionString(effect) {
-			if (effect.action == "Attack") { return "" }
-			return "Test";
+			switch (effect.type) {
+				case cardEffect.Attack: {
+					if (effect.values.length == 1)
+						return `Attack for ${effect.values[0]}`
+					else
+						return `Attack for ${effect.values[0]} ${effect.values[1]} times`
+				}
+				case cardEffect.Defend: {
+					return `Defend for ${effect.values[0]}`
+				}
+				case cardEffect.Draw: {
+					return `Draw ${effect.values[0]} cards`
+				}
+				case cardEffect.Shuffle: {
+					return `Shuffle the deck`
+				}
+				case cardEffect.DiscardRandom: {
+					if (effect.values[0] == 1)
+						return `Discard random card`
+					else
+						return `Discard ${effect.values[0]} random cards`
+				}
+				case cardEffect.DiscardHand: {
+					return `Discard your hand`
+				}
+				case cardEffect.ExhaustSelf: {
+					return `Exhaust this card`
+				}
+			}
+			return "Invalid Effect";
 		},
 	}
 };
 </script>
 
 <style scoped lang="less">
-
 .card {
 	@cardHeight: 320px;
 	@cardWidth: 220px;
 	@imageHeight: 120px;
 	@imageWidth: 200px;
-	
+
 	&__wrapper {
 		height: @cardHeight;
 		width: @cardWidth;
-		transform-origin: bottom;
-		
-		&:hover {
-			transform: scale(1.1) rotate(7.23deg) translateY(-20px);
-			transition: transform 0.06s ease-out;
-		}
+		transform-origin: center;
+		cursor: pointer;
 	}
 
 	&__div {
-		//box-sizing: border-box;
-		height: @cardHeight;
-		width: @cardWidth;
 		display: flex;
 		flex-direction: column;
-		background-color: rgb(121, 126, 133);
-		border-radius: 15px;
-		border: #000 2px solid;
 		overflow: hidden;
+
+		height: @cardHeight;
+		width: @cardWidth;
+
+		background-color: rgb(121, 126, 133);
+		border: 2px solid #000;
+		border-radius: 15px;
 	}
-	
+
 	&-cost {
 		height: 25px;
 		width: 25px;
@@ -104,8 +138,7 @@ export default {
 		position: absolute;
 		margin-top: -310px;
 		margin-left: -5px;
-		z-index: 5;
-		clip-path: none;
+		z-index: 10;
 
 		background-color: #e2d87b;
 		border: 2px solid #a09748;
@@ -119,6 +152,7 @@ export default {
 		&__div {
 			height: @imageHeight;
 			width: @imageWidth;
+
 			margin-left: calc((@cardWidth - @imageWidth) / 2);
 			margin-top: 10px;
 			border-radius: 15px;
@@ -133,11 +167,12 @@ export default {
 
 	&-description {
 		&__div {
-			width: @imageWidth;
-			margin-left: calc((@cardWidth - @imageWidth) / 2);
 			display: flex;
 			flex-direction: column;
 			flex-basis: 50%;
+
+			width: @imageWidth;
+			margin-left: calc((@cardWidth - @imageWidth) / 2);
 			margin-top: 10px;
 		}
 
@@ -151,17 +186,19 @@ export default {
 		}
 
 		&__description {
-			margin-top: 5px;
 			flex-basis: 100%;
+
+			margin-top: 5px;
 			background-color: rgb(59, 59, 59);
 			border: 2px solid rgb(26, 25, 25);
 			border-radius: 15px;
 			padding: 5px;
-			text-wrap: wrap;
-			overflow-wrap: break-word;
+
 
 			font-size: 14px;
 			color: rgb(234, 236, 236);
+			white-space: pre-line;
+			overflow-wrap: break-word;
 		}
 	}
 }

@@ -2,15 +2,18 @@
   <div>
     <RouterView />
     <ModalContainer />
+    <DeckComponent />
   </div>
 </template>
 
 <script>
 import ModalContainer from "@/components/parts/ModalContainer";
+import DeckComponent from "./deck/DeckComponent.vue";
 
 export default {
   components: {
     ModalContainer,
+    DeckComponent
   }
 }
 </script>
