@@ -1,4 +1,6 @@
 import modals from './modals'
+import cards from './cards'
+import deck from './deck'
 
 export default {
   namespaced: true,
@@ -6,6 +8,8 @@ export default {
   getters: {},
   mutations: {},
   modules: {
-    modals
+    modals,
+    cards,
+    deck,
   }
 }
