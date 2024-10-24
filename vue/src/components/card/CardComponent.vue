@@ -1,17 +1,19 @@
 <template>
-	<div class="card__div hCenter" :style="applyTransform" @click="cardClick">
-		<div class="card-cost hCenter vCenters">
-			<p> {{ this.card.cost }} </p>
-		</div>
-		<div class="card-image__div hCenter">
-			<img class="card-image__image" src="../../assets/cards/background.png" />
-		</div>
-		<div class="card-description__div">
-			<div class="card-description__title">
-				<p> {{ this.card.title }} </p>
+	<div class="card__wrapper" :style="applyTransform"  @click="cardClick">
+		<div class="card__div hCenter">
+			<div class="card-cost hCenter vCenters">
+				<p> {{ this.card.cost }} </p>
 			</div>
-			<div class="card-description__description">
-				<p> {{ this.cardDescription }}</p>
+			<div class="card-image__div hCenter">
+				<img class="card-image__image" src="../../assets/cards/background.png" />
+			</div>
+			<div class="card-description__div">
+				<div class="card-description__title">
+					<p> {{ this.card.title }} </p>
+				</div>
+				<div class="card-description__description">
+					<p> {{ this.cardDescription }}</p>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -37,7 +39,9 @@ export default {
 	computed: {
 		applyTransform() {
 			return {
-				transform: `translate(0px, ${this.yShift}px) rotate(${this.rotation}deg)`,
+				transform: `rotate(${this.rotation}deg) translateY(${this.yShift}px)`,
+				transformOrigin: "center", 
+				
 			};
 		},
 
@@ -45,6 +49,7 @@ export default {
 	methods: {
 		cardClick() {
 			this.$emit('cardPressed', this.card);
+			console.log('card emitted cardClick!', this.card)
 		},
 		setDescription() {
 			this.cardDescription = "THIS IS A VERY LONG CARD DESCRIPTION";
@@ -62,11 +67,23 @@ export default {
 </script>
 
 <style scoped lang="less">
+
 .card {
 	@cardHeight: 320px;
 	@cardWidth: 220px;
 	@imageHeight: 120px;
 	@imageWidth: 200px;
+	
+	&__wrapper {
+		height: @cardHeight;
+		width: @cardWidth;
+		transform-origin: bottom;
+		
+		&:hover {
+			transform: scale(1.1) rotate(7.23deg) translateY(-20px);
+			transition: transform 0.06s ease-out;
+		}
+	}
 
 	&__div {
 		//box-sizing: border-box;
@@ -78,12 +95,6 @@ export default {
 		border-radius: 15px;
 		border: #000 2px solid;
 		overflow: hidden;
-		transform-origin: center;
-
-		&:hover {
-			transform: scale(1.1) rotate(0deg) translateY(-20px);
-			transition: transform 0.06s ease-out;
-		}
 	}
 	
 	&-cost {

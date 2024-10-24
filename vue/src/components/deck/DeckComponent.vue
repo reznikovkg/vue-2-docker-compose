@@ -3,7 +3,8 @@
     <CardComponent v-for="(card, index) in getHand" :key="card.id"
       :card="card"
       :rotation="getRotation(index, getHand.length)"
-      :yShift="getYShift(index, getHand.length)" />
+      :yShift="getYShift(index, getHand.length)" 
+    />
   </div>
 </template>
 
@@ -25,15 +26,19 @@ export default {
     ...mapGetters("deck", ["getHand"])
   },
   methods: {
+    handleCardClick(card) {
+      console.log("Handling Card Click", card);
+    },
+    
     getRotation(index, totalCards) {
-      const maxAngle = 15; // Max angle for the outermost cards
+      const maxAngle = 15;
       const centerIndex = (totalCards - 1) / 2;
-      return maxAngle * ((index - centerIndex) / centerIndex); // Rotate left or right
+      return maxAngle * ((index - centerIndex) / centerIndex);
     },
 
     getYShift(index, totalCards) {
       const centerIndex = (totalCards - 1) / 2;
-      const maxDrop = 30; // Maximum Y-drop for cards at the edges
+      const maxDrop = 30;
       const distanceFromCenter = Math.abs(index - centerIndex);
       return maxDrop * (distanceFromCenter / centerIndex) ** 2;
     }
