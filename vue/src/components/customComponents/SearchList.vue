@@ -9,7 +9,7 @@
       @keyup.enter="() => include()" 
     />
 
-    <ul class="options">
+    <ul :class="ul_class">
       <li class="options__option" v-for="option in listToShow" :key="option.id" @click="() => include(option)">
         {{ option.name }}
       </li>
@@ -39,6 +39,10 @@ export default {
     input_class: {
       type: String,
       default: "local-search"
+    },
+    ul_class: {
+      type: String,
+      default: "options"
     },
     placeholder: {
       type: String,

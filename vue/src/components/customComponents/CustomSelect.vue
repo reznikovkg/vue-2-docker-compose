@@ -1,7 +1,7 @@
 <template>
   <div class="custom-select">
     <button 
-      class="form" 
+      :class="button_class" 
       role="combobox" 
       aria-label="select button" 
       aria-haspopup="listbox" 
@@ -12,7 +12,7 @@
       <span class="selected-value">{{ selected }}</span>
     </button>
 
-    <ul v-if="isActive" class="dropdown options" role="listbox">
+    <ul v-if="isActive" :class="dropdown_class" role="listbox">
       <li
         :value="value"
         class="options__option" 
@@ -62,6 +62,14 @@ export default {
     value: {
       type: Number,
       default: null
+    },
+    button_class: {
+      type: String,
+      default: "form"
+    },
+    dropdown_class: {
+      type: String,
+      default: "dropdown options"
     }
   },
   methods: {
