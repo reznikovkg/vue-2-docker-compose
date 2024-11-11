@@ -1,0 +1,53 @@
+@import "variables.less";
+
+.puzzle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, @tile-size);
+    grid-template-rows: repeat(4, @tile-size);
+    gap: @tile-gap;
+    margin-bottom: 20px;
+  }
+
+  &__tile {
+    width: @tile-size;
+    height: @tile-size;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: @tile-bg-color;
+    font-size: @font-size-lg;
+    border: 1px solid @tile-border-color;
+    cursor: pointer;
+
+    &--empty {
+      background-color: @tile-empty-bg-color;
+      border: none;
+    }
+  }
+
+  &__button {
+    &:hover {
+      background-color: @button-bg-color-hover;  
+    }
+    background-color: @button-bg-color;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: @font-size-md;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  &__win-message {
+    font-size: @font-size-lg;
+    font-weight: bold;
+    color: @win-message-color;
+    margin-bottom: 20px;
+  }
+}
