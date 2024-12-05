@@ -1,9 +1,11 @@
 <template>
   <div
-    class="game-card"
-    :class="[{ enlarged }, { dragged: dragInfo.dragged }]"
-    :style="faceDown ? faceDownStyle : faceUpStyle"
-    @mousedown="(e) => enlarged ? startDrag(e) : tryRemoveCard(index, type)" ref="draggableCard">
+      class="game-card"
+      :class="[{ enlarged }, { dragged: dragInfo.dragged }]"
+      :style="style"
+      @mousedown="(e) => enlarged ? startDrag(e) : tryRemoveCard(index, type)"
+      ref="draggableCard"
+  >
     <div v-if="!faceDown" class="game-card__content">
       <h3>{{ type }}</h3>
       <p>Score: {{ score }}</p>
@@ -18,7 +20,7 @@ import { TurnStates } from '@/engine/constants';
 export default {
   name: 'GameCard',
   emits: [
-    "onDrop",
+    'onDrop',
   ],
   props: {
     score: {
@@ -76,6 +78,35 @@ export default {
         backgroundColor: 'gray',
       };
     },
+    style() {
+      const sideStyle = this.faceDown ? this.faceDownStyle : this.faceUpStyle;
+
+      if (!this.enlarged || this.dragInfo.dragged) {
+        return sideStyle;
+      }
+
+      const cardsLength = this.opponent ? this.getGameEngine.opponent.cards.length : this.getGameEngine.player.cards.length
+
+      if (this.opponent) {
+        return this.index === 1 ? { 'margin-left': '0' } : {}
+      }
+
+      const angle = (this.index - (cardsLength - 1) / 2) * 7;
+      const isHovered = this.hoveredIndex === this.index;
+      const mid = Math.round(cardsLength / 2)
+      const style = {
+        zIndex: isHovered ? 100 : this.index,
+      }
+
+      if (this.draggedIndex !== this.index) {
+        style.transform = `translate(${this.index * 60 - cardsLength * 30}px, ${Math.abs(mid - this.index) * 15}px)  rotate(${angle}deg)`;
+      }
+
+      return {
+        ...style,
+        ...sideStyle,
+      }
+    },
     ...mapGetters('gameEngine', [
       'getGameEngine',
     ]),
@@ -95,9 +126,8 @@ export default {
       }
 
       const parentBounds = event.currentTarget.parentNode.parentNode.getBoundingClientRect();
-      const targetBounds = event.currentTarget.getBoundingClientRect();
-      this.$refs.draggableCard.style.top = `${targetBounds.top - parentBounds.top}px`;
-      this.$refs.draggableCard.style.left = `${targetBounds.left - parentBounds.left}px`;
+      this.$refs.draggableCard.style.top = `${event.clientY - parentBounds.top - 150}px`;
+      this.$refs.draggableCard.style.left = `${event.clientX - parentBounds.left - 75}px`;
       this.dragInfo.x = event.clientX;
       this.dragInfo.y = event.clientY;
       document.onmousemove = this.processDrag;
@@ -137,7 +167,6 @@ export default {
   height: 150px;
   border: 1px solid black;
   text-align: center;
-  transition: transform 0.5s, background-color 0.3s, box-shadow 0.3s;
 
   &__content {
     text-align: center;

@@ -5,18 +5,19 @@
           class="hand__card"
           v-for="(card, index) in cards"
           :key="index"
-          :style="index === 1 ? {'margin-left': '0'} : {}"
+          @mouseover="() => onMouseOver(index)"
+          @mouseleave="() => onMouseLeave()"
       >
         <GameCard
-          :key="index"
-          :type="card.type"
-          :score="card.score"
-          :image-uri="card.image"
-          :face-down="opponent"
-          :enlarged="!opponent"
-          :is-opponent="opponent"
-          :index="index"
-          @onDrop="(params) => $emit('onCardDrop', params)"
+            :key="index"
+            :type="card.type"
+            :score="card.score"
+            :image-uri="card.image"
+            :face-down="opponent"
+            :enlarged="!opponent"
+            :is-opponent="opponent"
+            :index="index"
+            @onDrop="(params) => onCardStopDrag(params)"
         />
       </div>
     </div>
@@ -31,7 +32,7 @@ export default {
   name: 'PlayerHand',
   components: { GameCard },
   emits: [
-    "onCardDrop",
+    'onCardDrop',
   ],
   props: {
     opponent: {
@@ -39,6 +40,9 @@ export default {
       required: false,
       default: false,
     },
+  },
+  data() {
+    return { hoveredIndex: null, draggedIndex: null };
   },
   computed: {
     ...mapGetters('gameEngine', [
@@ -50,7 +54,40 @@ export default {
           this.getGameEngine.player.cards
     },
     handClass() {
-      return this.opponent ? 'hand-opponent': 'hand-player';
+      return this.opponent ? 'hand-opponent' : 'hand-player';
+    }
+  },
+  methods: {
+    getHandStyles(index) {
+      if (this.opponent) {
+        return index === 1 ? { 'margin-left': '0' } : {}
+      }
+
+      const angle = (index - (this.cards.length - 1) / 2) * 7;
+      const isHovered = this.hoveredIndex === index;
+      const mid = Math.round(this.cards.length / 2)
+      const style = {
+        zIndex: isHovered ? 100 : index,
+      }
+
+      if (this.draggedIndex !== index) {
+        style.transform = `translate(${index * 60 - this.cards.length * 30}px, ${Math.abs(mid - index) * 15}px)  rotate(${angle}deg)`;
+      }
+
+      return style;
+    },
+    onMouseOver(index) {
+      this.hoveredIndex = index;
+    },
+    onMouseLeave() {
+      this.hoveredIndex = null;
+    },
+    onCardStartDrag(index) {
+      this.draggedIndex = index;
+    },
+    onCardStopDrag(params) {
+      this.$emit('onCardDrop', params);
+      this.draggedIndex = null;
     }
   }
 };
@@ -58,24 +95,25 @@ export default {
 
 <style scoped lang="less">
 .hand {
-  display: flex;
   position: absolute;
   z-index: 666;
   width: 80vw;
-  margin: auto;
-  justify-content: center;
+  left: 50vw;
 
   &__card {
     width: 150px;
-    height: 100%;
+    height: 60%;
     display: flex;
     align-items: center;
     font-size: 18px;
     color: black;
+    transform-origin: bottom center;
+    justify-content: center;
+    position: absolute;
   }
 
   &-player:extend(.hand) {
-    bottom: -20px;
+    bottom: -70px;
     height: 20vh;
   }
 
