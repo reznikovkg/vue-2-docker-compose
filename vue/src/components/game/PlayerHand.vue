@@ -1,5 +1,5 @@
 <template>
-  <div class="hand-container">
+  <div class="hand-container" :style="handStyle">
     <div :class="handClass">
       <div
           class="hand__card"
@@ -55,35 +55,17 @@ export default {
     },
     handClass() {
       return this.opponent ? 'hand-opponent' : 'hand-player';
-    }
+    },
+    handStyle() {
+      return this.opponent ? { transform: 'rotate(180deg)' } : {}
+    },
   },
   methods: {
-    getHandStyles(index) {
-      if (this.opponent) {
-        return index === 1 ? { 'margin-left': '0' } : {}
-      }
-
-      const angle = (index - (this.cards.length - 1) / 2) * 7;
-      const isHovered = this.hoveredIndex === index;
-      const mid = Math.round(this.cards.length / 2)
-      const style = {
-        zIndex: isHovered ? 100 : index,
-      }
-
-      if (this.draggedIndex !== index) {
-        style.transform = `translate(${index * 60 - this.cards.length * 30}px, ${Math.abs(mid - index) * 15}px)  rotate(${angle}deg)`;
-      }
-
-      return style;
-    },
     onMouseOver(index) {
       this.hoveredIndex = index;
     },
     onMouseLeave() {
       this.hoveredIndex = null;
-    },
-    onCardStartDrag(index) {
-      this.draggedIndex = index;
     },
     onCardStopDrag(params) {
       this.$emit('onCardDrop', params);
@@ -118,7 +100,7 @@ export default {
   }
 
   &-opponent:extend(.hand) {
-    top: -25px;
+    top: -75px;
     height: 15vh;
   }
 }

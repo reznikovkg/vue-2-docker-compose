@@ -51,6 +51,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    onTable: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
@@ -81,15 +85,11 @@ export default {
     style() {
       const sideStyle = this.faceDown ? this.faceDownStyle : this.faceUpStyle;
 
-      if (!this.enlarged || this.dragInfo.dragged) {
+      if (this.dragInfo.dragged || this.onTable) {
         return sideStyle;
       }
 
-      const cardsLength = this.opponent ? this.getGameEngine.opponent.cards.length : this.getGameEngine.player.cards.length
-
-      if (this.opponent) {
-        return this.index === 1 ? { 'margin-left': '0' } : {}
-      }
+      const cardsLength = this.isOpponent ? this.getGameEngine.opponent.cards.length : this.getGameEngine.player.cards.length
 
       const angle = (this.index - (cardsLength - 1) / 2) * 7;
       const isHovered = this.hoveredIndex === this.index;
@@ -99,7 +99,7 @@ export default {
       }
 
       if (this.draggedIndex !== this.index) {
-        style.transform = `translate(${this.index * 60 - cardsLength * 30}px, ${Math.abs(mid - this.index) * 15}px)  rotate(${angle}deg)`;
+        style.transform = `translate(${this.index * 60 - (cardsLength - 1) * 30}px, ${Math.abs(mid - this.index) * 15}px)  rotate(${angle}deg)`;
       }
 
       return {

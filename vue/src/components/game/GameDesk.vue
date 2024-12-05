@@ -1,17 +1,17 @@
 <template>
   <div class="desk">
     <div class="desk__enemy_line">
-      <GameDeskLine :cards="opponentRangeCards" :isMelee="false" :isOpponent="true" />
-      <GameDeskLine :cards="opponentMeleeCards" :isMelee="true" :isOpponent="true" />
+      <GameDeskLine :cards="opponentRangeCards" :isMelee="false" :isOpponent="true"/>
+      <GameDeskLine :cards="opponentMeleeCards" :isMelee="true" :isOpponent="true"/>
     </div>
     <div class="desk__separator">
-      <GameScore />
-      <span class="desk__separator__line" />
+      <GameScore/>
+      <span class="desk__separator__line"/>
       <span class="desk__separator__text">VS</span>
-      <span class="desk__separator__line" />
-      <CountDown />
-      <PassButton />
-      <EndTurnButton />
+      <span class="desk__separator__line"/>
+      <CountDown/>
+      <PassButton/>
+      <EndTurnButton/>
     </div>
     <div ref="lines">
       <GameDeskLine :cards="playerMeleeCards" :isMelee="true" :isOpponent="false" id="player-melee-cards" />
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import GameDeskLine from "./DeskLine";
+import GameDeskLine from './DeskLine';
 import CountDown from '../game/CountDown.vue';
 import { mapGetters } from 'vuex';
 import EndTurnButton from '@/components/game/EndTurnButton.vue';
@@ -36,7 +36,7 @@ export default {
     GameDeskLine,
     CountDown,
   },
-  name: "GameDesk",
+  name: 'GameDesk',
   computed: {
     playerMeleeCards() {
       return this.getGameEngine.player.board.firstLineCards;
@@ -65,7 +65,7 @@ export default {
   height: 15vh;
   border-radius: 7px;
   position: relative;
-  z-index: 0;
+  z-index: -1;
 
   &__enemy_line {
     margin-top: 2vh;
