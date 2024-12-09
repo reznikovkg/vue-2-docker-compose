@@ -1,21 +1,18 @@
 <template>
   <PageLayout>
-    <section class="p-16">
-      Homepage
-      <button @click="() => openHelpModal()">Open modal</button>
-    </section>
+    <ColorPicker />
   </PageLayout>
 </template>
 
 <script>
+import ColorPicker from '../parts/ColorPicker.vue';
 import PageLayout from '../parts/PageLayout'
-import { helpModal } from "@/mixins/modals";
 
 export default {
   name: 'HomePage',
-  mixins: [helpModal],
   components: {
-    PageLayout
+    PageLayout,
+    ColorPicker
   }
 }
 </script>
