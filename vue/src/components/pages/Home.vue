@@ -1,6 +1,7 @@
 <template>
   <PageLayout>
-    <ColorPicker />
+    <ColorPicker format="rgb" @color="(value) => this.color = value" />
+    <span> {{ color }} </span>
   </PageLayout>
 </template>
 
@@ -13,7 +14,12 @@ export default {
   components: {
     PageLayout,
     ColorPicker
-  }
+  },
+  data() {
+        return {
+            color: 0
+        };
+    },
 }
 </script>
 
