@@ -37,11 +37,8 @@ export const INIT_DECK = [
         ? engine.player
         : engine.opponent).board.firstLineCards;
 
-      console.log(oppositeLine);
-
       // Find geralt-of-rivia in the opposite line
       const isFound = oppositeLine.findIndex(card => card.image === 'geralt-of-rivia.jpeg') !== -1;
-      console.log(isFound);
 
       return new PlayCardAbilityResponse(isFound);
     }
