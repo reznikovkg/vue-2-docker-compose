@@ -1,6 +1,7 @@
 <template>
   <div class="level-menu">
     <StartScreen>
+      <BackButton></BackButton>
       <div class="level-menu__toggle" @click="() => toggleLevels()">
         <CustomButton type="menu">
           {{ showCustomLevels ? 'Показать основные уровни' : 'Показать свои уровни' }}
@@ -18,11 +19,6 @@
           </CustomButton>
         </RouterLink>
       </div>
-      <RouterLink class="level-menu__toggle" to="/">
-        <CustomButton type="menu">
-          Домой
-        </CustomButton>
-      </RouterLink>
     </StartScreen>
   </div>
 </template>
@@ -31,12 +27,14 @@
 import StartScreen from "../parts/PageBackground.vue";
 import CustomButton from "../parts/CustomButton.vue";
 import gameStorage from '@/GameEngine/gameStorage';
+import BackButton from "../parts/BackButton.vue";
 
 export default {
   name: "StartMenuView",
   components: {
     StartScreen,
     CustomButton,
+    BackButton,
   },
   data() {
     return {

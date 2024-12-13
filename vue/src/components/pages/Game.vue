@@ -1,6 +1,7 @@
 <template>
   <div class="game-page">
     <LevelBackground>
+      <BackButton></BackButton>
       <h2 class="game-page__title">Level {{ levelNumber }}</h2>
       <GameGrid />
       <p v-if="message" class="game-page__message">{{ message }}</p>
@@ -19,6 +20,7 @@ import gameLogic from "@/GameEngine/GameLogic";
 import gameStorage from "@/GameEngine/gameStorage";
 import { KeyboardEvents } from "@/GameEngine/GameEvents";
 import LevelBackground from "../parts/LevelBackground.vue";
+import BackButton from "../parts/BackButton.vue";
 
 export default {
   name: "GamePage",
@@ -26,6 +28,7 @@ export default {
     GameGrid,
     KeyboardController,
     LevelBackground,
+    BackButton,
   },
   props: {
     levelNumber: {
