@@ -1,6 +1,7 @@
 <template>
   <div class="menu">
     <StartScreen>
+      <BackButton></BackButton>
       <div class="menu__buttons">
         <RouterLink :to="{ name: RouteNames.GAME, params: { level_number: currentLevel } }" class="menu__button-link">
           <CustomButton type="menu">Продолжить</CustomButton>
@@ -22,12 +23,14 @@ import StartScreen from "../parts/PageBackground.vue";
 import CustomButton from "../parts/CustomButton.vue";
 import gameStorage from "@/GameEngine/gameStorage";
 import { RouteNames } from "@/router/routes";
+import BackButton from "../parts/BackButton.vue";
 
 export default {
   name: "StartMenuView",
   components: {
     StartScreen,
     CustomButton,
+    BackButton,
   },
   data() {
     return {
