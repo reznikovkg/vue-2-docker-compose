@@ -4,8 +4,15 @@
       <BackButton></BackButton>
       <h2 class="game-page__title">Level {{ levelNumber }}</h2>
       <GameGrid />
-      <p v-if="message" class="game-page__message">{{ message }}</p>
       <KeyboardController @key-action="handleKeyAction" />
+      <GameResultModal
+        v-if="showResultModal"
+        :result="result"
+        :levelNumber="levelNumber"
+        @close-modal="hideGameResultModal"
+        @restart-level="restartLevel"
+      >
+      </GameResultModal>
     </LevelBackground>
   </div>
 </template>
@@ -21,6 +28,7 @@ import gameStorage from "@/GameEngine/gameStorage";
 import { KeyboardEvents } from "@/GameEngine/GameEvents";
 import LevelBackground from "../parts/LevelBackground.vue";
 import BackButton from "../parts/BackButton.vue";
+import GameResultModal from "../parts/GameResultModal.vue";
 
 export default {
   name: "GamePage",
@@ -29,6 +37,7 @@ export default {
     KeyboardController,
     LevelBackground,
     BackButton,
+    GameResultModal,
   },
   props: {
     levelNumber: {
@@ -43,7 +52,8 @@ export default {
   },
   data() {
     return {
-      message: null,
+      showResultModal: false,
+      result: "",
     };
   },
   computed: {
@@ -52,33 +62,14 @@ export default {
   watch: {
     getHasWon(newVal) {
       if (newVal) {
-        this.message = "Ура! Вы победили! Запуск следующего уровня...";
-        setTimeout(() => {
-          this.message = null;
-          const nextLevel = this.levelNumber + 1;
-          const maxLevels = gameStorage.getNumberOfLevels(this.isCustom);
-
-          if (nextLevel <= maxLevels) {
-            this.$router.push({
-              name: this.isCustom ? RouteNames.CUSTOM_GAME : RouteNames.GAME,
-              params: { level_number: nextLevel },
-            });
-          } else {
-            this.$router.push({ name: RouteNames.LEVEL_MENU });
-          }
-        }, 5000);
+        this.result = "won";
+        this.showResultModal = true;
       }
     },
     getHasLost(newVal) {
       if (newVal) {
-        this.message = " Вы проиграли, перезапуск уровня...";
-        setTimeout(() => {
-          this.message = null;
-          this.loadLevel({
-            levelNumber: this.levelNumber,
-            isCustom: this.isCustom,
-          });
-        }, 5000);
+        this.result = "lost";
+        this.showResultModal = true;
       }
     },
     "$route.params.level_number"(newLevel) {
@@ -147,18 +138,23 @@ export default {
         this.win();
       }
     },
+
+    hideGameResultModal() {
+      this.showResultModal = false;
+    },
+
+    restartLevel() {
+      this.loadLevel({
+        levelNumber: this.levelNumber,
+        isCustom: this.isCustom,
+      });
+    },
   },
 };
 </script>
 
 <style scoped lang="less">
 .game-page {
-  &__message {
-    font-size: 1.5em;
-    color: red;
-    text-align: center;
-  }
-
   &__title {
     color: var(--level-title-color);
     font-size: 40px;

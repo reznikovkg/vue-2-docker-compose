@@ -65,6 +65,13 @@ export default {
     margin: 15px 0;
   }
 
+  &--modal {
+    font-size: 25px;
+    width: 150px;
+    height: 50px;
+    text-align: center;
+  }
+
   &--level {
     font-size: 70px;
     width: 130px;
