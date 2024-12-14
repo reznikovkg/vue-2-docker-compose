@@ -7,6 +7,7 @@
       <GridDimention />
       <DropdownSelect />
       <GridValidation />
+      <SaveLoadControls/>
     </div>
   </div>
 </template>
@@ -17,6 +18,7 @@ import EditorGrid from "../parts/EditorGrid.vue";
 import DropdownSelect from "../parts/DropdownSelect";
 import GridDimention from "../parts/GridDimention";
 import GridValidation from "../parts/GridValidation.vue";
+import SaveLoadControls from "../parts/SaveLoadControls.vue";
 
 export default {
   name: "EditorPage",
@@ -25,6 +27,7 @@ export default {
     DropdownSelect,
     GridDimention,
     GridValidation,
+    SaveLoadControls,
   },
   beforeMount() {
     this.loadLevel({ levelNumber: "editor" });
@@ -84,7 +87,8 @@ export default {
 
     &__right {
       order: 2;
-      padding: 10px;
+      padding: 1vh;
+      gap: 0vh;
     }
   }
 }

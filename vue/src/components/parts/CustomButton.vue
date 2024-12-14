@@ -4,6 +4,7 @@
     :class="'custom-button--' + type" 
     :disabled="disabled" 
     :aria-disabled="disabled.toString()"
+    @click="() => onClick()"
   >
     <slot>Кнопка</slot>
   </button>
@@ -20,6 +21,11 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    onClick() {
+      this.$emit("click");
     },
   },
 };
