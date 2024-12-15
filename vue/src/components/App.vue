@@ -3,7 +3,7 @@
     <PlayerHand opponent/>
     <GameDesk ref="playerDesk"/>
     <PlayerHand @onCardDrop="(payload) => this.onCardDrop(payload)"/>
-    <ModalContainer />
+    <ModalContainer/>
   </div>
 </template>
 

@@ -97,7 +97,7 @@ export const INIT_DECK = [
     score: 7,
     image: 'yapen-zigrin.jpeg',
   },
-].map(card => ({...card, new: false}));
+].map(card => ({ ...card, new: false }));
 
 export const MAX_CARDS_IN_HAND = 10;
 

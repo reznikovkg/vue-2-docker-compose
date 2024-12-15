@@ -20,6 +20,7 @@ import { TurnStates } from '@/engine/constants';
 export default {
   name: 'GameCard',
   emits: [
+    'onDrag',
     'onDrop',
   ],
   props: {
@@ -54,7 +55,7 @@ export default {
     onTable: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   data() {
     return {
@@ -89,21 +90,8 @@ export default {
         return sideStyle;
       }
 
-      const cardsLength = this.isOpponent ? this.getGameEngine.opponent.cards.length : this.getGameEngine.player.cards.length
-
-      const angle = (this.index - (cardsLength - 1) / 2) * 7;
-      const isHovered = this.hoveredIndex === this.index;
-      const mid = Math.round(cardsLength / 2)
-      const style = {
-        zIndex: isHovered ? 100 : this.index,
-      }
-
-      if (this.draggedIndex !== this.index) {
-        style.transform = `translate(${this.index * 60 - (cardsLength - 1) * 30}px, ${Math.abs(mid - this.index) * 15}px)  rotate(${angle}deg)`;
-      }
-
       return {
-        ...style,
+        translate: '0 -430px',
         ...sideStyle,
       }
     },
@@ -134,6 +122,7 @@ export default {
       document.onmouseup = this.stopDrag;
       this.$refs.draggableCard.style.position = 'absolute';
       this.dragInfo.dragged = true;
+      this.$emit('onDrag', this.index);
     },
     processDrag(event) {
       event.preventDefault();
@@ -153,7 +142,12 @@ export default {
       this.$refs.draggableCard.style.left = '0px';
       this.dragInfo.dragged = false;
 
-      this.$emit('onDrop', { index: this.index, x: event.clientX, y: event.clientY, cursor: { x: event.pageX, y: event.pageY } });
+      this.$emit('onDrop', {
+        index: this.index,
+        x: event.clientX,
+        y: event.clientY,
+        cursor: { x: event.pageX, y: event.pageY }
+      });
     }
   }
 };
