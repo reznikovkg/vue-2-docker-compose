@@ -2,13 +2,15 @@
   <CustomButton 
     type="back" 
     @click="goBack"
-  >
-    Назад
+  > 
+    Назад 
   </CustomButton>
 </template>
 
 <script>
 import CustomButton from "./CustomButton.vue";
+import { RouteNames } from "@/router/routes";
+import { RouteTree } from "@/GameEngine/RouteTree";
 
 export default {
   name: "BackButton",
@@ -17,11 +19,9 @@ export default {
   },
   methods: {
     goBack() {
-      if (window.history.length > 1) {
-        this.$router.go(-1);
-      } else {
-        this.$router.push("/");
-      }
+      const currentRoute = this.$route.name;
+      const previousRoute = RouteTree[currentRoute] || RouteNames.HOME;
+      this.$router.push({ name: previousRoute });
     },
   },
 };

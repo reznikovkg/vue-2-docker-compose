@@ -1,5 +1,6 @@
 <template>
   <div class="editor-page">
+    <BackButton></BackButton>
     <div class="editor-page__left">
       <EditorGrid />
     </div>
@@ -19,6 +20,7 @@ import DropdownSelect from "../parts/DropdownSelect";
 import GridDimention from "../parts/GridDimention";
 import GridValidation from "../parts/GridValidation.vue";
 import SaveLoadControls from "../parts/SaveLoadControls.vue";
+import BackButton from "../parts/BackButton.vue";
 
 export default {
   name: "EditorPage",
@@ -28,6 +30,7 @@ export default {
     GridDimention,
     GridValidation,
     SaveLoadControls,
+    BackButton,
   },
   beforeMount() {
     this.loadLevel({ levelNumber: "editor" });
