@@ -1,7 +1,7 @@
 <template>
   <div
       class="game-card"
-      :class="[{ enlarged }, { dragged: dragInfo.dragged }]"
+      :class="[{ enlarged }, { dragged: dragInfo.dragged }, { ['player-card']: !isOpponent }]"
       :style="style"
       @mousedown="(e) => enlarged ? startDrag(e) : tryRemoveCard(index, type)"
       ref="draggableCard"
@@ -155,7 +155,6 @@ export default {
 
 <style scoped lang="less">
 .game-card {
-  cursor: move;
   user-select: none;
   width: 100px;
   height: 150px;
@@ -178,9 +177,10 @@ export default {
   z-index: 777;
 }
 
-.game-card:hover {
+.player-card:hover {
   border-color: gold;
   background-color: yellow;
   box-shadow: 0 0 15px 5px rgba(255, 223, 0, 0.8);
+  cursor: move;
 }
 </style>
