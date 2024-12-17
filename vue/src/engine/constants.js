@@ -1,3 +1,6 @@
+import { Card } from "@/engine/card";
+import { AbilityCollection, PlayCardAbilityResponse } from "./ability";
+
 export const MAX_CARDS_PER_LINE = 7;
 
 export const GamePhases = {
@@ -22,82 +25,37 @@ export const CardType = {
 };
 
 export const INIT_DECK = [
-  {
-    type: CardType.MELEE,
-    score: 10,
-    image: 'geralt-of-rivia.jpeg',
-  },
-  {
-    type: CardType.RANGE,
-    score: 7,
-    image: 'triss-merigold.jpeg',
-  },
-  {
-    type: CardType.RANGE,
-    score: 8,
-    image: 'yennefer.jpeg',
-  },
-  {
-    type: CardType.MELEE,
-    score: 2,
-    image: 'dandelion.jpeg',
-  },
-  {
-    type: CardType.MELEE,
-    score: 10,
-    image: 'zoltan-chiva.png',
-  },
-  {
-    type: CardType.MELEE,
-    score: 9,
-    image: 'ciri.jpeg',
-  },
-  {
-    type: CardType.MELEE,
-    score: 6,
-    image: 'roche.png',
-  },
-  {
-    type: CardType.MELEE,
-    score: 10,
-    image: 'emgir-var-emreis.jpeg',
-  },
-  {
-    type: CardType.RANGE,
-    score: 7,
-    image: 'gyunter.jpeg',
-  },
-  {
-    type: CardType.RANGE,
-    score: 5,
-    image: 'iorvet.jpeg',
-  },
-  {
-    type: CardType.MELEE,
-    score: 3,
-    image: 'kerak.jpeg',
-  },
-  {
-    type: CardType.MELEE,
-    score: 6,
-    image: 'lamberd.jpeg',
-  },
-  {
-    type: CardType.MELEE,
-    score: 4,
-    image: 'leo-bonart.jpeg',
-  },
-  {
-    type: CardType.MELEE,
-    score: 9,
-    image: 'vesemir.jpeg',
-  },
-  {
-    type: CardType.MELEE,
-    score: 7,
-    image: 'yapen-zigrin.jpeg',
-  },
-].map(card => ({ ...card, new: false }));
+  new Card(CardType.MELEE, 10, 'geralt-of-rivia.jpeg'),
+  new Card(CardType.RANGE, 7, 'triss-merigold.jpeg'),
+  new Card(CardType.RANGE, 8, 'yennefer.jpeg'),
+  new Card(CardType.MELEE, 2, 'dandelion.jpeg'),
+  new Card(CardType.MELEE, 10, 'zoltan-chiva.png'),
+  new Card(CardType.MELEE, 9, 'ciri.jpeg', new AbilityCollection(
+    (context) => {
+      const engine = context.getEngine();
+      const oppositeLine = (engine.currentTurn !== TurnStates.PLAYER
+        ? engine.player
+        : engine.opponent).board.firstLineCards;
+
+      console.log(oppositeLine);
+
+      // Find geralt-of-rivia in the opposite line
+      const isFound = oppositeLine.findIndex(card => card.image === 'geralt-of-rivia.jpeg') !== -1;
+      console.log(isFound);
+
+      return new PlayCardAbilityResponse(isFound);
+    }
+  )),
+  new Card(CardType.MELEE, 6, 'roche.png'),
+  new Card(CardType.MELEE, 10, 'emgir-var-emreis.jpeg'),
+  new Card(CardType.RANGE, 7, 'gyunter.jpeg'),
+  new Card(CardType.RANGE, 5, 'iorvet.jpeg'),
+  new Card(CardType.MELEE, 3, 'kerak.jpeg'),
+  new Card(CardType.MELEE, 6, 'lamberd.jpeg'),
+  new Card(CardType.MELEE, 4, 'leo-bonart.jpeg'),
+  new Card(CardType.MELEE, 9, 'vesemir.jpeg'),
+  new Card(CardType.MELEE, 7, 'yapen-zigrin.jpeg'),
+];
 
 export const MAX_CARDS_IN_HAND = 10;
 

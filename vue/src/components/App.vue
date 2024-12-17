@@ -26,7 +26,7 @@ export default {
       const engine = this.getGameEngine;
       const { left, right, top, bottom } = this.$refs.playerDesk.$refs.lines.getBoundingClientRect();
       const card = engine.player.cards[cardIndex];
-      const lineId = card.type === CardType.MELEE ? 'player-melee-cards' : 'player-range-cards';
+      const lineId = card.getType() === CardType.MELEE ? 'player-melee-cards' : 'player-range-cards';
       const line = document.querySelector(`#${lineId} > .desk-line__cards`);
       const cardsNodes = line.childNodes;
 

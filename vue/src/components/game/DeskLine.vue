@@ -35,9 +35,9 @@
           v-for="(card, index) in cards"
           :index="index"
           :key="index"
-          :score="card.score"
-          :type="card.type"
-          :image-uri="card.image"
+          :score="card.getScore()"
+          :type="card.getType()"
+          :image-uri="card.getImage()"
           :is-opponent="isOpponent"
           :on-table="true"
       />
@@ -70,7 +70,7 @@ export default {
       },
       validator(value) {
         return Array.isArray(value)
-            && value.every(item => typeof item.score === 'number');
+          && value.every(item => typeof item.getScore() === "number");
       },
     },
   },

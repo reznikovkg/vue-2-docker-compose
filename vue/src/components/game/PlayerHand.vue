@@ -10,16 +10,16 @@
           :style="cardStyle(index)"
       >
         <GameCard
-            :key="index"
-            :type="card.type"
-            :score="card.score"
-            :image-uri="card.image"
-            :face-down="opponent"
-            :enlarged="!opponent"
-            :is-opponent="opponent"
-            :index="index"
-            @onDrag="(i) => onCardStartDrag(i)"
-            @onDrop="(params) => onCardStopDrag(params)"
+          :key="index"
+          :type="card.getType()"
+          :score="card.getScore()"
+          :image-uri="card.getImage()"
+          :face-down="opponent"
+          :enlarged="!opponent"
+          :is-opponent="opponent"
+          :index="index"
+          @onDrag="(i) => onCardStartDrag(i)"
+          @onDrop="(params) => onCardStopDrag(params)"
         />
       </div>
     </div>

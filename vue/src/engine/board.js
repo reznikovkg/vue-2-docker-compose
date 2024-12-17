@@ -6,11 +6,11 @@ export class Board {
   secondLineCards = [];
 
   getFirstLineScore() {
-    return this.firstLineCards.reduce((score, card) => score + card.score, 0);
+    return this.firstLineCards.reduce((score, card) => score + card.getScore(), 0);
   }
 
   getSecondLineScore() {
-    return this.secondLineCards.reduce((score, card) => score + card.score, 0);
+    return this.secondLineCards.reduce((score, card) => score + card.getScore(), 0);
   }
 
   getTotalScore() {
@@ -70,7 +70,7 @@ export class Board {
   }
 
   addCard(card, position) {
-    switch (card.type) {
+    switch (card.getType()) {
       case CardType.MELEE:
         this.addFirstLineCard(card, position);
         break;
@@ -80,7 +80,7 @@ export class Board {
         break;
 
       default:
-        console.error('Invalid cardType: ', card);
+        throw new Error('Invalid cardType');
     }
   }
 

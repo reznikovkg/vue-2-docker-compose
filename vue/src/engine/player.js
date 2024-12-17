@@ -1,6 +1,8 @@
 import { Board } from '@/engine/board';
 import { MAX_CARDS_IN_HAND, MAX_MULLIGAN_CARDS_QUANTITY, NEW_ROUND_DRAW_CARDS_QUANTITY } from '@/engine/constants';
+import { PlayCardAbilityContext } from '@/engine/ability';
 import { shuffleArray } from '@/utils/utils';
+import { getGameEngineSingleton } from './game-engine';
 
 export class Player {
   gameScore = 0;
@@ -28,11 +30,24 @@ export class Player {
     this.deck = shuffleArray(this.deck);
   }
 
-  playCard(cardIndex, position) {
-    const card = this.cards[cardIndex];
-    this.cards.splice(cardIndex, 1);
-    card.new = true;
-    return this.board.addCard(card, position);
+  tryPlayCard(cardIndex, position) {
+    try {
+      const card = this.cards[cardIndex];
+
+      const context = new PlayCardAbilityContext(getGameEngineSingleton(), cardIndex, position);
+      const response = card.getAbilities().onPlayCardAbility?.(context);
+      if (response?.dropPlayerCard) {
+        return false;
+      }
+
+      this.board.addCard(card, position);
+      this.cards.splice(cardIndex, 1);
+      card.setNew(true);
+
+      return true;
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   pass() {
@@ -53,7 +68,7 @@ export class Player {
 
   removeCardFromBoard(index, type) {
     const card = this.board.getCard(index, type);
-    if (!card.new) {
+    if (!card.getNew()) {
       return;
     }
 
