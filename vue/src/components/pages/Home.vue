@@ -1,21 +1,19 @@
 <template>
   <PageLayout>
-    <section class="p-16">
-      Homepage
-      <button @click="() => openHelpModal()">Open modal</button>
-    </section>
+    <FileUpload />
   </PageLayout>
 </template>
 
 <script>
+
+import FileUpload from '../parts/FileUpload.vue';
 import PageLayout from '../parts/PageLayout'
-import { helpModal } from "@/mixins/modals";
 
 export default {
   name: 'HomePage',
-  mixins: [helpModal],
   components: {
-    PageLayout
+    PageLayout,
+    FileUpload
   }
 }
 </script>
