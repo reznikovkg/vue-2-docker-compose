@@ -1,6 +1,7 @@
 <template>
   <div class="desk">
     <div class="desk__enemy_line">
+      <PlayerScoreCounter :opponent="true"/>
       <GameDeskLine :cards="opponentRangeCards" :isMelee="false" :isOpponent="true"/>
       <GameDeskLine :cards="opponentMeleeCards" :isMelee="true" :isOpponent="true"/>
     </div>
@@ -14,8 +15,9 @@
       <EndTurnButton/>
     </div>
     <div ref="lines">
-      <GameDeskLine :cards="playerMeleeCards" :isMelee="true" :isOpponent="false" id="player-melee-cards" />
-      <GameDeskLine :cards="playerRangeCards" :isMelee="false" :isOpponent="false" id="player-range-cards" />
+      <GameDeskLine :cards="playerMeleeCards" :isMelee="true" :isOpponent="false" id="player-melee-cards"/>
+      <GameDeskLine :cards="playerRangeCards" :isMelee="false" :isOpponent="false" id="player-range-cards"/>
+      <PlayerScoreCounter/>
     </div>
   </div>
 </template>
@@ -27,9 +29,11 @@ import { mapGetters } from 'vuex';
 import EndTurnButton from '@/components/game/EndTurnButton.vue';
 import PassButton from '@/components/game/PassButton.vue';
 import GameScore from '@/components/game/GameScore.vue';
+import PlayerScoreCounter from '@/components/game/PlayerScoreCounter.vue';
 
 export default {
   components: {
+    PlayerScoreCounter,
     GameScore,
     PassButton,
     EndTurnButton,
@@ -61,7 +65,7 @@ export default {
 .desk {
   display: flex;
   flex-direction: column;
-  margin: 4vh 0;
+  margin: -1vh 0;
   height: 15vh;
   border-radius: 7px;
   position: relative;

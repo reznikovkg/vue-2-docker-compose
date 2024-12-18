@@ -75,4 +75,13 @@ export class Player {
     const removed = this.board.removeCard(index, type);
     this.cards.push(removed);
   }
+
+  getScore() {
+    const { firstLineCards, secondLineCards } = this.board;
+    
+    const firstLineScore = firstLineCards.reduce((acc, card) => acc + card.getScore(), 0);
+    const secondLineScore = secondLineCards.reduce((acc, card) => acc + card.getScore(), 0);
+
+    return firstLineScore + secondLineScore;
+  }
 }
