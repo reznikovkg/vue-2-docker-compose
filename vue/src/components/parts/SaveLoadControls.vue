@@ -14,9 +14,6 @@
         @change="uploadFromFile"
         accept="application/json"
       />
-      <CustomButton type="menu" @click="() => loadFromLocal()">
-        Загрузить из локального
-      </CustomButton>
       <CustomButton
         type="menu"
         :disabled="!canSaveCurrent"
@@ -26,6 +23,9 @@
       </CustomButton>
       <CustomButton type="menu" @click="() => saveToLocalNew()">
         Сохранить как новый локальный
+      </CustomButton>
+      <CustomButton type="menu" class="save-load-controls__last_button" @click="() => loadFromLocal()">
+        Загрузить из локального
       </CustomButton>
     </div>
 
@@ -193,6 +193,7 @@ export default {
   .save-load-controls {
     margin-bottom: 1vh;
     padding: 0vh;
+    margin: 0vw;
     background-color: var(--main-background-color);
     color: rgb(109, 69, 69);
     border: none;
@@ -201,12 +202,23 @@ export default {
     text-align: center;
     width: 100vw;
 
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 0.5vh;
+    column-gap: 0vw;
+    justify-items: center;
+
     & * {
-      height: 3vh;
-      width: 95vw;
+      height: 7vh;
+      width: 48vw;
       font-size: 1.5vh;
-      padding: 1vh;
-      margin: 1vh;
+      margin: 0vw;
+      padding: 0vw;
+    }
+
+    &__last_button{
+      width: 98vw;
+      grid-column: span 2;
     }
 
     &__file-input {
