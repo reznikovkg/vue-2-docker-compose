@@ -39,7 +39,8 @@ export default {
       ];
     },
     getRandomStyle() {
-      const randomX = Math.random() * 100;
+      const isMobile = window.innerWidth <= 480;
+      const randomX = isMobile ? Math.random() * 60 - 10 : Math.random() * 100;
       const randomDelay = Math.random() * 5;
       const randomDuration = Math.random() * (5 - 3) + 3;
       const randomScale = Math.random() * (3 - 1) + 1;
@@ -66,7 +67,7 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   overflow: hidden;
 }
