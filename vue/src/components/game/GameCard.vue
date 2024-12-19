@@ -114,8 +114,8 @@ export default {
       }
 
       const parentBounds = event.currentTarget.parentNode.parentNode.getBoundingClientRect();
-      this.$refs.draggableCard.style.top = `${event.clientY - parentBounds.top - 150}px`;
-      this.$refs.draggableCard.style.left = `${event.clientX - parentBounds.left - 75}px`;
+      this.$refs.draggableCard.style.top = `${event.clientY - parentBounds.top - 100}px`;
+      this.$refs.draggableCard.style.left = `${event.clientX - parentBounds.left - 50}px`;
       this.dragInfo.x = event.clientX;
       this.dragInfo.y = event.clientY;
       document.onmousemove = this.processDrag;
@@ -156,8 +156,8 @@ export default {
 <style scoped lang="less">
 .game-card {
   user-select: none;
-  width: 100px;
-  height: 150px;
+  width: 80px;
+  height: 120px;
   border: 1px solid black;
   text-align: center;
 
@@ -168,8 +168,8 @@ export default {
   }
 
   &.enlarged {
-    width: 150px;
-    height: 225px;
+    width: 100px;
+    height: 150px;
   }
 }
 

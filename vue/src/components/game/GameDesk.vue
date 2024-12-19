@@ -91,7 +91,7 @@ export default {
     &__text {
       font-weight: bold;
       color: rgb(51, 51, 51);
-      font-size: 32px;
+      font-size: 150%;
     }
   }
 }

@@ -96,10 +96,9 @@ export default {
 .hand {
   position: absolute;
   z-index: 666;
-  width: 150px;
+  width: 100px;
 
   &__card {
-    width: 150px;
     height: 60%;
     display: flex;
     align-items: center;

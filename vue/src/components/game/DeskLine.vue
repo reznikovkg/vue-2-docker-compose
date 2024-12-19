@@ -99,7 +99,7 @@ export default {
   flex-direction: column;
   margin: 12px 0;
   padding: 4px;
-  height: 16vh;
+  height: 14vh;
   border-radius: 7px;
   position: relative;
   z-index: 0;
