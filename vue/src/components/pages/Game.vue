@@ -91,7 +91,7 @@ export default {
       "lose",
     ]),
 
-    handleKeyAction(action) {
+    async handleKeyAction(action) {
       if (this.getHasWon || this.getHasLost) {
         return;
       }
@@ -134,7 +134,7 @@ export default {
       if (result !== "Всё ок") {
         this.lose();
       } else if (gameLogic.hasWon(this.getGrid)) {
-        gameStorage.saveProgress(this.levelNumber);
+        await gameStorage.saveProgress(this.levelNumber);
         this.win();
       }
     },

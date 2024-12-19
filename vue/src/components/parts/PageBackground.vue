@@ -132,9 +132,10 @@ export default {
 
     &__title {
       color: var(--title-color);
-      font-size: 100px;
+      font-size: clamp(40px, 80vw, 100px);
       font-family: "Adigiana Ultra", sans-serif;
       margin: 0;
+      white-space: nowrap;
     }
 
     .circle {

@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       showCustomLevels: false,
+      levelProgress: 0
     };
   },
   computed: {
@@ -56,9 +57,9 @@ export default {
         disabled: this.levelProgress < index
       }));
     },
-    levelProgress() {
-      return gameStorage.loadProgress();
-    }
+  },
+  async mounted() {
+    this.levelProgress = await gameStorage.loadProgress();
   },
   methods: {
     toggleLevels() {
