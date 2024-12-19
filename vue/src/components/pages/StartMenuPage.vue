@@ -34,13 +34,13 @@ export default {
   },
   data() {
     return {
-      RouteNames
+      RouteNames,
+      currentLevel: 0
     }
   },
-  computed: {
-    currentLevel() {
-      return Math.min(gameStorage.loadProgress() + 1, gameStorage.getNumberOfLevels(false));
-    }
+  async mounted() {
+    const currentProgress = await gameStorage.loadProgress();
+    this.currentLevel = Math.min(currentProgress + 1, gameStorage.getNumberOfLevels(false))
   }
 };
 </script>
