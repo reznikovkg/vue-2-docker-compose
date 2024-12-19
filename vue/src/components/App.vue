@@ -1,12 +1,23 @@
 <template>
   <div id="app">
-    <router-view />
+    <SubscriptionBanner>
+      <router-view />
+    </SubscriptionBanner>
   </div>
 </template>
 
 <script>
-let tg = window.Telegram.WebApp;
-tg.disableVerticalSwipes()
+import SubscriptionBanner from './parts/SubscriptionBanner.vue';
+
+export default {
+  components: {
+    SubscriptionBanner
+  },
+  created() {
+    let tg = window.Telegram.WebApp;
+    tg.disableVerticalSwipes();
+  }
+}
 </script>
 
 <style lang="less">

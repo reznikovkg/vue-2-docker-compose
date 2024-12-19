@@ -1,4 +1,5 @@
 // src/utils/gameManager.js
+import UserDataService from '@/api/TelegramService';
 import levels from '@/assets/levels.json';
 
 const LOCAL_STORAGE_CUSTOM_LEVELS_KEY = 'customLevels';
@@ -45,7 +46,6 @@ const gameStorage = {
   
           const customLevels = this.getCustomLevels();
           customLevels.push(levelData);
-          localStorage.setItem(LOCAL_STORAGE_CUSTOM_LEVELS_KEY, JSON.stringify(customLevels));
   
           resolve(levelData);
         } catch (error) {
@@ -60,15 +60,44 @@ const gameStorage = {
     return isCustom ? this.getCustomLevels().length : Object.keys(levels.levels).filter(key => key !== "editor").length;
   },
 
-  saveProgress(currentLevel) {
-    if (this.loadProgress() < currentLevel) {
-      localStorage.setItem(LOCAL_STORAGE_CURRENT_LEVEL_KEY, JSON.stringify(currentLevel));
+  async saveProgress(currentLevel, isOnline = true, userData = null) {
+    if (isOnline) {
+      try {
+        userData = window.Telegram.WebApp.initData;
+        if (!userData) {
+          throw new Error('Вход на сайт был произведен не через Телеграм');
+        }
+        const success = await UserDataService.saveProgress(userData, currentLevel);
+        if (!success) {
+          throw new Error('Не удалось сохранить прогресс');
+        }
+      } catch (error) {
+        console.error('Ошибка сохранения прогресса:', error);
+      }
+    } else {
+      if (this.loadProgress() < currentLevel) {
+        localStorage.setItem(LOCAL_STORAGE_CURRENT_LEVEL_KEY, JSON.stringify(currentLevel));
+      }
     }
   },
 
-  loadProgress() {
-    const currentLevel = localStorage.getItem(LOCAL_STORAGE_CURRENT_LEVEL_KEY);
-    return currentLevel ? JSON.parse(currentLevel) : 0;
+  async loadProgress(isOnline = true, userData = null) {
+    if (isOnline) {
+      try {
+        userData = window.Telegram.WebApp.initData;
+        if (!userData) throw new Error('Вход на сайт был произведен не через Телеграм');
+        const parsedData = Object.fromEntries(new URLSearchParams(userData));
+        const userId = JSON.parse(parsedData.user).id;
+        const level = await UserDataService.getProgress(userId);
+        return level || 0;
+      } catch (error) {
+        console.error('Ошибка загрузки прогресса', error);
+        return 0;
+      }
+    } else {
+      const currentLevel = localStorage.getItem(LOCAL_STORAGE_CURRENT_LEVEL_KEY);
+      return currentLevel ? JSON.parse(currentLevel) : 0;
+    }
   }
 };
 

@@ -1,7 +1,11 @@
 <template>
   <div class="game-grid__wrapper">
     <div class="game-grid" :style="gridStyle">
-      <div v-for="(row, rowIndex) in getGrid" :key="rowIndex" class="game-grid__row">
+      <div
+        v-for="(row, rowIndex) in getGrid"
+        :key="rowIndex"
+        class="game-grid__row"
+      >
         <GameCell
           v-for="(cell, cellIndex) in row"
           :key="cellIndex"
@@ -26,11 +30,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters('game', [
-      'getGrid'
-    ]),
+    ...mapGetters("game", ["getGrid"]),
     gridStyle() {
-      console.log(this.scale)
+      console.log(this.scale);
       return {
         transform: `scale(${this.scale})`,
       };
@@ -60,7 +62,7 @@ export default {
         const parentHeight = parentElement.clientHeight;
 
         const scaleX = parentWidth / gridWidth;
-        const scaleY = parentHeight / gridHeight * 0.85;
+        const scaleY = (parentHeight / gridHeight) * 0.7;
 
         this.scale = Math.min(scaleX, scaleY, 1);
       }

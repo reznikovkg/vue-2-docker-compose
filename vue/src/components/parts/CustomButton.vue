@@ -1,9 +1,10 @@
 <template>
-  <button 
-    class="custom-button" 
-    :class="'custom-button--' + type" 
-    :disabled="disabled" 
+  <button
+    class="custom-button"
+    :class="'custom-button--' + type"
+    :disabled="disabled"
     :aria-disabled="disabled.toString()"
+    @click="() => onClick()"
   >
     <slot>Кнопка</slot>
   </button>
@@ -20,6 +21,11 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    onClick() {
+      this.$emit("click");
     },
   },
 };
@@ -59,17 +65,47 @@ export default {
     margin: 15px 0;
   }
 
+  &--modal {
+    font-size: 25px;
+    width: 150px;
+    height: 50px;
+    text-align: center;
+  }
+
   &--level {
     font-size: 70px;
     width: 130px;
     height: 130px;
     margin: 50px 0;
   }
+
+  &--back {
+    font-size: 40px;
+    width: 130px;
+    height: 70px;
+    margin: 0;
+    top: 20px;
+    right: 20px;
+    background-color: var(--button-text-color);
+    color: var(--button-background-color);
+    border: 2px solid var(--button-background-color);
+    border-radius: 15px;
+    position: fixed;
+    z-index: 2;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      background-color: var(--button-disabled-background-color, #ffb6c1);
+      color: var(--button-disabled-text-color, #aaa);
+      border-color: var(--button-disabled-background-color, #ffb6c1);
+    }
+  }
 }
 
 @media (max-width: 480px) {
   .custom-button {
-  border-radius: 18px;
+    border-radius: 18px;
 
     &--menu {
       padding: 9px 15px;
@@ -85,6 +121,15 @@ export default {
       width: 78px;
       height: 78px;
       margin: 30px 0;
+    }
+
+    &--back {
+      font-size: 24px;
+      width: 78px;
+      height: 42px;
+      top: 12px;
+      right: 12px;
+      border-radius: 10px;
     }
   }
 }

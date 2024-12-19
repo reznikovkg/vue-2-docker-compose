@@ -136,4 +136,15 @@ export default {
     }
   }
 }
+
+@media (max-width: 480px) {
+  .matrix-dimension{
+    margin: 1vh;
+    * {
+      font-size: 2vh;
+      height: 2vh;
+    }
+  }
+}
+
 </style>

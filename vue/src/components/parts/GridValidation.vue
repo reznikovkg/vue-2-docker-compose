@@ -57,11 +57,11 @@ export default {
 
 @media (max-width: 480px) {
   .editor-settings {
-    margin: 1vh;
+    margin: 0vh;
     &__header-text {
       font-family: "Adigiana Ultra", sans-serif;
       font-size: 7vw;
-      margin-bottom: 2vh;
+      margin-bottom: 0vh;
     }
 
     &__subheader-text {

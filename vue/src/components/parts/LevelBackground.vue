@@ -1,30 +1,27 @@
 <template>
-  <div class="start-screen">
-    <div class="start-screen__image--plant-left"></div>
-    <div class="start-screen__image--plant-right"></div>
-    <div class="start-screen__image--draw-plant-right-bot"></div>
-    <div class="start-screen__image--draw-plant-right-top"></div>
-    <div class="start-screen__image--draw-plant-left"></div>
-    <div class="circle"></div>
-    <header class="start-screen__header">
-      <h1 class="start-screen__title">GROW UP</h1>
+  <div class="level-background">
+    <div class="level-background__image--plant-left"></div>
+    <div class="level-background__image--plant-right"></div>
+    <div class="level-background__image--draw-plant-right-bot"></div>
+    <div class="level-background__image--draw-plant-right-top"></div>
+    <div class="level-background__image--draw-plant-left"></div>
+    <header class="level-background__header">
+      <h1 class="level-background__title">GROW UP</h1>
     </header>
-    <div class="start-screen__buttons">
-      <slot></slot>
-    </div>
+    <slot></slot>
   </div>
 </template>
 
 <script>
 export default {
-  name: "StartScreen",
+  name: "LevelBackground",
 };
 </script>
 
 <style scoped lang="less">
 @import "../../assets/styles/variables.less";
 
-.start-screen {
+.level-background {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -32,7 +29,7 @@ export default {
   background-color: var(--main-background-color);
 
   &__header {
-    padding: 80px 0 30px 0;
+    padding: 30px 0 0 0;
     top: 0;
     text-align: center;
     z-index: 1;
@@ -40,22 +37,9 @@ export default {
 
   &__title {
     color: var(--title-color);
-    font-size: 198px;
+    font-size: 80px;
     font-family: "Adigiana Ultra", sans-serif;
     margin: 0;
-  }
-
-  .circle {
-    position: absolute;
-    top: 70%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 1500px;
-    height: 1500px;
-    background-color: var(--cicle-color);
-    border-radius: 50%;
-    z-index: 0;
-    pointer-events: none;
   }
 
   &__image {
@@ -116,15 +100,15 @@ export default {
 }
 
 @media (max-width: 480px) {
-  .start-screen {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  --bg-size: 60%;
+  .level-background {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    --bg-size: 60%;
 
     &__header {
-      padding: 250px 0 18px 0;
+      padding: 18px 0 0 0;
       top: 0;
       text-align: center;
       z-index: 1;
@@ -132,23 +116,9 @@ export default {
 
     &__title {
       color: var(--title-color);
-      font-size: clamp(40px, 80vw, 100px);
+      font-size: 48px;
       font-family: "Adigiana Ultra", sans-serif;
       margin: 0;
-      white-space: nowrap;
-    }
-
-    .circle {
-      position: absolute;
-      top: 70%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 900px;
-      height: 900px;
-      background-color: var(--cicle-color);
-      border-radius: 50%;
-      z-index: 0;
-      pointer-events: none;
     }
 
     &__image {
@@ -159,11 +129,11 @@ export default {
         background-image: url(../../assets/images/plant-left.png);
         background-size: var(--bg-size);
         background-repeat: no-repeat;
-        width: 235px;
-        height: 315px;
+        width: 188px;
+        height: 252px;
         top: 0px;
         left: 0px;
-        z-index: 1;
+        z-index: 0;
       }
 
       &--plant-right {
@@ -171,11 +141,11 @@ export default {
         background-image: url(../../assets/images/plant-right.png);
         background-size: var(--bg-size);
         background-repeat: no-repeat;
-        width: 270px;
-        height: 425px;
-        top: 450px;
-        right: -175px;
-        z-index: 1;
+        width: 170px;
+        height: 340px;
+        top: 0px;
+        right: -70px;
+        z-index: 0;
       }
 
       &--draw-plant-right-bot {
@@ -187,7 +157,7 @@ export default {
         height: 239px;
         bottom: -100px;
         right: -30px;
-        z-index: 1;
+        z-index: 0;
       }
 
       &--draw-plant-right-top {
@@ -195,11 +165,12 @@ export default {
         background-image: url(../../assets/images/draw-plant-right-top.png);
         background-size: var(--bg-size);
         background-repeat: no-repeat;
-        width: 136px;
-        height: 323px;
-        bottom: 490px;
-        right: -60px;
-        z-index: 1;
+        transform: rotate(-180deg);
+        width: 200px;
+        height: 300px;
+        bottom: 100px;
+        left: -100px;
+        z-index: 0;
       }
 
       &--draw-plant-left {
@@ -211,7 +182,7 @@ export default {
         height: 240px;
         bottom: -100px;
         left: 50px;
-        z-index: 1;
+        z-index: 0;
       }
     }
   }
