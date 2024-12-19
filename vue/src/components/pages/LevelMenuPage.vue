@@ -54,7 +54,7 @@ export default {
         text: `${index + 1}`,
         path: `/${this.showCustomLevels? 'custom-' : ''}level-${index + 1}`,
         type: "level",
-        disabled: this.levelProgress < index
+        disabled: this.showCustomLevels? false : this.levelProgress < index
       }));
     },
   },

@@ -46,7 +46,6 @@ const gameStorage = {
   
           const customLevels = this.getCustomLevels();
           customLevels.push(levelData);
-          localStorage.setItem(LOCAL_STORAGE_CUSTOM_LEVELS_KEY, JSON.stringify(customLevels));
   
           resolve(levelData);
         } catch (error) {
@@ -81,7 +80,7 @@ const gameStorage = {
       }
     }
   },
-  
+
   async loadProgress(isOnline = true, userData = null) {
     if (isOnline) {
       try {
