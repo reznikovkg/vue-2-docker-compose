@@ -211,9 +211,10 @@ export default {
     & * {
       height: 7vh;
       width: 48vw;
-      font-size: 1.5vh;
+      font-size: 2.2vh;
       margin: 0vw;
       padding: 0vw;
+      letter-spacing: 1px;
     }
 
     &__last_button{
