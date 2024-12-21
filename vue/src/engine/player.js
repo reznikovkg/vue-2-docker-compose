@@ -27,6 +27,8 @@ export class Player {
 
     this.deck.push(...removedCards);
     this.deck = shuffleArray(this.deck);
+
+    this.cards = [...this.cards];
   }
 
   tryPlayCard(cardIndex, position) {
