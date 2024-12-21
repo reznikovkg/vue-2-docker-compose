@@ -4,6 +4,16 @@
       <h1>
         It is Mulligan time!
       </h1>
+      <div class="mulligan-container__cards">
+        <GameCard
+          v-for="(card, index) in cards"
+          :key="index"
+          :type="card.getType()"
+          :score="card.getScore()"
+          :image-uri="card.getImage()"
+          :index="index"
+        />
+      </div>
       <button class="ok-button" @click="() => performMulligan()">
         Ok
       </button>
@@ -13,14 +23,19 @@
 
 <script>
 import ModalComponent from "@/components/parts/Modal";
+import GameCard from '@/components/game/GameCard.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   name: "MulliganModal",
   components: {
-    ModalComponent
+    ModalComponent,
+    GameCard
   },
   computed: {
+    cards() {
+      return this.getGameEngine.player.cards;
+    },
     ...mapGetters('gameEngine', [
       'getGameEngine',
     ]),
@@ -34,7 +49,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .mulligan-container {
   height: 60vh;
   width: 60vw;
@@ -43,6 +58,12 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+
+  &__cards {
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+  }
 }
 
 .ok-button {
