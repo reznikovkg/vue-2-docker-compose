@@ -30,6 +30,8 @@ import EndTurnButton from '@/components/game/EndTurnButton.vue';
 import PassButton from '@/components/game/PassButton.vue';
 import GameScore from '@/components/game/GameScore.vue';
 import PlayerScoreCounter from '@/components/game/PlayerScoreCounter.vue';
+import { mulliganModal } from '@/mixins/modals';
+import { GamePhases } from '@/engine/constants';
 
 export default {
   components: {
@@ -41,7 +43,11 @@ export default {
     CountDown,
   },
   name: 'GameDesk',
+  mixins: [mulliganModal],
   computed: {
+    gamePhase() {
+      return this.getGameEngine.currentPhase;
+    },
     playerMeleeCards() {
       return this.getGameEngine.player.board.firstLineCards;
     },
@@ -57,6 +63,23 @@ export default {
     ...mapGetters('gameEngine', [
       'getGameEngine',
     ]),
+  },
+  mounted() {
+    this.handleMulligan();
+  },
+  methods: {
+    handleMulligan() {
+      this.openMulliganModal();
+    },
+  },
+  watch: {
+    gamePhase: function () {
+      if (this.gamePhase !== GamePhases.MULLIGAN) {
+        return;
+      }
+
+      this.handleMulligan();
+    },
   },
 }
 </script>

@@ -1,9 +1,9 @@
 <template>
   <div
       class="game-card"
-      :class="[{ enlarged }, { dragged: dragInfo.dragged }, { ['player-card']: !isOpponent }]"
+      :class="[{ enlarged }, { dragged: dragInfo.dragged }, { ['player-card']: !isOpponent }, { mulliganed }]"
       :style="style"
-      @mousedown="(e) => enlarged ? startDrag(e) : tryRemoveCard(index, type)"
+      @mousedown="(e) => handleMouseDown(e)"
       ref="draggableCard"
   >
     <div v-if="!faceDown" class="game-card__content">
@@ -15,7 +15,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { TurnStates } from '@/engine/constants';
+import { TurnStates, GamePhases } from '@/engine/constants';
 
 export default {
   name: 'GameCard',
@@ -65,7 +65,8 @@ export default {
         deltaX: 0,
         deltaY: 0,
         dragged: false,
-      }
+      },
+      mulliganed: false,
     }
   },
   computed: {
@@ -100,12 +101,27 @@ export default {
     ]),
   },
   methods: {
-    tryRemoveCard(index, type) {
-      if (this.isOpponent || this.faceDown) {
+    handleMouseDown(event) {
+      if (this.getGameEngine.currentPhase === GamePhases.MULLIGAN) {
+        this.handleMulligan();
         return;
       }
 
-      this.getGameEngine.removeCardFromBoard(index, type);
+      if (this.enlarged) {
+        this.startDrag(event);
+        return;
+      }
+
+      if (!this.faceDown && !this.isOpponent) {
+        this.tryRemoveCard();
+        return;
+      }
+    },
+    handleMulligan() {
+      this.mulliganed = this.getGameEngine.mulligan.tryGetNewCardStatus(this.index);
+    },
+    tryRemoveCard() {
+      this.getGameEngine.removeCardFromBoard(this.index, this.type);
     },
     startDrag(event) {
       event.preventDefault();
@@ -171,10 +187,11 @@ export default {
     width: 100px;
     height: 150px;
   }
-}
 
-.dragged {
-  z-index: 777;
+  &.mulliganed {
+    border-color: red;
+    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.8);
+  }
 }
 
 .player-card:hover {
@@ -182,5 +199,10 @@ export default {
   background-color: yellow;
   box-shadow: 0 0 15px 5px rgba(255, 223, 0, 0.8);
   cursor: move;
+}
+
+.dragged {
+  cursor: move;
+  z-index: 777;
 }
 </style>
