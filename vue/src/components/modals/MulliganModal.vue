@@ -28,7 +28,7 @@ export default {
   methods: {
     performMulligan() {
       this.$emit('close');
-      this.getGameEngine.performMulligan([]);
+      this.getGameEngine.performMulligan();
     },
   },
 }

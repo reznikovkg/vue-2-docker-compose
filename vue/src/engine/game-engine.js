@@ -10,10 +10,12 @@ import {
   Winners
 } from '@/engine/constants';
 import { sleep } from '@/utils/utils';
+import { Mulligan } from './mulligan';
 
 class GameEngine {
   player = new Player(INIT_DECK);
   opponent = new Player(INIT_DECK);
+  mulligan = new Mulligan(this.player);
   currentPhase = GamePhases.MULLIGAN;
   currentTurn = TurnStates.PLAYER;
   roundNumber = 1;
@@ -35,8 +37,8 @@ class GameEngine {
     }, COUNTDOWN_STEP_MS)
   }
 
-  performMulligan(indexesToRemove) {
-    this.player.performMulligan(indexesToRemove);
+  performMulligan() {
+    this.mulligan.perform();
     this.currentPhase = GamePhases.ROUND_IN_PROGRESS;
 
     if (TurnStates.OPPONENT) {
@@ -173,7 +175,8 @@ class GameEngine {
 
   restart() {
     this.player = new Player(INIT_DECK);
-    this.opponent =  new Player(INIT_DECK);
+    this.opponent = new Player(INIT_DECK);
+    this.mulligan = new Mulligan(this.player);
     this.currentTurn = TurnStates.PLAYER;
     this.roundNumber = 1;
     this.opponentTurnsQuantity = 0;

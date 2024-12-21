@@ -56,8 +56,6 @@ export const INIT_DECK = [
 
 export const MAX_CARDS_IN_HAND = 10;
 
-export const MAX_MULLIGAN_CARDS_QUANTITY = 3;
-
 export const ROUNDS_TO_WIN = 2;
 
 export const NEW_ROUND_DRAW_CARDS_QUANTITY = 3;
