@@ -37,11 +37,8 @@ export const INIT_DECK = [
         ? engine.player
         : engine.opponent).board.firstLineCards;
 
-      console.log(oppositeLine);
-
       // Find geralt-of-rivia in the opposite line
       const isFound = oppositeLine.findIndex(card => card.image === 'geralt-of-rivia.jpeg') !== -1;
-      console.log(isFound);
 
       return new PlayCardAbilityResponse(isFound);
     }
@@ -58,8 +55,6 @@ export const INIT_DECK = [
 ];
 
 export const MAX_CARDS_IN_HAND = 10;
-
-export const MAX_MULLIGAN_CARDS_QUANTITY = 3;
 
 export const ROUNDS_TO_WIN = 2;
 
