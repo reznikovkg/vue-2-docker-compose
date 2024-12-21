@@ -1,16 +1,24 @@
 <template>
     <div
-        class="moveable-block"
+        :class="computeClassForBlock"
         ref="block"
-        :style="sizeStyle"
+        :style="blockStyle"
         @pointermove="handlePointerMove"
         @pointerdown="handlePointerDown"
         @pointerup="handlePointerUp"
     >
+        <div class="moveable-block__text-info">
+            <h1 class="moveable-block__name" :style="nameFontSize">
+                {{ textData.name }}
+            </h1>
+            <p class="moveable-block__description" :style="descriptionFontSize">
+                {{ textData.description }}
+            </p>
+        </div>
         <div
             class="moveable-block__connector"
+            ref="connector"
             @pointerdown="handleConnectorDown"
-            @pointerup="handleConnectorUp"
         ></div>
     </div>
 </template>
@@ -26,6 +34,12 @@ export default {
         handleMoved: Function,
         handleStartConnection: Function,
         handleEndConnection: Function,
+        color: String,
+        textData: {
+            name: String,
+            description: String,
+        },
+        selected: Boolean,
     },
     data() {
         return {
@@ -33,17 +47,31 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('blocks', ['getSize']),
-        zIndex() {
-            return this.isPointerDown ? 2 : 1;
+        ...mapGetters('blocks', ['getSize', 'getDefaultSize']),
+        computeClassForBlock() {
+            return [
+                'moveable-block',
+                this.selected ? 'moveable-block_selected' : '',
+            ];
         },
-        sizeStyle() {
+        blockStyle() {
             return {
                 width: `${this.getSize}px`,
                 height: `${this.getSize}px`,
                 left: this.startLeft + 'px',
                 top: this.startTop + 'px',
-                zIndex: this.zIndex,
+                zIndex: this.isPointerDown ? 2 : 1,
+                backgroundColor: this.color,
+            };
+        },
+        nameFontSize() {
+            return {
+                fontSize: `${(11 * this.getSize) / this.getDefaultSize}px`,
+            };
+        },
+        descriptionFontSize() {
+            return {
+                fontSize: `${(10 * this.getSize) / this.getDefaultSize}px`,
             };
         },
     },
@@ -56,38 +84,39 @@ export default {
         },
         handlePointerUp(event) {
             event.stopPropagation();
+            event.preventDefault();
 
-            this.isPointerDown = false;
-            this.$refs.block.releasePointerCapture(event.pointerId);
+            if (this.isPointerDown) {
+                this.isPointerDown = false;
+                this.$refs.block.releasePointerCapture(event.pointerId);
+            } else {
+                this.handleEndConnection(event);
+            }
         },
         handlePointerMove(event) {
-            event.stopPropagation();
             event.preventDefault();
 
             if (this.isPointerDown) {
                 const newLeft =
-                    event.pageX <= 50
+                    event.pageX <= this.getSize / 2
                         ? 0
-                        : event.pageX > 750
-                        ? 700
-                        : event.pageX - 50;
+                        : event.pageX > 800 - this.getSize / 2
+                        ? 800 - this.getSize
+                        : event.pageX - this.getSize / 2;
                 const newTop =
-                    event.pageY <= 50
+                    event.pageY <= this.getSize / 2
                         ? 0
-                        : event.pageY > 750
-                        ? 700
-                        : event.pageY - 50;
+                        : event.pageY > 800 - this.getSize / 2
+                        ? 800 - this.getSize
+                        : event.pageY - this.getSize / 2;
 
                 this.handleMoved(newLeft, newTop);
             }
         },
         handleConnectorDown(event) {
+            event.preventDefault();
             event.stopPropagation();
             this.handleStartConnection(event);
-        },
-        handleConnectorUp(event) {
-            event.stopPropagation();
-            this.handleEndConnection(event);
         },
     },
 };
@@ -96,21 +125,47 @@ export default {
 <style scoped lang="less">
 .moveable-block {
     position: absolute;
-    background-color: @cBaseFive;
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-    &:active {
-        background-color: @cBaseFour;
+    &_selected {
+        box-shadow: 0px 0px 15px green;
     }
-    &__connector {
-        z-index: 3;
+
+    &__text-info {
         position: absolute;
-        top: 95%;
-        left: 25%;
-        width: 50%;
-        height: 10%;
+        top: 5%;
+        height: 80%;
+        width: 96%;
+        overflow: hidden;
+
+        user-select: none;
+    }
+
+    &__name {
+        width: 100%;
+        text-align: center;
+        color: @cBaseWhite;
+    }
+
+    &__description {
+        width: 100%;
+        text-align: center;
+        color: @cBaseWhite;
+        font-family: @ffOne;
+        margin: 0;
+    }
+
+    &__connector {
+        z-index: 4;
+        position: absolute;
+        bottom: -15px;
+        width: 20px;
+        height: 20px;
         background-color: @cBaseTwo;
-        border-radius: 10px;
+        border-radius: 50%;
     }
 }
 </style>

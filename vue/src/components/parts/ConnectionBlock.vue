@@ -21,7 +21,7 @@ export default {
                 ? {
                       top:
                           this.getBlock(this.connection.end?.blockId).top +
-                          this.getSize,
+                          this.getSize + 6,
                       left:
                           this.getBlock(this.connection.end?.blockId).left +
                           Math.floor(this.getSize / 2),
@@ -33,7 +33,7 @@ export default {
             if (this.connection.start) {
                 return {
                     start: {
-                        top: startblock.top + this.getSize,
+                        top: startblock.top + this.getSize + 6,
                         left: startblock.left + Math.floor(this.getSize / 2),
                     },
                     end: {
@@ -106,8 +106,9 @@ export default {
     justify-content: center;
     align-items: center;
     position: absolute;
+    pointer-events: none;
     &__line {
-        z-index: 1;
+        z-index: 3;
         flex-shrink: 0;
         border-top: 1px solid red;
         transform-origin: 50% 50%;
