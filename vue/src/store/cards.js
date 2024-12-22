@@ -1,14 +1,16 @@
 import cardEffect from "@/components/common/cardEffect";
+import rarity from "@/components/common/rarity";
 
 export default {
   namespaced: true,
   state: {
     cards: [
       {
+        id: 0,
         title: "Attack",
         image: require("@/assets/cards/Archer_Charged_Shot.png"),
         cost: 1,
-        rarity: 1,
+        rarity: rarity.BASIC,
         targeted: true,
         effects: [
           {
@@ -18,10 +20,11 @@ export default {
         ],
       },
       {
+        id: 1,
         title: "Defend",
         image: require("@/assets/cards/Mage_Explode.png"),
-        cost: 0,
-        rarity: 1,
+        cost: 1,
+        rarity: rarity.BASIC,
         targeted: false,
         effects: [
           {
@@ -31,15 +34,16 @@ export default {
         ],
       },
       {
+        id: 2,
         title: "Riposte",
         image: require("@/assets/cards/Archer_Back_Up.png"),
-        cost: 4,
-        rarity: 1,
+        cost: 2,
+        rarity: rarity.COMMON,
         targeted: true,
         effects: [
           {
             type: cardEffect.ATTACK,
-            values: [4],
+            values: [6],
           },
           {
             type: cardEffect.DEFEND,
@@ -48,15 +52,34 @@ export default {
         ],
       },
       {
+        id: 3,
         title: "Fury Swipes",
         image: require("@/assets/cards/Archer_Rapid_Fire.png"),
-        cost: 14,
-        rarity: 1,
+        cost: 1,
+        rarity: rarity.COMMON,
         targeted: true,
         effects: [
           {
             type: cardEffect.ATTACK,
-            values: [1, 4],
+            values: [1, 5],
+          },
+        ],
+      },
+      {
+        id: 4,
+        title: "Combat Roll",
+        image: require("@/assets/cards/Archer_Explosive_Arrow.png"),
+        cost: 0,
+        rarity: rarity.RARE,
+        targeted: false,
+        effects: [
+          {
+            type: cardEffect.DISCARDRANDOM,
+            values: [1],
+          },
+          {
+            type: cardEffect.DRAW,
+            values: [2],
           },
         ],
       },
@@ -64,7 +87,7 @@ export default {
         title: "",
         image: "",
         cost: 0,
-        rarity: 0,
+        rarity: rarity.DEFAULT,
         targeted: true,
         effects: [
           {
@@ -76,7 +99,7 @@ export default {
     ],
   },
   getters: {
-    getCards: (state) => state.cards,
+    getCards: (state) => state.cards.filter((card) => card.rarity > rarity.DEFAULT),
     getCardById: (state) => (id) => state.cards.find((card) => card.id == id),
   },
 };

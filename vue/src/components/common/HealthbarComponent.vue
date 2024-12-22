@@ -1,11 +1,13 @@
 <template>
   <div class="healthbar">
     <span class="healthbar__text">{{ currentHealth }}/{{maxHealth}}</span>
-      <div class="healthbar__fill" 
+      <div class="healthbar-fill" 
         :style="{ '--health': `${healthPercent}%` }">
       </div>
-      <div class="healthbar__shield"
-        :style="{ '--shield': `${shieldPercent}%` }">
+      <div class="healthbar-shield"
+        :style="{ '--shield': `${shieldPercent}%` }"
+      >
+        <p class="healthbar-shield__text" v-if="shield>0"> {{ shield }}</p>
       </div>
   </div>
 </template>
@@ -43,14 +45,14 @@ export default {
   &__text {
     position: absolute;
     width: 100%;
-    top: -3px;
+    top: -2px;
     z-index: 1;
     font-size: 17px;
     font-weight: bold;
     text-shadow: #fff 0px 1px 1px;
   }
 
-  &__fill {
+  &-fill {
     position: absolute;
     height: 100%;
     width: var(--health);
@@ -59,12 +61,24 @@ export default {
     margin: 0;
     background: rgb(197, 48, 48);
   }
-  &__shield {
+
+  &-shield {
     position: relative;
     height: 100%;
     width: var(--shield);
     border-radius: 20px;
     background: rgba(0, 247, 255, 0.678);
+
+    &__text {
+      position: absolute;
+      color:#054047;
+      left: 5px;
+      top: -2px;
+      z-index: 1;
+      font-size: 17px;
+      font-weight: bold;
+      text-shadow: #1eebfa 0px 1px 1px;
+    }
   }
 }
 </style>

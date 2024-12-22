@@ -32,13 +32,10 @@ export default {
   props: {
     card: Object,
   },
-  data() {
-    return {
-      cardDescription: "",
-    };
-  },
-  mounted() {
-    this.generateDescription();
+  computed: {
+    cardDescription() {
+      return this.generateDescription();
+    }
   },
   methods: {
     onCardClick() {
@@ -55,11 +52,12 @@ export default {
     },
 
     generateDescription() {
-      this.cardDescription = "";
+      let description = "";
 
       this.card.effects.forEach(effect => {
-        this.cardDescription += this.returnDescriptionString(effect) + '\n';
+        description += this.returnDescriptionString(effect) + '\n';
       });
+      return description;
     },
 
     returnDescriptionString(effect) {

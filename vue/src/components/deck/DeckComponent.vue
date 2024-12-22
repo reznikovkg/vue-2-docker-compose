@@ -1,22 +1,24 @@
 <template>
   <div class="deck__wrapper center-horizontal">
-    <div class="deck center-horizontal center-vertical"
+    <TransitionGroup name="slide" tag="div"
+      class="deck center-horizontal center-vertical"
       :style="{'--card-spacing': `${getXSpacing}px`}"
+      @after-enter="afterEnter"
     >
       <CardComponent 
         v-for="(card, index) in getHand" 
-        :key="card.id"
+        :key="index"
         :card="card"
         :style="applyTransform(index)"
         @onMouseOver="(isHovered) => handleMouseOver(isHovered, index)"
         @onCardClick="() => handleCardClick(card, index)"
       />
-    </div>
+    </TransitionGroup>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import CardComponent from '../card/CardComponent.vue';
 
 export default {
@@ -27,12 +29,31 @@ export default {
     return {
       hoveredIndex: null,
       selectedIndex: null,
-      selectedCard: Object,
+      selectedCard: null,
+      animated: [],
       sfx: new Audio(require('../../assets/sounds/card/tap.mp3')),
     };
   },
-  mounted() {
+  beforeMount() {
     this.sfx.volume = 0.1;
+
+    this.$root.$on('playCard', payload => {
+      this.animated.pop();
+      this.playCard(payload.cardIndex);
+    });
+
+    this.$root.$on('discardCard', () => {
+      this.animated.pop();
+    });
+
+    this.$root.$on('discardHand', () => {
+      this.animated = [];
+    });
+
+    this.$root.$on('selectCard', (card, index) => {
+      this.selectedCard = card,
+      this.selectedIndex = index;
+    });
   },
   computed: {
     ...mapGetters("deck", ["getHand"]),
@@ -50,10 +71,10 @@ export default {
     },
   },
   methods: {
+    ...mapActions("deck", ["playCard"]),
+
     handleCardClick(card, index) {
-      this.selectedCard = card;
-      this.selectedIndex = index;
-      console.log("Handling Card Click", card);
+      this.$root.$emit("selectCard", card, index);
     },
 
     handleMouseOver(isHovered, index) {
@@ -62,7 +83,15 @@ export default {
       this.sfx.play().catch(() => console.log("Can't play sound without user interaction"));
     },
 
+    afterEnter(el) {
+      const index = Array.from(el.parentElement.children).indexOf(el);
+      this.animated.push(index);
+    },
+
     applyTransform(index) {
+      if (!this.animated.includes(index)) {
+        return;
+      }
       const isHovered = this.hoveredIndex == index;
       const isSelected = this.selectedIndex == index;
       if (isHovered || isSelected)
@@ -105,16 +134,13 @@ export default {
   width: 1100px;
   padding-left: 120px;
   padding-right: 10px;
-
   display: flex;
   flex-direction: row;
   align-items: start;
-  background-color: pink;
 
   &__wrapper {
     height: fit-content;
     width: fit-content;
-
     padding-top: 35px;
     overflow: hidden;
   }
@@ -122,5 +148,12 @@ export default {
   >.card {
     margin-left: var(--card-spacing);
   }
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: .15s;
+}
+.slide-enter, .slide-leave-active {
+  transform: translate(-500px, 50px) rotate(90deg) scale(0);
 }
 </style>
