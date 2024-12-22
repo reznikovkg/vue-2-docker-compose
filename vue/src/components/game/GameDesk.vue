@@ -6,6 +6,7 @@
       <GameDeskLine :cards="opponentMeleeCards" :isMelee="true" :isOpponent="true"/>
     </div>
     <div class="desk__separator">
+      <ShowcaseButton/>
       <GameScore/>
       <span class="desk__separator__line"/>
       <span class="desk__separator__text">VS</span>
@@ -32,9 +33,11 @@ import GameScore from '@/components/game/GameScore.vue';
 import PlayerScoreCounter from '@/components/game/PlayerScoreCounter.vue';
 import { mulliganModal } from '@/mixins/modals';
 import { GamePhases } from '@/engine/constants';
+import ShowcaseButton from '@/components/game/ShowcaseButton.vue';
 
 export default {
   components: {
+    ShowcaseButton,
     PlayerScoreCounter,
     GameScore,
     PassButton,
