@@ -3,6 +3,7 @@
     :class="'card-pile__wrapper--'+type"
     class="center-horizontal center-vertical"
     @click.self="() => close()"
+    @mousemove="(event) => updateMousePosition(event)"
   >
     <div
       :class="'card-pile--'+type"
@@ -12,6 +13,7 @@
           :key="index"
           :card="card"
           :style="applyTransform(index)"
+          :ref="'card_'+index"
           @onMouseOver="(isHovered) => handleMouseOver(isHovered, index)"
           @onCardClick="() => handleCardClick(card)"
           @onCardRightClick="() => handleCardRightClick(card)"
@@ -43,6 +45,9 @@ export default {
       showingCard: null,
       visible: false,
       hoveredIndex: null,
+      hoveredDiv: null,
+      mouseX: 1,
+      mouseY: 1,
     };
   },
   mounted() {
@@ -65,14 +70,35 @@ export default {
         boxShadow: `2px 2px 15px 4px rgba(45, 255, 255, 0.9)`,
       };
     },
+
+    computeRotation() {
+      if (this.hoveredDiv == null)
+        return '';
+      const rect = this.hoveredDiv.getBoundingClientRect();
+
+      const x = this.mouseX - rect.left;
+      const y = this.mouseY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const offsetX = (x - centerX) / centerX;
+      const offsetY = (y - centerY) / centerY;
+
+      const rotationX = -offsetY * 30;
+      const rotationY = offsetX * 40;
+      return `perspective(500px) rotate3d(1, 0, 0, ${rotationX}deg) rotate3d(0, 1, 0, ${rotationY}deg)`;
+    },
   },
   methods: {
     applyTransform(index) {
       const isHovered = this.hoveredIndex == index;
+
       if (isHovered)
       {
+        this.hoveredDiv = this.$refs['card_'+index][0].$el;
+
         return {
-          transform: `scale(${this.getScaling + 0.05})`,
+          transform: `scale(${this.getScaling + 0.10}) ${this.computeRotation}`,
           transition: `transform 0.1s ease-out`,
           boxShadow: `2px 2px 7px 2px rgba(45, 255, 255, 0.9)`,
           zIndex: 100,
@@ -83,6 +109,11 @@ export default {
           transition: `transform 0.05s ease-in`,
         }
       }
+    },
+
+    updateMousePosition(event) {
+      this.mouseX = event.clientX;
+      this.mouseY = event.clientY;
     },
 
     handleCardClick(card) {
@@ -196,6 +227,7 @@ export default {
       gap: 20px;
       border-radius: 10px;
       overflow-y: scroll;
+      overflow-x: hidden;
       background: #72727259;
           
       &::-webkit-scrollbar {
