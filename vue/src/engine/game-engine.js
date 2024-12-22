@@ -10,11 +10,13 @@ import {
   Winners
 } from '@/engine/constants';
 import { sleep } from '@/utils/utils';
+import { Mulligan } from './mulligan';
 
 class GameEngine {
   player = new Player(INIT_DECK);
-  opponent =  new Player(INIT_DECK);
-  currentPhase = GamePhases.ROUND_IN_PROGRESS;
+  opponent = new Player(INIT_DECK);
+  mulligan = new Mulligan(this.player);
+  currentPhase = GamePhases.MULLIGAN;
   currentTurn = TurnStates.PLAYER;
   roundNumber = 1;
   opponentTurnsQuantity = 0;
@@ -35,9 +37,13 @@ class GameEngine {
     }, COUNTDOWN_STEP_MS)
   }
 
-  performMulligan(indexesToRemove) {
-    this.player.performMulligan(indexesToRemove);
+  performMulligan() {
+    this.mulligan.perform();
     this.currentPhase = GamePhases.ROUND_IN_PROGRESS;
+
+    if (TurnStates.OPPONENT) {
+      void this.performOpponentActions();
+    }
   }
 
   endPlayerTurn(passed) {
@@ -128,6 +134,7 @@ class GameEngine {
 
     if (!winner) {
       this.roundNumber++;
+      this.currentPhase = GamePhases.MULLIGAN;
     } else {
       this.currentPhase = GamePhases.END;
     }
@@ -140,7 +147,6 @@ class GameEngine {
 
     if (this.roundNumber % 2 === 0) {
       this.currentTurn = TurnStates.OPPONENT
-      void this.performOpponentActions();
     } else {
       this.currentTurn = TurnStates.PLAYER
     }
@@ -169,12 +175,13 @@ class GameEngine {
 
   restart() {
     this.player = new Player(INIT_DECK);
-    this.opponent =  new Player(INIT_DECK);
+    this.opponent = new Player(INIT_DECK);
+    this.mulligan = new Mulligan(this.player);
     this.currentTurn = TurnStates.PLAYER;
     this.roundNumber = 1;
     this.opponentTurnsQuantity = 0;
     this.msRemainToTurn = TIME_TO_TURN_MS;
-    this.currentPhase = GamePhases.ROUND_IN_PROGRESS;
+    this.currentPhase = GamePhases.MULLIGAN;
     this.cardPlayed = false;
   }
 }

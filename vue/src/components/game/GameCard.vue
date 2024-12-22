@@ -1,9 +1,11 @@
 <template>
   <div
-    class="game-card"
-    :class="[{ enlarged }, { dragged: dragInfo.dragged }]"
-    :style="faceDown ? faceDownStyle : faceUpStyle"
-    @mousedown="(e) => enlarged ? startDrag(e) : tryRemoveCard(index, type)" ref="draggableCard">
+      class="game-card"
+      :class="[{ enlarged }, { dragged: dragInfo.dragged }, { ['player-card']: !isOpponent }, { mulliganed }]"
+      :style="style"
+      @mousedown="(e) => handleMouseDown(e)"
+      ref="draggableCard"
+  >
     <div v-if="!faceDown" class="game-card__content">
       <h3>{{ type }}</h3>
       <p>Score: {{ score }}</p>
@@ -13,12 +15,13 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { TurnStates } from '@/engine/constants';
+import { TurnStates, GamePhases } from '@/engine/constants';
 
 export default {
   name: 'GameCard',
   emits: [
-    "onDrop",
+    'onDrag',
+    'onDrop',
   ],
   props: {
     score: {
@@ -49,6 +52,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    onTable: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -58,7 +65,8 @@ export default {
         deltaX: 0,
         deltaY: 0,
         dragged: false,
-      }
+      },
+      mulliganed: false,
     }
   },
   computed: {
@@ -76,17 +84,44 @@ export default {
         backgroundColor: 'gray',
       };
     },
+    style() {
+      const sideStyle = this.faceDown ? this.faceDownStyle : this.faceUpStyle;
+
+      if (this.dragInfo.dragged || this.onTable) {
+        return sideStyle;
+      }
+
+      return {
+        translate: '0 -430px',
+        ...sideStyle,
+      }
+    },
     ...mapGetters('gameEngine', [
       'getGameEngine',
     ]),
   },
   methods: {
-    tryRemoveCard(index, type) {
-      if (this.isOpponent || this.faceDown) {
+    handleMouseDown(event) {
+      if (this.getGameEngine.currentPhase === GamePhases.MULLIGAN) {
+        this.handleMulligan();
         return;
       }
 
-      this.getGameEngine.removeCardFromBoard(index, type);
+      if (this.enlarged) {
+        this.startDrag(event);
+        return;
+      }
+
+      if (!this.faceDown && !this.isOpponent) {
+        this.tryRemoveCard();
+        return;
+      }
+    },
+    handleMulligan() {
+      this.mulliganed = this.getGameEngine.mulligan.tryGetNewCardStatus(this.index);
+    },
+    tryRemoveCard() {
+      this.getGameEngine.removeCardFromBoard(this.index, this.type);
     },
     startDrag(event) {
       event.preventDefault();
@@ -95,15 +130,15 @@ export default {
       }
 
       const parentBounds = event.currentTarget.parentNode.parentNode.getBoundingClientRect();
-      const targetBounds = event.currentTarget.getBoundingClientRect();
-      this.$refs.draggableCard.style.top = `${targetBounds.top - parentBounds.top}px`;
-      this.$refs.draggableCard.style.left = `${targetBounds.left - parentBounds.left}px`;
+      this.$refs.draggableCard.style.top = `${event.clientY - parentBounds.top - 100}px`;
+      this.$refs.draggableCard.style.left = `${event.clientX - parentBounds.left - 50}px`;
       this.dragInfo.x = event.clientX;
       this.dragInfo.y = event.clientY;
       document.onmousemove = this.processDrag;
       document.onmouseup = this.stopDrag;
       this.$refs.draggableCard.style.position = 'absolute';
       this.dragInfo.dragged = true;
+      this.$emit('onDrag', this.index);
     },
     processDrag(event) {
       event.preventDefault();
@@ -123,7 +158,12 @@ export default {
       this.$refs.draggableCard.style.left = '0px';
       this.dragInfo.dragged = false;
 
-      this.$emit('onDrop', { index: this.index, x: event.clientX, y: event.clientY, cursor: { x: event.pageX, y: event.pageY } });
+      this.$emit('onDrop', {
+        index: this.index,
+        x: event.clientX,
+        y: event.clientY,
+        cursor: { x: event.pageX, y: event.pageY }
+      });
     }
   }
 };
@@ -131,13 +171,11 @@ export default {
 
 <style scoped lang="less">
 .game-card {
-  cursor: move;
   user-select: none;
-  width: 100px;
-  height: 150px;
+  width: 80px;
+  height: 120px;
   border: 1px solid black;
   text-align: center;
-  transition: transform 0.5s, background-color 0.3s, box-shadow 0.3s;
 
   &__content {
     text-align: center;
@@ -146,18 +184,25 @@ export default {
   }
 
   &.enlarged {
-    width: 150px;
-    height: 225px;
+    width: 100px;
+    height: 150px;
+  }
+
+  &.mulliganed {
+    border-color: red;
+    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.8);
   }
 }
 
-.dragged {
-  z-index: 777;
-}
-
-.game-card:hover {
+.player-card:hover {
   border-color: gold;
   background-color: yellow;
   box-shadow: 0 0 15px 5px rgba(255, 223, 0, 0.8);
+  cursor: move;
+}
+
+.dragged {
+  cursor: move;
+  z-index: 777;
 }
 </style>

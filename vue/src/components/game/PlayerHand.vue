@@ -1,11 +1,13 @@
 <template>
-  <div class="hand-container">
+  <div class="hand-container" :style="handStyle">
     <div :class="handClass">
       <div
           class="hand__card"
           v-for="(card, index) in cards"
           :key="index"
-          :style="index === 1 ? {'margin-left': '0'} : {}"
+          @mouseover="() => onMouseOver(index)"
+          @mouseleave="() => onMouseLeave()"
+          :style="cardStyle(index)"
       >
         <GameCard
           :key="index"
@@ -16,7 +18,8 @@
           :enlarged="!opponent"
           :is-opponent="opponent"
           :index="index"
-          @onDrop="(params) => $emit('onCardDrop', params)"
+          @onDrag="(i) => onCardStartDrag(i)"
+          @onDrop="(params) => onCardStopDrag(params)"
         />
       </div>
     </div>
@@ -31,7 +34,7 @@ export default {
   name: 'PlayerHand',
   components: { GameCard },
   emits: [
-    "onCardDrop",
+    'onCardDrop',
   ],
   props: {
     opponent: {
@@ -39,6 +42,9 @@ export default {
       required: false,
       default: false,
     },
+  },
+  data() {
+    return { hoveredIndex: null, draggedIndex: null };
   },
   computed: {
     ...mapGetters('gameEngine', [
@@ -50,7 +56,37 @@ export default {
           this.getGameEngine.player.cards
     },
     handClass() {
-      return this.opponent ? 'hand-opponent': 'hand-player';
+      return this.opponent ? 'hand-opponent' : 'hand-player';
+    },
+    handStyle() {
+      return this.opponent ? { transform: 'rotate(180deg)' } : {}
+    }
+  },
+  methods: {
+    onMouseOver(index) {
+      this.hoveredIndex = index;
+    },
+    onMouseLeave() {
+      this.hoveredIndex = null;
+    },
+    onCardStartDrag(index) {
+      this.draggedIndex = index;
+    },
+    onCardStopDrag(params) {
+      this.$emit('onCardDrop', params);
+      this.draggedIndex = null;
+    },
+    cardStyle(index) {
+      if (this.draggedIndex === index) {
+        return {};
+      }
+
+      const cardsLength = this.opponent ? this.getGameEngine.opponent.cards.length : this.getGameEngine.player.cards.length
+      const angle = (index - (cardsLength - 1) / 2) * 7;
+
+      return {
+        transform: `rotate(${angle}deg)`,
+      }
     }
   }
 };
@@ -58,30 +94,25 @@ export default {
 
 <style scoped lang="less">
 .hand {
-  display: flex;
   position: absolute;
   z-index: 666;
-  width: 80vw;
-  margin: auto;
-  justify-content: center;
+  width: 100px;
 
   &__card {
-    width: 150px;
-    height: 100%;
+    height: 60%;
     display: flex;
     align-items: center;
     font-size: 18px;
     color: black;
+    position: absolute;
   }
 
   &-player:extend(.hand) {
-    bottom: -20px;
-    height: 20vh;
+    bottom: -360px;
   }
 
   &-opponent:extend(.hand) {
-    top: -25px;
-    height: 15vh;
+    top: 380px;
   }
 }
 

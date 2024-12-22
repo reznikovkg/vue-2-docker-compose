@@ -1,5 +1,5 @@
 import { Board } from '@/engine/board';
-import { MAX_CARDS_IN_HAND, MAX_MULLIGAN_CARDS_QUANTITY, NEW_ROUND_DRAW_CARDS_QUANTITY } from '@/engine/constants';
+import { MAX_CARDS_IN_HAND, NEW_ROUND_DRAW_CARDS_QUANTITY } from '@/engine/constants';
 import { PlayCardAbilityContext } from '@/engine/ability';
 import { shuffleArray } from '@/utils/utils';
 import { getGameEngineSingleton } from './game-engine';
@@ -17,7 +17,6 @@ export class Player {
   }
 
   performMulligan(indexesToRemove) {
-    indexesToRemove = indexesToRemove.splice(0, MAX_MULLIGAN_CARDS_QUANTITY);
     const newCards = this.deck.splice(0, indexesToRemove.length);
 
     const removedCards = indexesToRemove.map((indexToRemove, i) => {
@@ -28,6 +27,8 @@ export class Player {
 
     this.deck.push(...removedCards);
     this.deck = shuffleArray(this.deck);
+
+    this.cards = [...this.cards];
   }
 
   tryPlayCard(cardIndex, position) {
@@ -74,5 +75,14 @@ export class Player {
 
     const removed = this.board.removeCard(index, type);
     this.cards.push(removed);
+  }
+
+  getScore() {
+    const { firstLineCards, secondLineCards } = this.board;
+    
+    const firstLineScore = firstLineCards.reduce((acc, card) => acc + card.getScore(), 0);
+    const secondLineScore = secondLineCards.reduce((acc, card) => acc + card.getScore(), 0);
+
+    return firstLineScore + secondLineScore;
   }
 }

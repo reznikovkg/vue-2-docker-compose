@@ -1,43 +1,56 @@
 <template>
   <div class="desk">
     <div class="desk__enemy_line">
-      <GameDeskLine :cards="opponentRangeCards" :isMelee="false" :isOpponent="true" />
-      <GameDeskLine :cards="opponentMeleeCards" :isMelee="true" :isOpponent="true" />
+      <PlayerScoreCounter :opponent="true"/>
+      <GameDeskLine :cards="opponentRangeCards" :isMelee="false" :isOpponent="true"/>
+      <GameDeskLine :cards="opponentMeleeCards" :isMelee="true" :isOpponent="true"/>
     </div>
     <div class="desk__separator">
-      <GameScore />
-      <span class="desk__separator__line" />
+      <ShowcaseButton/>
+      <GameScore/>
+      <span class="desk__separator__line"/>
       <span class="desk__separator__text">VS</span>
-      <span class="desk__separator__line" />
-      <CountDown />
-      <PassButton />
-      <EndTurnButton />
+      <span class="desk__separator__line"/>
+      <CountDown/>
+      <PassButton/>
+      <EndTurnButton/>
     </div>
     <div ref="lines">
-      <GameDeskLine :cards="playerMeleeCards" :isMelee="true" :isOpponent="false" id="player-melee-cards" />
-      <GameDeskLine :cards="playerRangeCards" :isMelee="false" :isOpponent="false" id="player-range-cards" />
+      <GameDeskLine :cards="playerMeleeCards" :isMelee="true" :isOpponent="false" id="player-melee-cards"/>
+      <GameDeskLine :cards="playerRangeCards" :isMelee="false" :isOpponent="false" id="player-range-cards"/>
+      <PlayerScoreCounter/>
     </div>
   </div>
 </template>
 
 <script>
-import GameDeskLine from "./DeskLine";
+import GameDeskLine from './DeskLine';
 import CountDown from '../game/CountDown.vue';
 import { mapGetters } from 'vuex';
 import EndTurnButton from '@/components/game/EndTurnButton.vue';
 import PassButton from '@/components/game/PassButton.vue';
 import GameScore from '@/components/game/GameScore.vue';
+import PlayerScoreCounter from '@/components/game/PlayerScoreCounter.vue';
+import { mulliganModal } from '@/mixins/modals';
+import { GamePhases } from '@/engine/constants';
+import ShowcaseButton from '@/components/game/ShowcaseButton.vue';
 
 export default {
   components: {
+    ShowcaseButton,
+    PlayerScoreCounter,
     GameScore,
     PassButton,
     EndTurnButton,
     GameDeskLine,
     CountDown,
   },
-  name: "GameDesk",
+  name: 'GameDesk',
+  mixins: [mulliganModal],
   computed: {
+    gamePhase() {
+      return this.getGameEngine.currentPhase;
+    },
     playerMeleeCards() {
       return this.getGameEngine.player.board.firstLineCards;
     },
@@ -54,6 +67,23 @@ export default {
       'getGameEngine',
     ]),
   },
+  mounted() {
+    this.handleMulligan();
+  },
+  methods: {
+    handleMulligan() {
+      this.openMulliganModal();
+    },
+  },
+  watch: {
+    gamePhase: function () {
+      if (this.gamePhase !== GamePhases.MULLIGAN) {
+        return;
+      }
+
+      this.handleMulligan();
+    },
+  },
 }
 </script>
 
@@ -61,11 +91,11 @@ export default {
 .desk {
   display: flex;
   flex-direction: column;
-  margin: 4vh 0;
+  margin: -1vh 0;
   height: 15vh;
   border-radius: 7px;
   position: relative;
-  z-index: 0;
+  z-index: -1;
 
   &__enemy_line {
     margin-top: 2vh;
@@ -87,7 +117,7 @@ export default {
     &__text {
       font-weight: bold;
       color: rgb(51, 51, 51);
-      font-size: 32px;
+      font-size: 150%;
     }
   }
 }
