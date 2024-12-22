@@ -92,7 +92,6 @@ export default {
     width: 100px;
     height: 150px;
     transition: all 0.2s ease-out;
-    perspective: 200px;
 
     &__content {
       text-align: center;
