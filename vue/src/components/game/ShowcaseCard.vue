@@ -22,7 +22,6 @@ export default {
   computed: {
     style() {
       const img = require(`@/assets/cards/${this.imageUri}`);
-      console.log(this.cursorRelativePos.y)
 
       if (this.hovered) {
         return {
