@@ -1,21 +1,18 @@
 <template>
   <PageLayout>
-    <section class="p-16">
-      Homepage
-      <button @click="() => openHelpModal()">Open modal</button>
-    </section>
+    <CounterPart> </CounterPart>
   </PageLayout>
 </template>
 
 <script>
 import PageLayout from '../parts/PageLayout'
-import { helpModal } from "@/mixins/modals";
+import CounterPart from '../parts/Counter.vue'
 
 export default {
   name: 'HomePage',
-  mixins: [helpModal],
   components: {
-    PageLayout
+    PageLayout,
+    CounterPart,
   }
 }
 </script>
