@@ -10,17 +10,21 @@ import ModalContainer from "@/components/parts/ModalContainer";
 
 export default {
   components: {
-    ModalContainer
-  }
-}
+    ModalContainer,
+  },
+};
 </script>
 
 <style lang="less">
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap");
 
-body {
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+body {
   background-color: @cBaseTwo;
 }
 
@@ -39,7 +43,11 @@ section {
   }
 }
 
-h1, h2, h3, h4, h5 {
+h1,
+h2,
+h3,
+h4,
+h5 {
   font-family: @ffOne;
   color: @cBaseThree;
   margin: 0;
@@ -58,9 +66,7 @@ h2 {
 }
 
 .rcms {
-
   &-divider {
-
     &-h {
       width: 100%;
       height: @sizeBorderDefault;
@@ -68,7 +74,6 @@ h2 {
     }
 
     &-v {
-
     }
   }
 
@@ -76,7 +81,7 @@ h2 {
     position: relative;
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       left: 0;
       top: 0;

@@ -1,22 +1,15 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import HomePage from '../components/pages/Home.vue'
-import { RouteNames } from './routes'
+import Vue from "vue";
+import Router from "vue-router";
+import GameView from "@/components/game/GameView.vue";
 
-Vue.use(VueRouter)
+Vue.use(Router);
 
-const routes = [
-  {
-    path: '/',
-    name: RouteNames.HOME,
-    component: HomePage
-  }
-]
-
-const router = new VueRouter({
-  mode: 'history',
-  base: '/',
-  routes
-})
-
-export default router
+export default new Router({
+  routes: [
+    {
+      path: "/",
+      name: "GameView",
+      component: GameView,
+    },
+  ],
+});
