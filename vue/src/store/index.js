@@ -2,10 +2,12 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { items } from "@/components/engine/gameEngine";
 import { recipes } from "@/components/engine/recipes";
+import modals from "./modals";
 
 Vue.use(Vuex);
 
 export default {
+  namespaced: true,
   state: {
     items: items,
     tableItems: [],
@@ -49,5 +51,8 @@ export default {
     items: (state) => state.items,
     tableItems: (state) => state.tableItems,
     recipes: (state) => state.recipes,
+  },
+  modules: {
+    modals,
   },
 };

@@ -1,9 +1,9 @@
 <template>
-  <div class="recipe-popup" v-if="isOpen">
+  <div class="recipe-popup">
     <div class="popup-content">
       <h3>Доступные рецепты:</h3>
       <ul>
-        <li v-for="(recipe, index) in recipes" :key="index">
+        <li v-for="(recipe, index) in params.recipes" :key="index">
           {{ recipe.ingredients.join(" + ") }} = {{ recipe.result }}
         </li>
       </ul>
@@ -14,13 +14,10 @@
 
 <script>
 export default {
+  name: "RecipePopup",
   props: {
-    recipes: {
-      type: Array,
-      required: true,
-    },
-    isOpen: {
-      type: Boolean,
+    params: {
+      type: Object,
       required: true,
     },
   },

@@ -3,14 +3,15 @@
     <img
       :src="require(`../../assets/inventory/${item.image}`)"
       :alt="item.name"
-      class="item-image"
+      class="item-card__image"
     />
-    <div class="item-name">{{ item.name }}</div>
+    <div class="item-card__name">{{ item.name }}</div>
   </div>
 </template>
 
 <script>
 export default {
+  name: "ItemCard",
   props: {
     item: {
       type: Object,
@@ -32,18 +33,18 @@ export default {
   cursor: pointer;
   transition: transform 0.2s;
   height: 120px;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
-.item-card:hover {
-  transform: scale(1.1);
-}
-
-.item-image {
+.item-card__image {
   width: 50px;
   height: 50px;
 }
 
-.item-name {
+.item-card__name {
   margin-top: 5px;
   font-size: 14px;
   text-align: center;

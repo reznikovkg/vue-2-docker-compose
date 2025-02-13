@@ -1,6 +1,6 @@
 <template>
   <div class="recipe-list">
-    <h3>Доступные рецепты:</h3>
+    <h3 class="recipe-list__title">Доступные рецепты:</h3>
     <ul>
       <li v-for="(recipe, index) in recipes" :key="index">
         {{ recipe.ingredients.join(" + ") }} = {{ recipe.result }}
@@ -11,6 +11,7 @@
 
 <script>
 export default {
+  name: "RecipeList",
   props: {
     recipes: {
       type: Array,
@@ -29,7 +30,7 @@ export default {
   width: 80%;
 }
 
-h3 {
+.recipe-list__title {
   margin-bottom: 10px;
   font-size: 18px;
   color: #333;

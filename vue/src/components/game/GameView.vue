@@ -14,12 +14,11 @@
       <button @click="mixItems">Смешать</button>
       <button @click="showRecipes">Рецепты</button>
     </div>
-    <RecipePopup :recipes="recipes" :isOpen="isPopupOpen" @close="closePopup" />
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 import ItemCard from "./ItemCard.vue";
 import CraftingTable from "./CraftingTable.vue";
 import RecipePopup from "./RecipePopup.vue";
@@ -29,21 +28,17 @@ function normalizeItemName(name) {
 }
 
 export default {
+  name: "GameView",
   components: {
     ItemCard,
     CraftingTable,
-    RecipePopup,
-  },
-  data() {
-    return {
-      isPopupOpen: false,
-    };
   },
   computed: {
     ...mapState(["items", "tableItems", "recipes"]),
   },
   methods: {
     ...mapActions(["addTableItem", "removeTableItem", "clearTable", "addItem"]),
+    ...mapMutations("modals", ["openModal"]),
     addToTable(item) {
       this.addTableItem(item);
     },
@@ -85,12 +80,13 @@ export default {
         alert("Нет подходящего рецепта!");
       }
     },
-
     showRecipes() {
-      this.isPopupOpen = true;
-    },
-    closePopup() {
-      this.isPopupOpen = false;
+      this.openModal({
+        component: RecipePopup,
+        params: {
+          recipes: this.recipes,
+        },
+      });
     },
   },
 };

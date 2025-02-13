@@ -14,6 +14,7 @@ import { mapState } from "vuex";
 import ItemCard from "./ItemCard.vue";
 
 export default {
+  name: "CraftingTable",
   mounted() {
     console.log("tableItems:", this.tableItems);
   },
