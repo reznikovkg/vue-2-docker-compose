@@ -21,7 +21,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .item-card {
   display: flex;
   flex-direction: column;
@@ -37,16 +37,16 @@ export default {
   &:hover {
     transform: scale(1.1);
   }
-}
 
-.item-card__image {
-  width: 50px;
-  height: 50px;
-}
+  &__image {
+    width: 50px;
+    height: 50px;
+  }
 
-.item-card__name {
-  margin-top: 5px;
-  font-size: 14px;
-  text-align: center;
+  &__name {
+    margin-top: 5px;
+    font-size: 14px;
+    text-align: center;
+  }
 }
 </style>

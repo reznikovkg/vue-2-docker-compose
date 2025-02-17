@@ -13,6 +13,11 @@ export default {
     tableItems: [],
     recipes: recipes,
   },
+  getters: {
+    items: (state) => state.items,
+    tableItems: (state) => state.tableItems,
+    recipes: (state) => state.recipes,
+  },
   mutations: {
     ADD_ITEM(state, item) {
       state.items.push(item);
@@ -46,11 +51,6 @@ export default {
     setRecipes({ commit }, recipes) {
       commit("SET_RECIPES", recipes);
     },
-  },
-  getters: {
-    items: (state) => state.items,
-    tableItems: (state) => state.tableItems,
-    recipes: (state) => state.recipes,
   },
   modules: {
     modals,

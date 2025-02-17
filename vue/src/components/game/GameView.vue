@@ -10,9 +10,15 @@
     </div>
     <CraftingTable @remove-item="removeFromTable" />
     <div class="controls">
-      <button @click="clearTable">Сбросить</button>
-      <button @click="mixItems">Смешать</button>
-      <button @click="showRecipes">Рецепты</button>
+      <button class="controls__button" @click="() => clearTable()">
+        Сбросить
+      </button>
+      <button class="controls__button" @click="() => mixItems()">
+        Смешать
+      </button>
+      <button class="controls__button" @click="() => showRecipes()">
+        Рецепты
+      </button>
     </div>
   </div>
 </template>
@@ -92,7 +98,10 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
+@primary-button-bg: #8b4513;
+@primary-button-hover-bg: #a0522d;
+
 .game-container {
   height: 100vh;
   width: 100%;
@@ -101,37 +110,35 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 10px;
-}
 
-.items-grid {
-  display: grid;
-  padding: 20px;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  .items-grid {
+    display: grid;
+    padding: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+    width: 80%;
+    height: 60%;
+    margin-bottom: 20px;
+    overflow-y: auto;
+  }
 
-  gap: 20px;
-  width: 80%;
-  height: 60%;
-  margin-bottom: 20px;
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
 
-  overflow-y: auto;
-}
+    .controls__button {
+      padding: 10px 20px;
+      background-color: @primary-button-bg;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
 
-.controls {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #8b4513;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #a0522d;
+      &:hover {
+        background-color: @primary-button-hover-bg;
+      }
+    }
+  }
 }
 </style>
