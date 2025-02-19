@@ -1,9 +1,13 @@
 <template>
   <div class="crafting-table">
-    <div v-for="(item, index) in tableItems" :key="index" class="table-item">
+    <div
+      v-for="(item, index) in tableItems"
+      :key="index"
+      class="crafting-table__item"
+    >
       <ItemCard
         :item="{ name: item.name, image: item.image }"
-        @click="removeItem(index)"
+        @click="() => removeItem(index)"
       />
     </div>
   </div>
@@ -46,7 +50,7 @@ export default {
   justify-content: center;
 }
 
-.table-item {
+.crafting-table__item {
   cursor: pointer;
 }
 </style>

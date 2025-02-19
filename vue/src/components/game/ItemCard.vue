@@ -1,5 +1,5 @@
 <template>
-  <div class="item-card" @click="$emit('click')">
+  <div class="item-card" @click="() => $emit('click')">
     <img
       :src="require(`../../assets/inventory/${item.image}`)"
       :alt="item.name"

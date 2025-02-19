@@ -1,13 +1,19 @@
 <template>
   <div class="recipe-popup">
-    <div class="popup-content">
-      <h3>Доступные рецепты:</h3>
-      <ul>
-        <li v-for="(recipe, index) in params.recipes" :key="index">
+    <div class="recipe-popup__content">
+      <h3 class="recipe-popup__title">Доступные рецепты:</h3>
+      <ul class="recipe-popup__list">
+        <li
+          v-for="(recipe, index) in params.recipes"
+          :key="index"
+          class="recipe-popup__item"
+        >
           {{ recipe.ingredients.join(" + ") }} = {{ recipe.result }}
         </li>
       </ul>
-      <button @click="closePopup">Закрыть</button>
+      <button class="recipe-popup__close-button" @click="() => closePopup()">
+        Закрыть
+      </button>
     </div>
   </div>
 </template>
@@ -29,7 +35,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .recipe-popup {
   position: fixed;
   top: 0;
@@ -40,40 +46,40 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
-.popup-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 500px;
-  width: 100%;
-}
+  &__content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 100%;
+  }
 
-h3 {
-  margin-bottom: 10px;
-}
+  &__title {
+    margin-bottom: 10px;
+  }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
+  &__list {
+    list-style-type: none;
+    padding: 0;
+  }
 
-li {
-  margin-bottom: 5px;
-}
+  &__item {
+    margin-bottom: 5px;
+  }
 
-button {
-  margin-top: 10px;
-  padding: 5px 10px;
-  background-color: #8b4513;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+  &__close-button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #8b4513;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 
-button:hover {
-  background-color: #a0522d;
+    &:hover {
+      background-color: #a0522d;
+    }
+  }
 }
 </style>

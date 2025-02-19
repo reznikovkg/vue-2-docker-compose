@@ -1,22 +1,31 @@
 <template>
   <div class="game-container">
-    <div class="items-grid">
+    <div class="game-container__items-grid">
       <ItemCard
         v-for="(item, index) in items"
         :key="index"
         :item="item"
-        @click="addToTable(item)"
+        @click="() => addToTable(item)"
       />
     </div>
     <CraftingTable @remove-item="removeFromTable" />
-    <div class="controls">
-      <button class="controls__button" @click="() => clearTable()">
+    <div class="game-container__controls">
+      <button
+        class="game-container__controls__button"
+        @click="() => clearTable()"
+      >
         Сбросить
       </button>
-      <button class="controls__button" @click="() => mixItems()">
+      <button
+        class="game-container__controls__button"
+        @click="() => mixItems()"
+      >
         Смешать
       </button>
-      <button class="controls__button" @click="() => showRecipes()">
+      <button
+        class="game-container__controls__button"
+        @click="() => showRecipes()"
+      >
         Рецепты
       </button>
     </div>
@@ -111,7 +120,7 @@ export default {
   justify-content: center;
   padding: 10px;
 
-  .items-grid {
+  &__items-grid {
     display: grid;
     padding: 20px;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -122,12 +131,12 @@ export default {
     overflow-y: auto;
   }
 
-  .controls {
+  &__controls {
     display: flex;
     gap: 10px;
     margin-top: 20px;
 
-    .controls__button {
+    &__button {
       padding: 10px 20px;
       background-color: @primary-button-bg;
       color: white;

@@ -21,7 +21,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .recipe-list {
   margin-top: 20px;
   padding: 10px;
@@ -36,12 +36,12 @@ export default {
   color: #333;
 }
 
-ul {
+.recipe-list__list {
   list-style-type: none;
   padding: 0;
 }
 
-li {
+.recipe-list__item {
   margin-bottom: 5px;
   font-size: 14px;
   color: #555;
