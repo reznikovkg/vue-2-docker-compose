@@ -28,22 +28,22 @@ export default {
   background-color: #f5f5f5;
   border-radius: 10px;
   width: 80%;
-}
 
-.recipe-list__title {
-  margin-bottom: 10px;
-  font-size: 18px;
-  color: #333;
-}
+  &__title {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
+  }
 
-.recipe-list__list {
-  list-style-type: none;
-  padding: 0;
-}
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
 
-.recipe-list__item {
-  margin-bottom: 5px;
-  font-size: 14px;
-  color: #555;
+  li {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+  }
 }
 </style>

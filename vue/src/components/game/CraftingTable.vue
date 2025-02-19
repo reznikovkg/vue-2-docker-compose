@@ -36,7 +36,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .crafting-table {
   display: flex;
   flex-wrap: wrap;
@@ -48,9 +48,9 @@ export default {
   min-height: 150px;
   align-items: center;
   justify-content: center;
-}
 
-.crafting-table__item {
-  cursor: pointer;
+  &__item {
+    cursor: pointer;
+  }
 }
 </style>
