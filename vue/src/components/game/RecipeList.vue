@@ -1,8 +1,12 @@
 <template>
   <div class="recipe-list">
     <h3 class="recipe-list__title">Доступные рецепты:</h3>
-    <ul>
-      <li v-for="(recipe, index) in recipes" :key="index">
+    <ul class="recipe-list__items">
+      <li
+        class="recipe-list__item"
+        v-for="(recipe, index) in recipes"
+        :key="index"
+      >
         {{ recipe.ingredients.join(" + ") }} = {{ recipe.result }}
       </li>
     </ul>
@@ -35,12 +39,12 @@ export default {
     color: #333;
   }
 
-  ul {
+  &__items {
     list-style-type: none;
     padding: 0;
   }
 
-  li {
+  &__item {
     margin-bottom: 5px;
     font-size: 14px;
     color: #555;
