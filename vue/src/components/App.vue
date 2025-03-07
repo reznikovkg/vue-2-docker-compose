@@ -1,91 +1,104 @@
 <template>
-  <div>
-    <RouterView />
-    <ModalContainer />
-  </div>
+	<div class="app">
+		<HeaderC
+			:balance="balance"
+			@go-to-inventory="goToInventory"
+			@go-to-trade="goToTrade"
+		/>
+
+		<div v-if="showTrade">
+			<TradeC
+				:balance="balance"
+				:inventoryItems="inventoryItems"
+				@update-balance="updateBalance"
+				@close="closeTrade"
+				@del-item="delItem"
+				@update-inventory="addFishToInventory"
+			/>
+		</div>
+
+		<div v-if="showInventory">
+			<InventoryC
+				:balance="balance"
+				@update-balance="updateBalance"
+				@close="closeInventory"
+				:inventoryItems="inventoryItems"
+			/>
+		</div>
+
+		<LocationList :locations="locations" @select-location="selectLocation" />
+		<FishingSpot
+			:selectedLocation="selectedLocation"
+			@fish-caught="addFishToInventory"
+		/>
+	</div>
 </template>
 
 <script>
-import ModalContainer from "@/components/parts/ModalContainer";
+import HeaderC from "./components/HeaderC.vue";
+import LocationList from "./components/LocationList.vue";
+import FishingSpot from "./components/FishingSpot.vue";
+import TradeC from "./components/TradeC.vue";
+import InventoryC from "./components/InventoryC.vue";
 
 export default {
-  components: {
-    ModalContainer
-  }
-}
+	components: {
+		HeaderC,
+		LocationList,
+		FishingSpot,
+		TradeC,
+		InventoryC,
+	},
+	data() {
+		return {
+			locations: ["Озеро", "Река", "Пруд"],
+			selectedLocation: null,
+			balance: 100,
+			showTrade: false,
+			showInventory: false,
+			inventoryItems: ["Удочка", "Наживка"],
+		};
+	},
+	methods: {
+		selectLocation(location) {
+			this.selectedLocation = location;
+		},
+		goToInventory() {
+			this.showInventory = true;
+			this.showTrade = false;
+		},
+		goToTrade() {
+			this.showTrade = true;
+			this.showInventory = false;
+		},
+		closeTrade() {
+			this.showTrade = false;
+		},
+		closeInventory() {
+			this.showInventory = false;
+		},
+		updateBalance(newBalance) {
+			this.balance = newBalance;
+		},
+		addFishToInventory(fish) {
+			this.inventoryItems.push(fish.name);
+		},
+		delItem(index) {
+			this.inventoryItems.splice(index, 1);
+		},
+	},
+};
 </script>
 
-<style lang="less">
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: @cBaseTwo;
-}
-
-a {
-  text-decoration: none;
-}
-
-section {
-  background-color: @cBaseOne;
-  margin-bottom: 20px;
-  border-radius: 2px;
-  box-sizing: border-box;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-h1, h2, h3, h4, h5 {
-  font-family: @ffOne;
-  color: @cBaseThree;
-  margin: 0;
-}
-
-h2 {
-  font-size: 32px;
-}
-
-.p-16 {
-  padding: 16px;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.rcms {
-
-  &-divider {
-
-    &-h {
-      width: 100%;
-      height: @sizeBorderDefault;
-      background-color: @cBaseTwo;
-    }
-
-    &-v {
-
-    }
-  }
-
-  &-loading {
-    position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background: rgba(100, 100, 100, 0.5);
-      cursor: wait;
-    }
-  }
+<style scoped lang="less">
+.app {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 1000px;
+	background: #2f80c83d;
+	padding: 20px;
+	border-radius: 20px;
+	margin: 0 auto;
 }
 </style>
