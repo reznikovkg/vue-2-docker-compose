@@ -12,17 +12,7 @@
 					class="fish"
 					:style="getFishStyle(rod.fishCaught)"
 					@click="selectFish(rod.fishCaught)"
-				>
-					<div
-						class="fight-info__progress-bar"
-						v-if="rod.fishCaught === selectedFish"
-					>
-						<div
-							class="fight-info__progress"
-							:style="{ width: getProgressBarWidthForFish(rod.fishCaught) }"
-						></div>
-					</div>
-				</div>
+				></div>
 			</div>
 		</div>
 
@@ -90,14 +80,25 @@ export default {
 		},
 
 		addFish(rod) {
+			const areaWidth = 500;
+			const areaHeight = 300;
+			const fishSize = 40;
+
+			let fishX = Math.random() * 50 - 25;
+			let fishY = Math.random() * 50 - 25;
+
+			fishX = Math.min(areaWidth - fishSize, Math.max(0, fishX));
+			fishY = Math.min(areaHeight - fishSize, Math.max(0, fishY));
+
 			const fish = {
 				rodId: rod.id,
-				x: rod.x + Math.random() * 50,
-				y: rod.y + Math.random() * 50,
+				x: fishX,
+				y: fishY,
 				resistance: 50,
 				name: `Рыба ${Math.floor(Math.random() * 100) + 1}`,
 				caught: false,
 			};
+
 			rod.fishCaught = fish;
 			this.moveFish(fish);
 		},
@@ -123,6 +124,9 @@ export default {
 				this.selectedFish.resistance += Math.random() * 3;
 				if (this.selectedFish.resistance > 100) {
 					this.selectedFish.resistance = 100;
+					alert("Рыба сорвалась!");
+					this.selectedFish = null;
+					this.endFishing();
 				}
 
 				this.selectedFish.resistance -= Math.random() * 5 + 5;
@@ -131,6 +135,7 @@ export default {
 				if (this.selectedFish.resistance > 100) {
 					alert("Рыба сорвалась!");
 					this.selectedFish = null;
+					this.endFishing();
 				}
 
 				if (this.selectedFish.resistance <= 0) {
@@ -172,11 +177,12 @@ export default {
 		},
 
 		getFightInfo() {
+			if (this.selectedFish.resistance > 100) {
+				alert("Рыба сорвалась!");
+				this.selectedFish = null;
+				this.endFishing();
+			}
 			return { displayProgress: this.selectedFish !== null };
-		},
-
-		getProgressBarWidthForFish(fish) {
-			return `${Math.max(fish.resistance, 0)}%`;
 		},
 
 		getProgressBarWidth(fish) {
