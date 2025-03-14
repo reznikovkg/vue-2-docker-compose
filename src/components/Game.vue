@@ -113,6 +113,7 @@ export default {
       if (direction === 'right' || direction === 'down') {
         compressed.reverse();
       }
+
       // Объединение одинаковых элементов
       for (let i = 0; i < compressed.length - 1; i++) {
         if (compressed[i] === compressed[i + 1]) {
@@ -122,10 +123,12 @@ export default {
           compressed.splice(i + 1, 1);
         }
       }
+
       // Добавление нулей
       while (compressed.length < 4) {
         compressed.push(0);
       }
+
       if (direction === 'right' || direction === 'down') {
         compressed.reverse();
       }
@@ -172,27 +175,31 @@ export default {
   align-items: center;
   height: 100vh;
 }
+
 .header {
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
+
 .header-content {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 40px; /* Расстояние между элементами */
   padding: 0 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
+
 .game-title {
   color: #bb8213;
   margin-left: 200px;
-  font-weight: 900;
-  font-size: 100px;
+  font-weight: 900; /* Жирный шрифт */
+  font-size: 100px; /* Увеличенный размер */
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Добавляем тень */
 
 }
+
 .board {
   display: flex;
   flex-direction: column;
@@ -200,9 +207,11 @@ export default {
   border-radius: 8px;
   position: relative;
 }
+
 .row {
   display: flex;
 }
+
 .new-game-btn {
   margin-right: 200px;
   background: indianred;
@@ -214,9 +223,11 @@ export default {
   border-radius: 5px;
   transition: transform 0.1s ease;
 }
+
 .new-game-btn:active {
   transform: scale(0.95);
 }
+
 .game-over, .victory {
   position: absolute;
   top: 50%;
@@ -226,29 +237,34 @@ export default {
   font-weight: bold;
   text-align: center;
 }
+
 .game-over {
   color: red;
 }
+
 .victory {
   color: green;
 }
+
 .score-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #f3bb4c;
-  border-radius: 10px;
-  width: 150px;
-  height: 65px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px; /* Скругление больше */
+  width: 150px; /* Ширина больше */
+  height: 65px; /* Высота больше */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень для объема */
 }
+
 .score-label {
-  font-size: 18px;
+  font-size: 18px; /* Больше текста */
   margin-bottom: 8px;
 }
+
 .score-value {
-  font-size: 32px;
+  font-size: 32px; /* Крупный счет */
   font-weight: 700;
   line-height: 1;
 }
