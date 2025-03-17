@@ -169,7 +169,6 @@ export default {
 </script>
 
 <style scoped>
-/* Ваш CSS-стиль */
 .game {
   display: flex;
   flex-direction: column;
@@ -268,33 +267,5 @@ export default {
   font-size: 32px;
   font-weight: 700;
   line-height: 1;
-}
-.controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.controls-row {
-  display: flex;
-  gap: 10px;
-}
-
-.controls button {
-  width: 50px;
-  height: 50px;
-  font-size: 20px;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  background-color: #f3bb4c;
-  color: #3f3b3b;
-  cursor: pointer;
-  transition: transform 0.1s ease;
-}
-
-.controls button:active {
-  transform: scale(0.95);
 }
 </style>
