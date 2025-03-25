@@ -53,24 +53,22 @@ export default {
         move({ dispatch, state, commit }, direction) {
             let moved = false;
             let cells = [...state.cells];
-
             switch (direction) {
                 case 'ArrowLeft':
-                    ({ cells, moved } = moveRow(cells, 'left'));
+                    ({ cells, moved } = moveRow(cells, 'left', commit));
                     break;
                 case 'ArrowRight':
-                    ({ cells, moved } = moveRow(cells, 'right'));
+                    ({ cells, moved } = moveRow(cells, 'right', commit));
                     break;
                 case 'ArrowUp':
-                    ({ cells, moved } = moveColumn(cells, 'up'));
+                    ({ cells, moved } = moveColumn(cells, 'up', commit));
                     break;
                 case 'ArrowDown':
-                    ({ cells, moved } = moveColumn(cells, 'down'));
+                    ({ cells, moved } = moveColumn(cells, 'down', commit));
                     break;
                 default:
                     console.error(`Unknown direction: ${direction}`);
             }
-
             if (moved) {
                 commit('SET_CELLS', cells);
                 dispatch('addRandomTile');
@@ -82,7 +80,6 @@ export default {
                 const hasMoves = this.getters['game/hasPossibleMoves'];
                 commit('SET_GAME_OVER', !hasMoves);
             }
-
             if (state.cells.includes(2048)) {
                 commit('SET_VICTORY', true);
             }

@@ -202,7 +202,6 @@ export default {
   }
 }
 
-/* Анимации */
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.3s ease, transform 0.3s ease;
