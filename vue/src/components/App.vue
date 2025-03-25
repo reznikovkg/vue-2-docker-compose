@@ -1,91 +1,174 @@
 <template>
-  <div>
-    <RouterView />
-    <ModalContainer />
+  <div id="app" @mousemove="($event)=>{moveCursor($event)}">
+    <GameWorld :x-cursor="xUserCursor" :y-cursor="yUserCursor" :w="width" :h="height" 
+                :attackPrototype="attackPrototype"
+                :enemyPrototype="enemyPrototype"
+                :keys="keys"/>
+
+    <PlayerAim :player-radius="playerStart.playerRadius" 
+               :x-cursor="xUserCursor" 
+               :y-cursor="yUserCursor"/>
+               
+    <PlayerStats :health="HEALTH" :coins="SCORE"/>
+    <div class="TopUI">
+      <GameTimer :game-status="GAMESTATUS"/>
+      <button @click="()=>{Pause()}" class="pause">Пауза</button>
+    </div>
+    <button v-if="GAMESTATUS==2" @click="()=>{Start()}" class="play">Играть</button>
+
   </div>
 </template>
 
 <script>
-import ModalContainer from "@/components/parts/ModalContainer";
-
+import {mapGetters} from 'vuex';
+import GameWorld from './Game/GameWorld.vue';
+import PlayerAim from './Game/PlayerAim.vue';
+import PlayerStats from './Game/PlayerSats.vue';
+import GameTimer from './Game/GameTimer.vue';
 export default {
+  name: 'App',
   components: {
-    ModalContainer
+    GameWorld,
+    PlayerAim,
+    PlayerStats,
+    GameTimer
+  },
+  computed : {
+      ...mapGetters(['SCORE',
+                    'HEALTH',
+                    'GAMESTATUS'
+                    ])
+    },
+  data(){
+    return{
+      xUserCursor:0,
+      yUserCursor:0,
+
+      player:{},
+      health: 100,
+      playerStart:{
+        score:0,
+        health: 100,
+        playerSpeed: 100,
+        playerRadius: 15,
+      },
+      enemyPrototype:{
+        health: 3,
+        enemySpeed: 90,
+        enemyRadius: 15,
+        spawnSpan: 2000,
+        spawnRadius: 300
+      },
+      attackPrototype:{ 
+        attackRadius:10,
+        spawnSpan: 2000
+      },
+
+      gameStatus:2,
+      keys: {},
+      width:1100,
+      height:1100
+    }
+  },
+  mounted(){
+    window.addEventListener('keydown', this.keyDownHandler);
+    window.addEventListener('keyup', this.keyUpHandler);
+    this.$store.commit('INIT', {w:this.width, 
+                                h:this.height, 
+                                wWindow:document.documentElement.scrollWidth, 
+                                hWindow:document.documentElement.scrollHeight,
+                                playerPrototype: this.playerStart,
+                                enemyPrototype: this.enemyPrototype,
+                                attackPrototype: this.attackPrototype
+                                });
+  },
+  beforeDestroy(){
+    window.removeEventListener('keydown', this.keyDownHandler);
+    window.removeEventListener('keyup', this.keyUpHandler);
+  },
+  methods: {
+    moveCursor(e) {
+      this.xUserCursor = e.clientX;
+      this.yUserCursor = e.clientY;
+    },
+    Pause(){
+      this.$store.commit('PAUSE');
+    },
+    Start(){
+      this.$store.commit('RESET');
+      this.$store.commit('START');
+    },
+    keyDownHandler(event) {
+      this.keys[event.code] = true;
+    },
+    keyUpHandler(event) {
+      this.keys[event.code] = false;
+    },
   }
 }
 </script>
 
+
 <style lang="less">
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
 
-body {
-  margin: 0;
-  padding: 0;
-  background-color: @cBaseTwo;
+* {
+	padding: 0px;
+	margin: 0px;
+	border: none;
+  height: 100%;
 }
-
-a {
-  text-decoration: none;
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  /* cursor: none; */
+  background-color: rgba(167, 167, 164, 0.356);
 }
+button {
+  background: #3498db;
+  width: 180px;
+  padding: 4px 0;
+  font-family: 'Roboto'; 
+  text-align: center;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  user-select: none;
+  transform: translateX(0%) translateY(0%);
+  border-radius: 3px;
 
-section {
-  background-color: @cBaseOne;
-  margin-bottom: 20px;
-  border-radius: 2px;
-  box-sizing: border-box;
-
-  &:last-child {
-    margin-bottom: 0;
+  &:hover {
+    cursor: pointer;
   }
+  
 }
+.TopUI{
+  position: fixed;
+  top: 1vh;
+  left: 45vw;
+  display:flex;
 
-h1, h2, h3, h4, h5 {
-  font-family: @ffOne;
-  color: @cBaseThree;
-  margin: 0;
+  align-content:center;
+  z-index: 5555;
 }
-
-h2 {
-  font-size: 32px;
+.pause{
+  width: 5vw;
+  height: 5vh;
+  z-index: 5555;
+  padding: auto;
 }
-
-.p-16 {
-  padding: 16px;
+.play{
+  top: 60vh;
+  left: 45vw;
+  position: fixed;
+  width: 10vw;
+  height: 5vh;
+  z-index: 5555;
 }
-
-.d-flex {
-  display: flex;
-}
-
-.rcms {
-
-  &-divider {
-
-    &-h {
-      width: 100%;
-      height: @sizeBorderDefault;
-      background-color: @cBaseTwo;
-    }
-
-    &-v {
-
-    }
-  }
-
-  &-loading {
-    position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background: rgba(100, 100, 100, 0.5);
-      cursor: wait;
-    }
-  }
+.circle{
+  pointer-events: none;
+  user-select: none;
+  border-radius: 50%;
+  will-change: transform;
 }
 </style>
