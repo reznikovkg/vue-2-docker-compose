@@ -7,159 +7,72 @@
           <span class="score-label">Счет:</span>
           <span class="score-value">{{ score }}</span>
         </div>
-        <button class="new-game-btn" @click="init">Новая игра</button>
       </div>
     </div>
     <div class="board">
-      <div v-for="(row, rowIndex) in rows" :key="rowIndex" class="row">
+      <div class="grid">
         <GameTile
-            v-for="(cell, colIndex) in row"
-            :key="`${rowIndex}-${colIndex}`"
+            v-for="(cell, index) in cells"
+            :key="index"
             :tile="cell"
+            :style="getTilePosition(index)"
         />
       </div>
-      <div v-if="gameOver" class="game-over">Конец игры</div>
-      <div v-if="victory" class="victory">Победа!</div>
     </div>
+    <GameOverModal
+        :isVisible="gameOver"
+        @restart="restartGame"
+    />
+    <VictoryModal
+        :isVisible="victory"
+        @restart="restartGame"
+    />
   </div>
 </template>
+
 <script>
+import { mapState, mapGetters, mapActions } from 'vuex';
 import GameTile from '@/components/Tile.vue';
+import GameOverModal from "@/components/modals/GameOverModal.vue";
+import VictoryModal from "@/components/modals/VictoryModal.vue";
 
 export default {
   name: 'HomePage',
-  components: { GameTile },
-  data() {
-    return {
-      cells: [],
-      score: 0,
-      gameOver: false,
-      victory: false,
-    };
-  },
+  components: { GameTile, GameOverModal, VictoryModal },
   computed: {
-    rows() {
-      const rows = [];
-      for (let i = 0; i < 4; i++) {
-        rows.push(this.cells.slice(i * 4, (i + 1) * 4));
-      }
-      return rows;
-    },
+    ...mapState('game', ['cells', 'score', 'gameOver', 'victory']),
+    ...mapGetters('game', ['rows']),
   },
   methods: {
-    init() {
-      this.cells = Array(16).fill(0);
-      this.addRandomTile();
-      this.addRandomTile();
-      this.gameOver = false;
-      this.victory = false;
-      this.score = 0;
-    },
-    addRandomTile() {
-      const emptyCells = this.cells
-          .map((value, index) => (value === 0 ? index : -1))
-          .filter(index => index !== -1);
-      if (emptyCells.length > 0) {
-        const index = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        this.cells[index] = 2;
-      }
-    },
-    move(direction) {
-      const moved = this[`move${direction}`]();
-      if (moved) {
-        this.addRandomTile();
-        this.checkGameState();
-      }
-    },
-    moveArrowLeft() {
-      return this.moveRow('left');
-    },
-    moveArrowRight() {
-      return this.moveRow('right');
-    },
-    moveArrowUp() {
-      return this.moveColumn('up');
-    },
-    moveArrowDown() {
-      return this.moveColumn('down');
-    },
-    moveRow(direction) {
-      let moved = false;
-      for (let row = 0; row < 4; row++) {
-        const start = row * 4;
-        const end = start + 4;
-        const currentRow = this.cells.slice(start, end);
-        const newRow = this.compressAndMerge(currentRow, direction);
-        if (JSON.stringify(currentRow) !== JSON.stringify(newRow)) {
-          this.cells.splice(start, 4, ...newRow);
-          moved = true;
-        }
-      }
-      return moved;
-    },
-    moveColumn(direction) {
-      let moved = false;
-      for (let col = 0; col < 4; col++) {
-        const column = [this.cells[col], this.cells[col + 4], this.cells[col + 8], this.cells[col + 12]];
-        const newColumn = this.compressAndMerge(column, direction);
-        if (JSON.stringify(column) !== JSON.stringify(newColumn)) {
-          this.$set(this.cells, col, newColumn[0]);
-          this.$set(this.cells, col + 4, newColumn[1]);
-          this.$set(this.cells, col + 8, newColumn[2]);
-          this.$set(this.cells, col + 12, newColumn[3]);
-          moved = true;
-        }
-      }
-      return moved;
-    },
-    compressAndMerge(array, direction) {
-      const compressed = array.filter(cell => cell !== 0);
-      if (direction === 'right' || direction === 'down') {
-        compressed.reverse();
-      }
-      for (let i = 0; i < compressed.length - 1; i++) {
-        if (compressed[i] === compressed[i + 1]) {
-          compressed[i] *= 2;
-          this.score += compressed[i];
-          if (compressed[i] === 2048) this.victory = true;
-          compressed.splice(i + 1, 1);
-        }
-      }
-      while (compressed.length < 4) {
-        compressed.push(0);
-      }
-      if (direction === 'right' || direction === 'down') {
-        compressed.reverse();
-      }
-      return compressed;
-    },
-    checkGameState() {
-      if (!this.cells.includes(0)) {
-        this.gameOver = !this.hasPossibleMoves();
-      }
-    },
-    hasPossibleMoves() {
-      for (let i = 0; i < 16; i++) {
-        if (i % 4 < 3 && this.cells[i] === this.cells[i + 1]) return true;
-        if (i < 12 && this.cells[i] === this.cells[i + 4]) return true;
-      }
-      return false;
-    },
+    ...mapActions('game', [
+      'initGame',
+      'addRandomTile',
+      'move',
+      'checkGameState',
+      'restartGame',
+    ]),
     handleKeyDown(event) {
-      console.log('Key pressed:', event.key);
       event.preventDefault();
       const keyMap = {
         ArrowUp: 'ArrowUp',
         ArrowDown: 'ArrowDown',
         ArrowLeft: 'ArrowLeft',
-        ArrowRight: 'ArrowRight'
+        ArrowRight: 'ArrowRight',
       };
       const direction = keyMap[event.key];
       if (direction) this.move(direction);
     },
+    getTilePosition(index) {
+      const row = Math.floor(index / 4);
+      const col = index % 4;
+      return {
+        gridRow: row + 1,
+        gridColumn: col + 1,
+      };
+    },
   },
   created() {
-    this.init();
+    this.initGame();
     document.addEventListener('keydown', this.handleKeyDown);
   },
   beforeDestroy() {
@@ -168,82 +81,36 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .game {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   height: 100vh;
+  padding: 20px;
+  background-color: #faf8ef;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   width: 100%;
-}
+  max-width: 620px;
+  margin-bottom: 20px;
 
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-  padding: 0 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
 }
 
 .game-title {
   color: #bb8213;
-  margin-left: 200px;
   font-weight: 900;
-  font-size: 100px;
+  font-size: 5vw;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.board {
-  display: flex;
-  flex-direction: column;
-  background-color: #d0d6da;
-  border-radius: 8px;
-  position: relative;
-}
-
-.row {
-  display: flex;
-}
-
-.new-game-btn {
-  margin-right: 200px;
-  background: indianred;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 20px;
-  padding: 20px 30px;
-  border-radius: 5px;
-  transition: transform 0.1s ease;
-}
-
-.new-game-btn:active {
-  transform: scale(0.95);
-}
-
-.game-over,
-.victory {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 36px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.game-over {
-  color: red;
-}
-
-.victory {
-  color: green;
 }
 
 .score-box {
@@ -253,19 +120,112 @@ export default {
   justify-content: center;
   background-color: #f3bb4c;
   border-radius: 10px;
-  width: 150px;
-  height: 65px;
+  width: 120px;
+  height: 60px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  .score-label {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .score-value {
+    font-size: 24px;
+    font-weight: bold;
+  }
 }
 
-.score-label {
-  font-size: 18px;
-  margin-bottom: 8px;
+.new-game-btn {
+  background: indianred;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  transition: transform 0.1s ease, background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken(indianred, 10%);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
-.score-value {
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1;
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+  width: 90%;
+  max-width: 620px;
+  padding: 10px;
+  background-color: #d0d6da;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+
+  h2 {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    color: #666;
+  }
+}
+
+/* Анимации */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.modal-enter,
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.tile-enter-active {
+  animation: pop-in 0.4s ease;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 </style>
