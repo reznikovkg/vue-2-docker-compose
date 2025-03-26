@@ -1,4 +1,4 @@
-export function moveRow(cells, direction, commit) {
+export const moveRow = (cells, direction, commit) => {
     let moved = false;
     for (let row = 0; row < 4; row++) {
         const start = row * 4;
@@ -11,9 +11,9 @@ export function moveRow(cells, direction, commit) {
         }
     }
     return { cells, moved };
-}
+};
 
-export function moveColumn(cells, direction, commit) {
+export const moveColumn = (cells, direction, commit) => {
     let moved = false;
     for (let col = 0; col < 4; col++) {
         const column = [cells[col], cells[col + 4], cells[col + 8], cells[col + 12]];
@@ -27,8 +27,8 @@ export function moveColumn(cells, direction, commit) {
         }
     }
     return { cells, moved };
-}
-export function compressAndMerge(array, direction, commit) {
+};
+export const compressAndMerge = (array, direction, commit) => {
     const sanitizedArray = array.map(cell => (typeof cell === 'number' ? cell : 0));
     const compressed = sanitizedArray.filter(cell => cell !== 0);
     if (direction === 'right' || direction === 'down') {
@@ -50,4 +50,4 @@ export function compressAndMerge(array, direction, commit) {
         compressed.reverse();
     }
     return compressed;
-}
+};

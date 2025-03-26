@@ -21,11 +21,11 @@
     </div>
     <GameOverModal
         :isVisible="gameOver"
-        @restart="restartGame"
+        @restart="() => restartGame()"
     />
     <VictoryModal
         :isVisible="victory"
-        @restart="restartGame"
+        @restart="() => restartGame()"
     />
   </div>
 </template>
@@ -41,7 +41,7 @@ export default {
   components: { GameTile, GameOverModal, VictoryModal },
   computed: {
     ...mapState('game', ['cells', 'score', 'gameOver', 'victory']),
-    ...mapGetters('game', ['rows']),
+    ...mapGetters('game', ['rows', 'keyMap']),
   },
   methods: {
     ...mapActions('game', [
@@ -53,14 +53,10 @@ export default {
     ]),
     handleKeyDown(event) {
       event.preventDefault();
-      const keyMap = {
-        ArrowUp: 'ArrowUp',
-        ArrowDown: 'ArrowDown',
-        ArrowLeft: 'ArrowLeft',
-        ArrowRight: 'ArrowRight',
-      };
-      const direction = keyMap[event.key];
-      if (direction) this.move(direction);
+      const direction = this.keyMap[event.key];
+      if (direction) {
+        this.move(direction);
+      }
     },
     getTilePosition(index) {
       const row = Math.floor(index / 4);
@@ -80,7 +76,6 @@ export default {
   },
 };
 </script>
-
 <style scoped lang="less">
 .game {
   display: flex;
@@ -111,8 +106,11 @@ export default {
   font-weight: 900;
   font-size: 5vw;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
 
+  @media (max-width: 600px) {
+    font-size: 12vw;
+  }
+}
 .score-box {
   display: flex;
   flex-direction: column;
@@ -123,15 +121,21 @@ export default {
   width: 120px;
   height: 60px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
   .score-label {
     font-size: 14px;
     margin-bottom: 4px;
-  }
 
+    @media (max-width: 200px) {
+      font-size: 10px;
+    }
+  }
   .score-value {
     font-size: 24px;
     font-weight: bold;
+
+    @media (max-width: 200px) {
+      font-size: 18px;
+    }
   }
 }
 
@@ -156,23 +160,33 @@ export default {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(100px, 1fr));
   grid-gap: 10px;
-  width: 90%;
-  max-width: 620px;
+  width: 100%;
+  max-width: 430px;
   padding: 10px;
   background-color: #d0d6da;
   border-radius: 8px;
   position: relative;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  @media (max-width: 200px) {
+    grid-gap: 5px;
+    width: 100%;
+    padding: 5px;
+  }
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-gap: 10px;
+  grid-template-columns: repeat(4, minmax(100px, 1fr));
+  grid-gap: 8px;
   width: 100%;
   height: 100%;
+
+  @media (max-width: 200px) {
+    grid-gap: 5px;
+  }
 }
 
 .overlay {

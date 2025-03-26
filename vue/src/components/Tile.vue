@@ -18,16 +18,23 @@ export default {
 
 <style lang="less" scoped>
 .game__tile {
-  width: 140px;
-  height: 140px;
+  min-width: 100px;
+  min-height: 100px;
+  width: 20%;
+  height: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 34px;
-  margin: 5px;
+  font-size: 3vw;
+  margin: 1%;
   border-radius: 5px;
   color: #3f3b3b;
 
+  @media (max-width: 200px) {
+    font-size: 5vw;
+    min-width: 70px;
+    min-height: 70px;
+  }
   &--0 {
     background-color: #cec0b3;
   }

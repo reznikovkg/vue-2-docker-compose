@@ -3,7 +3,7 @@
     <div class="modal modal--game-over">
       <h2 class="modal__title">Конец игры</h2>
       <p class="modal__text">Вы проиграли! Попробуйте ещё раз.</p>
-      <button class="modal__button" @click="restartGame">Новая игра</button>
+      <button class="modal__button" @click="() => restartGame()">Новая игра</button>
     </div>
   </div>
 </template>

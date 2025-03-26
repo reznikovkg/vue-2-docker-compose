@@ -3,7 +3,7 @@
     <div class="modal modal--victory">
       <h2 class="modal__title">Победа!</h2>
       <p class="modal__text">Вы достигли 2048! Поздравляем!</p>
-      <button class="modal__button" @click="restartGame">Новая игра</button>
+      <button class="modal__button" @click="() => restartGame()">Новая игра</button>
     </div>
   </div>
 </template>
