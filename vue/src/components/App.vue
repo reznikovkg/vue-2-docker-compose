@@ -15,13 +15,6 @@ export default {
 };
 </script>
 
-<style>
-#app {
-  text-align: center;
-  font-family: Arial, sans-serif;
-}
-h1 {
-  font-size: 28px;
-  margin: 16px;
-}
+<style lang="less" scoped>
+  @import '@/less/styles.less';
 </style>

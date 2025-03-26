@@ -47,6 +47,34 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-  @import '@/less/modal.less';
+<style scoped>
+.modal {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal__content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+.modal__button {
+  cursor: pointer;
+  font-weight: bold;
+  color: white;
+  font-size: 16px;
+}
+.modal__button--over {
+  background-color: red;
+}
+.modal__button--victory {
+  background-color: green;
+}
 </style>

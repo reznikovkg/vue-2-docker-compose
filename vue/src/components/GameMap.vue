@@ -74,22 +74,14 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+     ...mapGetters([
       "coins",
       "currentLevel",
       "levels",
       "enemyDefeated",
       "gameOver",
-      "towerCost",
-      "upgradeCost",
-      "sellRefund",
       "enemyPosition",
       "enemyHealth",
-      "attackIntervals",
-      "healthIncrease",
-      "damageIncrease",
-      "fireRateIncrease",
-      "rangeIncrease",
       "message",
       "canPlaceTower",
     ]),
@@ -106,24 +98,16 @@ export default {
       return this.levels[this.currentLevel].buildableCells
     }
   },
+    mounted() {
+    this.startTowerAttacks()
+    this.moveEnemy()
+  },
   methods: {
     ...mapActions([
-      "updateCoins",
-      "changeCurrentLevel",
-      "setEnemyDefeated",
-      "setGameOver",
-      "setEnemyPosition",
-      "setEnemyHealth",
-      "pushTower",
-      "stopTowerAttacks",
-      "startEnemyAttacks",
-      "stopEnemyAttacks",
       "moveEnemy",
-      "showMessage",
       "startTowerAttacks",
       "placeTower",
       "upgradeTower",
-      "deleteTower",
       "changeLevel",
     ]),
     isRoad(index) {
@@ -142,7 +126,7 @@ export default {
       return this.path[this.path.length - 1] === index
     },
     handleCellClick(index) {
-      if (this.gameOver || this.enemyDefeated) return // взаимодействие с ячейками после окончания игры запрещено
+      if (this.gameOver || this.enemyDefeated) return
       if (this.isTower(index)) {
         this.upgradeTower(index)
       } else {
@@ -150,13 +134,111 @@ export default {
       }
     },
   },
-  mounted() {
-    this.startTowerAttacks()
-    this.moveEnemy()
-  },
 }
 </script>
 
-<style lang="less" scoped>
-  @import '@/less/game.less';
+<style scoped>
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.game__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.game__level {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  background-color: #222222;
+  padding: 10px;
+  border-radius: 5px;
+}
+.game__level-buttons {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.game__level-button {
+  margin: 5px;
+  padding: 10px;
+  background-color: dimgray;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.game__level-button:hover {
+  background-color: dimgray;
+}
+.game__coins {
+  font-size: 18px;
+  font-weight: bold;
+  color: gold;
+  margin-bottom: 10px;
+  background-color: #222222;
+  padding: 10px;
+  border-radius: 5px;
+}
+.game__status {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: #222222;
+  padding: 10px;
+  border-radius: 5px;
+  width: 500px;
+  h3 {
+    margin: 0;
+    font-size: 18px;
+  }
+}
+.game__controls {
+  display: flex;
+  flex-direction: column;
+  width: 650px;
+  align-items: center;
+}
+.game__message {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 1000;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
+  gap: 2px;
+  background-color: darkgreen;
+  border: 5px solid black;
+  padding: 5px;
+}
+.grid__cell {
+  width: 40px;
+  height: 40px;
+  background-color: green;
+  border: 1px solid darkgreen;
+  position: relative;
+}
+.grid__cell--road {
+  /*background-color: #c4a642;*/
+  background-color: peru;
+}
+.grid__cell--road-first {
+  background-color: dodgerblue;
+}
+.grid__cell--road-last {
+  background-color: rebeccapurple;
+}
+.grid__cell--can-place-tower {
+  background-color: olivedrab;
+  cursor: pointer;
+}
 </style>
