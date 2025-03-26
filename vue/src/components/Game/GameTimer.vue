@@ -66,5 +66,4 @@ export default{
     z-index: 555;
     opacity: 50%;
   }
-
 </style>

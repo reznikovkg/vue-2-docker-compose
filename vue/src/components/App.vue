@@ -128,63 +128,61 @@ export default {
 <style lang="less">
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
 
-* {
-	padding: 0px;
-	margin: 0px;
-	border: none;
-  height: 100%;
-}
-#app {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  /* cursor: none; */
-  background-color: rgba(167, 167, 164, 0.356);
-}
-button {
-  background: #3498db;
-  width: 180px;
-  padding: 4px 0;
-  font-family: 'Roboto'; 
-  text-align: center;
-  text-transform: uppercase;
-  color: #FFFFFF;
-  user-select: none;
-  transform: translateX(0%) translateY(0%);
-  border-radius: 3px;
-
-  &:hover {
-    cursor: pointer;
+  * {
+    padding: 0px;
+    margin: 0px;
+    border: none;
+    height: 100%;
   }
-  
-}
-.TopUI{
-  position: fixed;
-  top: 1vh;
-  left: 45vw;
-  display:flex;
+  #app {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(167, 167, 164, 0.356);
+  }
+  button {
+    background: #3498db;
+    width: 180px;
+    padding: 4px 0;
+    font-family: 'Roboto'; 
+    text-align: center;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    user-select: none;
+    transform: translateX(0%) translateY(0%);
+    border-radius: 3px;
 
-  align-content:center;
-  z-index: 5555;
-}
-.pause{
-  width: 5vw;
-  height: 5vh;
-  z-index: 5555;
-  padding: auto;
-}
-.play{
-  top: 60vh;
-  left: 45vw;
-  position: fixed;
-  width: 10vw;
-  height: 5vh;
-  z-index: 5555;
-}
-.circle{
-  pointer-events: none;
-  user-select: none;
-  border-radius: 50%;
-  will-change: transform;
-}
+    &:hover {
+      cursor: pointer;
+    }
+    
+  }
+  .TopUI{
+    position: fixed;
+    top: 1vh;
+    left: 45vw;
+    display:flex;
+    align-content:center;
+    z-index: 5555;
+  }
+  .pause{
+    width: 5vw;
+    height: 5vh;
+    z-index: 5555;
+    padding: auto;
+  }
+  .play{
+    top: 60vh;
+    left: 45vw;
+    position: fixed;
+    width: 10vw;
+    height: 5vh;
+    z-index: 5555;
+  }
+  .circle{
+    pointer-events: none;
+    user-select: none;
+    border-radius: 50%;
+    will-change: transform;
+  }
 </style>

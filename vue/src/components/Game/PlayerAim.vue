@@ -50,20 +50,20 @@ export default{
 </script>
 
 <style scoped>
-.Player{
-  position: fixed;
-  width: 30px;
-  height: 30px;
-  background: #16a91f;
-  border: 2px solid #089a5b;
-  z-index: 555;
-}
-.Aim{
-  position: fixed;
-  width: 14px;
-  height: 14px;
-  background: #cfcfcf;
-  border: 2px solid #646464;
-  opacity: 50%;
-}
+  .Player{
+    position: fixed;
+    width: 30px;
+    height: 30px;
+    background: #16a91f;
+    border: 2px solid #089a5b;
+    z-index: 555;
+  }
+  .Aim{
+    position: fixed;
+    width: 14px;
+    height: 14px;
+    background: #cfcfcf;
+    border: 2px solid #646464;
+    opacity: 50%;
+  }
 </style>

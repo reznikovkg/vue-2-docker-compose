@@ -58,11 +58,9 @@ export default{
     text-align: center; 
     width: 5vw;
   }
-
   .coins{
     color: #1573c0;
     text-align: center;
     width: 5vw;
   }
-
 </style>

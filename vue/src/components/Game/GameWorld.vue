@@ -123,9 +123,8 @@ export default{
 </script>
 
 <style scoped>
-.World{
-  position: relative;
-  background-color: antiquewhite;
-}
-
+  .World{
+    position: relative;
+    background-color: antiquewhite;
+  }
 </style>
