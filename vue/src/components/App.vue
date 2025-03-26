@@ -51,19 +51,13 @@ export default {
     PlayerStats,
     GameTimer
   },
-  computed : {
-      ...mapGetters(['SCORE',
-                    'HEALTH',
-                    'GAMESTATUS'
-                    ])
-    },
-  data(){
+  data () {
     return{
       xUserCursor:0,
       yUserCursor:0,
-
+      width:1100,
+      height:1100,
       player:{},
-      health: 100,
       playerStart:{
         score:0,
         health: 100,
@@ -71,7 +65,6 @@ export default {
         playerRadius: 15,
       },
       enemyPrototype:{
-        health: 3,
         enemySpeed: 90,
         enemyRadius: 15,
         spawnSpan: 2000,
@@ -81,45 +74,50 @@ export default {
         attackRadius:10,
         spawnSpan: 2000
       },
-
-      gameStatus:2,
       keys: {},
-      width:1100,
-      height:1100
+      gameStatus:2
     }
   },
-  mounted(){
+  computed: {
+      ...mapGetters([
+        'SCORE',
+        'HEALTH',
+        'GAMESTATUS'
+      ])
+  },
+  mounted () {
     window.addEventListener('keydown', this.keyDownHandler);
     window.addEventListener('keyup', this.keyUpHandler);
-    this.$store.commit('INIT', {w:this.width, 
-                                h:this.height, 
-                                wWindow:document.documentElement.scrollWidth, 
-                                hWindow:document.documentElement.scrollHeight,
-                                playerPrototype: this.playerStart,
-                                enemyPrototype: this.enemyPrototype,
-                                attackPrototype: this.attackPrototype
-                                });
+    this.$store.commit('INIT', {
+      w:this.width, 
+      h:this.height, 
+      wWindow:document.documentElement.scrollWidth, 
+      hWindow:document.documentElement.scrollHeight,
+      playerPrototype: this.playerStart,
+      enemyPrototype: this.enemyPrototype,
+      attackPrototype: this.attackPrototype
+      });
   },
-  beforeDestroy(){
+  beforeDestroy () {
     window.removeEventListener('keydown', this.keyDownHandler);
     window.removeEventListener('keyup', this.keyUpHandler);
   },
   methods: {
-    moveCursor(e) {
+    moveCursor (e) {
       this.xUserCursor = e.clientX;
       this.yUserCursor = e.clientY;
     },
-    Pause(){
+    Pause () {
       this.$store.commit('PAUSE');
     },
-    Start(){
+    Start () {
       this.$store.commit('RESET');
       this.$store.commit('START');
     },
-    keyDownHandler(event) {
+    keyDownHandler (event) {
       this.keys[event.code] = true;
     },
-    keyUpHandler(event) {
+    keyUpHandler (event) {
       this.keys[event.code] = false;
     },
   }

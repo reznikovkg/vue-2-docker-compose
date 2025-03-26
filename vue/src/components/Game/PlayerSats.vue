@@ -22,23 +22,19 @@
 export default{
   name: 'PlayerStats',
   props:{
-      time: Number,
-      health: Number,
-      coins:Number
+    time: Number,
+    health: Number,
+    coins:Number
   },
   computed:{
-
     Center(){
       return {
-        'top': (0)+'px',
+        'top': (0) + 'px',
         'left': (document.documentElement.scrollWidth)+ 'px'
       }
     }
   }
-
 }
-
-
 </script>
 
 <style scoped>

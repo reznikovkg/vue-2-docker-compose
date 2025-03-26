@@ -32,7 +32,6 @@ export default{
       }
     }
   },
-
   mounted(){
     this.counter = 0;
     this.timerID = setInterval(()=>{
@@ -45,7 +44,6 @@ export default{
     clearInterval(this.timerID);
   },
   computed:{
-
     Center(){
       return {
         'top': (0)+'px',
@@ -53,7 +51,6 @@ export default{
       }
     }
   }
-
 }
 
 

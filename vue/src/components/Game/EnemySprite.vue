@@ -5,9 +5,7 @@
   >
   </div>
 </template>
-
-
-  
+ 
 <script>
 
 export default{
@@ -18,7 +16,7 @@ export default{
     enemyRadius: Number 
   },
   computed:{
-    EnemyStyle(){
+    EnemyStyle () {
       return {
         'width': (this.enemyRadius*2) + 'px',
         'height': (this.enemyRadius*2) + 'px',
@@ -27,10 +25,7 @@ export default{
       }
     }
   }
-
 }
-
-
 </script>
   
 <style scoped>

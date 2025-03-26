@@ -20,15 +20,12 @@ export default{
       return {
         'width': (this.attackRadius*2)+ 'px',
         'height': (this.attackRadius*2) + 'px',
-        'top': (this.y-this.attackRadius)+'px',
-        'left': (this.x-this.attackRadius)+ 'px'
+        'top': (this.y-this.attackRadius) + 'px',
+        'left': (this.x-this.attackRadius) + 'px'
       }
     }
   }
-
 }
-
-
 </script>
 
 <style scoped>

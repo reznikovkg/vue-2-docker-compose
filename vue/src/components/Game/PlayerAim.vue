@@ -24,16 +24,12 @@ export default{
   computed:{
     Cursor(){
       let R = 100;
-      
       let xAim = -window.innerWidth/2+this.xCursor;
       let yAim = -window.innerHeight/2+this.yCursor;
-
       let tan = yAim/xAim;
       let sign = xAim/Math.abs(xAim);
-
-      let x =R/ Math.sqrt((1+tan*tan));
+      let x = R/Math.sqrt((1+tan*tan));
       let y = tan*x;
-
       return {
         'width': (this.playerRadius) + 'px',
         'height': (this.playerRadius) + 'px',
@@ -50,10 +46,7 @@ export default{
       }
     }
   }
-
 }
-
-
 </script>
 
 <style scoped>
