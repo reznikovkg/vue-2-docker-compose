@@ -1,5 +1,9 @@
 <template>
-  <div :style="EnemyStyle" class="circle Enemy"></div>
+  <div 
+    :style="EnemyStyle"
+    class="circle Enemy"
+  >
+  </div>
 </template>
 
 

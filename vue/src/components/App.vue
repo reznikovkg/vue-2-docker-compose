@@ -1,21 +1,39 @@
 <template>
   <div id="app" @mousemove="($event)=>{moveCursor($event)}">
-    <GameWorld :x-cursor="xUserCursor" :y-cursor="yUserCursor" :w="width" :h="height" 
-                :attackPrototype="attackPrototype"
-                :enemyPrototype="enemyPrototype"
-                :keys="keys"/>
-
-    <PlayerAim :player-radius="playerStart.playerRadius" 
-               :x-cursor="xUserCursor" 
-               :y-cursor="yUserCursor"/>
-               
-    <PlayerStats :health="HEALTH" :coins="SCORE"/>
+    <GameWorld
+      :x-cursor="xUserCursor"
+      :y-cursor="yUserCursor"
+      :w="width"
+      :h="height" 
+      :attackPrototype="attackPrototype"
+      :enemyPrototype="enemyPrototype"
+      :keys="keys"
+    />
+    <PlayerAim 
+      :player-radius="playerStart.playerRadius" 
+      :x-cursor="xUserCursor" 
+      :y-cursor="yUserCursor"
+    />      
+    <PlayerStats
+      :health="HEALTH"
+      :coins="SCORE"
+    />
     <div class="TopUI">
       <GameTimer :game-status="GAMESTATUS"/>
-      <button @click="()=>{Pause()}" class="pause">Пауза</button>
+      <button
+        @click="()=>{Pause()}"
+        class="pause"
+      >
+          Пауза
+      </button>
     </div>
-    <button v-if="GAMESTATUS==2" @click="()=>{Start()}" class="play">Играть</button>
-
+    <button
+      v-if="GAMESTATUS==2"
+      @click="()=>{Start()}"
+      class="play"
+    >
+        Играть
+    </button>
   </div>
 </template>
 

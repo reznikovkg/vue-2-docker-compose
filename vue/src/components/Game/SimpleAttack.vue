@@ -1,5 +1,9 @@
 <template>
-  <div :style="Cursor" class="circle Bull"></div>
+  <div
+    :style="Cursor"
+    class="circle Bull"
+  >
+  </div>
 </template>
 
 <script>

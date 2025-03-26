@@ -1,9 +1,11 @@
 <template>
-  <div :style="Center" class="Coin"></div>
+  <div 
+    :style="Center"
+    class="Coin"
+  >
+  </div>
 </template>
 
-  
-  
 <script>
 
 export default{
@@ -13,15 +15,13 @@ export default{
     y: Number
   },
   computed:{
-    Center(){
-
+    Center () {
       return {
-        'top': (this.y-7)+'px',
+        'top': (this.y-7)+ 'px',
         'left': (this.x-7)+ 'px'
       }
     }
   }
-
 }
 
 

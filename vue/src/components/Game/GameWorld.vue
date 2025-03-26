@@ -1,13 +1,28 @@
 <template>
-  <div :style="{
-          'width': w + 'px',
-          'height': h + 'px',
-          'left': X_WORLD + 'px',
-          'top': Y_WORLD + 'px'}"  class="World">
-    <EnemySprite v-for="enemy in ENEMYS" :key="enemy.id"  :x="enemy.x" :y="enemy.y" :enemy-radius="enemyPrototype.enemyRadius"/>
-    <SimpleAttack v-for="attack in ATTACKS" :key="'attak' + attack.id" :x="attack.x" :y="attack.y" :attack-radius="attackPrototype.attackRadius"/>
-    <CoinSprite v-for="coin in COINS" :key="'coin' + coin.id" :x="coin.x" :y="coin.y" />
-
+  <div 
+    :style="WORLDSTYLE" 
+    class="World"
+  >
+    <EnemySprite 
+      v-for="enemy in ENEMYS"
+      :key="enemy.id"
+      :x="enemy.x"
+      :y="enemy.y"
+      :enemy-radius="enemyPrototype.enemyRadius"
+    />
+    <SimpleAttack
+      v-for="attack in ATTACKS"
+      :key="'attak' + attack.id"
+      :x="attack.x"
+      :y="attack.y"
+      :attack-radius="attackPrototype.attackRadius"
+    />
+    <CoinSprite
+      v-for="coin in COINS"
+      :key="'coin' + coin.id"
+      :x="coin.x" 
+      :y="coin.y" 
+    />
   </div>
 </template>
 
@@ -41,17 +56,15 @@ import SimpleAttack from './SimpleAttack.vue';
                      'ATTACKS',
                      'COINS',
                      'X_WORLD',
-                     'Y_WORLD'])
+                     'Y_WORLD',
+                     'WORLDSTYLE'])
     },
-
     data(){
       return{
         deltaTime:0,
         lastTime:0,
-
         enemyTimerId: 0,
         attackTimerId: 0,
-
         enemyCounter: 0,
         maxEnemy:50,
       }

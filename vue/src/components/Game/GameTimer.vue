@@ -1,8 +1,10 @@
 <template>
-    <div class="Timer" :class="Center">
-      {{counter}}
-    </div>
-    
+  <div 
+    class="Timer"
+    :class="Center"
+  >
+    {{ counter }}
+  </div>
 </template>
   
   

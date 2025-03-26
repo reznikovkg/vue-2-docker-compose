@@ -1,11 +1,21 @@
 <template>
-  <div class="Stats" :class="Center">
-    <div class="health">{{health}}</div>|<div class="coins">{{coins}}</div>
+  <div
+    class="Stats"
+    :class="Center"
+  >
+    <div
+      class="health"
+    >
+      {{health}}
+    </div>
+      |
+    <div
+      class="coins"
+    >
+      {{coins}}
+    </div>
   </div>
-  
 </template>
-
-  
   
 <script>
 

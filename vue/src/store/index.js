@@ -198,6 +198,14 @@ getters: {
   Y_WORLD: state => {
     return state.yWorld;
   },
+  WORLDSTYLE: state =>{
+    return  {
+      'width': state.w + 'px',
+      'height': state.h + 'px',
+      'left': state.xWorld + 'px',
+      'top': state.yWorld + 'px'
+    }
+  },
   HEALTH: state => {
     return state.health;
   },

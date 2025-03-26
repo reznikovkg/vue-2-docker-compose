@@ -1,16 +1,19 @@
 <template>
   <div>
-    <div :style="Cursor" class="circle Aim"></div>
-    <div :style="PlayerStyle" class="circle Player"></div>
-
+    <div
+      :style="Cursor"
+      class="circle Aim"
+    >
+    </div>
+    <div
+      :style="PlayerStyle"
+      class="circle Player"
+    >
+    </div>
   </div>
-
 </template>
 
-
-
 <script>
-
 export default{
   name: 'GameAim',
   props:{
