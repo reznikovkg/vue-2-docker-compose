@@ -1,5 +1,5 @@
 
-![Example video](images/gameplay.mp4)<br>
+![Example video](screenshot/gameplay.gif)<br>
 
 # Vampire Survivors Prototype
 
