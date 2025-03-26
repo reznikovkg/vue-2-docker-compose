@@ -98,7 +98,7 @@ export default {
       return this.levels[this.currentLevel].buildableCells
     }
   },
-    mounted() {
+  mounted() {
     this.startTowerAttacks()
     this.moveEnemy()
   },
