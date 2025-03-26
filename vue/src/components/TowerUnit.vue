@@ -33,7 +33,10 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["gameOver", "enemyDefeated"]),
+    ...mapGetters([
+      "gameOver",
+      "enemyDefeated"
+    ]),
   },
   methods: {
     ...mapActions(["deleteTower"])
@@ -42,5 +45,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import '../less/tower.less';
+  @import '@/less/tower.less';
 </style>

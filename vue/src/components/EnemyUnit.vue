@@ -20,5 +20,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import '../less/enemy.less';
+  @import '@/less/enemy.less';
 </style>

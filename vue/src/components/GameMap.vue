@@ -47,8 +47,13 @@
           />
         </div>
       </div>
-      <div v-if="gameOver" class="game__end game__end--over">Игра окончена!</div>
-      <div v-if="enemyDefeated" class="game__end game__end--victory">Враг повержен!</div>
+      <GameModal
+          :visible="gameOver || enemyDefeated"
+          :title="gameOver ? 'Игра окончена!' : 'Поздравляем!'"
+          :message="gameOver ? 'Попробуйте еще раз!' : 'Вы победили врага!'"
+          @replay="() => changeLevel(currentLevel)"
+          @next="() => changeLevel(currentLevel + 1)"
+      />
       <div v-if="message && !gameOver && !enemyDefeated" class="game__message">{{ message }}</div>
     </div>
   </div>
@@ -56,11 +61,12 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import EnemyUnit from "./EnemyUnit.vue"
-import TowerUnit from "./TowerUnit.vue"
+import EnemyUnit from "@/components/EnemyUnit.vue"
+import TowerUnit from "@/components/TowerUnit.vue"
+import GameModal from "@/components/GameModal.vue";
 export default {
   name: 'GameMap',
-  components: {TowerUnit, EnemyUnit},
+  components: {GameModal, TowerUnit, EnemyUnit},
   data() {
     return {
       rows: 10,
@@ -152,5 +158,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  @import '../less/game.less';
+  @import '@/less/game.less';
 </style>

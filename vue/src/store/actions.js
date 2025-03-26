@@ -24,7 +24,7 @@ export default {
         commit("pushTower", index)
     },
     startEnemyAttacks({ state, commit, dispatch }) {
-        dispatch("stopEnemyAttacks") // Очищаем старые атаки
+        dispatch("stopEnemyAttacks")
         const interval = setInterval(() => {
             if (state.enemyHealth > 0 && !state.gameOver) {
                 dispatch("enemyAttack")
@@ -54,8 +54,8 @@ export default {
         commit("setEnemyHealth", 100)
         commit("setEnemyDefeated", false)
         commit("setGameOver", false)
-        dispatch("stopEnemyAttacks") // Очищаем атаки перед стартом
-        dispatch("stopEnemyMovement") // Очищаем предыдущее движение
+        dispatch("stopEnemyAttacks")
+        dispatch("stopEnemyMovement")
         const interval = setInterval(() => {
             if (step < state.levels[state.currentLevel].path.length) {
                 commit("setEnemyPosition", state.levels[state.currentLevel].path[step])
@@ -63,11 +63,11 @@ export default {
             } else {
                 dispatch("stopEnemyMovement")
                 commit("setGameOver", true)
-                dispatch("stopEnemyAttacks") // Остановить атаки, если враг дошел до конца
+                dispatch("stopEnemyAttacks")
             }
         }, 500)
         commit("setEnemyInterval", interval)
-        dispatch("startEnemyAttacks") // Запуск атаки врага
+        dispatch("startEnemyAttacks")
     },
     stopEnemyMovement({ commit }) {
         commit("clearEnemyInterval")
@@ -131,7 +131,7 @@ export default {
         }
     },
     deleteTower({ state, commit, dispatch }, index) {
-        if (state.gameOver || state.enemyDefeated) return // Запрещаем удаление после окончания игры
+        if (state.gameOver || state.enemyDefeated) return
         const towers = state.levels[state.currentLevel].towers
         const towerIndex = towers.findIndex(tower => tower.position === index)
         if (towerIndex !== -1) {
@@ -148,10 +148,10 @@ export default {
             clearInterval(state.enemyInterval)
             commit('setEnemyInterval', null)
         }
-        dispatch('stopAllAttacks') // Остановить все атаки перед сменой уровня
-        commit('setCurrentLevel', level) // Обновляем текущий уровень
-        commit('setEnemyPosition', state.levels[level].path[0]) // Ставим врага в начальную точку
-        commit('setEnemyHealth', 100) // Восстанавливаем здоровье врага
+        dispatch('stopAllAttacks')
+        commit('setCurrentLevel', level)
+        commit('setEnemyPosition', state.levels[level].path[0])
+        commit('setEnemyHealth', 100)
         commit('clearTowers')
         dispatch('startTowerAttacks')
         dispatch('moveEnemy')
