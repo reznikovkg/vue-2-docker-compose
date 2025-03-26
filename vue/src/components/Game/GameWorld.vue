@@ -4,7 +4,7 @@
     class="World"
   >
     <EnemySprite 
-      v-for="enemy in ENEMYS"
+      v-for="enemy in ENEMIES"
       :key="enemy.id"
       :x="enemy.x"
       :y="enemy.y"
@@ -62,7 +62,7 @@ export default{
   },
   computed : {
     ...mapGetters([
-      'ENEMYS',
+      'ENEMIES',
       'ATTACKS',
       'COINS',
       'X_WORLD',
