@@ -1,3 +1,4 @@
+const towers = (state) => state.levels[state.currentLevel].towers;
 export default {
     setCoins(state, amount) {
         state.coins += amount;
@@ -18,7 +19,7 @@ export default {
         state.enemyHealth = health;
     },
     pushTower(state, index) {
-        state.levels[state.currentLevel].towers.push({
+        towers(state).push({
             position: index,
             health: state.startHealth,
             damage: state.startDamage,
@@ -34,17 +35,11 @@ export default {
     setEnemyAttackInterval(state, interval) {
         state.enemyAttackInterval = interval;
     },
-    clearEnemyAttackInterval(state) {
-        if (state.enemyAttackInterval) {
-            clearInterval(state.enemyAttackInterval);
-            state.enemyAttackInterval = null;
-        }
-    },
     damageTower(state, index) {
-        if (state.levels[state.currentLevel].towers[index]) {
-            state.levels[state.currentLevel].towers[index].health -= 1;
-            if (state.levels[state.currentLevel].towers[index].health <= 0) {
-                state.levels[state.currentLevel].towers.splice(index, 1);
+        if (towers(state)[index]) {
+            towers(state)[index].health -= 1;
+            if (towers(state)[index].health <= 0) {
+                towers(state).splice(index, 1);
             }
         }
     },
@@ -67,7 +62,7 @@ export default {
         state.coins += amount;
     },
     removeTower(state, index) {
-        state.levels[state.currentLevel].towers.splice(index, 1); // Удаляем башню
+        towers(state).splice(index, 1); // Удаляем башню
     },
     upgradeTowerStats(state, tower) {
         tower.health += state.healthIncrease;

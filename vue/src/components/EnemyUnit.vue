@@ -20,6 +20,7 @@ export default {
 </script>
 
 <style scoped>
+@import '@/less/styles.less';
 .enemy {
   display: flex;
   align-items: center;

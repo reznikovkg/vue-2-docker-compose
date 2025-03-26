@@ -47,13 +47,15 @@
           />
         </div>
       </div>
-      <GameModal
-          :visible="gameOver || enemyDefeated"
-          :title="gameOver ? 'Игра окончена!' : 'Поздравляем!'"
-          :message="gameOver ? 'Попробуйте еще раз!' : 'Вы победили врага!'"
-          @replay="() => changeLevel(currentLevel)"
-          @next="() => changeLevel(currentLevel + 1)"
-      />
+      <!-- Модальное окно -->
+      <dialog ref="modal" class="game__modal">
+        <p>{{ gameOver ? "Игра окончена! Попробуйте еще раз!" : "Поздравляем! Вы победили врага!" }}</p>
+        <button @click="() => closeModal()">OK</button>
+        <button v-if="gameOver" @click="() => {
+          closeModal()
+          changeLevel(currentLevel)
+        }">Играть снова</button>
+      </dialog>
       <div v-if="message && !gameOver && !enemyDefeated" class="game__message">{{ message }}</div>
     </div>
   </div>
@@ -63,10 +65,9 @@
 import { mapGetters, mapActions } from "vuex"
 import EnemyUnit from "@/components/EnemyUnit.vue"
 import TowerUnit from "@/components/TowerUnit.vue"
-import GameModal from "@/components/GameModal.vue";
 export default {
   name: 'GameMap',
-  components: {GameModal, TowerUnit, EnemyUnit},
+  components: {TowerUnit, EnemyUnit},
   data() {
     return {
       rows: 10,
@@ -84,19 +85,21 @@ export default {
       "enemyHealth",
       "message",
       "canPlaceTower",
+      "path",
+      "buildableCells",
+      "towers"
     ]),
     grid() {
       return new Array(this.rows * this.cols).fill(null)
-    },
-    path() {
-      return this.levels[this.currentLevel].path
-    },
-    towers() {
-      return this.levels[this.currentLevel].towers
-    },
-    buildableCells() {
-      return this.levels[this.currentLevel].buildableCells
     }
+  },
+  watch: {
+    gameOver(newValue) {
+      if (newValue) this.$refs.modal.showModal();
+    },
+    enemyDefeated(newValue) {
+      if (newValue) this.$refs.modal.showModal();
+    },
   },
   mounted() {
     this.startTowerAttacks()
@@ -138,6 +141,7 @@ export default {
 </script>
 
 <style scoped>
+@import '@/less/styles.less';
 .game {
   display: flex;
   flex-direction: column;
@@ -161,18 +165,6 @@ export default {
 .game__level-buttons {
   margin-top: 5px;
   margin-bottom: 5px;
-}
-.game__level-button {
-  margin: 5px;
-  padding: 10px;
-  background-color: dimgray;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-.game__level-button:hover {
-  background-color: dimgray;
 }
 .game__coins {
   font-size: 18px;
@@ -240,5 +232,11 @@ export default {
 .grid__cell--can-place-tower {
   background-color: olivedrab;
   cursor: pointer;
+}
+.game__modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 </style>

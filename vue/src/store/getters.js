@@ -19,6 +19,7 @@ export default {
     message: (state) => state.message,
     towers: (state) => state.levels[state.currentLevel].towers,
     buildableCells: (state) => state.levels[state.currentLevel].buildableCells,
+    path: (state) => state.levels[state.currentLevel].path,
     canPlaceTower: (state) => (index) => {
         return state.levels[state.currentLevel].buildableCells.includes(index) &&
             !state.levels[state.currentLevel].towers.some(tower => tower.position === index)

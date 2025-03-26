@@ -1,3 +1,4 @@
+const towers = (state) => state.levels[state.currentLevel].towers;
 export default {
     stopTowerAttacks({commit}) {
         commit("stopTowerAttacks")
@@ -38,7 +39,7 @@ export default {
         commit("clearEnemyAttackInterval")
     },
     enemyAttack({ state, commit }) {
-        state.levels[state.currentLevel].towers.forEach((tower, index) => {
+        towers(state).forEach((tower, index) => {
             const enemyRow = Math.floor(state.enemyPosition / 10)
             const enemyCol = state.enemyPosition % 10
             const towerRow = Math.floor(tower.position / 10)
@@ -54,30 +55,24 @@ export default {
         commit("setEnemyHealth", 100)
         commit("setEnemyDefeated", false)
         commit("setGameOver", false)
-        dispatch("stopEnemyAttacks")
-        dispatch("stopEnemyMovement")
         const interval = setInterval(() => {
             if (step < state.levels[state.currentLevel].path.length) {
                 commit("setEnemyPosition", state.levels[state.currentLevel].path[step])
                 step++
             } else {
-                dispatch("stopEnemyMovement")
                 commit("setGameOver", true)
                 dispatch("stopEnemyAttacks")
             }
-        }, 500)
+        }, 700)
         commit("setEnemyInterval", interval)
         dispatch("startEnemyAttacks")
-    },
-    stopEnemyMovement({ commit }) {
-        commit("clearEnemyInterval")
     },
     showMessage({ commit }, text) {
         commit("setMessage", text)
     },
     startTowerAttacks({ state, commit, dispatch }) {
         dispatch('stopTowerAttacks')
-        state.levels[state.currentLevel].towers.forEach((tower) => {
+        towers(state).forEach((tower) => {
             let attackSpeed = 1000 / tower.fireRate
             let attackInterval = setInterval(() => {
                 const enemyRow = Math.floor(state.enemyPosition / state.cols)
@@ -114,7 +109,7 @@ export default {
         }
     },
     upgradeTower({ state, commit, dispatch }, index) {
-        let tower = state.levels[state.currentLevel].towers.find(t => t.position === index)
+        let tower = towers(state).find(t => t.position === index)
         if (tower) {
             if (state.coins >= state.upgradeCost) {
                 commit("updateCoins", -state.upgradeCost)
@@ -132,7 +127,7 @@ export default {
     },
     deleteTower({ state, commit, dispatch }, index) {
         if (state.gameOver || state.enemyDefeated) return
-        const towers = state.levels[state.currentLevel].towers
+        const towers = towers(state)
         const towerIndex = towers.findIndex(tower => tower.position === index)
         if (towerIndex !== -1) {
             const tower = towers[towerIndex]

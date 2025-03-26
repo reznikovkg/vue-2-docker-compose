@@ -45,6 +45,7 @@ export default {
 </script>
 
 <style scoped>
+@import '@/less/styles.less';
 .tower {
   position: relative;
   display: flex;
