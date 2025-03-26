@@ -20,8 +20,8 @@ export default {
   text-align: center;
   font-family: Arial, sans-serif;
 }
-
 h1 {
   font-size: 28px;
+  margin: 16px;
 }
 </style>
