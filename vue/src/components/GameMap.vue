@@ -54,7 +54,8 @@
         <button v-if="gameOver" @click="() => {
           closeModal()
           changeLevel(currentLevel)
-        }">Играть снова</button>
+        }">Играть снова
+        </button>
       </dialog>
       <div v-if="message && !gameOver && !enemyDefeated" class="game__message">{{ message }}</div>
     </div>
@@ -95,10 +96,12 @@ export default {
   },
   watch: {
     gameOver(newValue) {
-      if (newValue) this.$refs.modal.showModal();
+      if (newValue)
+        this.$refs.modal.showModal();
     },
     enemyDefeated(newValue) {
-      if (newValue) this.$refs.modal.showModal();
+      if (newValue)
+        this.$refs.modal.showModal();
     },
   },
   mounted() {
@@ -135,6 +138,9 @@ export default {
       } else {
         this.placeTower(index)
       }
+    },
+    closeModal() {
+      this.$refs.modal.close();
     },
   },
 }
