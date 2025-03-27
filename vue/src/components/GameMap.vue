@@ -49,8 +49,10 @@
       </div>
       <!-- Модальное окно -->
       <dialog ref="modal" class="game__modal">
-        <p>{{ gameOver ? "Игра окончена! Попробуйте еще раз!" : "Поздравляем! Вы победили врага!" }}</p>
-        <button @click="() => closeModal()">OK</button>
+        <p>{{ gameOver ? "GAME OVER!" : "ENEMY DEFEATED!" }}</p>
+        <button v-if="enemyDefeated" @click="() => closeModal()">
+          OK
+        </button>
         <button v-if="gameOver" @click="() => {
           closeModal()
           changeLevel(currentLevel)
