@@ -16,5 +16,5 @@ export default {
 </script>
 
 <style scoped>
-  @import '@/less/styles.less';
+  @import '@/less/const.less';
 </style>

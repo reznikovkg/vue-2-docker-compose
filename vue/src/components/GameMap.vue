@@ -146,68 +146,77 @@ export default {
 }
 </script>
 
-<style scoped>
-@import '@/less/styles.less';
-.game {
+<style lang="less">
+@import '@/less/const.less';
+.flex-column-center() {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.game__content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-.game__level {
-  font-size: 16px;
+.box-style(@bg-color, @text-color, @font-size: 16px) {
+  font-size: @font-size;
   font-weight: bold;
-  color: white;
+  color: @text-color;
   margin: 0;
-  background-color: #222222;
+  background-color: @bg-color;
   padding: 10px;
   border-radius: 5px;
 }
-.game__level-buttons {
-  margin-top: 5px;
-  margin-bottom: 5px;
+.grid-cell(@color) {
+  background-color: @color;
+  width: 40px;
+  height: 40px;
+  border: 1px solid darkgreen;
+  position: relative;
 }
-.game__coins {
-  font-size: 18px;
-  font-weight: bold;
-  color: gold;
-  margin-bottom: 10px;
-  background-color: #222222;
-  padding: 10px;
-  border-radius: 5px;
-}
-.game__status {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  background-color: #222222;
-  padding: 10px;
-  border-radius: 5px;
-  width: 500px;
-  h3 {
-    margin: 0;
-    font-size: 18px;
+.game {
+  .flex-column-center();
+  &__content {
+    .flex-column-center();
+    gap: 10px;
   }
-}
-.game__controls {
-  display: flex;
-  flex-direction: column;
-  width: 650px;
-  align-items: center;
-}
-.game__message {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 10px 20px;
-  font-size: 18px;
-  border-radius: 8px;
-  text-align: center;
-  z-index: 1000;
+  &__level {
+    .box-style(#222222, white, 16px);
+  }
+  &__coins {
+    .box-style(#222222, gold, 18px);
+    margin-bottom: 10px;
+  }
+  &__level-buttons {
+    margin: 5px 0;
+  }
+  &__status {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #222222;
+    padding: 10px;
+    border-radius: 5px;
+    width: 500px;
+    h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+  }
+  &__controls {
+    .flex-column-center();
+    width: 650px;
+  }
+  &__message {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 8px;
+    text-align: center;
+    z-index: 1000;
+  }
+  &__modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
 }
 .grid {
   display: grid;
@@ -217,32 +226,21 @@ export default {
   background-color: darkgreen;
   border: 5px solid black;
   padding: 5px;
-}
-.grid__cell {
-  width: 40px;
-  height: 40px;
-  background-color: green;
-  border: 1px solid darkgreen;
-  position: relative;
-}
-.grid__cell--road {
-  /*background-color: #c4a642;*/
-  background-color: peru;
-}
-.grid__cell--road-first {
-  background-color: dodgerblue;
-}
-.grid__cell--road-last {
-  background-color: rebeccapurple;
-}
-.grid__cell--can-place-tower {
-  background-color: olivedrab;
-  cursor: pointer;
-}
-.game__modal {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  &__cell {
+    .grid-cell(green);
+    &--road {
+      .grid-cell(peru);
+    }
+    &--road-first {
+      .grid-cell(dodgerblue);
+    }
+    &--road-last {
+      .grid-cell(rebeccapurple);
+    }
+    &--can-place-tower {
+      .grid-cell(olivedrab);
+      cursor: pointer;
+    }
+  }
 }
 </style>
