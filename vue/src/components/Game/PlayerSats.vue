@@ -1,7 +1,7 @@
 <template>
   <div
     class="Stats"
-    :class="Center"
+    :class="center"
   >
     <div
       class="health"
@@ -27,7 +27,7 @@ export default{
     coins:Number
   },
   computed:{
-    Center(){
+    center(){
       return {
         'top': (0) + 'px',
         'left': (document.documentElement.scrollWidth)+ 'px'

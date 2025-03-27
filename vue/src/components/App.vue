@@ -21,7 +21,7 @@
     <div class="TopUI">
       <GameTimer :game-status="GAMESTATUS"/>
       <button
-        @click="()=>{Pause()}"
+        @click="()=>{pauseClick()}"
         class="pause"
       >
           Пауза
@@ -29,16 +29,16 @@
     </div>
     <button
       v-if="GAMESTATUS==2"
-      @click="()=>{Start()}"
+      @click="()=>{startClick()}"
       class="play"
     >
-        Играть
+      Играть
     </button>
   </div>
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
+import {mapGetters, mapActions} from 'vuex';
 import GameWorld from './Game/GameWorld.vue';
 import PlayerAim from './Game/PlayerAim.vue';
 import PlayerStats from './Game/PlayerSats.vue';
@@ -88,7 +88,7 @@ export default {
   mounted () {
     window.addEventListener('keydown', this.keyDownHandler);
     window.addEventListener('keyup', this.keyUpHandler);
-    this.$store.commit('INIT', {
+    this.init({
       w:this.width, 
       h:this.height, 
       wWindow:document.documentElement.scrollWidth, 
@@ -96,23 +96,29 @@ export default {
       playerPrototype: this.playerStart,
       enemyPrototype: this.enemyPrototype,
       attackPrototype: this.attackPrototype
-      });
+    });
   },
   beforeDestroy () {
     window.removeEventListener('keydown', this.keyDownHandler);
     window.removeEventListener('keyup', this.keyUpHandler);
   },
   methods: {
+    ...mapActions([
+      'start',
+      'pause',
+      'reset',
+      'init'
+    ]), 
     moveCursor (e) {
       this.xUserCursor = e.clientX;
       this.yUserCursor = e.clientY;
     },
-    Pause () {
-      this.$store.commit('PAUSE');
+    pauseClick () {
+      this.pause();
     },
-    Start () {
-      this.$store.commit('RESET');
-      this.$store.commit('START');
+    startClick () {
+      this.reset();
+      this.start();
     },
     keyDownHandler (event) {
       this.keys[event.code] = true;

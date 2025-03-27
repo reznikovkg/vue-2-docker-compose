@@ -1,6 +1,6 @@
 <template>
   <div 
-    :style="EnemyStyle"
+    :style="enemyStyle"
     class="circle Enemy"
   >
   </div>
@@ -16,7 +16,7 @@ export default{
     enemyRadius: Number 
   },
   computed:{
-    EnemyStyle () {
+    enemyStyle () {
       return {
         'width': (this.enemyRadius*2) + 'px',
         'height': (this.enemyRadius*2) + 'px',

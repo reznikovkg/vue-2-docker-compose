@@ -1,6 +1,6 @@
 <template>
   <div
-    :style="Cursor"
+    :style="cursor"
     class="circle Bull"
   >
   </div>
@@ -16,7 +16,7 @@ export default{
     attackRadius: Number
   },
   computed:{
-    Cursor(){
+    cursor(){
       return {
         'width': (this.attackRadius*2)+ 'px',
         'height': (this.attackRadius*2) + 'px',

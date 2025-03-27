@@ -99,7 +99,7 @@ const mutations = {
     if(state.gameStatus != 0){
       return
     }
-    update(state, deltaTime);
+    Update(state, deltaTime);
   },
   INIT: (state, args) =>{
     state.w= args.w;
@@ -145,7 +145,34 @@ const mutations = {
   },
 }
 
-export const update = (state, deltaTime) => {
+const actions = {
+  addEnemy({commit}) {
+    commit("ADD_ENEMY")
+  },
+  addAttack({commit}) {
+    commit("ADD_ATTACK")
+  },
+  updateInput({commit}, args) {
+    commit("UPDATE_INPUT", args)
+  },
+  updateState({commit}, deltaTime) {
+    commit("UPDATE", deltaTime)
+  },
+  init({commit}, args) {
+    commit("INIT", args)
+  },
+  start({commit}) {
+    commit("START")
+  },
+  pause({commit}) {
+    commit("PAUSE")
+  },
+  reset({commit}) {
+    commit("RESET")
+  },
+}
+
+export const Update = (state, deltaTime) => {
   if(state.gameStatus == 0){
     WorldMove(state, deltaTime);
     EnemyMove(state, deltaTime);
@@ -290,5 +317,6 @@ export default {
   state,
   getters,
   mutations,
+  actions
 }
   

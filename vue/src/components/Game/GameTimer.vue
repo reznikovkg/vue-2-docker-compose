@@ -14,10 +14,10 @@
 export default{
   name: 'GameTimer',
   props:{
-      time: Number,
-      health: Number,
-      coins:Number,
-      gameStatus: Number
+    time: Number,
+    health: Number,
+    coins:Number,
+    gameStatus: Number
   },
   data(){
     return{

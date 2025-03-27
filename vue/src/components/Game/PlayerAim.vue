@@ -1,12 +1,12 @@
 <template>
   <div>
     <div
-      :style="Cursor"
+      :style="cursor"
       class="circle Aim"
     >
     </div>
     <div
-      :style="PlayerStyle"
+      :style="playerStyle"
       class="circle Player"
     >
     </div>
@@ -22,7 +22,7 @@ export default{
     playerRadius: Number
   },
   computed:{
-    Cursor(){
+    cursor(){
       let R = 100;
       let xAim = -window.innerWidth/2+this.xCursor;
       let yAim = -window.innerHeight/2+this.yCursor;
@@ -37,7 +37,7 @@ export default{
         'left': (window.innerWidth/2+sign*x - this.playerRadius/2)+ 'px'
       }
     },
-    PlayerStyle(){
+    playerStyle(){
       return {
         'width': (this.playerRadius*2) + 'px',
         'height': (this.playerRadius*2) + 'px',

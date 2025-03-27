@@ -29,7 +29,7 @@
 
 
 <script>
-import {mapGetters} from 'vuex';
+import {mapGetters, mapActions} from 'vuex';
 import CoinSprite from './CoinSprite.vue';
 import EnemySprite from './EnemySprite.vue';
 import SimpleAttack from './SimpleAttack.vue';
@@ -84,13 +84,13 @@ export default{
     this.gameLoop();
     this.attackTimerId =  setInterval(()=>
     {
-      this.$store.commit('ADD_ATTACK');
+      this.addAttack();
     } ,this.attackPrototype.spawnSpan);
 
     this.enemyTimerId =  setInterval(()=>
     {
       if(this.enemyCounter < this.maxEnemy ){
-        this.$store.commit('ADD_ENEMY');
+        this.addEnemy();
         this.enemyCounter++;
       }
     } ,this.enemyPrototype.spawnSpan);
@@ -100,11 +100,17 @@ export default{
     clearInterval(this.enemyTimerId);
   },
   methods:{
+    ...mapActions([
+      'updateInput',
+      'updateState',
+      'addEnemy',
+      'addAttack'
+    ]), 
     gameLoop() {
       const loop = (currentTime) => {
         this.deltaTime = (currentTime - this.lastTime) / 1000; 
         this.lastTime = currentTime;
-        this.$store.commit('UPDATE_INPUT', {
+        this.updateInput({
           keys:this.keys, 
           xCursor:this.xCursor, 
           yCursor:this.yCursor
@@ -116,7 +122,7 @@ export default{
       requestAnimationFrame(loop);
     },
     update(deltaTime) {
-        this.$store.commit('UPDATE', deltaTime);
+      this.updateState(deltaTime);
     },
   }
 }
