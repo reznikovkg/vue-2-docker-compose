@@ -18,59 +18,72 @@ export default {
 
 <style lang="less" scoped>
 .game__tile {
-  min-width: 100px;
-  min-height: 100px;
-  width: 20%;
-  height: 20%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 3vw;
-  margin: 1%;
+  justify-content: center;
+  background-color: #ccc;
   border-radius: 5px;
-  color: #3f3b3b;
+  aspect-ratio: 1;
+  font-size: clamp(12px, 2vw, 24px);
+  font-weight: bold;
+  transition: transform 0.1s ease, background-color 0.3s ease;
 
-  @media (max-width: 200px) {
-    font-size: 5vw;
-    min-width: 70px;
-    min-height: 70px;
+  &:hover {
+    transform: scale(1.05);
   }
+
+  @media (max-width: 400px) {
+    font-size: clamp(10px, 3vw, 18px);
+  }
+
   &--0 {
     background-color: #cec0b3;
   }
+
   &--2 {
     background-color: #eee4da;
   }
+
   &--4 {
     background-color: #ece0ca;
   }
+
   &--8 {
     background-color: #f3b07a;
   }
+
   &--16 {
     background-color: #f59462;
   }
+
   &--32 {
     background-color: #f57b5f;
   }
+
   &--64 {
     background-color: #f55d3b;
   }
+
   &--128 {
     background-color: #eccd71;
   }
+
   &--256 {
     background-color: #eccb61;
   }
+
   &--512 {
     background-color: #edc53f;
   }
+
   &--1024 {
     background-color: #edc52f;
   }
+
   &--2048 {
     background-color: #edc12e;
   }
+
   &--default {
     background-color: #3c3a32;
   }

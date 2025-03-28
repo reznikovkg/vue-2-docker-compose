@@ -26,7 +26,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import '@/less/const.less';
 
 .modal-overlay {
   position: fixed;

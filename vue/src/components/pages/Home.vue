@@ -82,9 +82,8 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   padding: 20px;
-  background-color: #faf8ef;
+  background-color: #eee4da;
 }
 
 .header {
@@ -104,11 +103,11 @@ export default {
 .game-title {
   color: #bb8213;
   font-weight: 900;
-  font-size: 5vw;
+  font-size: clamp(24px, 5vw, 48px);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 
-  @media (max-width: 600px) {
-    font-size: 12vw;
+  @media (max-width: 400px) {
+    font-size: clamp(18px, 6vw, 36px);
   }
 }
 .score-box {
@@ -118,24 +117,18 @@ export default {
   justify-content: center;
   background-color: #f3bb4c;
   border-radius: 10px;
-  width: 120px;
-  height: 60px;
+  width: clamp(100px, 20vw, 150px);
+  height: clamp(50px, 10vw, 80px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
   .score-label {
-    font-size: 14px;
+    font-size: clamp(12px, 2vw, 16px);
     margin-bottom: 4px;
-
-    @media (max-width: 200px) {
-      font-size: 10px;
-    }
   }
-  .score-value {
-    font-size: 24px;
-    font-weight: bold;
 
-    @media (max-width: 200px) {
-      font-size: 18px;
-    }
+  .score-value {
+    font-size: clamp(16px, 3vw, 24px);
+    font-weight: bold;
   }
 }
 
@@ -157,36 +150,34 @@ export default {
     transform: scale(0.95);
   }
 }
+:root {
+  --gap: clamp(5px, 1vw, 10px);
+}
 
 .board {
   display: grid;
-  grid-template-columns: repeat(4, minmax(100px, 1fr));
-  grid-gap: 10px;
-  width: 100%;
-  max-width: 430px;
-  padding: 10px;
+  gap: clamp(5px, 1vw, 10px);
+  width: clamp(200px, 80vw, 430px);
+  padding: clamp(8px, 1vw, 15px);
   background-color: #d0d6da;
   border-radius: 8px;
   position: relative;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
-  @media (max-width: 200px) {
-    grid-gap: 5px;
-    width: 100%;
+  @media (max-width: 400px) {
+    gap: 5px;
     padding: 5px;
   }
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(100px, 1fr));
-  grid-gap: 8px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(5px, 1vw, 10px);
   width: 100%;
-  height: 100%;
-
-  @media (max-width: 200px) {
-    grid-gap: 5px;
-  }
+  max-width: 100%;
+  max-height: calc(100% - 50px);
+  height: auto;
 }
 
 .modal-enter-active,
