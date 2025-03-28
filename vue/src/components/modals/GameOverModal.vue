@@ -55,14 +55,11 @@ export default {
   width: 90%;
   text-align: center;
 
-  &--game-over {
-    color: red;
-  }
-
   &__title {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 10px;
+    color: red;
   }
 
   &__text {

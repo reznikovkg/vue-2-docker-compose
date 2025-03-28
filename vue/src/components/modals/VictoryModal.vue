@@ -55,14 +55,11 @@ export default {
   width: 90%;
   text-align: center;
 
-  &--victory {
-    color: green;
-  }
-
   &__title {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 10px;
+    color: green;
   }
 
   &__text {

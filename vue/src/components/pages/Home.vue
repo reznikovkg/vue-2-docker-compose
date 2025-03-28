@@ -189,33 +189,6 @@ export default {
   }
 }
 
-.overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.95);
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-
-  h2 {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-
-  p {
-    font-size: 18px;
-    color: #666;
-  }
-}
-
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.3s ease, transform 0.3s ease;

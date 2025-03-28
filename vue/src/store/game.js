@@ -10,6 +10,32 @@ const initialState = () => ({
 export default {
     namespaced: true,
     state: initialState(),
+    getters: {
+        rows: (state) => {
+            const rows = [];
+            for (let i = 0; i < 4; i++) {
+                rows.push(state.cells.slice(i * 4, (i + 1) * 4));
+            }
+            return rows;
+        },
+        keyMap: () => ({
+            ArrowUp: 'ArrowUp',
+            ArrowDown: 'ArrowDown',
+            ArrowLeft: 'ArrowLeft',
+            ArrowRight: 'ArrowRight',
+        }),
+        hasPossibleMoves: (state) => {
+            for (let i = 0; i < 16; i++) {
+                if (
+                    (i % 4 < 3 && state.cells[i] === state.cells[i + 1]) ||
+                    (i < 12 && state.cells[i] === state.cells[i + 4])
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        },
+    },
     mutations: {
         RESET_STATE: (state) => {
             Object.assign(state, initialState());
@@ -92,33 +118,6 @@ export default {
             if (state.cells.includes(2048)) {
                 commit('SET_VICTORY', true);
             }
-        },
-    },
-    getters: {
-        rows: (state) => {
-            const rows = [];
-            for (let i = 0; i < 4; i++) {
-                rows.push(state.cells.slice(i * 4, (i + 1) * 4));
-            }
-            return rows;
-        },
-        keyMap: () => ({
-            ArrowUp: 'ArrowUp',
-            ArrowDown: 'ArrowDown',
-            ArrowLeft: 'ArrowLeft',
-            ArrowRight: 'ArrowRight',
-        }),
-
-        hasPossibleMoves: (state) => {
-            for (let i = 0; i < 16; i++) {
-                if (
-                    (i % 4 < 3 && state.cells[i] === state.cells[i + 1]) ||
-                    (i < 12 && state.cells[i] === state.cells[i + 4])
-                ) {
-                    return true;
-                }
-            }
-            return false;
         },
     },
 };
