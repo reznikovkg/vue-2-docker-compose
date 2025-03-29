@@ -21,7 +21,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ccc;
+  background-color: #cecdcd;
   border-radius: 5px;
   aspect-ratio: 1;
   font-size: clamp(12px, 2vw, 24px);

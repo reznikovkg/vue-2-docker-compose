@@ -1,9 +1,13 @@
 <template>
-  <div class="modal-overlay" v-if="isVisible">
+  <div v-if="isVisible" class="modal-overlay">
     <div class="modal modal--game-over">
       <h2 class="modal__title">Конец игры</h2>
       <p class="modal__text">Вы проиграли! Попробуйте ещё раз.</p>
-      <button class="modal__button" @click="() => restartGame()">Новая игра</button>
+      <button
+          class="modal__button"
+          @click="() => restartGame()">
+        Новая игра
+      </button>
     </div>
   </div>
 </template>
@@ -26,7 +30,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-@import '@/less/const.less';
 
 .modal-overlay {
   position: fixed;
@@ -48,7 +51,7 @@ export default {
   align-items: center;
   gap: 20px;
   padding: 30px;
-  background-color: #fff;
+  background-color: #fcf9f9;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   max-width: 400px;
@@ -59,19 +62,19 @@ export default {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: red;
+    color: #fc0202;
   }
 
   &__text {
     font-size: 18px;
-    color: #666;
+    color: #656565;
     margin-bottom: 20px;
   }
 
   &__button {
-    background-color: indianred;
+    background-color: #d26767;
     border: none;
-    color: white;
+    color: #fdfcfc;
     font-size: 16px;
     padding: 12px 24px;
     border-radius: 5px;
@@ -79,7 +82,7 @@ export default {
     transition: background-color 0.3s ease, transform 0.1s ease;
 
     &:hover {
-      background-color: darken(indianred, 10%);
+      background-color: darken(#d26767, 10%);
     }
 
     &:active {
