@@ -19,7 +19,6 @@
       </p>
     </div>
     <div class="game__content">
-      <!-- Игровая сетка -->
       <div class="game__grid grid">
         <GameCell
             v-for="(cell, index) in grid"
@@ -37,7 +36,6 @@
         />
       </div>
       </div>
-      <!-- Модальное окно -->
       <dialog ref="modal" class="game__modal">
         <p>{{ gameOver ? "GAME OVER!" : "ENEMY DEFEATED!" }}</p>
         <button v-if="enemyDefeated" @click="() => closeModal()">
@@ -203,6 +201,23 @@ export default {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    z-index: 1000;
+    &::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+    }
+    & button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      background: #222;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    & button:hover {
+      background: #444;
+    }
   }
 }
 .grid {
@@ -213,24 +228,5 @@ export default {
   background-color: #023902;
   border: 5px solid #000000;
   padding: 5px;
-}
-.game__modal {
-  text-align: center;
-  z-index: 1000;
-  &::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-  }
-  & button {
-    margin-top: 10px;
-    padding: 10px 15px;
-    background: #222;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  & button:hover {
-    background: #444;
-  }
 }
 </style>
