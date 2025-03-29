@@ -53,6 +53,15 @@ export default {
         },
     },
     actions: {
+        checkGameState: ({ state, commit, rootGetters }) => {
+            if (!state.cells.includes(0)) {
+                const hasMoves = rootGetters['game/hasPossibleMoves'];
+                commit('SET_GAME_OVER', !hasMoves);
+            }
+            if (state.cells.includes(2048)) {
+                commit('SET_VICTORY', true);
+            }
+        },
         restartGame: ({commit, dispatch}) => {
             commit('RESET_STATE');
             dispatch('addRandomTile');
