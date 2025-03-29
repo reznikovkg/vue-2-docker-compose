@@ -45,13 +45,16 @@
           Играть снова
         </button>
       </dialog>
-      <div v-if="message && !gameOver && !enemyDefeated" class="game__message">{{ message }}</div>
+      <div v-if="message && !gameOver && !enemyDefeated"
+           class="game__message">
+        {{ message }}
+      </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import GameCell from "@/components/GameCell.vue";
+import GameCell from "@/components/GameCell.vue"
 export default {
   name: 'GameMap',
   components: {GameCell},
