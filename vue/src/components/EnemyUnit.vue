@@ -19,37 +19,26 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-@import '@/less/const.less';
-.flex-center-column() {
+<style lang="less">
+.enemy {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-}
-.circle(@size, @color) {
-  width: @size;
-  height: @size;
-  background-color: @color;
-  border-radius: 50%;
-}
-.box-style(@bg-color, @text-color, @font-size: 10px) {
-  background-color: @bg-color;
-  color: @text-color;
-  font-size: @font-size;
-  padding: 2px 2px;
-  border-radius: 5px;
-}
-.enemy {
-  .flex-center-column();
   width: 100%;
   height: 100%;
-
   &__dot {
-    .circle(20px, red);
+    width: 20px;
+    height: 20px;
+    background-color: #ff0000;
+    border-radius: 50%;
   }
   &__health {
-    .box-style(rgba(0, 0, 0, 0.7), white, 10px);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    font-size: 10px;
+    padding: 2px 2px;
+    border-radius: 5px;
   }
 }
 </style>

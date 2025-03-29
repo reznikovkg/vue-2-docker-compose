@@ -53,10 +53,8 @@
         <button v-if="enemyDefeated" @click="() => closeModal()">
           OK
         </button>
-        <button v-if="gameOver" @click="() => {
-          closeModal()
-          changeLevel(currentLevel)
-        }">Играть снова
+        <button v-if="gameOver" @click="() => switchLevel(currentLevel)">
+          Играть снова
         </button>
       </dialog>
       <div v-if="message && !gameOver && !enemyDefeated" class="game__message">{{ message }}</div>
@@ -144,44 +142,41 @@ export default {
     closeModal() {
       this.$refs.modal.close();
     },
+    switchLevel(level) {
+      this.closeModal();
+      this.changeLevel(level)
+    }
   },
 }
 </script>
 
 <style lang="less">
-@import '@/less/const.less';
-.flex-column-center() {
+.game {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.box-style(@bg-color, @text-color, @font-size: 16px) {
-  font-size: @font-size;
-  font-weight: bold;
-  color: @text-color;
-  margin: 0;
-  background-color: @bg-color;
-  padding: 10px;
-  border-radius: 5px;
-}
-.grid-cell(@color) {
-  background-color: @color;
-  width: 40px;
-  height: 40px;
-  border: 1px solid darkgreen;
-  position: relative;
-}
-.game {
-  .flex-column-center();
   &__content {
-    .flex-column-center();
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
   }
+  &__level,
+  &__coins {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+    background-color: #222222;
+    padding: 10px;
+    border-radius: 5px;
+  }
   &__level {
-    .box-style(#222222, white, 16px);
+    font-size: 16px;
   }
   &__coins {
-    .box-style(#222222, gold, 18px);
+    font-size: 18px;
+    color: gold;
     margin-bottom: 10px;
   }
   &__level-buttons {
@@ -195,18 +190,20 @@ export default {
     padding: 10px;
     border-radius: 5px;
     width: 500px;
-    h3 {
+    & h3 {
       margin: 0;
       font-size: 18px;
     }
   }
   &__controls {
-    .flex-column-center();
+    display: flex;
+    flex-direction: column;
     width: 650px;
+    align-items: center;
   }
   &__message {
     background-color: rgba(0, 0, 0, 0.8);
-    color: white;
+    color: #ffffff;
     padding: 10px 20px;
     font-size: 18px;
     border-radius: 8px;
@@ -214,7 +211,7 @@ export default {
     z-index: 1000;
   }
   &__modal {
-    background-color: white;
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -225,24 +222,50 @@ export default {
   grid-template-columns: repeat(10, 40px);
   grid-template-rows: repeat(10, 40px);
   gap: 2px;
-  background-color: darkgreen;
-  border: 5px solid black;
+  background-color: #023902;
+  border: 5px solid #000000;
   padding: 5px;
   &__cell {
-    .grid-cell(green);
+    width: 40px;
+    height: 40px;
+    background-color: #028502;
+    border: 1px solid #023902;
+    position: relative;
     &--road {
-      .grid-cell(peru);
+      background-color: #b66f2a;
     }
     &--road-first {
-      .grid-cell(dodgerblue);
+      background-color: #1d84e8;
     }
     &--road-last {
-      .grid-cell(rebeccapurple);
+      background-color: #5e2c8f;
     }
     &--can-place-tower {
-      .grid-cell(olivedrab);
+      background-color: #6e951e;
       cursor: pointer;
     }
+  }
+}
+.game__modal {
+  text-align: center;
+  z-index: 1001;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  & button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background: #222;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  & button:hover {
+    background: #444;
   }
 }
 </style>

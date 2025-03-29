@@ -44,76 +44,56 @@ export default {
 </script>
 
 <style lang="less">
-@import '@/less/const.less';
-.flex-center-column() {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-.flex-center() {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.box-style(@bg-color, @text-color, @font-size: 10px) {
-  background-color: @bg-color;
-  color: @text-color;
-  font-size: @font-size;
-  padding: 2px 2px;
-  border-radius: 5px;
-}
-.circle(@size, @radius: 50%) {
-  width: @size;
-  height: @size;
-  border-radius: @radius;
-}
 .tower {
   position: relative;
   width: 100%;
   height: 100%;
-  .flex-center-column();
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
   &__dot {
-    .circle(25px, 25%);
+    width: 25px;
+    height: 25px;
+    border-radius: 25%;
     text-align: center;
-    color: white;
+    color: #ffffff;
     font-weight: bold;
     line-height: 30px;
     cursor: pointer;
-    -webkit-text-stroke: 1px black;
-    &--grade-1 {
-      background-color: hotpink;
-    }
-    &--grade-2 {
-      background-color: aqua;
-    }
-    &--grade-3 {
-      background-color: cornflowerblue;
-    }
-    &--grade-4 {
-      background-color: darkred;
-    }
-    &--grade-5 {
-      background-color: purple;
-    }
-    &--grade-6 {
-      background-color: mediumblue;
+    -webkit-text-stroke: 1px #000000;
+    &--grade {
+      &-1 { background-color: #ff69b4; }
+      &-2 { background-color: #04e6e6; }
+      &-3 { background-color: #4e89f4; }
+      &-4 { background-color: #750101; }
+      &-5 { background-color: #7a037a; }
+      &-6 { background-color: #0808b6; }
     }
   }
   &__health {
-    .box-style(rgba(0, 0, 0, 0.7), white, 8px);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    font-size: 8px;
+    padding: 2px;
+    border-radius: 5px;
   }
   &__unit {
-    .flex-center();
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   &__delete {
     position: absolute;
     left: -5px;
-    .box-style(rgba(0, 0, 0, 0.7), white, 10px);
-    border: none;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    font-size: 10px;
     padding: 1px;
+    border-radius: 5px;
+    border: none;
     &:hover {
-      background-color: darkred;
+      background-color: #8b0000;
       cursor: pointer;
     }
   }

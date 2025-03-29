@@ -1,30 +1,30 @@
 const towers = (state) => state.levels[state.currentLevel].towers;
 export default {
-    stopTowerAttacks({commit}) {
+    stopTowerAttacks: ({commit}) => {
         commit("stopTowerAttacks")
     },
-    updateCoins({commit}, amount) {
+    updateCoins: ({commit}, amount) => {
         commit("setCoins", amount)
     },
-    changeCurrentLevel({commit}, level) {
+    changeCurrentLevel: ({commit}, level) => {
         commit("setCurrentLevel", level)
     },
-    setGameOver({commit}, value) {
+    setGameOver: ({commit}, value) => {
         commit("setGameOver", value)
     },
-    setEnemyDefeated({commit}, value) {
+    setEnemyDefeated: ({commit}, value) => {
         commit("setEnemyDefeated", value)
     },
-    setEnemyPosition({commit}, position) {
+    setEnemyPosition: ({commit}, position) => {
         commit("setEnemyPosition", position)
     },
-    setEnemyHealth({commit}, health) {
+    setEnemyHealth: ({commit}, health) => {
         commit("setEnemyHealth", health)
     },
-    pushTower({commit}, index) {
+    pushTower: ({commit}, index) => {
         commit("pushTower", index)
     },
-    startEnemyAttacks({ state, commit, dispatch }) {
+    startEnemyAttacks: ({ state, commit, dispatch }) => {
         dispatch("stopEnemyAttacks")
         const interval = setInterval(() => {
             if (state.enemyHealth > 0 && !state.gameOver) {
@@ -35,10 +35,10 @@ export default {
         }, 200)
         commit("setEnemyAttackInterval", interval)
     },
-    stopEnemyAttacks({ commit }) {
+    stopEnemyAttacks: ({ commit }) => {
         commit("clearEnemyAttackInterval")
     },
-    enemyAttack({ state, commit }) {
+    enemyAttack: ({ state, commit }) => {
         towers(state).forEach((tower, index) => {
             const enemyRow = Math.floor(state.enemyPosition / 10)
             const enemyCol = state.enemyPosition % 10
@@ -50,7 +50,7 @@ export default {
             }
         })
     },
-    moveEnemy({ state, commit, dispatch }) {
+    moveEnemy: ({ state, commit, dispatch }) => {
         let step = 0
         commit("setEnemyHealth", 100)
         commit("setEnemyDefeated", false)
@@ -67,10 +67,10 @@ export default {
         commit("setEnemyInterval", interval)
         dispatch("startEnemyAttacks")
     },
-    showMessage({ commit }, text) {
+    showMessage: ({ commit }, text) => {
         commit("setMessage", text)
     },
-    startTowerAttacks({ state, commit, dispatch }) {
+    startTowerAttacks: ({ state, commit, dispatch }) => {
         dispatch('stopTowerAttacks')
         towers(state).forEach((tower) => {
             let attackSpeed = 1000 / tower.fireRate
@@ -96,7 +96,7 @@ export default {
             state.attackIntervals.push(attackInterval)
         })
     },
-    placeTower({ state, commit, getters, dispatch }, index) {
+    placeTower: ({ state, commit, getters, dispatch }, index) => {
         if (state.gameOver || state.enemyDefeated) return
         if (!getters.canPlaceTower(index)) return
         if (state.coins >= state.towerCost) {
@@ -108,7 +108,7 @@ export default {
             dispatch("showMessage", "❌ Недостаточно монет для новой башни!")
         }
     },
-    upgradeTower({ state, commit, dispatch }, index) {
+    upgradeTower: ({ state, commit, dispatch }, index) => {
         let tower = towers(state).find(t => t.position === index)
         if (tower) {
             if (state.coins >= state.upgradeCost) {
@@ -125,7 +125,7 @@ export default {
             }
         }
     },
-    deleteTower({ state, commit, dispatch }, index) {
+    deleteTower: ({ state, commit, dispatch }, index) => {
         if (state.gameOver || state.enemyDefeated) return
         const towers = towers(state)
         const towerIndex = towers.findIndex(tower => tower.position === index)
@@ -138,7 +138,7 @@ export default {
         }
         dispatch('startTowerAttacks')
     },
-    changeLevel({ state, commit, dispatch }, level) {
+    changeLevel: ({ state, commit, dispatch }, level) => {
         if (state.enemyInterval) {
             clearInterval(state.enemyInterval)
             commit('setEnemyInterval', null)

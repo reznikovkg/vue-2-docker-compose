@@ -1,24 +1,24 @@
 const towers = (state) => state.levels[state.currentLevel].towers;
 export default {
-    setCoins(state, amount) {
+    setCoins: (state, amount) => {
         state.coins += amount;
     },
-    setCurrentLevel(state, level) {
+    setCurrentLevel: (state, level) => {
         state.currentLevel = level;
     },
-    setGameOver(state, value) {
+    setGameOver: (state, value) => {
         state.gameOver = value;
     },
-    setEnemyDefeated(state, value) {
+    setEnemyDefeated: (state, value) => {
         state.enemyDefeated = value;
     },
-    setEnemyPosition(state, position) {
+    setEnemyPosition: (state, position) => {
         state.enemyPosition = position;
     },
-    setEnemyHealth(state, health) {
+    setEnemyHealth: (state, health) => {
         state.enemyHealth = health;
     },
-    pushTower(state, index) {
+    pushTower: (state, index) => {
         towers(state).push({
             position: index,
             health: state.startHealth,
@@ -28,14 +28,14 @@ export default {
             grade: 1
         });
     },
-    stopTowerAttacks(state) {
+    stopTowerAttacks: (state) => {
         state.attackIntervals.forEach(interval => clearInterval(interval));
         state.attackIntervals = [];
     },
-    setEnemyAttackInterval(state, interval) {
+    setEnemyAttackInterval: (state, interval) => {
         state.enemyAttackInterval = interval;
     },
-    damageTower(state, index) {
+    damageTower: (state, index) => {
         if (towers(state)[index]) {
             towers(state)[index].health -= 1;
             if (towers(state)[index].health <= 0) {
@@ -43,28 +43,28 @@ export default {
             }
         }
     },
-    setEnemyInterval(state, interval) {
+    setEnemyInterval: (state, interval) => {
         state.enemyInterval = interval;
     },
-    clearEnemyInterval(state) {
+    clearEnemyInterval: (state) => {
         if (state.enemyInterval) {
             clearInterval(state.enemyInterval);
             state.enemyInterval = null;
         }
     },
-    setMessage(state, text) {
+    setMessage: (state, text) => {
         state.message = text;
         setTimeout(() => {
             state.message = "";
         }, 2000);
     },
-    updateCoins(state, amount) {
+    updateCoins: (state, amount) => {
         state.coins += amount;
     },
-    removeTower(state, index) {
+    removeTower: (state, index) => {
         towers(state).splice(index, 1); // Удаляем башню
     },
-    upgradeTowerStats(state, tower) {
+    upgradeTowerStats: (state, tower) => {
         tower.health += state.healthIncrease;
         if (tower.grade >= 2) {
             tower.damage += state.damageIncrease;
@@ -77,7 +77,7 @@ export default {
         }
         tower.grade += 1;
     },
-    clearTowers(state) {
+    clearTowers: (state) => {
         state.levels[state.currentLevel].towers = []
     },
 }
