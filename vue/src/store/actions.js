@@ -25,19 +25,14 @@ export default {
         commit("pushTower", index)
     },
     startEnemyAttacks: ({ state, commit, dispatch }) => {
-        dispatch("stopEnemyAttacks")
         const interval = setInterval(() => {
             if (state.enemyHealth > 0 && !state.gameOver) {
                 dispatch("enemyAttack")
-            } else {
-                dispatch("stopEnemyAttacks")
             }
         }, 200)
         commit("setEnemyAttackInterval", interval)
     },
-    stopEnemyAttacks: ({ commit }) => {
-        commit("clearEnemyAttackInterval")
-    },
+
     enemyAttack: ({ state, commit }) => {
         towers(state).forEach((tower, index) => {
             const enemyRow = Math.floor(state.enemyPosition / 10)
@@ -61,7 +56,6 @@ export default {
                 step++
             } else {
                 commit("setGameOver", true)
-                dispatch("stopEnemyAttacks")
             }
         }, 700)
         commit("setEnemyInterval", interval)
@@ -89,7 +83,6 @@ export default {
                         commit('setEnemyDefeated', true)
                         commit('setCoins', 150)
                         dispatch('stopTowerAttacks')
-                        dispatch('stopEnemyAttacks')
                     }
                 }
             }, attackSpeed)
@@ -127,7 +120,7 @@ export default {
     },
     deleteTower: ({ state, commit, dispatch }, index) => {
         if (state.gameOver || state.enemyDefeated) return
-        const towers = towers(state)
+        const towers = state.levels[state.currentLevel].towers
         const towerIndex = towers.findIndex(tower => tower.position === index)
         if (towerIndex !== -1) {
             const tower = towers[towerIndex]
@@ -143,7 +136,7 @@ export default {
             clearInterval(state.enemyInterval)
             commit('setEnemyInterval', null)
         }
-        dispatch('stopAllAttacks')
+        dispatch('stopTowerAttacks')
         commit('setCurrentLevel', level)
         commit('setEnemyPosition', state.levels[level].path[0])
         commit('setEnemyHealth', 100)
