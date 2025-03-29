@@ -21,31 +21,21 @@
     <div class="game__content">
       <!-- Игровая сетка -->
       <div class="game__grid grid">
-        <div
+        <GameCell
             v-for="(cell, index) in grid"
             :key="index"
-            class="grid__cell"
-            :class="{
-              'grid__cell--road': isRoad(index),
-              'grid__cell--road-first': isRoad(index) && isFirstRoadCell(index),
-              'grid__cell--road-last': isRoad(index) && isLastRoadCell(index),
-              'grid__cell--enemy': enemyPosition === index && enemyHealth > 0,
-              'grid__cell--tower': isTower(index),
-              'grid__cell--can-place-tower': canPlaceTower(index)
-            }"
-            @click="() => handleCellClick(index)"
-        >
-          <EnemyUnit
-              v-if="enemyPosition === index && enemyHealth > 0"
-              :enemyHealth="enemyHealth"
-          />
-          <TowerUnit
-              v-if="isTower(index)"
-              :towerGrade="getTower(index).grade"
-              :towerHealth="getTower(index).health"
-              :index="index"
-          />
-        </div>
+            :index="index"
+            :isRoad="isRoad(index)"
+            :isFirstRoadCell="isFirstRoadCell(index)"
+            :isLastRoadCell="isLastRoadCell(index)"
+            :isEnemy="enemyPosition === index && enemyHealth > 0"
+            :isTower="isTower(index)"
+            :canPlaceTower="canPlaceTower(index)"
+            :enemyHealth="enemyHealth"
+            :tower="getTower(index)"
+            @cellClick="handleCellClick"
+        />
+      </div>
       </div>
       <!-- Модальное окно -->
       <dialog ref="modal" class="game__modal">
@@ -58,17 +48,15 @@
         </button>
       </dialog>
       <div v-if="message && !gameOver && !enemyDefeated" class="game__message">{{ message }}</div>
-    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex"
-import EnemyUnit from "@/components/EnemyUnit.vue"
-import TowerUnit from "@/components/TowerUnit.vue"
+import GameCell from "@/components/GameCell.vue";
 export default {
   name: 'GameMap',
-  components: {TowerUnit, EnemyUnit},
+  components: {GameCell},
   data() {
     return {
       rows: 10,
@@ -225,35 +213,13 @@ export default {
   background-color: #023902;
   border: 5px solid #000000;
   padding: 5px;
-  &__cell {
-    width: 40px;
-    height: 40px;
-    background-color: #028502;
-    border: 1px solid #023902;
-    position: relative;
-    &--road {
-      background-color: #b66f2a;
-    }
-    &--road-first {
-      background-color: #1d84e8;
-    }
-    &--road-last {
-      background-color: #5e2c8f;
-    }
-    &--can-place-tower {
-      background-color: #6e951e;
-      cursor: pointer;
-    }
-  }
 }
 .game__modal {
   text-align: center;
-  z-index: 1001;
-
+  z-index: 1000;
   &::backdrop {
     background: rgba(0, 0, 0, 0.5);
   }
-
   & button {
     margin-top: 10px;
     padding: 10px 15px;
@@ -263,7 +229,6 @@ export default {
     border-radius: 5px;
     cursor: pointer;
   }
-
   & button:hover {
     background: #444;
   }
