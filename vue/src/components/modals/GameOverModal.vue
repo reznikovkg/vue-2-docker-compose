@@ -5,7 +5,7 @@
       <p class="modal__text">Вы проиграли! Попробуйте ещё раз.</p>
       <button
           class="modal__button"
-          @click="() => restartGame()">
+          @click="restartGame">
         Новая игра
       </button>
     </div>
@@ -23,6 +23,7 @@ export default {
   },
   methods: {
     restartGame() {
+      this.$emit('close');
       this.$emit('restart');
     },
   },
@@ -30,7 +31,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -43,7 +43,6 @@ export default {
   align-items: center;
   z-index: 1000;
 }
-
 .modal {
   position: relative;
   display: flex;
@@ -57,20 +56,17 @@ export default {
   max-width: 400px;
   width: 90%;
   text-align: center;
-
   &__title {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 10px;
     color: #fc0202;
   }
-
   &__text {
     font-size: 18px;
     color: #656565;
     margin-bottom: 20px;
   }
-
   &__button {
     background-color: #d26767;
     border: none;
@@ -80,11 +76,9 @@ export default {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
-
     &:hover {
       background-color: darken(#d26767, 10%);
     }
-
     &:active {
       transform: scale(0.95);
     }

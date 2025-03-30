@@ -47,19 +47,22 @@ export default {
         },
     },
     actions: {
-        checkGameState: ({ state, commit, rootGetters }) => {
+        checkGameState: ({ state, dispatch, rootGetters }) => {
             if (!state.cells.includes(0)) {
                 const hasMoves = rootGetters['game/hasPossibleMoves'];
-                commit('SET_GAME_OVER', !hasMoves);
+                if (!hasMoves) {
+                    dispatch('modals/openModal', {component: 'GameOverModal'}, { root: true });
+                }
             }
             if (state.cells.includes(2048)) {
-                commit('SET_VICTORY', true);
+                dispatch('modals/openModal', {component: 'VictoryModal'}, { root: true });
             }
         },
         restartGame: ({ commit, dispatch }) => {
             commit('RESET_STATE');
             dispatch('addRandomTile');
             dispatch('addRandomTile');
+            dispatch('modals/clearAllModals', null, { root: true });
         },
         addRandomTile: ({ state, commit }) => {
             const emptyCells = state.cells

@@ -5,7 +5,7 @@
       <p class="modal__text">Вы достигли 2048! Поздравляем!</p>
       <button
           class="modal__button"
-          @click="() => restartGame()">
+          @click="restartGame">
         Новая игра
       </button>
     </div>
@@ -23,6 +23,7 @@ export default {
   },
   methods: {
     restartGame() {
+      this.$emit('close');
       this.$emit('restart');
     },
   },
@@ -30,7 +31,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -51,7 +51,7 @@ export default {
   align-items: center;
   gap: 20px;
   padding: 30px;
-  background-color: #fcfafa;
+  background-color: #fcf9f9;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   max-width: 400px;
@@ -62,19 +62,19 @@ export default {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #018101;
+    color: #28a745;
   }
 
   &__text {
     font-size: 18px;
-    color: #6e6e6e;
+    color: #656565;
     margin-bottom: 20px;
   }
 
   &__button {
-    background-color: #d26767;
+    background-color: #28a745;
     border: none;
-    color: #fcfafa;
+    color: #fdfcfc;
     font-size: 16px;
     padding: 12px 24px;
     border-radius: 5px;
@@ -82,7 +82,7 @@ export default {
     transition: background-color 0.3s ease, transform 0.1s ease;
 
     &:hover {
-      background-color: darken(#d26767, 10%);
+      background-color: darken(#28a745, 10%);
     }
 
     &:active {
