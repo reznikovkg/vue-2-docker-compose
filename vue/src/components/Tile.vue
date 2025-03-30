@@ -1,5 +1,8 @@
 <template>
-  <span :class="['game__tile', `game__tile--${tile}`]">
+  <span
+      class="game__tile"
+      :class="`game__tile--${tile}`"
+  >
     {{ tile > 0 ? tile : '' }}
   </span>
 </template>

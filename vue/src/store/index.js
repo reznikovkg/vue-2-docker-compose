@@ -1,12 +1,12 @@
 import modals from './modals'
-import gameModule from './game';
+import game from './game';
 export default {
   namespaced: true,
   state: {},
   getters: {},
   mutations: {},
   modules: {
-    game: gameModule,
+    game,
     modals
   }
 }

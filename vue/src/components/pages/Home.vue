@@ -1,22 +1,22 @@
 <template>
   <div
       class="game"
-      @keydown="(event) => handleKeyDown(event)"
       tabindex="0"
+      @keydown="(event) => handleKeyDown(event)"
   >
     <div class="game__header">
       <div class="game__header__content">
         <h1 class="game__title">2048</h1>
         <div class="game__score-box">
           <span class="game__score-box__label">Счет:</span>
-          <span class="game__score-box__value">{{ score }}</span>
+          <span class="game__score-box__value">{{ getScore }}</span>
         </div>
       </div>
     </div>
     <div class="game__board">
       <div class="game__grid">
         <GameTile
-            v-for="(cell, index) in cells"
+            v-for="(cell, index) in getCells"
             :key="index"
             :tile="cell"
             :style="tilePositions[index]"
@@ -24,11 +24,11 @@
       </div>
     </div>
     <GameOverModal
-        :isVisible="gameOver"
+        :isVisible="isGameOver"
         @restart="() => restartGame()"
     />
     <VictoryModal
-        :isVisible="victory"
+        :isVisible="isVictory"
         @restart="() => restartGame()"
     />
   </div>
@@ -52,20 +52,9 @@ export default {
       'isGameOver',
       'isVictory',
     ]),
-    cells() {
-      return this.getCells;
-    },
-    score() {
-      return this.getScore;
-    },
-    gameOver() {
-      return this.isGameOver;
-    },
-    victory() {
-      return this.isVictory;
-    },
+
     tilePositions() {
-      return this.cells.map((_, index) => {
+      return this.getCells.map((_, index) => {
         const row = Math.floor(index / 4);
         const col = index % 4;
         return {
@@ -148,25 +137,6 @@ export default {
     &__value {
       font-size: clamp(16px, 3vw, 24px);
       font-weight: bold;
-    }
-  }
-
-  &__new-game-btn {
-    background: #d26767;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 5px;
-    transition: transform 0.1s ease, background-color 0.3s ease;
-
-    &:hover {
-      background-color: darken(#d26767, 10%);
-    }
-
-    &:active {
-      transform: scale(0.95);
     }
   }
 

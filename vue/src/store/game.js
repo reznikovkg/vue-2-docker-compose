@@ -9,13 +9,7 @@ const initialState = () => ({
 
 export default {
     namespaced: true,
-    state: {
-        cells: [],
-        score: 0,
-        gameOver: false,
-        victory: false,
-    },
-
+    state: initialState(),
     getters: {
         getCells: (state) => state.cells,
         getScore: (state) => state.score,
@@ -62,12 +56,12 @@ export default {
                 commit('SET_VICTORY', true);
             }
         },
-        restartGame: ({commit, dispatch}) => {
+        restartGame: ({ commit, dispatch }) => {
             commit('RESET_STATE');
             dispatch('addRandomTile');
             dispatch('addRandomTile');
         },
-        addRandomTile: ({state, commit}) => {
+        addRandomTile: ({ state, commit }) => {
             const emptyCells = state.cells
                 .map((value, index) => (value === 0 ? index : -1))
                 .filter((index) => index !== -1);
@@ -79,44 +73,28 @@ export default {
                 commit('SET_CELLS', newCells);
             }
         },
-        move: ({dispatch, state, commit}, direction) => {
+        move: ({ dispatch, state, commit }, direction) => {
             let moved = false;
             let cells = [...state.cells];
             let scoreIncrease = 0;
 
             switch (direction) {
-                case KEY_MAP.ArrowLeft: {
-                    const result = moveRow(cells, 'left');
-                    cells = result.cells;
-                    moved = result.moved;
-                    scoreIncrease = result.scoreIncrease;
+                case KEY_MAP.ArrowLeft:
+                    ({ cells, moved, scoreIncrease } = processMove(cells, 'left', moveRow));
                     break;
-                }
-                case KEY_MAP.ArrowRight: {
-                    const result = moveRow(cells, 'right');
-                    cells = result.cells;
-                    moved = result.moved;
-                    scoreIncrease = result.scoreIncrease;
+                case KEY_MAP.ArrowRight:
+                    ({ cells, moved, scoreIncrease } = processMove(cells, 'right', moveRow));
                     break;
-                }
-                case KEY_MAP.ArrowUp: {
-                    const result = moveColumn(cells, 'up');
-                    cells = result.cells;
-                    moved = result.moved;
-                    scoreIncrease = result.scoreIncrease;
+                case KEY_MAP.ArrowUp:
+                    ({ cells, moved, scoreIncrease } = processMove(cells, 'up', moveColumn));
                     break;
-                }
-                case KEY_MAP.ArrowDown: {
-                    const result = moveColumn(cells, 'down');
-                    cells = result.cells;
-                    moved = result.moved;
-                    scoreIncrease = result.scoreIncrease;
+                case KEY_MAP.ArrowDown:
+                    ({ cells, moved, scoreIncrease } = processMove(cells, 'down', moveColumn));
                     break;
-                }
-                default: {
+                default:
                     console.error(`Unknown direction: ${direction}`);
-                }
             }
+
             if (moved) {
                 commit('SET_CELLS', cells);
                 if (scoreIncrease > 0) {
@@ -128,6 +106,31 @@ export default {
         },
     },
 };
+
+const compressAndMerge = (array, direction) => {
+    const sanitizedArray = array.map((cell) => (typeof cell === 'number' ? cell : 0));
+    const compressed = sanitizedArray.filter((cell) => cell !== 0);
+    let scoreIncrease = 0;
+    if (direction === 'right' || direction === 'down') {
+        compressed.reverse();
+    }
+    for (let i = 0; i < compressed.length - 1; i++) {
+        if (compressed[i] === compressed[i + 1]) {
+            compressed[i] *= 2;
+            scoreIncrease += compressed[i];
+            compressed.splice(i + 1, 1);
+            i--;
+        }
+    }
+    while (compressed.length < 4) {
+        compressed.push(0);
+    }
+    if (direction === 'right' || direction === 'down') {
+        compressed.reverse();
+    }
+    return { compressed, scoreIncrease };
+};
+
 const moveRow = (cells, direction) => {
     let moved = false;
     let totalScoreIncrease = 0;
@@ -163,26 +166,11 @@ const moveColumn = (cells, direction) => {
     return { cells, moved, scoreIncrease: totalScoreIncrease };
 };
 
-const compressAndMerge = (array, direction) => {
-    const sanitizedArray = array.map((cell) => (typeof cell === 'number' ? cell : 0));
-    const compressed = sanitizedArray.filter((cell) => cell !== 0);
-    let scoreIncrease = 0;
-    if (direction === 'right' || direction === 'down') {
-        compressed.reverse();
-    }
-    for (let i = 0; i < compressed.length - 1; i++) {
-        if (compressed[i] === compressed[i + 1]) {
-            compressed[i] *= 2;
-            scoreIncrease += compressed[i];
-            compressed.splice(i + 1, 1);
-            i--;
-        }
-    }
-    while (compressed.length < 4) {
-        compressed.push(0);
-    }
-    if (direction === 'right' || direction === 'down') {
-        compressed.reverse();
-    }
-    return { compressed, scoreIncrease };
+const processMove = (cells, direction, moveFunction) => {
+    const result = moveFunction(cells, direction);
+    return {
+        cells: result.cells,
+        moved: result.moved,
+        scoreIncrease: result.scoreIncrease,
+    };
 };
