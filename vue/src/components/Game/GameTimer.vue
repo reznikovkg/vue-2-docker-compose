@@ -1,13 +1,8 @@
 <template>
-  <div 
-    class="Timer"
-    :class="Center"
-  >
+  <div>
     {{ counter }}
   </div>
 </template>
-  
-  
   
 <script>
 
@@ -17,7 +12,7 @@ export default{
     time: Number,
     health: Number,
     coins:Number,
-    gameStatus: Number
+    gameStatus: String
   },
   data(){
     return{
@@ -27,7 +22,7 @@ export default{
   },
   watch:{
     gameStatus:function(value){
-      if(value == 2){
+      if(value == 'end'){
         this.counter = 0;
       }
     }
@@ -35,35 +30,13 @@ export default{
   mounted(){
     this.counter = 0;
     this.timerID = setInterval(()=>{
-      if(this.gameStatus == 0){
+      if(this.gameStatus == 'play'){
         this.counter++;
       }
     }, 1000);
   },
   beforeDestroy(){
     clearInterval(this.timerID);
-  },
-  computed:{
-    Center(){
-      return {
-        'top': (0)+'px',
-        'left': (document.documentElement.scrollWidth)+ 'px'
-      }
-    }
   }
 }
-
-
 </script>
-
-<style scoped>
-  .Timer{
-    width: 5vw;
-    height: 5vh;
-    text-align: center;
-    font-size: 4vh;
-    background: #cfcfcf;
-    z-index: 555;
-    opacity: 50%;
-  }
-</style>

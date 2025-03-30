@@ -1,16 +1,16 @@
 <template>
   <div
-    class="Stats"
-    :class="center"
+    class="stats-panel"
+    :class="statsPanelPosition"
   >
     <div
-      class="health"
+      class="stats-panel__health"
     >
       {{health}}
     </div>
       |
     <div
-      class="coins"
+      class="stats-panel__coins"
     >
       {{coins}}
     </div>
@@ -27,40 +27,41 @@ export default{
     coins:Number
   },
   computed:{
-    center(){
+    statsPanelPosition(){
       return {
-        'top': (0) + 'px',
-        'left': (document.documentElement.scrollWidth)+ 'px'
+        top: (0) + 'px',
+        left: (document.documentElement.scrollWidth)+ 'px'
       }
     }
   }
 }
 </script>
 
-<style scoped>
-  .Stats{
-    display: flex;
-    top: 60vh;
-    left: 45vw;
-    position: fixed;
-    width: 10vw;
-    height: 5vh;
-    text-align: center;
-    font-size: 4vh;
-    
-    background: #cfcfcf;
-    z-index: 555;
-    opacity: 50%;
+<style lang="less">
+.stats-panel{
+  display: flex;
+  top: 60vh;
+  left: 45vw;
+  position: fixed;
+  width: 10vw;
+  height: 5vh;
+  text-align: center;
+  font-size: 4vh;
+  
+  background: @cBaseUi;
+  z-index: 555;
+  opacity: 50%;
 
+  &__health{
+    color: @cBasePlayer;
   }
-  .health{
-    color: #16a91f;
-    text-align: center; 
+  
+  &__coins{
+    color: @cBaseCoin;  
+  }
+
+  &__health,&__coins{
     width: 5vw;
   }
-  .coins{
-    color: #1573c0;
-    text-align: center;
-    width: 5vw;
-  }
+}
 </style>

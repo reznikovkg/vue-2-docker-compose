@@ -1,32 +1,30 @@
 <template>
   <div 
-    :style="WORLDSTYLE" 
-    class="World"
+    :style="worldStyle" 
+    class="world"
   >
     <EnemySprite 
-      v-for="enemy in ENEMIES"
+      v-for="enemy in enemies"
       :key="enemy.id"
       :x="enemy.x"
       :y="enemy.y"
-      :enemy-radius="enemyPrototype.enemyRadius"
+      :enemy-radius="enemyPrototype.radius"
     />
     <SimpleAttack
-      v-for="attack in ATTACKS"
+      v-for="attack in attacks"
       :key="'attak' + attack.id"
       :x="attack.x"
       :y="attack.y"
-      :attack-radius="attackPrototype.attackRadius"
+      :attack-radius="attackPrototype.radius"
     />
     <CoinSprite
-      v-for="coin in COINS"
+      v-for="coin in coins"
       :key="'coin' + coin.id"
       :x="coin.x" 
       :y="coin.y" 
     />
   </div>
 </template>
-
-
 
 <script>
 import {mapGetters, mapActions} from 'vuex';
@@ -48,36 +46,24 @@ export default{
       enemyTimerId: 0,
       attackTimerId: 0,
       enemyCounter: 0,
-      maxEnemy:50,
     }
   },
   props:{
     w:Number,
     h:Number,
-    xCursor: Number,
-    yCursor: Number,
     enemyPrototype: Object,
     attackPrototype: Object,
-    keys: Object
   },
   computed : {
     ...mapGetters([
-      'ENEMIES',
-      'ATTACKS',
-      'COINS',
-      'X_WORLD',
-      'Y_WORLD',
-      'WORLDSTYLE'
+      'enemies',
+      'attacks',
+      'coins',
+      'xWorld',
+      'yWorld',
+      'worldStyle',
+      'enemiesCounter'
     ])
-  },
-  watch:{
-    gameStatus:function(value){
-      if(value == 2){
-        this.enemyCounter = 0;
-        this.enemyIDCounter=0;
-        this.coinsCounter = 0;
-      }
-    }
   },
   mounted() {
     this.lastTime = 0;
@@ -89,9 +75,8 @@ export default{
 
     this.enemyTimerId =  setInterval(()=>
     {
-      if(this.enemyCounter < this.maxEnemy ){
+      if(this.enemiesCounter < this.enemyPrototype.maxEnemies ){
         this.addEnemy();
-        this.enemyCounter++;
       }
     } ,this.enemyPrototype.spawnSpan);
   },
@@ -110,11 +95,6 @@ export default{
       const loop = (currentTime) => {
         this.deltaTime = (currentTime - this.lastTime) / 1000; 
         this.lastTime = currentTime;
-        this.updateInput({
-          keys:this.keys, 
-          xCursor:this.xCursor, 
-          yCursor:this.yCursor
-        });
         this.update(this.deltaTime);
 
         setTimeout(() => requestAnimationFrame(loop));
@@ -128,9 +108,9 @@ export default{
 }
 </script>
 
-<style scoped>
-  .World{
-    position: relative;
-    background-color: antiquewhite;
-  }
+<style lang="less">
+.world{
+  position: relative;
+  background-color: @cBaseWorld;
+}
 </style>

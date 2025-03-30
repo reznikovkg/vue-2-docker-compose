@@ -1,21 +1,23 @@
 const state = {
-  player:{},
   health:0,
   score:0,
   playerPrototype:{},
   enemyPrototype:{},
   attackPrototype:{},
-  coinRadius:40,
+  coinRadius:10,
  
-  w:0,
-  h:0,
+  gameWidth:0,
+  gameHeight:0,
+  windowWidth:0,
+  windowHeight:0,
   xWorld: 0,
   yWorld: 0,
-  wWindow:0,
-  hWindow:0,
+  xCursor:0,
+  yCursor:0,
 
-  bullCounter: 1,
+  attacksCounter: 0,
   coinsCounter: 0,
+  enemiesCounter: 0,
   enemyIDCounter: 0,
 
   keys: {},
@@ -23,41 +25,39 @@ const state = {
   attacks:[],
   coins:[],
 
-  gameStatus:0
+  gameStatus:'end'
 }
 
 const getters = {
-  ENEMIES: (state) => state.enemies,
-  ATTACKS: (state) => state.attacks,
-  COINS: (state) => state.coins,
-  X_WORLD: (state) => state.xWorld,
-  Y_WORLD: (state) => state.yWorld,
-  WORLDSTYLE: (state) => {
+  enemies: (state) => state.enemies,
+  attacks: (state) => state.attacks,
+  coins: (state) => state.coins,
+  enemiesCounter: (state) => state.enemiesCounter,
+  xWorld: (state) => state.xWorld,
+  yWorld: (state) => state.yWorld,
+  xCursor: (state) => state.xCursor,
+  yCursor: (state) => state.yCursor,
+  worldStyle: (state) => {
     return {
-      'width': state.w + 'px',
-      'height': state.h + 'px',
-      'left': state.xWorld + 'px',
-      'top': state.yWorld + 'px'
+      width: state.gameWidth + 'px',
+      height: state.gameHeight + 'px',
+      left: state.xWorld + 'px',
+      top: state.yWorld + 'px'
     }
   },
-  HEALTH: (state) => state.health,
-  SCORE: (state) => state.score,
-  GAMESTATUS: (state) => state.gameStatus
+  health: (state) => state.health,
+  score: (state) => state.score,
+  gameStatus: (state) => state.gameStatus
 }
 
 const mutations = {
   ADD_ENEMY: (state) =>{
-    if(state.gameStatus != 0){
+    if(state.gameStatus != 'play'){
       return
     }
-    let playerX = state.wWindow/2 - state.xWorld;
-    let playerY = state.hWindow/2 - state.yWorld;
-    let R = 300;
-    let angle = Math.random() * (Math.PI -(-Math.PI)) -Math.PI;
-
-    let x = playerX + R*Math.cos(angle);
-    let y = playerY + R*Math.sin(angle);
-    
+    let playerX = state.windowWidth/2 - state.xWorld;
+    let playerY = state.windowHeight/2 - state.yWorld;
+    let [x,y] = SpawnCoordsOnCircle(playerX, playerY, state.enemyPrototype.spawnRadius);
     state.enemies.push({
       id:state.enemyIDCounter, 
       x:x, 
@@ -65,75 +65,78 @@ const mutations = {
       deactivate: false
     });
     state.enemyIDCounter++;
+    state.enemiesCounter++;
   },
   ADD_ATTACK: (state) =>{
-    if(state.gameStatus != 0){
+    if(state.gameStatus != 'play'){
       return
     }
-    const deltaXAim = state.wWindow/2 - state.xCursor;
-    const deltaYAim = state.hWindow/2 - state.yCursor;
-    const gipo = Math.sqrt(deltaXAim*deltaXAim + deltaYAim*deltaYAim);
-    const sin = deltaYAim/gipo;
-    const cos = deltaXAim/gipo;
-
+    const x = state.windowWidth/2 - state.xWorld;
+    const y = state.windowHeight/2 - state.yWorld;
+    const distanceXAim = state.windowWidth/2 - state.xCursor;
+    const distanceYAim = state.windowHeight/2 - state.yCursor;
+    const [dX, dY] = LinearIncrementByStep(distanceXAim, distanceYAim, state.attackPrototype.speed);
     state.attacks.push({
-      id:state.bullCounter,
-      x: state.wWindow/2 - state.xWorld,
-      y: state.hWindow/2 - state.yWorld,
-      xOld: state.wWindow/2 - state.xWorld,
-      yOld: state.hWindow/2 - state.yWorld,
+      id: state.attacksCounter,
+      x: x,
+      y: y,
+      xStart: x,
+      yStart: y,
+      R: state.attackPrototype.lifeRadius,
+      dX: dX,
+      dY: dY,
       deactivate: false,
-      R: 180,
-      dX:-cos*400,
-      dY:-sin*400
-    });
-                        
-    state.bullCounter++;
+    });                 
+    state.attacksCounter++;
   },
   UPDATE_INPUT: (state, args) =>{
     state.keys = args.keys;
     state.xCursor = args.xCursor;
     state.yCursor = args.yCursor;
   },
-  UPDATE: (state, deltaTime) =>{
-    if(state.gameStatus != 0){
+  UPDATE_INPUT_CURSOR: (state, args) =>{
+    state.xCursor = args.xCursor;
+    state.yCursor = args.yCursor;
+  },
+  UPDATE_INPUT_KEY: (state, key) =>{
+    state.keys[key.code] = key.status;
+  },
+  UPDATE_GAME_STATE: (state, deltaTime) =>{
+    if(state.gameStatus != 'play'){
       return
     }
-    Update(state, deltaTime);
+    UpdateGameState(state, deltaTime);
   },
   INIT: (state, args) =>{
-    state.w= args.w;
-    state.h= args.h;
-    state.wWindow= args.wWindow;
-    state.hWindow= args.hWindow;
-    state.xWorld = state.wWindow/2 - state.w/2;
-    state.yWorld = state.hWindow/2 - state.h/2;
+    state.gameWidth = args.gameWidth;
+    state.gameHeight = args.gameWidth;
+    state.windowWidth = args.windowWidth;
+    state.windowHeight = args.windowHeight;
+    state.xWorld = state.windowWidth/2 - state.gameWidth/2;
+    state.yWorld = state.windowHeight/2 - state.gameHeight/2;
 
-    state.playerPrototype=args.playerPrototype,
-    state.enemyPrototype=args.enemyPrototype,
-    state.attackPrototype=args.attackPrototype,
+    state.playerPrototype = args.playerPrototype,
+    state.enemyPrototype = args.enemyPrototype,
+    state.attackPrototype = args.attackPrototype,
 
-    Object.assign(state.player, state.playerPrototype);
     state.health = state.playerPrototype.health;
 
-    state.gameStatus = 2;
+    state.gameStatus = 'end';
   },
   START: (state) =>{
-    state.gameStatus = 0;
+    state.gameStatus = 'play';
   },
   PAUSE: (state) =>{
-    if(state.gameStatus==0){
-      state.gameStatus=1;
+    if(state.gameStatus == 'play'){
+      state.gameStatus = 'pause';
     }
-    else if(state.gameStatus==1) {
-      state.gameStatus=0;
+    else if(state.gameStatus == 'pause') {
+      state.gameStatus ='play';
     }
   },
   RESET: (state) =>{
-    state.xWorld = state.wWindow/2 - state.w/2;
-    state.yWorld = state.hWindow/2 - state.h/2;
-
-    Object.assign(state.player, state.playerPrototype);
+    state.xWorld = state.windowWidth/2 - state.gameWidth/2;
+    state.yWorld = state.windowHeight/2 - state.gameHeight/2;
 
     state.enemies = [];
     state.attacks = [];
@@ -141,7 +144,7 @@ const mutations = {
 
     state.score = state.playerPrototype.score;
     state.health = state.playerPrototype.health;
-    state.gameStatus = 2;
+    state.gameStatus = 'end';
   },
 }
 
@@ -155,8 +158,14 @@ const actions = {
   updateInput({commit}, args) {
     commit("UPDATE_INPUT", args)
   },
+  updateInputCursor({commit}, args) {
+    commit("UPDATE_INPUT_CURSOR", args)
+  },
+  updateInputKey({commit}, key) {
+    commit("UPDATE_INPUT_KEY", key)
+  },
   updateState({commit}, deltaTime) {
-    commit("UPDATE", deltaTime)
+    commit("UPDATE_GAME_STATE", deltaTime)
   },
   init({commit}, args) {
     commit("INIT", args)
@@ -172,23 +181,26 @@ const actions = {
   },
 }
 
-export const Update = (state, deltaTime) => {
-  if(state.gameStatus == 0){
-    WorldMove(state, deltaTime);
-    EnemyMove(state, deltaTime);
-    AttackEnemyColision(state);
-    PlayercoinsColision(state);
-    AttackMove(state, deltaTime);
-    PlayerCheck(state);
+export const UpdateGameState = (state, deltaTime) => {
+  if(state.gameStatus != 'play'){
+    return
   }
+  WorldMove(state, deltaTime);
+  EnemyMove(state, deltaTime);
+  AttackEnemyCollision(state);
+  PlayerCoinsCollision(state);
+  AttackMove(state, deltaTime);
+  PlayerHealthCheck(state);
 }
-export const PlayerCheck = (state) => {
+
+export const PlayerHealthCheck = (state) => {
   if(state.health <= 0){
-    state.gameStatus = 2;
+    state.gameStatus = 'end';
   }
 }
+
 export const WorldMove = (state, deltaTime) => {
-  const movement =  state.player.playerSpeed * deltaTime;
+  const movement =  state.playerPrototype.speed * deltaTime;
   let dyWorld = 0;
   let dxWorld = 0;
   if (state.keys['KeyW']) {
@@ -203,113 +215,137 @@ export const WorldMove = (state, deltaTime) => {
   if (state.keys['KeyD']) {
     dxWorld = -movement;
   }
-  CheckBorders(state, dxWorld, dyWorld);
-}
-
-export const CheckBorders = (state, dxWorld, dyWorld) => {
-  let left = (state.xWorld - dxWorld) + state.player.playerRadius < state.wWindow/2;
-  let right =(state.xWorld + state.w + dxWorld)-state.player.playerRadius > state.wWindow/2;
-  if(left && right){
+  if(LeftBorderCollision(state, dxWorld) && RightBorderCollision(state, dxWorld)){
     state.xWorld += dxWorld;
-  }else{
-    if(!left) state.xWorld --;
-    if(!right) state.xWorld ++;
   }
-  let top = (state.yWorld - dyWorld) + 2*state.player.playerRadius < state.hWindow/2;
-  let bottom =(state.yWorld + state.h + dyWorld)-state.player.playerRadius > state.hWindow/2;
-  if(top && bottom){
+  if(TopBorderCollision(state, dyWorld) && BottomBorderCollision(state, dyWorld)){
     state.yWorld += dyWorld;
-  }else{
-    if(!top) state.yWorld --;
-    if(!bottom) state.yWorld ++;
   }
 }
 
 export const EnemyMove = (state, deltaTime) => {
-  for(const enemy in state.enemies){
-    let enemyDeltaX = (state.xWorld-state.wWindow/2) + state.enemies[enemy].x;
-    let enemyDeltaY = (state.yWorld-state.hWindow/2) + state.enemies[enemy].y;
-    const d = Math.sqrt(enemyDeltaX*enemyDeltaX + enemyDeltaY*enemyDeltaY);
-    const sin = enemyDeltaX/d;
-    const cos = enemyDeltaY/d;
-    let dX_ = state.enemyPrototype.enemySpeed*sin * deltaTime;
-    let dY_ = state.enemyPrototype.enemySpeed*cos * deltaTime;
-    const enemyPos = Math.sqrt(enemyDeltaX*enemyDeltaX + enemyDeltaY* enemyDeltaY);
-    const R = state.player.playerRadius + state.enemyPrototype.enemyRadius;
-    if(enemyPos <= R){
+  state.enemies.forEach( (enemy) => {
+    let enemyDistanceX = (state.xWorld-state.windowWidth/2) + enemy.x;
+    let enemyDistanceY = (state.yWorld-state.windowHeight/2) + enemy.y;
+    let [dX, dY] = LinearIncrement(enemyDistanceX, enemyDistanceY, state.enemyPrototype.speed, deltaTime);
+    if(CircleCollision(enemyDistanceX, enemyDistanceY, state.enemyPrototype.radius, state.playerPrototype.radius)){
       state.health--;
-      if(state.health < 0){
-        state.health = 0;
-      }
-      state.enemies[enemy].x += dX_;
-      state.enemies[enemy].y += dY_;
+      enemy.x += dX;
+      enemy.y += dY;
     }
     else{
-      state.enemies[enemy].x -= dX_;
-      state.enemies[enemy].y -= dY_;
+      enemy.x -= dX;
+      enemy.y -= dY;
     }
-  }
+  });
 }
 
-export const AttackEnemyColision = (state) => {
-  for(const enemy in state.enemies){
-    for(const attack in state.attacks){
-      let x1 = state.enemies[enemy].x;
-      let y1 = state.enemies[enemy].y;
-      let x2 = state.attacks[attack].x;
-      let y2 = state.attacks[attack].y;
-      let d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-      const colisionFlag = (d <= state.enemyPrototype.enemyRadius + state.attackPrototype.attackRadius);
-
-      if(!state.attacks[attack].deactivate && !state.enemies[enemy].deactivate && colisionFlag){
-        state.attacks[attack].deactivate = true;
-        state.coins.push({
-          id:state.coinsCounter,
-          x:state.enemies[enemy].x, 
-          y:state.enemies[enemy].y, 
-          deactivate:false
-        });
-        state.enemies[enemy].deactivate = true;
+export const AttackEnemyCollision = (state) => {
+  state.enemies.forEach( (enemy) => {
+    state.attacks.forEach( (attack) => {
+      let distanceX = enemy.x - attack.x;
+      let distanceY = enemy.y - attack.y;
+      const colisionFlag = CircleCollision(distanceX, distanceY, state.enemyPrototype.radius, state.attackPrototype.radius);
+      if(!attack.deactivate && !enemy.deactivate && colisionFlag){
+        attack.deactivate = true;
+        enemy.deactivate = true;
+        AddCoin(state, enemy.x, enemy.y);
         state.enemyCounter--;
         state.coinsCounter++;
       }
-    }
-  }
-  state.attacks=state.attacks.filter((attack) => attack.deactivate != true);
-  state.enemies=state.enemies.filter((enemy) => enemy.deactivate != true);
+    });
+  });
+  state.attacks = state.attacks.filter((attack) => attack.deactivate != true);
+  state.enemies = state.enemies.filter((enemy) => enemy.deactivate != true);
 }
 
-export const PlayercoinsColision = (state) => {
-  for(const coin in state.coins){
-    let x1 = state.coins[coin].x;
-    let y1 = state.coins[coin].y;
-    let x2 = -(state.xWorld-state.wWindow/2);
-    let y2 = -(state.yWorld-state.hWindow/2);
-    let d = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-
-    if(!state.coins[coin].deactivate && d <= state.coinRadius){
-      state.coins[coin].deactivate = true;
+export const PlayerCoinsCollision = (state) => {
+  state.coins.forEach( (coin) => {
+    let distanceX = coin.x + (state.xWorld-state.windowWidth/2);
+    let distanceY = coin.y + (state.yWorld-state.windowHeight/2);
+    const colisionFlag = CircleCollision(distanceX, distanceY, state.coinRadius, state.playerPrototype.radius);
+    if(!coin.deactivate && colisionFlag){
+      coin.deactivate = true;
       state.score++;
     }
-  }
-  state.coins=state.coins.filter((coin) => coin.deactivate != true);
+  });
+  state.coins = state.coins.filter((coin) => coin.deactivate != true);
 }
 
 export const AttackMove = (state, deltaTime) => {
-  for(const attack in state.attacks){
-
-    let dX = state.attacks[attack].dX*deltaTime;
-    let dY = state.attacks[attack].dY*deltaTime;
-    const distanceX = state.attacks[attack].xOld-state.attacks[attack].x;
-    const distanceY = state.attacks[attack].yOld-state.attacks[attack].y;
-    let d = Math.sqrt(distanceX*distanceX + distanceY*distanceY);
-    state.attacks[attack].x += dX;
-    state.attacks[attack].y += dY;
-
-    if(d > state.attacks[attack].R){
-      state.attacks[attack].deactivate = true;
+  state.attacks.forEach( (attack) => {
+    let dX = attack.dX*deltaTime;
+    let dY = attack.dY*deltaTime;
+    attack.x += dX;
+    attack.y += dY;
+    const distanceX = attack.xStart-attack.x;
+    const distanceY = attack.yStart-attack.y;
+    const colisionFlag = CircleCollision(distanceX, distanceY, attack.R, state.attackPrototype.radius); 
+    if(!colisionFlag){
+      attack.deactivate = true;
     }
-  }
+  });
+  state.attacks = state.attacks.filter((attack) => attack.deactivate != true);
+}
+
+export const AddCoin = (state, x, y) =>{
+  state.coins.push({
+    id:state.coinsCounter,
+    x: x, 
+    y: y, 
+    deactivate:false
+  });
+}
+
+export const LeftBorderCollision = (state, dxWorld) => {
+  const newWorldBorderX = state.xWorld + dxWorld;
+  return newWorldBorderX + state.playerPrototype.radius < state.windowWidth/2;
+}
+
+export const RightBorderCollision = (state, dxWorld) => {
+  const newWorldBorderX = state.xWorld + state.gameWidth + dxWorld;
+  return newWorldBorderX - state.playerPrototype.radius > state.windowWidth/2;
+}
+
+export const TopBorderCollision = (state, dyWorld) => {
+  const newWorldBorderY = state.yWorld + dyWorld;
+  return newWorldBorderY + state.playerPrototype.radius < state.windowHeight/2;
+}
+
+export const BottomBorderCollision = (state, dyWorld) => {
+  const newWorldBorderY = state.yWorld + state.gameHeight + dyWorld;
+  return newWorldBorderY - state.playerPrototype.radius > state.windowHeight/2;
+}
+
+export const CircleCollision = (distanceX, distanceY, firstRadius, secondRadius) => {
+  const distance = Math.sqrt(distanceX*distanceX + distanceY*distanceY);
+  const R = firstRadius + secondRadius;
+  return distance <= R;
+}
+
+export const LinearIncrement = (distanceX, distanceY, speed, deltaTime) => {
+  const distance = Math.sqrt(distanceX*distanceX + distanceY*distanceY);
+  const sin = distanceY/distance;
+  const cos = distanceX/distance;
+  let dX = speed * cos * deltaTime;
+  let dY = speed * sin * deltaTime;
+  return [dX, dY];
+}
+
+export const LinearIncrementByStep = (distanceX, distanceY, speed) => {
+  const distance = Math.sqrt(distanceX*distanceX + distanceY*distanceY);
+  const sin = distanceY/distance;
+  const cos = distanceX/distance;
+  let dX = -cos*speed;
+  let dY = -sin*speed;
+  return [dX, dY];
+}
+
+export const SpawnCoordsOnCircle = (centerX, centerY, R) => {
+  let angle = Math.random() * (Math.PI -(-Math.PI)) -Math.PI;
+  let x = centerX + R*Math.cos(angle);
+  let y = centerY + R*Math.sin(angle);
+  return [x,y];
 }
 
 export default {

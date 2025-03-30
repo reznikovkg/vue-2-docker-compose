@@ -1,7 +1,7 @@
 <template>
   <div 
     :style="enemyStyle"
-    class="circle Enemy"
+    class="enemy"
   >
   </div>
 </template>
@@ -18,22 +18,23 @@ export default{
   computed:{
     enemyStyle () {
       return {
-        'width': (this.enemyRadius*2) + 'px',
-        'height': (this.enemyRadius*2) + 'px',
-        'top': (this.y-this.enemyRadius)+'px',
-        'left': (this.x-this.enemyRadius)+ 'px'
+        width: (this.enemyRadius*2) + 'px',
+        height: (this.enemyRadius*2) + 'px',
+        top: (this.y-this.enemyRadius)+'px',
+        left: (this.x-this.enemyRadius)+ 'px'
       }
     }
   }
 }
 </script>
   
-<style scoped>
-  .Enemy{
-    position: absolute;
-    background: #fd0000;
-    border: 2px solid #490505;
-    opacity: 50%;
-    z-index: 555;
-  }
+<style lang="less">
+.enemy{
+  border-radius: 50%;
+  position: absolute;
+  background: @cBaseEnemy;
+  border: 2px solid @cBorderEnemy;
+  opacity: 50%;
+  z-index: 555;
+}
 </style>

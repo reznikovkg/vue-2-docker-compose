@@ -1,36 +1,35 @@
 <template>
   <div id="app" @mousemove="($event)=>{moveCursor($event)}">
     <GameWorld
-      :x-cursor="xUserCursor"
-      :y-cursor="yUserCursor"
       :w="width"
       :h="height" 
       :attackPrototype="attackPrototype"
       :enemyPrototype="enemyPrototype"
-      :keys="keys"
     />
     <PlayerAim 
-      :player-radius="playerStart.playerRadius" 
-      :x-cursor="xUserCursor" 
-      :y-cursor="yUserCursor"
+      :player-radius="playerPrototype.radius" 
     />      
     <PlayerStats
-      :health="HEALTH"
-      :coins="SCORE"
+      v-if="gameStatus != 'end'"
+      :health="health"
+      :coins="score"
     />
-    <div class="TopUI">
-      <GameTimer :game-status="GAMESTATUS"/>
+    <div class="control-panel">
+      <GameTimer
+        class="control-panel__timer" 
+        :game-status="gameStatus"
+      />
       <button
-        @click="()=>{pauseClick()}"
-        class="pause"
+        class="control-panel__pause-button"
+        @click="()=>pauseClick()"
       >
-          Пауза
+        Пауза
       </button>
     </div>
     <button
-      v-if="GAMESTATUS==2"
-      @click="()=>{startClick()}"
-      class="play"
+      v-if="gameStatus == 'end'"
+      class="gameButton gameButton--play"
+      @click="()=>startGameClick()"
     >
       Играть
     </button>
@@ -53,47 +52,45 @@ export default {
   },
   data () {
     return{
-      xUserCursor:0,
-      yUserCursor:0,
       width:1100,
       height:1100,
-      player:{},
-      playerStart:{
+      playerPrototype:{
         score:0,
         health: 100,
-        playerSpeed: 100,
-        playerRadius: 15,
+        speed: 100,
+        radius: 15,
       },
       enemyPrototype:{
-        enemySpeed: 90,
-        enemyRadius: 15,
+        speed: 90,
+        radius: 15,
+        maxEnemies:50,
         spawnSpan: 2000,
         spawnRadius: 300
       },
       attackPrototype:{ 
-        attackRadius:10,
+        radius: 10,
+        lifeRadius: 180,
+        speed: 400,
         spawnSpan: 2000
       },
-      keys: {},
-      gameStatus:2
     }
   },
   computed: {
       ...mapGetters([
-        'SCORE',
-        'HEALTH',
-        'GAMESTATUS'
+        'score',
+        'health',
+        'gameStatus'
       ])
   },
   mounted () {
     window.addEventListener('keydown', this.keyDownHandler);
     window.addEventListener('keyup', this.keyUpHandler);
     this.init({
-      w:this.width, 
-      h:this.height, 
-      wWindow:document.documentElement.scrollWidth, 
-      hWindow:document.documentElement.scrollHeight,
-      playerPrototype: this.playerStart,
+      gameWidth: this.width, 
+      gameHeight: this.height, 
+      windowWidth: document.documentElement.scrollWidth, 
+      windowHeight: document.documentElement.scrollHeight,
+      playerPrototype: this.playerPrototype,
       enemyPrototype: this.enemyPrototype,
       attackPrototype: this.attackPrototype
     });
@@ -107,24 +104,34 @@ export default {
       'start',
       'pause',
       'reset',
-      'init'
+      'init',
+      'updateInputCursor',
+      'updateInputKey'
     ]), 
     moveCursor (e) {
-      this.xUserCursor = e.clientX;
-      this.yUserCursor = e.clientY;
+      this.updateInputCursor({
+        xCursor: e.clientX,
+        yCursor: e.clientY
+      });
     },
     pauseClick () {
       this.pause();
     },
-    startClick () {
+    startGameClick () {
       this.reset();
       this.start();
     },
     keyDownHandler (event) {
-      this.keys[event.code] = true;
+      this.updateInputKey({
+        code: event.code,
+        status: true
+      });
     },
     keyUpHandler (event) {
-      this.keys[event.code] = false;
+      this.updateInputKey({
+        code: event.code,
+        status: false
+      });
     },
   }
 }
@@ -132,63 +139,68 @@ export default {
 
 
 <style lang="less">
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
+* {
+  padding: 0px;
+  margin: 0px;
+  border: none;
+  height: 100%;
+  text-transform: uppercase;
+}
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: @background;
+}
+.gameButton {
+  width: 10vw;
+  height: 5vh;
+  text-align: center;
+  text-transform: uppercase;
+  background-color: @buttonColor;
+  color: white;
+  border-radius: 3px;
 
-  * {
-    padding: 0px;
-    margin: 0px;
-    border: none;
-    height: 100%;
+  &:hover {
+    cursor: pointer;
   }
-  #app {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(167, 167, 164, 0.356);
+
+  &--play {
+    top: 60vh;
+    left: 45vw;
+    position: fixed;
+    z-index: 5555;
   }
-  button {
-    background: #3498db;
-    width: 180px;
-    padding: 4px 0;
-    font-family: 'Roboto'; 
-    text-align: center;
-    text-transform: uppercase;
-    color: #FFFFFF;
-    user-select: none;
-    transform: translateX(0%) translateY(0%);
-    border-radius: 3px;
+
+}
+.control-panel {
+  position: fixed;
+  top: 1vh;
+  left: 45vw;
+  display:flex;
+  align-content:center;
+  z-index: 5555;
+
+  &__pause-button {
+    width: 5vw;
+    height: 5vh;
+    padding: auto;
+    color: white;
+    background-color: @buttonColor;
 
     &:hover {
       cursor: pointer;
     }
-    
   }
-  .TopUI{
-    position: fixed;
-    top: 1vh;
-    left: 45vw;
-    display:flex;
-    align-content:center;
-    z-index: 5555;
-  }
-  .pause{
+
+  &__timer {
     width: 5vw;
     height: 5vh;
-    z-index: 5555;
-    padding: auto;
+    text-align: center;
+    font-size: 4vh;
+    background: @cBaseUi;
+    z-index: 555;
+    opacity: 50%;
   }
-  .play{
-    top: 60vh;
-    left: 45vw;
-    position: fixed;
-    width: 10vw;
-    height: 5vh;
-    z-index: 5555;
-  }
-  .circle{
-    pointer-events: none;
-    user-select: none;
-    border-radius: 50%;
-    will-change: transform;
-  }
+}
 </style>

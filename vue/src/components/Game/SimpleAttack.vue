@@ -1,7 +1,7 @@
 <template>
   <div
-    :style="cursor"
-    class="circle Bull"
+    :style="bullPosition"
+    class="bull"
   >
   </div>
 </template>
@@ -16,26 +16,27 @@ export default{
     attackRadius: Number
   },
   computed:{
-    cursor(){
+    bullPosition(){
       return {
-        'width': (this.attackRadius*2)+ 'px',
-        'height': (this.attackRadius*2) + 'px',
-        'top': (this.y-this.attackRadius) + 'px',
-        'left': (this.x-this.attackRadius) + 'px'
+        width: (this.attackRadius*2)+ 'px',
+        height: (this.attackRadius*2) + 'px',
+        top: (this.y-this.attackRadius) + 'px',
+        left: (this.x-this.attackRadius) + 'px'
       }
     }
   }
 }
 </script>
 
-<style scoped>
-  .Bull{
-    top: 0;
-    left: 0;
-    position: absolute;
-    background: #8997c7;
-    border: 2px solid #232a94;
-    opacity: 50%;
-    z-index: 55555555;
-  }
+<style lang="less">
+.bull{
+  top: 0;
+  left: 0;
+  position: absolute;
+  background: @cBaseBull;
+  border-radius: 50%;
+  border: 2px solid @cBorderColor;
+  opacity: 50%;
+  z-index: 55555555;
+}
 </style>

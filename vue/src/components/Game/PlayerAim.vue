@@ -2,26 +2,30 @@
   <div>
     <div
       :style="cursor"
-      class="circle Aim"
+      class="aim"
     >
     </div>
     <div
       :style="playerStyle"
-      class="circle Player"
+      class="player"
     >
     </div>
   </div>
 </template>
 
 <script>
+import {mapGetters} from 'vuex';
+
 export default{
   name: 'GameAim',
   props:{
-    xCursor: Number,
-    yCursor: Number,
     playerRadius: Number
   },
   computed:{
+    ...mapGetters([
+      'xCursor',
+      'yCursor'
+    ]),
     cursor(){
       let R = 100;
       let xAim = -window.innerWidth/2+this.xCursor;
@@ -31,39 +35,41 @@ export default{
       let x = R/Math.sqrt((1+tan*tan));
       let y = tan*x;
       return {
-        'width': (this.playerRadius) + 'px',
-        'height': (this.playerRadius) + 'px',
-        'top': (window.innerHeight/2+sign*y - this.playerRadius/2)+'px',
-        'left': (window.innerWidth/2+sign*x - this.playerRadius/2)+ 'px'
+        width: (this.playerRadius) + 'px',
+        height: (this.playerRadius) + 'px',
+        top: (window.innerHeight/2+sign*y - this.playerRadius/2)+'px',
+        left: (window.innerWidth/2+sign*x - this.playerRadius/2)+ 'px'
       }
     },
     playerStyle(){
       return {
-        'width': (this.playerRadius*2) + 'px',
-        'height': (this.playerRadius*2) + 'px',
-        'top': (window.innerHeight/2-this.playerRadius)+'px',
-        'left': (window.innerWidth/2-this.playerRadius)+ 'px'
+        width: (this.playerRadius*2) + 'px',
+        height: (this.playerRadius*2) + 'px',
+        top: (window.innerHeight/2-this.playerRadius)+'px',
+        left: (window.innerWidth/2-this.playerRadius)+ 'px'
       }
     }
   }
 }
 </script>
 
-<style scoped>
-  .Player{
-    position: fixed;
-    width: 30px;
-    height: 30px;
-    background: #16a91f;
-    border: 2px solid #089a5b;
-    z-index: 555;
-  }
-  .Aim{
-    position: fixed;
-    width: 14px;
-    height: 14px;
-    background: #cfcfcf;
-    border: 2px solid #646464;
-    opacity: 50%;
-  }
+<style lang="less">
+.player{
+  border-radius: 50%;
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  background-color: @cBasePlayer;
+  border: 2px solid @cBorderPlayer;
+  z-index: 555;
+}
+.aim{
+  border-radius: 50%;
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  background: @cBaseUi;
+  border: 2px solid @cBorderUi;
+  opacity: 50%;
+}
 </style>
