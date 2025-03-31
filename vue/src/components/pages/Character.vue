@@ -37,11 +37,16 @@
                 <div class="menu__tag primary-text">Actions</div>
             </div>
             <div v-for="action in character.actions" :key="action.id" class="menu__block-wrapper">
-                <button v-on:click="charAction(action.requirements, action.gives)" class="action__button">
+                <button v-on:click="charAction(action.requirements, action.gives)" class="action__button"
+                v-on:mouseenter="showTooltip" v-on:mousemove="moveTooltip" v-on:mouseleave="hideTooltip"
+                v-bind:data-action-desc="action.desc">
                     <div class="button__tag detail-text">{{ action.name }}</div>
                 </button>
             </div>
         </MenuListLayout>
+        <TooltipLayout v-if="isTooltipVisible" :style="{top: `${tooltipYpos}px`, left: `${tooltipXpos}px`}">
+            <div class="tooltip__text detail-text">{{ tooltipText }}</div>
+        </TooltipLayout>
     </PageLayout>
 </template>
 
@@ -49,18 +54,24 @@
 import MenuListLayout from '../parts/MenuListLayout.vue';
 import PageLayout from '../parts/PageLayout.vue';
 import catChar from '@/char';
+import TooltipLayout from '../parts/TooltipLayout.vue';
 
 
 export default {
     name: 'CharPage',
     components: {
         PageLayout,
-        MenuListLayout
+        MenuListLayout,
+        TooltipLayout
     },
 
     data () {
         return {
-            character: catChar
+            character: catChar,
+            isTooltipVisible: true,
+            tooltipYpos: 0,
+            tooltipXpos: 0,
+            tooltipText: ''
         };
     },
 
@@ -72,6 +83,21 @@ export default {
             catch(err) {
                 console.log("Can't do. " + err); // TODO
             }
+        },
+
+        showTooltip (event) {
+            this.tooltipText = event.target.dataset.actionDesc;
+            
+            this.tooltipYpos = event.target.offsetTop + event.target.offsetHeight * 0.8;
+            this.isTooltipVisible = true;
+        },
+        hideTooltip () {
+            this.isTooltipVisible = false;
+
+            this.tooltipText = ''
+        },
+        moveTooltip (event) {
+            this.tooltipXpos = event.clientX - event.target.offsetWidth;
         }
     }
 }
@@ -155,5 +181,9 @@ export default {
 
 .menu__tag {
     font-size: @sizeFontLarge;
+}
+
+.tooltip__text {
+    margin: 4px;
 }
 </style>

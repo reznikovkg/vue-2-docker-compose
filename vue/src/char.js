@@ -73,21 +73,24 @@ export default new char(
             name: 'Sing',
             cooldown: 30,
             requirements: {energy: 30},
-            gives: null
+            gives: {money: 100},
+            desc: 'Sing a little and get a bit of money.'
         },
         {
             id: 2,
             name: 'Spin',
             cooldown: 60,
             requirements: {energy: 90},
-            gives: {money: 1000}
+            gives: {money: 1000},
+            desc: 'Use most of your energy to earn money.'
         },
         {
             id: 3,
             name: 'Sleep',
             cooldown: 120,
             requirements: {energy:0, money:400},
-            gives: {energy: 100}
+            gives: {energy: 100},
+            desc: 'Restore energy at the cost of some money.'
         }
     ],
     [],
