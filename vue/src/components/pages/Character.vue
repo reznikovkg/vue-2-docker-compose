@@ -1,39 +1,45 @@
 <template>
     <PageLayout>
-        <MenuListLayout class="left__menu-wrapper">
+        <MenuListLayout>
             <div class="menu__block-wrapper">
-                <div class="menu__section-tag primary-text" id="character-name">Character</div>
+                <div class="menu__tag primary-text">Character</div>
             </div>
             <div class="menu__block-wrapper">
-                <span class="stats-text detail-text" id="money-text">{{ money }}</span>
+                <span class="stats-text detail-text">{{ character.money }}</span>
                 <img class="stats-icon" src="../../assets/rupee.svg" alt="">
             </div>
             <div class="menu__block-wrapper">
-                <span class="stats-text detail-text" id="energy-text">{{ energy }}/100</span>
+                <span class="stats-text detail-text">{{ character.energy }}/100</span>
                 <img class="stats-icon" src="../../assets/energy_bolt.svg" alt="">
             </div>
             <div class="menu__block-wrapper">
-                <div class="menu__section-tag primary-text">Items</div>
+                <button class="detail-text" id="items-button">
+                    <div class="button__tag detail-text">Items</div>
+                    <img id="items-icon" src="../../assets/items.svg" alt="">
+                </button>
             </div>
             <div class="menu__block-wrapper">
                 <button class="detail-text" id="items-button">
-                    <img class="money-icon" src="../../assets/items.svg" alt="">
+                    <div class="button__tag detail-text">Tasks</div>
+                    <img id="items-icon" src="../../assets/tasks.svg" alt="">
                 </button>
             </div>
         </MenuListLayout>
         <div class="char-screen-wrapper">
-            <span class="char-name primary-text">CREATURE</span>
-            <img class="char-img" src="../../assets/cat.png" alt="">
+            <div class="char-info-wrapper">
+                <p class="primary-text" id="char-name">{{ character.name }}</p>
+                <p class="detail-text" id="char-status">{{ character.charStatus }}</p>
+            </div>
+            <img id="char-img" src="../../assets/cat.png" alt="">
         </div>
-        <MenuListLayout class="right__menu-wrapper">
+        <MenuListLayout>
             <div class="menu__block-wrapper">
-                <div class="menu__section-tag primary-text">Actions</div>
+                <div class="menu__tag primary-text">Actions</div>
             </div>
-            <div class="menu__block-wrapper">
-                <button class="action__button detail-text" id="action__spin-button">Spin</button>
-            </div>
-            <div class="menu__block-wrapper">
-                <button class="action__button detail-text" id="action__sing-button">Sing</button>
+            <div v-for="action in character.actions" :key="action.id" class="menu__block-wrapper">
+                <button v-on:click="charAction(action.requirements, action.gives)" class="action__button">
+                    <div class="button__tag detail-text">{{ action.name }}</div>
+                </button>
             </div>
         </MenuListLayout>
     </PageLayout>
@@ -42,22 +48,31 @@
 <script>
 import MenuListLayout from '../parts/MenuListLayout.vue';
 import PageLayout from '../parts/PageLayout.vue';
-import char from '@/char';
+import catChar from '@/char';
+
 
 export default {
     name: 'CharPage',
     components: {
         PageLayout,
-        MenuListLayout,
+        MenuListLayout
     },
 
     data () {
-        this.character = new char();
-
         return {
-            energy: this.character.energy,
-            money: this.character.money
+            character: catChar
         };
+    },
+
+    methods: {
+        charAction (requirements, returns) {
+            try {
+                this.character.doAction(requirements, returns);
+            }
+            catch(err) {
+                console.log("Can't do. " + err); // TODO
+            }
+        }
     }
 }
 </script>
@@ -67,7 +82,7 @@ export default {
     text-align: center;
     width: 100%;
     height: 100%;
-    padding-top: 10%;
+    padding-top: 5%;
 }
 
 .menu-wrapper {
@@ -77,23 +92,32 @@ export default {
 }
 
 .char-screen-wrapper {
+    vertical-align: top;
     display: inline-block;
     width: 50%;
     padding: 1%;
 }
 
-.char-name {
-    font-size: 300%;
+#char-name {
+    font-size: @sizeFontLargest;
+    margin-bottom: 1%;
+    margin-top: 1%;
 }
 
-.char-img {
+#char-status {
+    font-size: @sizeFontBigger;
+    margin-top: 0px;
+    margin-bottom: 1%;
+}
+
+#char-img {
     display: block;
     margin: auto;
 }
 
 .stats-text {
     vertical-align: middle;
-    font-size: 200%;
+    font-size: @sizeFontBigger;
 }
 
 .stats-icon {
@@ -107,7 +131,10 @@ export default {
     height: 50px;
     background-color: @cPrimary;
     border-color: @cAccent;
-    font-size: 130%;
+}
+
+.button__tag {
+    font-size: @sizeFontBigger;
 }
 
 #items-button {
@@ -115,7 +142,10 @@ export default {
     height: 70px;
     background-color: @cPrimary;
     border-color: @cAccent;
-    font-size: 130%;
+}
+
+#items-icon {
+    scale: 150%;
 }
 
 .menu__block-wrapper {
@@ -123,7 +153,7 @@ export default {
     margin-bottom: 2%;
 }
 
-.menu__section-tag {
-    font-size: 150%;
+.menu__tag {
+    font-size: @sizeFontLarge;
 }
 </style>
