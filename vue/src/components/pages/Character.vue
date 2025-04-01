@@ -153,15 +153,17 @@ export default {
         },
 
         displayErrMessage (message) {
-            this.isErrorRaised = true;
+            if (!this.isErrorRaised) {
+                this.isErrorRaised = true;
 
-            let prevStatus = this.character.charStatus;
-            this.character.charStatus = message;
+                let prevStatus = this.character.charStatus;
+                this.character.charStatus = message;
 
-            setTimeout(() => {
-                this.isErrorRaised = false;
-                this.character.charStatus = prevStatus;
-            }, 2000)
+                setTimeout(() => {
+                    this.isErrorRaised = false;
+                    this.character.charStatus = prevStatus;
+                }, 2000)
+            }
         },
 
         showTooltip (event) {
