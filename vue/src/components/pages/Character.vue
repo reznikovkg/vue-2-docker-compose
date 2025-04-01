@@ -15,15 +15,15 @@
                 <span v-if="isEnergyChangeVisible" v-bind:class="energyChangeTypeClass" class="stats-change__text detail-text">{{ energyChangeText }}</span>
             </div>
             <div class="menu__block-wrapper">
-                <button class="detail-text" id="items-button">
+                <button v-on:click="openItemsModal" class="modal-button">
                     <div class="button__tag detail-text">Items</div>
-                    <img id="items-icon" src="../../assets/items.svg" alt="">
+                    <img class="modal-button__icon" src="../../assets/items.svg" alt="">
                 </button>
             </div>
             <div class="menu__block-wrapper">
-                <button class="detail-text" id="items-button">
+                <button v-on:click="openTasksModal" class="modal-button">
                     <div class="button__tag detail-text">Tasks</div>
-                    <img id="items-icon" src="../../assets/tasks.svg" alt="">
+                    <img class="modal-button__icon" src="../../assets/tasks.svg" alt="">
                 </button>
             </div>
         </MenuListLayout>
@@ -49,6 +49,15 @@
         <TooltipLayout v-if="isTooltipVisible" :style="{top: `${tooltipYpos}px`, left: `${tooltipXpos}px`}">
             <div class="tooltip__text detail-text">{{ tooltipText }}</div>
         </TooltipLayout>
+
+        <ModalContainer ref="itemsModal">
+            <div class="items-modal__contents-grid">
+            </div>
+        </ModalContainer>
+        <ModalContainer ref="tasksModal">
+            <div class="tasks-modal__contents-grid">
+            </div>
+        </ModalContainer>
     </PageLayout>
 </template>
 
@@ -57,6 +66,7 @@ import MenuListLayout from '../parts/MenuListLayout.vue';
 import PageLayout from '../parts/PageLayout.vue';
 import catChar from '@/char';
 import TooltipLayout from '../parts/TooltipLayout.vue';
+import ModalContainer from '../modals/ModalContainer.vue';
 
 
 export default {
@@ -64,7 +74,8 @@ export default {
     components: {
         PageLayout,
         MenuListLayout,
-        TooltipLayout
+        TooltipLayout,
+        ModalContainer
     },
 
     data () {
@@ -166,6 +177,19 @@ export default {
             }
         },
 
+        openItemsModal () {
+            this.$refs.itemsModal.openModal();
+        },
+        closeItemsModal () {
+            this.$refs.itemsModal.closeModal();
+        },
+        openTasksModal () {
+            this.$refs.tasksModal.openModal();
+        },
+        closeTasksModal () {
+            this.$refs.tasksModal.closeModal();
+        },
+
         showTooltip (event) {
             this.tooltipText = event.target.dataset.actionDesc;
             
@@ -245,14 +269,14 @@ export default {
     font-size: @sizeFontBigger;
 }
 
-#items-button {
+.modal-button {
     width: 70px;
     height: 70px;
     background-color: @cPrimary;
     border-color: @cAccent;
 }
 
-#items-icon {
+.modal-button__icon {
     scale: 150%;
 }
 
