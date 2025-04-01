@@ -13,8 +13,8 @@ export default {
 <style scoped lang="less">
 .tooltip-wrapper {
     position: absolute;
-    background-color: @cAccent;
-    box-shadow: 1px 1px;
+    background-color: @cPrimary;
+    border: 2px solid @cAccent;
     height: auto;
     width: auto;
 }
