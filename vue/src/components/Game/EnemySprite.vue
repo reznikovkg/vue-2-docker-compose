@@ -11,9 +11,18 @@
 export default{
   name: 'EnemySprite',
   props:{
-    x: Number,
-    y: Number,
-    enemyRadius: Number 
+    x: {
+      type: Number,
+      required: true
+    },
+    y: {
+      type: Number,
+      required: true
+    },
+    enemyRadius: {
+      type: Number,
+      default: 15
+    }
   },
   computed:{
     enemyStyle () {
@@ -28,7 +37,7 @@ export default{
 }
 </script>
   
-<style lang="less">
+<style lang="less" scoped>
 .enemy{
   border-radius: 50%;
   position: absolute;

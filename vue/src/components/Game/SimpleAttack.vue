@@ -11,9 +11,18 @@
 export default{
   name: 'SimpleAttack',
   props:{
-    x: Number,
-    y: Number,
-    attackRadius: Number
+    x: {
+      type: Number,
+      required: true
+    },
+    y: {
+      type: Number,
+      required: true
+    },
+    attackRadius: {
+      type: Number,
+      default: 10
+    }
   },
   computed:{
     bullPosition(){
@@ -28,7 +37,7 @@ export default{
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .bull{
   top: 0;
   left: 0;

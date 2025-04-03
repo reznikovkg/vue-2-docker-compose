@@ -11,8 +11,14 @@
 export default{
   name: 'CoinSprite',
   props:{
-    x: Number,
-    y: Number
+    x: {
+      type: Number,
+      required: true
+    },
+    y: {
+      type: Number,
+      required: true
+    }
   },
   computed:{
     center () {
@@ -25,7 +31,7 @@ export default{
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .coin{
   border-radius: 50%;
   top: 0;

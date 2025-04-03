@@ -49,10 +49,22 @@ export default{
     }
   },
   props:{
-    w:Number,
-    h:Number,
-    enemyPrototype: Object,
-    attackPrototype: Object,
+    w: {
+      type: Number,
+      required: true
+    },
+    h: {
+      type: Number,
+      required: true
+    },
+    enemyPrototype: {
+      type: Object,
+      required: true
+    },
+    attackPrototype: {
+      type: Object,
+      required: true
+    }
   },
   computed : {
     ...mapGetters([
@@ -108,7 +120,7 @@ export default{
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .world{
   position: relative;
   background-color: @cBaseWorld;

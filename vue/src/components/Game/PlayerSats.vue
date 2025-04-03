@@ -22,9 +22,18 @@
 export default{
   name: 'PlayerStats',
   props:{
-    time: Number,
-    health: Number,
-    coins:Number
+    time: {
+      type: Number,
+      required: true
+    },
+    health: {
+      type: Number,
+      required: true
+    },
+    coins: {
+      type: Number,
+      required: true
+    }
   },
   computed:{
     statsPanelPosition(){
@@ -37,7 +46,7 @@ export default{
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .stats-panel{
   display: flex;
   top: 60vh;

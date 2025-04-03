@@ -57,7 +57,7 @@ const mutations = {
     }
     let playerX = state.windowWidth/2 - state.xWorld;
     let playerY = state.windowHeight/2 - state.yWorld;
-    let [x,y] = SpawnCoordsOnCircle(playerX, playerY, state.enemyPrototype.spawnRadius);
+    let [x,y] = spawnCoordsOnCircle(playerX, playerY, state.enemyPrototype.spawnRadius);
     state.enemies.push({
       id:state.enemyIDCounter, 
       x:x, 
@@ -75,7 +75,7 @@ const mutations = {
     const y = state.windowHeight/2 - state.yWorld;
     const distanceXAim = state.windowWidth/2 - state.xCursor;
     const distanceYAim = state.windowHeight/2 - state.yCursor;
-    const [dX, dY] = LinearIncrementByStep(distanceXAim, distanceYAim, state.attackPrototype.speed);
+    const [dX, dY] = linearIncrementByStep(distanceXAim, distanceYAim, state.attackPrototype.speed);
     state.attacks.push({
       id: state.attacksCounter,
       x: x,
@@ -105,7 +105,7 @@ const mutations = {
     if(state.gameStatus != 'play'){
       return
     }
-    UpdateGameState(state, deltaTime);
+    updateGameState(state, deltaTime);
   },
   INIT: (state, args) =>{
     state.gameWidth = args.gameWidth;
@@ -181,25 +181,25 @@ const actions = {
   },
 }
 
-export const UpdateGameState = (state, deltaTime) => {
+export const updateGameState = (state, deltaTime) => {
   if(state.gameStatus != 'play'){
     return
   }
-  WorldMove(state, deltaTime);
-  EnemyMove(state, deltaTime);
-  AttackEnemyCollision(state);
-  PlayerCoinsCollision(state);
-  AttackMove(state, deltaTime);
-  PlayerHealthCheck(state);
+  worldMove(state, deltaTime);
+  enemyMove(state, deltaTime);
+  attackEnemyCollision(state);
+  playerCoinsCollision(state);
+  attackMove(state, deltaTime);
+  playerHealthCheck(state);
 }
 
-export const PlayerHealthCheck = (state) => {
+export const playerHealthCheck = (state) => {
   if(state.health <= 0){
     state.gameStatus = 'end';
   }
 }
 
-export const WorldMove = (state, deltaTime) => {
+export const worldMove = (state, deltaTime) => {
   const movement =  state.playerPrototype.speed * deltaTime;
   let dyWorld = 0;
   let dxWorld = 0;
@@ -215,20 +215,20 @@ export const WorldMove = (state, deltaTime) => {
   if (state.keys['KeyD']) {
     dxWorld = -movement;
   }
-  if(LeftBorderCollision(state, dxWorld) && RightBorderCollision(state, dxWorld)){
+  if(leftBorderCollision(state, dxWorld) && rightBorderCollision(state, dxWorld)){
     state.xWorld += dxWorld;
   }
-  if(TopBorderCollision(state, dyWorld) && BottomBorderCollision(state, dyWorld)){
+  if(topBorderCollision(state, dyWorld) && bottomBorderCollision(state, dyWorld)){
     state.yWorld += dyWorld;
   }
 }
 
-export const EnemyMove = (state, deltaTime) => {
+export const enemyMove = (state, deltaTime) => {
   state.enemies.forEach( (enemy) => {
     let enemyDistanceX = (state.xWorld-state.windowWidth/2) + enemy.x;
     let enemyDistanceY = (state.yWorld-state.windowHeight/2) + enemy.y;
-    let [dX, dY] = LinearIncrement(enemyDistanceX, enemyDistanceY, state.enemyPrototype.speed, deltaTime);
-    if(CircleCollision(enemyDistanceX, enemyDistanceY, state.enemyPrototype.radius, state.playerPrototype.radius)){
+    let [dX, dY] = linearIncrement(enemyDistanceX, enemyDistanceY, state.enemyPrototype.speed, deltaTime);
+    if(circleCollision(enemyDistanceX, enemyDistanceY, state.enemyPrototype.radius, state.playerPrototype.radius)){
       state.health--;
       enemy.x += dX;
       enemy.y += dY;
@@ -240,16 +240,16 @@ export const EnemyMove = (state, deltaTime) => {
   });
 }
 
-export const AttackEnemyCollision = (state) => {
+export const attackEnemyCollision = (state) => {
   state.enemies.forEach( (enemy) => {
     state.attacks.forEach( (attack) => {
       let distanceX = enemy.x - attack.x;
       let distanceY = enemy.y - attack.y;
-      const colisionFlag = CircleCollision(distanceX, distanceY, state.enemyPrototype.radius, state.attackPrototype.radius);
+      const colisionFlag = circleCollision(distanceX, distanceY, state.enemyPrototype.radius, state.attackPrototype.radius);
       if(!attack.deactivate && !enemy.deactivate && colisionFlag){
         attack.deactivate = true;
         enemy.deactivate = true;
-        AddCoin(state, enemy.x, enemy.y);
+        addCoin(state, enemy.x, enemy.y);
         state.enemyCounter--;
         state.coinsCounter++;
       }
@@ -259,11 +259,11 @@ export const AttackEnemyCollision = (state) => {
   state.enemies = state.enemies.filter((enemy) => enemy.deactivate != true);
 }
 
-export const PlayerCoinsCollision = (state) => {
+export const playerCoinsCollision = (state) => {
   state.coins.forEach( (coin) => {
     let distanceX = coin.x + (state.xWorld-state.windowWidth/2);
     let distanceY = coin.y + (state.yWorld-state.windowHeight/2);
-    const colisionFlag = CircleCollision(distanceX, distanceY, state.coinRadius, state.playerPrototype.radius);
+    const colisionFlag = circleCollision(distanceX, distanceY, state.coinRadius, state.playerPrototype.radius);
     if(!coin.deactivate && colisionFlag){
       coin.deactivate = true;
       state.score++;
@@ -272,7 +272,7 @@ export const PlayerCoinsCollision = (state) => {
   state.coins = state.coins.filter((coin) => coin.deactivate != true);
 }
 
-export const AttackMove = (state, deltaTime) => {
+export const attackMove = (state, deltaTime) => {
   state.attacks.forEach( (attack) => {
     let dX = attack.dX*deltaTime;
     let dY = attack.dY*deltaTime;
@@ -280,7 +280,7 @@ export const AttackMove = (state, deltaTime) => {
     attack.y += dY;
     const distanceX = attack.xStart-attack.x;
     const distanceY = attack.yStart-attack.y;
-    const colisionFlag = CircleCollision(distanceX, distanceY, attack.R, state.attackPrototype.radius); 
+    const colisionFlag = circleCollision(distanceX, distanceY, attack.R, state.attackPrototype.radius); 
     if(!colisionFlag){
       attack.deactivate = true;
     }
@@ -288,7 +288,7 @@ export const AttackMove = (state, deltaTime) => {
   state.attacks = state.attacks.filter((attack) => attack.deactivate != true);
 }
 
-export const AddCoin = (state, x, y) =>{
+export const addCoin = (state, x, y) =>{
   state.coins.push({
     id:state.coinsCounter,
     x: x, 
@@ -297,33 +297,33 @@ export const AddCoin = (state, x, y) =>{
   });
 }
 
-export const LeftBorderCollision = (state, dxWorld) => {
+export const leftBorderCollision = (state, dxWorld) => {
   const newWorldBorderX = state.xWorld + dxWorld;
   return newWorldBorderX + state.playerPrototype.radius < state.windowWidth/2;
 }
 
-export const RightBorderCollision = (state, dxWorld) => {
+export const rightBorderCollision = (state, dxWorld) => {
   const newWorldBorderX = state.xWorld + state.gameWidth + dxWorld;
   return newWorldBorderX - state.playerPrototype.radius > state.windowWidth/2;
 }
 
-export const TopBorderCollision = (state, dyWorld) => {
+export const topBorderCollision = (state, dyWorld) => {
   const newWorldBorderY = state.yWorld + dyWorld;
   return newWorldBorderY + state.playerPrototype.radius < state.windowHeight/2;
 }
 
-export const BottomBorderCollision = (state, dyWorld) => {
+export const bottomBorderCollision = (state, dyWorld) => {
   const newWorldBorderY = state.yWorld + state.gameHeight + dyWorld;
   return newWorldBorderY - state.playerPrototype.radius > state.windowHeight/2;
 }
 
-export const CircleCollision = (distanceX, distanceY, firstRadius, secondRadius) => {
+export const circleCollision = (distanceX, distanceY, firstRadius, secondRadius) => {
   const distance = Math.sqrt(distanceX*distanceX + distanceY*distanceY);
   const R = firstRadius + secondRadius;
   return distance <= R;
 }
 
-export const LinearIncrement = (distanceX, distanceY, speed, deltaTime) => {
+export const linearIncrement = (distanceX, distanceY, speed, deltaTime) => {
   const distance = Math.sqrt(distanceX*distanceX + distanceY*distanceY);
   const sin = distanceY/distance;
   const cos = distanceX/distance;
@@ -332,7 +332,7 @@ export const LinearIncrement = (distanceX, distanceY, speed, deltaTime) => {
   return [dX, dY];
 }
 
-export const LinearIncrementByStep = (distanceX, distanceY, speed) => {
+export const linearIncrementByStep = (distanceX, distanceY, speed) => {
   const distance = Math.sqrt(distanceX*distanceX + distanceY*distanceY);
   const sin = distanceY/distance;
   const cos = distanceX/distance;
@@ -341,7 +341,7 @@ export const LinearIncrementByStep = (distanceX, distanceY, speed) => {
   return [dX, dY];
 }
 
-export const SpawnCoordsOnCircle = (centerX, centerY, R) => {
+export const spawnCoordsOnCircle = (centerX, centerY, R) => {
   let angle = Math.random() * (Math.PI -(-Math.PI)) -Math.PI;
   let x = centerX + R*Math.cos(angle);
   let y = centerY + R*Math.sin(angle);

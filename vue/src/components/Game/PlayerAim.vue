@@ -19,7 +19,10 @@ import {mapGetters} from 'vuex';
 export default{
   name: 'GameAim',
   props:{
-    playerRadius: Number
+    playerRadius: {
+      type: Number,
+      default: 15
+    }
   },
   computed:{
     ...mapGetters([
@@ -53,7 +56,7 @@ export default{
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .player{
   border-radius: 50%;
   position: fixed;
