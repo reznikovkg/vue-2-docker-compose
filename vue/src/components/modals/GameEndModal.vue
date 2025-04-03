@@ -5,7 +5,7 @@
       <p class="modal__text">{{ params.message }}</p>
       <button
           class="modal__button"
-          @click="restartGame"
+          @click="() => restartGame()"
       >
         Новая игра
       </button>
