@@ -11,10 +11,10 @@
     </div>
     <div>
       <button
-        v-for="(btn, index) in params.buttons"
-        :key="index"
-        :type="btn.type || 'default'"
-        @click="() => click(btn)"
+          v-for="(btn, index) in params.buttons"
+          :key="index"
+          :type="btn.type || 'default'"
+          @click="() => click(btn)"
       >
         {{ btn.text }}
       </button>

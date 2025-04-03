@@ -1,11 +1,12 @@
 <template>
   <div v-if="isVisible" class="modal-overlay">
-    <div class="modal modal--game-over">
-      <h2 class="modal__title">Конец игры</h2>
-      <p class="modal__text">Вы проиграли! Попробуйте ещё раз.</p>
+    <div class="modal modal--game-end">
+      <h2 class="modal__title">{{ params.title }}</h2>
+      <p class="modal__text">{{ params.message }}</p>
       <button
           class="modal__button"
-          @click="restartGame">
+          @click="restartGame"
+      >
         Новая игра
       </button>
     </div>
@@ -14,17 +15,21 @@
 
 <script>
 export default {
-  name: 'GameOverModal',
+  name: 'GameEndModal',
   props: {
     isVisible: {
       type: Boolean,
       required: true,
     },
+    params: {
+      type: Object,
+      required: true,
+    },
   },
   methods: {
     restartGame() {
-      this.$emit('close');
       this.$emit('restart');
+      this.$emit('close');
     },
   },
 };
@@ -60,7 +65,6 @@ export default {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #fc0202;
   }
   &__text {
     font-size: 18px;

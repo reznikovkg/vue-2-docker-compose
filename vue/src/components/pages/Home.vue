@@ -1,45 +1,39 @@
 <template>
-  <PageLayout>
-    <section>
-      <div
-        class="game"
-        tabindex="0"
-        @keydown="(event) => handleKeyDown(event)"
-      >
-        <div class="game__header">
-          <div class="game__header__content">
-            <h1 class="game__title">2048</h1>
-              <div class="game__score-box">
-                <span class="game__score-box__label">Счет:</span>
-                <span class="game__score-box__value">{{ getScore }}</span>
-              </div>
-            </div>
-          </div>
-        <div class="game__board">
-          <div class="game__grid">
-            <GameTile
-              v-for="(cell, index) in getCells"
-              :key="index"
-              :tile="cell"
-              :style="tilePositions[index]"
-            />
-          </div>
+  <div
+      class="game"
+      tabindex="0"
+      @keydown="(event) => handleKeyDown(event)"
+  >
+    <div class="game__header">
+      <div class="game__header__content">
+        <h1 class="game__title">2048</h1>
+        <div class="game__score-box">
+          <span class="game__score-box__label">Счет:</span>
+          <span class="game__score-box__value">{{ getScore }}</span>
         </div>
       </div>
-    </section>
-  </PageLayout>
+    </div>
+    <div class="game__board">
+      <div class="game__grid">
+        <GameTile
+            v-for="(cell, index) in getCells"
+            :key="index"
+            :tile="cell"
+            :style="tilePositions[index]"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
-import PageLayout from '../parts/PageLayout';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 import GameTile from '@/components/Tile.vue';
 import { KEY_MAP } from '@/utils/keyMap.js';
 
-
 export default {
   name: 'HomePage',
-  components: { GameTile, PageLayout },
+  components: { GameTile },
   computed: {
     ...mapGetters('game', [
       'getCells',
@@ -47,7 +41,6 @@ export default {
       'isGameOver',
       'isVictory',
     ]),
-
     tilePositions() {
       return this.getCells.map((_, index) => {
         const row = Math.floor(index / 4);
@@ -64,11 +57,40 @@ export default {
       'move',
       'restartGame',
     ]),
+    ...mapMutations('modals', [
+      'openModal',
+    ]),
     handleKeyDown(event) {
       event.preventDefault();
       const direction = KEY_MAP[event.key];
       if (direction) {
         this.move(direction);
+      }
+    },
+    openGameEndModal(params) {
+      this.openModal({
+        component: 'GameEndModal',
+        params,
+      });
+    },
+  },
+  watch: {
+    isGameOver(newVal) {
+      if (newVal) {
+        this.openGameEndModal({
+          title: 'Конец игры',
+          message: 'Вы проиграли. Попробуйте снова!',
+          textColor: 'red',
+        });
+      }
+    },
+    isVictory(newVal) {
+      if (newVal) {
+        this.openGameEndModal({
+          title: 'Победа!',
+          message: 'Вы выиграли! Поздравляем!',
+          textColor: 'green',
+        });
       }
     },
   },
@@ -86,7 +108,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: clamp(20px, 5vw, 40px);
+  padding: 20px;
   background-color: #eee4da;
 
   &__header {
@@ -94,13 +116,12 @@ export default {
     justify-content: space-between;
     width: 100%;
     max-width: 620px;
-    margin-bottom: clamp(10px, 2vw, 20px);
+    margin-bottom: 20px;
 
     &__content {
       display: flex;
       align-items: center;
-      gap: clamp(10px, 2vw, 20px);
-      flex-wrap: wrap;
+      gap: 20px;
     }
   }
 
@@ -109,7 +130,10 @@ export default {
     font-weight: 900;
     font-size: clamp(24px, 5vw, 48px);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    white-space: nowrap;
+
+    @media (max-width: 400px) {
+      font-size: clamp(18px, 6vw, 36px);
+    }
   }
 
   &__score-box {
@@ -119,18 +143,17 @@ export default {
     justify-content: center;
     background-color: #f3bb4c;
     border-radius: 10px;
-    width: clamp(80px, 15vw, 150px);
-    height: clamp(40px, 8vw, 80px);
+    width: clamp(100px, 20vw, 150px);
+    height: clamp(50px, 10vw, 80px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: clamp(5px, 1vw, 10px);
 
     &__label {
-      font-size: clamp(10px, 1.5vw, 16px);
-      margin-bottom: clamp(2px, 0.5vw, 4px);
+      font-size: clamp(12px, 2vw, 16px);
+      margin-bottom: 4px;
     }
 
     &__value {
-      font-size: clamp(14px, 2vw, 24px);
+      font-size: clamp(16px, 3vw, 24px);
       font-weight: bold;
     }
   }
@@ -159,30 +182,22 @@ export default {
     max-width: 100%;
     max-height: calc(100% - 50px);
     height: auto;
-
-    @media (max-width: 400px) {
-      gap: 5px;
-    }
   }
 }
 
-&__modal {
-  &-enter-active,
-  &-leave-active {
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  &-enter,
-  &-leave-to {
-    opacity: 0;
-    transform: scale(0.9);
-  }
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-&__tile {
-  &-enter-active {
-    animation: pop-in 0.4s ease;
-  }
+.modal-enter,
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.tile-enter-active {
+  animation: pop-in 0.4s ease;
 }
 
 @keyframes pop-in {

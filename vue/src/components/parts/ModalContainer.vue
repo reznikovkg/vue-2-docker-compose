@@ -4,47 +4,39 @@
         v-for="i in getModals"
         :key="i.hash"
         :is="i.component"
-        :isVisible="i.isVisible"
         :params="i.params"
-        @close="() => removeModal(i.hash)"
-        @restart="() => handleRestart()"
+        :isVisible="true"
+    @close="() => removeModal(i.hash)"
+    @restart="restartGame"
     />
   </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
-import GameOverModal from '@/components/modals/GameOverModal.vue';
-import VictoryModal from '@/components/modals/VictoryModal.vue';
+import { mapGetters, mapMutations, mapActions } from 'vuex';
 
 export default {
-  name: 'ModalContainer',
-  components: {
-    GameOverModal,
-    VictoryModal,
-  },
   computed: {
-    ...mapGetters('modals', [
-      'getModals',
-    ]),
+    ...mapGetters('modals', ['getModals']),
     showModalContainer() {
-      return this.getModals.some((modal) => modal.isVisible);
+      return Object.keys(this.getModals).length > 0;
     },
   },
   methods: {
-    ...mapMutations('modals', [
-      'removeModal',
-    ]),
-    handleRestart() {
-      this.$store.dispatch('game/restartGame');
-    },
+    ...mapMutations('modals', ['removeModal']),
+    ...mapActions('game', ['restartGame']),
   },
 };
 </script>
 
 <style scoped lang="less">
 .modal-container {
-  width: 0;
-  height: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
 }
 </style>
+

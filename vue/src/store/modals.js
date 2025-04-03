@@ -1,42 +1,40 @@
-import Vue from "vue";
+export const randomInteger = (min, max) => {
+  const rand = min + Math.random() * (max - min);
+  return Math.round(rand);
+}
+
+export const genHash = (length = 32) => {
+  let hash = "";
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < length; i++) {
+    hash += chars[randomInteger(0, chars.length-1)]
+  }
+
+  return hash + Date.now();
+}
 
 export default {
   namespaced: true,
   state: {
-    modals: {},
+    modals: {}
   },
   getters: {
-    getModals: (state) => Object.values(state.modals),
+    getModals: (state) => state.modals
   },
   mutations: {
+    removeModal: (state, hash) => {
+      delete state.modals[hash]
+      state.modals = { ...state.modals }
+    },
     openModal: (state, { component, params }) => {
-      const hash = Date.now() + Math.random();
-      Vue.set(state.modals, hash, {
+      const hash = genHash()
+      state.modals[hash] = {
         component,
         hash,
-        params,
-        isVisible: true,
-      });
-    },
-    closeModal: (state, hash) => {
-      if (state.modals[hash]) {
-        Vue.set(state.modals[hash], 'isVisible', false);
+        params
       }
-    },
-    clearModals: (state) => {
-      state.modals = {};
-    },
-  },
-  actions: {
-    openModal: ({ commit }, payload) => {
-      commit('clearModals');
-      commit('openModal', payload);
-    },
-    closeModal: ({ commit }, hash) => {
-      commit('closeModal', hash);
-    },
-    clearAllModals: ({ commit }) => {
-      commit('clearModals');
-    },
-  },
-};
+      state.modals = { ...state.modals }
+    }
+  }
+}
