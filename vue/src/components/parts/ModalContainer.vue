@@ -7,7 +7,7 @@
         :params="i.params"
         :isVisible="true"
     @close="() => removeModal(i.hash)"
-    @restart="restartGame"
+    @restart="() => restartGame()"
     />
   </div>
 </template>
