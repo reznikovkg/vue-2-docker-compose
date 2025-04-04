@@ -2,6 +2,9 @@
   <div
       class="game"
       tabindex="0"
+      ref="gameField"
+      @focus="() => handleFocus()"
+      @blur="() => handleBlur()"
       @keydown="(event) => handleKeyDown(event)"
   >
     <div class="game__header">
@@ -11,6 +14,18 @@
           <span class="game__score-box__label">Счет:</span>
           <span class="game__score-box__value">{{ getScore }}</span>
         </div>
+        <button
+            @click="() => undoMove()"
+            :disabled="isUndoDisabled"
+            class="game__undo-button"
+        >
+          <img src="@/utils/restartbtn.png" />
+        </button>
+        <button
+            @click="() => addSpecificTiles()"
+        >
+          Add 1024 Tiles
+        </button>
       </div>
     </div>
     <div class="game__board">
@@ -26,10 +41,10 @@
   </div>
 </template>
 
+
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import GameTile from '@/components/Tile.vue';
-import { KEY_MAP } from '@/utils/keyMap.js';
 
 export default {
   name: 'HomePage',
@@ -41,6 +56,9 @@ export default {
       'isGameOver',
       'isVictory',
     ]),
+    isUndoDisabled() {
+      return !this.$store.state.game.previousState;
+    },
     tilePositions() {
       return this.getCells.map((_, index) => {
         const row = Math.floor(index / 4);
@@ -54,52 +72,38 @@ export default {
   },
   methods: {
     ...mapActions('game', [
-      'move',
+      'moveByKeyEvent',
       'restartGame',
-    ]),
-    ...mapMutations('modals', [
-      'openModal',
+      'setFocus',
+      'addSpecificTiles', //отладочный элемент
     ]),
     handleKeyDown(event) {
       event.preventDefault();
-      const direction = KEY_MAP[event.key];
-      if (direction) {
-        this.move(direction);
-      }
+      this.moveByKeyEvent(event);
     },
-    openGameEndModal(params) {
-      this.openModal({
-        component: 'GameEndModal',
-        params,
-      });
+    handleFocus() {
+      this.setFocus(true);
     },
-  },
-  watch: {
-    isGameOver(newVal) {
-      if (newVal) {
-        this.openGameEndModal({
-          title: 'Конец игры',
-          message: 'Вы проиграли. Попробуйте снова!',
-          textColor: 'red',
-        });
-      }
+    handleBlur() {
+      setTimeout(() => {
+        this.$refs.gameField.focus();
+        this.setFocus(false);
+      }, 0);
     },
-    isVictory(newVal) {
-      if (newVal) {
-        this.openGameEndModal({
-          title: 'Победа!',
-          message: 'Вы выиграли! Поздравляем!',
-          textColor: 'green',
-        });
+    undoMove() {
+      if (this.$store.state.game.previousState) {
+        this.$store.commit('game/UNDO_MOVE');
       }
     },
   },
   mounted() {
     this.restartGame();
-    this.$el.focus();
+    this.$refs.gameField.focus();
+    this.setFocus(true);
   },
 };
 </script>
+
 
 <style scoped lang="less">
 .game {
@@ -182,6 +186,29 @@ export default {
     max-width: 100%;
     max-height: calc(100% - 50px);
     height: auto;
+  }
+
+  &__undo-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    outline: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: relative;
+
+    & img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }
 

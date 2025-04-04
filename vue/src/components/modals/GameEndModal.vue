@@ -28,8 +28,8 @@ export default {
   },
   methods: {
     restartGame() {
-      this.$emit('restart');
       this.$emit('close');
+      this.$emit('restart');
     },
   },
 };

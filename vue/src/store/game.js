@@ -5,6 +5,7 @@ const initialState = () => ({
     score: 0,
     gameOver: false,
     victory: false,
+    previousState: null,
 });
 
 export default {
@@ -15,7 +16,6 @@ export default {
         getScore: (state) => state.score,
         isGameOver: (state) => state.gameOver,
         isVictory: (state) => state.victory,
-
         hasPossibleMoves: (state) => {
             return state.cells.some((cell, index) => {
                 return (
@@ -45,16 +45,61 @@ export default {
         SET_VICTORY: (state, status) => {
             state.victory = status;
         },
+        SAVE_PREVIOUS_STATE: (state) => {
+            state.previousState = {
+                cells: [...state.cells],
+                score: state.score,
+            };
+        },
+        RESET_PREVIOUS_STATE: (state) => {
+            state.previousState = null;
+        },
+        SET_FOCUS: (state, status) => {
+            state.isFocused = status;
+        },
+        UNDO_MOVE: (state) => {
+            if (state.previousState) {
+                state.cells = state.previousState.cells;
+                state.score = state.previousState.score;
+                state.previousState = null;
+            }
+        },
     },
     actions: {
-        checkGameState: ({ state, commit, rootGetters }) => {
+        checkGameState: ({ state, commit, dispatch }) => {
             if (!state.cells.includes(0)) {
-                const hasMoves = rootGetters['game/hasPossibleMoves'];
-                commit('SET_GAME_OVER', !hasMoves);
+                const hasMoves = state.cells.some((cell, index) => {
+                    return (
+                        (index % 4 < 3 && cell === state.cells[index + 1]) ||
+                        (index < 12 && cell === state.cells[index + 4])
+                    );
+                });
+                if (!hasMoves) {
+                    commit('SET_GAME_OVER', true);
+                    dispatch('openGameEndModal', {
+                        title: 'Конец игры',
+                        message: 'Вы проиграли. Попробуйте снова!',
+                        textColor: 'red',
+                    });
+                }
             }
             if (state.cells.includes(2048)) {
                 commit('SET_VICTORY', true);
+                dispatch('openGameEndModal', {
+                    title: 'Победа!',
+                    message: 'Вы выиграли! Поздравляем!',
+                    textColor: 'green',
+                });
             }
+        },
+        openGameEndModal: ({ commit }, { title, message }) => {
+            commit('modals/openModal',
+                {
+                    component: 'GameEndModal',
+                    params: { title, message },
+                },
+                { root: true }
+            );
         },
         restartGame: ({ commit, dispatch }) => {
             commit('RESET_STATE');
@@ -73,35 +118,65 @@ export default {
                 commit('SET_CELLS', newCells);
             }
         },
+        addSpecificTiles: ({ state, commit }) => { //отладочный элемент (снесётся в дальнейшем)
+            const cells = [...state.cells];
+            const emptyCells = cells
+                .map((value, index) => (value === 0 ? index : -1))
+                .filter((index) => index !== -1);
+
+            if (emptyCells.length >= 2) {
+                const [index1, index2] = emptyCells.slice(0, 2);
+                cells[index1] = 1024;
+                cells[index2] = 1024;
+                commit('SET_CELLS', cells);
+            }
+        },
         move: ({ dispatch, state, commit }, direction) => {
-            let moved = false;
+            const previousCells = [...state.cells];
+            const previousScore = state.score;
+
             let cells = [...state.cells];
             let scoreIncrease = 0;
 
             switch (direction) {
                 case KEY_MAP.ArrowLeft:
-                    ({ cells, moved, scoreIncrease } = processMove(cells, 'left', moveRow));
+                    ({ cells, scoreIncrease } = processMove(cells, 'left', moveRow));
                     break;
                 case KEY_MAP.ArrowRight:
-                    ({ cells, moved, scoreIncrease } = processMove(cells, 'right', moveRow));
+                    ({ cells, scoreIncrease } = processMove(cells, 'right', moveRow));
                     break;
                 case KEY_MAP.ArrowUp:
-                    ({ cells, moved, scoreIncrease } = processMove(cells, 'up', moveColumn));
+                    ({ cells, scoreIncrease } = processMove(cells, 'up', moveColumn));
                     break;
                 case KEY_MAP.ArrowDown:
-                    ({ cells, moved, scoreIncrease } = processMove(cells, 'down', moveColumn));
+                    ({ cells, scoreIncrease } = processMove(cells, 'down', moveColumn));
                     break;
                 default:
                     console.error(`Unknown direction: ${direction}`);
             }
-
-            if (moved) {
+            if (
+                JSON.stringify(previousCells) !== JSON.stringify(cells) ||
+                previousScore !== state.score + scoreIncrease
+            ) {
+                commit('SAVE_PREVIOUS_STATE');
                 commit('SET_CELLS', cells);
                 if (scoreIncrease > 0) {
                     commit('ADD_SCORE', scoreIncrease);
                 }
                 dispatch('addRandomTile');
                 dispatch('checkGameState');
+            }
+        },
+        setFocus: ({ commit }, status) => {
+            commit('SET_FOCUS', status);
+        },
+        undoMove: ({ commit }) => {
+            commit('UNDO_MOVE');
+        },
+        moveByKeyEvent: ({ dispatch }, event) => {
+            const direction = KEY_MAP[event.key];
+            if (direction) {
+                dispatch('move', direction);
             }
         },
     },
@@ -134,11 +209,13 @@ const compressAndMerge = (array, direction) => {
 const moveRow = (cells, direction) => {
     let moved = false;
     let totalScoreIncrease = 0;
+
     for (let row = 0; row < 4; row++) {
         const start = row * 4;
         const end = start + 4;
         const currentRow = cells.slice(start, end);
         const { compressed, scoreIncrease } = compressAndMerge(currentRow, direction);
+
         if (JSON.stringify(currentRow) !== JSON.stringify(compressed)) {
             cells.splice(start, 4, ...compressed);
             moved = true;
@@ -151,9 +228,11 @@ const moveRow = (cells, direction) => {
 const moveColumn = (cells, direction) => {
     let moved = false;
     let totalScoreIncrease = 0;
+
     for (let col = 0; col < 4; col++) {
         const column = [cells[col], cells[col + 4], cells[col + 8], cells[col + 12]];
         const { compressed, scoreIncrease } = compressAndMerge(column, direction);
+
         if (JSON.stringify(column) !== JSON.stringify(compressed)) {
             cells[col] = compressed[0];
             cells[col + 4] = compressed[1];
