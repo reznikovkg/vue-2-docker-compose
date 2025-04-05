@@ -1,47 +1,48 @@
 class char {
-    constructor (_name, _actions, _items, _tasks) {
+    constructor (_name, _iconPath, _actions, _items, _tasks) {
         this.name = _name;
-        this.energy = 100;
-        this.money = 0;
-        this.energyRecievedMult = 1.0;
-        this.moneyRecievedMult = 1.0;
+        this.stats = {energy: 100, money: 0}
+        this.recieveMultipliers = {energy: 1.0, money: 1.0}
         this.charStatus = 'idle';
         this.actions = _actions;
         this.items = _items;
         this.tasks = _tasks;
+        this.iconPath = _iconPath;
     }
     
     addEnergy (amount) {
-        if (this.energy < 100 && this.energy + amount >= 100) {
-            this.energy = 100;
-        } else if (this.energy < 100) {
-            this.energy += amount;
+        let multipliedAmount = amount * this.recieveMultipliers.energy;
+
+        if (this.stats.energy < 100 && this.stats.energy + multipliedAmount >= 100) {
+            this.stats.energy = 100;
+        } else if (this.stats.energy < 100) {
+            this.stats.energy += multipliedAmount;
         } else {
             throw 'Energy already full.';
         }
     }
 
     reduceEnergy (amount) {
-        if (this.energy > 0 && this.energy - amount <= 100) {
-            this.energy = 0;
-        } else if (this.energy > 0) {
-            this.energy += amount;
+        if (this.stats.energy - amount == 0) {
+            this.stats.energy = 0;
+        } else if (this.stats.energy > 0 && this.stats.energy - amount > 0) {
+            this.stats.energy -= amount;
         } else {
-            throw 'No energy left.';
+            throw 'Not enough energy left.';
         }
     }
 
     addMoney (amount) {
-        this.money += amount;
+        this.stats.money += amount * this.recieveMultipliers.money;
     }
 
     takeMoney (amount) {
-        if (this.money > 0 && this.money - amount <= 0) {
-            this.money = 0;
-        } else if (this.money > 0) {
-            this.money -= amount;
+        if (this.stats.money - amount == 0) {
+            this.stats.money = 0;
+        } else if (this.stats.money > 0 && this.stats.money - amount > 0) {
+            this.stats.money -= amount;
         } else {
-            throw "No money left."
+            throw "Not enough money left."
         }
     }
 
@@ -75,29 +76,44 @@ class char {
         
         setTimeout(() => {
             this.charStatus = 'idle';
+            
+        }, action.duration);
+        setTimeout(() => {
             action.isOnCooldown = false;
             
         }, action.actionCooldown);
+    }
+
+    equipItem (item) {
+        if (item.isEquipped) {
+            throw 'Item already equipped.';
+        }
+
+        this.takeMoney(item.cost);
+        item.isEquipped = true;
+        this.recieveMultipliers.energy += item.multipliers.energy;
+        this.recieveMultipliers.money += item.multipliers.money
     }
 }
 
 
 export default new char(
-    'CREATURE',
+    'Cat',
+    'img/char/cat.png',
+    // actions
     [
         {
-            id: 1,
             name: 'Sing',
             verb: 'Singing',
             cooldown: 30,
             isOnCooldown: false,
             requirements: {energy: 30},
             returns: {money: 100},
-            actionCooldown: 5000,
-            desc: 'Sing a little and get a bit of money.'
+            actionCooldown: 15000,
+            duration: 5000,
+            desc: 'Get a bit of money for a bit of energy.'
         },
         {
-            id: 2,
             name: 'Spin',
             verb: 'Spinning',
             cooldown: 60,
@@ -105,10 +121,10 @@ export default new char(
             requirements: {energy: 90},
             returns: {money: 1000},
             actionCooldown: 10000,
-            desc: 'Use most of your energy to earn money.'
+            duration: 2000,
+            desc: 'Earn a lot of money for a lot of energy.'
         },
         {
-            id: 3,
             name: 'Sleep',
             verb: 'Sleeping',
             cooldown: 120,
@@ -116,9 +132,35 @@ export default new char(
             requirements: {energy:0, money:400},
             returns: {energy: 100},
             actionCooldown: 30000,
+            duration: 10000,
             desc: 'Restore energy at the cost of some money.'
         }
     ],
-    [],
-    []
+    // items
+    [
+        {
+            name: 'Hat',
+            iconPath: 'img/items/hat.webp',
+            isEquipped: false,
+            cost: 300,
+            multipliers: {energy: 0.1, money: 0.2},
+            desc: 'A funny hat. Gives you a bit more money and energy.'
+        },
+        {
+            name: 'Necklace',
+            iconPath: 'img/items/necklace.png',
+            isEquipped: false,
+            cost: 1200,
+            multipliers: {energy: 2.0, money: 0.0},
+            desc: 'A weird necklace that looks like a pine tree. Smells like forest after a rain.'
+        }
+    ],
+    // tasks
+    [
+        {
+            name: 'click_task',
+            returns: {energy: 100, money: 1000000},
+            desc: 'Click the button to complete the task'
+        }
+    ]
 );

@@ -1,63 +1,71 @@
 <template>
     <PageLayout>
-        <MenuListLayout>
+        <MenuListLayout class="side-menu-wrapper">
             <div class="menu__block-wrapper">
                 <div class="menu__tag primary-text">Character</div>
             </div>
             <div class="menu__block-wrapper">
-                <span class="stats-text detail-text">{{ character.money }}</span>
-                <img class="stats-icon" src="../../assets/rupee.svg" alt="">
-                <span v-if="isMoneyChangeVisible" v-bind:class="moneyChangeTypeClass" class="stats-change__text detail-text">{{ moneyChangeText }}</span>
+                <span class="stats-text detail-text">{{ this.character.stats.money }}</span>
+                <img class="stats-icon" src="@/assets/img/rupee.svg" alt="">
+                <span v-if="moneyChangeStatus!==0" v-bind:class="moneyChangeTypeClass" class="stats-change__text detail-text">{{ moneyChangeText }}</span>
             </div>
             <div class="menu__block-wrapper">
-                <span class="stats-text detail-text">{{ character.energy }}/100</span>
-                <img class="stats-icon" src="../../assets/energy_bolt.svg" alt="">
-                <span v-if="isEnergyChangeVisible" v-bind:class="energyChangeTypeClass" class="stats-change__text detail-text">{{ energyChangeText }}</span>
+                <span class="stats-text detail-text">{{ this.character.stats.energy }}/100</span>
+                <img class="stats-icon" src="@/assets/img/energy_bolt.svg" alt="">
+                <span v-if="energyChangeStatus!==0" v-bind:class="energyChangeTypeClass" class="stats-change__text detail-text">{{ energyChangeText }}</span>
             </div>
             <div class="menu__block-wrapper">
                 <button v-on:click="openItemsModal" class="modal-button">
                     <div class="button__tag detail-text">Items</div>
-                    <img class="modal-button__icon" src="../../assets/items.svg" alt="">
+                    <img class="modal-button__icon" src="@/assets/img/items.svg" alt="">
                 </button>
             </div>
             <div class="menu__block-wrapper">
                 <button v-on:click="openTasksModal" class="modal-button">
                     <div class="button__tag detail-text">Tasks</div>
-                    <img class="modal-button__icon" src="../../assets/tasks.svg" alt="">
+                    <img class="modal-button__icon" src="@/assets/img/tasks.svg" alt="">
                 </button>
             </div>
         </MenuListLayout>
+
         <div class="char-screen-wrapper">
             <div class="char-info-wrapper">
                 <p class="primary-text" id="char-name">{{ character.name }}</p>
                 <p v-bind:class="charStatusClass" class="detail-text" id="char-status">{{ character.charStatus }}</p>
             </div>
-            <img id="char-img" src="../../assets/cat.png" alt="">
+            <img id="char-img" :src="require(`@/assets/${character.iconPath}`)" alt="">
         </div>
-        <MenuListLayout>
+
+        <MenuListLayout class="side-menu-wrapper">
             <div class="menu__block-wrapper">
                 <div class="menu__tag primary-text">Actions</div>
             </div>
-            <div v-for="action in character.actions" :key="action.id" class="menu__block-wrapper">
+            <div v-for="(action, index) in character.actions" :key="index" class="menu__block-wrapper">
                 <button v-on:click="charAction(action)" class="action__button"
                 v-on:mouseenter="showTooltip" v-on:mousemove="moveTooltip" v-on:mouseleave="hideTooltip"
-                v-bind:data-action-desc="action.desc">
+                v-bind:data-desc="action.desc">
                     <div class="button__tag detail-text">{{ action.name }}</div>
                 </button>
             </div>
         </MenuListLayout>
+
+        
+
+        <MenuGridModalLayout ref="itemsModal">
+            <div v-for="(item, index) in character.items" :key="index" class="grid-menu__button-wrapper">
+                <button v-on:click="buyItem(item)" v-bind:class="{'equipped-item__button': item.isEquipped}" v-bind:disabled="item.isEquipped" class="item__button"
+                v-on:mouseenter="showTooltip" v-on:mousemove="moveTooltip" v-on:mouseleave="hideTooltip" v-bind:data-desc="item.desc+'\n'+'Price:'+item.cost">
+                    <img :src="require(`@/assets/${item.iconPath}`)" alt="" class="item__icon">
+                </button>
+            </div>
+        </MenuGridModalLayout>
+        <MenuGridModalLayout ref="tasksModal">
+            <!-- TODO TASKS MENU -->
+        </MenuGridModalLayout>
+
         <TooltipLayout v-if="isTooltipVisible" :style="{top: `${tooltipYpos}px`, left: `${tooltipXpos}px`}">
             <div class="tooltip__text detail-text">{{ tooltipText }}</div>
         </TooltipLayout>
-
-        <ModalContainer ref="itemsModal">
-            <div class="items-modal__contents-grid">
-            </div>
-        </ModalContainer>
-        <ModalContainer ref="tasksModal">
-            <div class="tasks-modal__contents-grid">
-            </div>
-        </ModalContainer>
     </PageLayout>
 </template>
 
@@ -66,7 +74,7 @@ import MenuListLayout from '../parts/MenuListLayout.vue';
 import PageLayout from '../parts/PageLayout.vue';
 import catChar from '@/char';
 import TooltipLayout from '../parts/TooltipLayout.vue';
-import ModalContainer from '../modals/ModalContainer.vue';
+import MenuGridModalLayout from '../parts/MenuGridModalLayout.vue';
 
 
 export default {
@@ -75,17 +83,15 @@ export default {
         PageLayout,
         MenuListLayout,
         TooltipLayout,
-        ModalContainer
+        MenuGridModalLayout
     },
 
     data () {
         return {
             character: catChar,
             isTooltipVisible: false,
-            isEnergyChangeVisible: false,
-            isMoneyChangeVisible: false,
-            isEnergyChangePositive: false,
-            isMoneyChangePositive: false,
+            energyChangeStatus: 0,
+            moneyChangeStatus: 0,
             isErrorRaised: false,
             tooltipYpos: 0,
             tooltipXpos: 0,
@@ -99,15 +105,15 @@ export default {
     computed: {
         moneyChangeTypeClass () {
             return {
-                'stats__change-positive': this.isMoneyChangePositive,
-                'stats__change-negative': !this.isMoneyChangePositive
+                'stats__change-positive': this.moneyChangeStatus == 1,
+                'stats__change-negative': this.moneyChangeStatus == -1
             };
         },
 
         energyChangeTypeClass () {
             return {
-                'stats__change-positive': this.isEnergyChangePositive,
-                'stats__change-negative': !this.isEnergyChangePositive
+                'stats__change-positive': this.energyChangeStatus == 1,
+                'stats__change-negative': this.energyChangeStatus == -1
             };
         },
 
@@ -124,7 +130,7 @@ export default {
             if (!this.isErrorRaised) {
                 try {
                     this.character.doAction(action);
-                    this.displayStatsChange(action.returns.energy, action.returns.money);
+                    this.displayStatsChange(action.returns.energy * this.character.recieveMultipliers.energy, action.returns.money * this.character.recieveMultipliers.money);
                     setTimeout(() => { this.displayStatsChange(action.requirements.energy * -1, action.requirements.money * -1) }, 4000);
                 }
                 catch(err) {
@@ -132,33 +138,42 @@ export default {
                 }
             }
         },
+        buyItem (item) {
+            try {
+                this.character.equipItem(item);
+
+            }
+            catch(err) {
+                console.log("Can't equip item. " + err);
+            }
+        },
+        // activateTask (task) {
+        //     // TODO
+        // },
 
         displayStatsChange (energyChange, moneyChange) {
-            this.isEnergyChangeVisible = true;
 
             if (energyChange > 0) {
-                this.isEnergyChangePositive = true;
+                this.energyChangeStatus = 1;
                 this.energyChangeText = '+' + String(energyChange);
             } else if (energyChange < 0) {
-                this.isEnergyChangePositive = false;
+                this.energyChangeStatus = -1;
                 this.energyChangeText = String(energyChange);
             }
             setTimeout(() => {
-                    this.isEnergyChangeVisible = false;
+                    this.energyChangeStatus = 0;
                     this.energyChangeText = '';
                 }, 3000);
 
-            this.isMoneyChangeVisible = true;
-
             if (moneyChange > 0) {
-                this.isMoneyChangePositive = true;
+                this.moneyChangeStatus = 1;
                 this.moneyChangeText = '+' + String(moneyChange);
             } else if (moneyChange < 0) {
-                this.isMoneyChangePositive = false;
+                this.moneyChangeStatus = -1;
                 this.moneyChangeText = String(moneyChange);
             }
             setTimeout(() => {
-                    this.isMoneyChangeVisible = false;
+                    this.moneyChangeStatus = 0;
                     this.moneyChangeText = '';
                 }, 3000);
         },
@@ -172,26 +187,24 @@ export default {
 
                 setTimeout(() => {
                     this.isErrorRaised = false;
+
+                    if (this.character.charStatus == 'idle') {
+                        prevStatus = 'idle';
+                    }
                     this.character.charStatus = prevStatus;
                 }, 2000)
             }
         },
 
         openItemsModal () {
-            this.$refs.itemsModal.openModal();
-        },
-        closeItemsModal () {
-            this.$refs.itemsModal.closeModal();
+            this.$refs.itemsModal.openRootModal();
         },
         openTasksModal () {
-            this.$refs.tasksModal.openModal();
-        },
-        closeTasksModal () {
-            this.$refs.tasksModal.closeModal();
+            this.$refs.tasksModal.openRootModal();
         },
 
         showTooltip (event) {
-            this.tooltipText = event.target.dataset.actionDesc;
+            this.tooltipText = event.target.dataset.desc;
             
             this.tooltipYpos = event.target.offsetTop + event.target.offsetHeight * 0.8;
             this.isTooltipVisible = true;
@@ -216,7 +229,7 @@ export default {
     padding-top: 5%;
 }
 
-.menu-wrapper {
+.side-menu-wrapper {
     vertical-align: top;
     display: inline-block;
     width: 20%;
@@ -308,5 +321,27 @@ export default {
 .char-status-err {
     color: @cBad;
     font-size: @sizeFontLarge;
+}
+
+.grid-menu__button-wrapper {
+    display: flex;
+}
+
+.item__button, .task__button {
+    background-color: @cPrimary;
+    border-color: @cAccent;
+    width: 200px;
+    height: 200px;
+    margin: 4px;
+}
+
+.item__icon {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+
+.equipped-item__button {
+    border-color: @cSecondary;
 }
 </style>

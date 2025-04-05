@@ -1,6 +1,6 @@
 <template>
     <div v-on:click="closeModal" v-if="isVisible" class="modal__overlay">
-        <div class="modal__contents-wrapper">
+        <div class="modal__contents-wrapper" @click.stop>
             <slot />
         </div>
     </div>
@@ -27,7 +27,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .modal__overlay {
     position: fixed;
     display: flex;
