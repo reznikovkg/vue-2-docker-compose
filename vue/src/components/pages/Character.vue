@@ -31,7 +31,7 @@
         <div class="char-screen-wrapper">
             <div class="char-info-wrapper">
                 <p class="primary-text" id="char-name">{{ character.name }}</p>
-                <p v-bind:class="charStatusClass" class="detail-text" id="char-status">{{ character.charStatus }}</p>
+                <p class="detail-text" id="char-status">{{ character.charStatus }}</p>
             </div>
             <img id="char-img" :src="require(`@/assets/${character.iconPath}`)" alt="">
         </div>
@@ -49,11 +49,10 @@
             </div>
         </MenuListLayout>
 
-        
 
         <MenuGridModalLayout ref="itemsModal">
             <div v-for="(item, index) in character.items" :key="index" class="grid-menu__button-wrapper">
-                <button v-on:click="buyItem(item)" v-bind:class="{'equipped-item__button': item.isEquipped}" v-bind:disabled="item.isEquipped" class="item__button"
+                <button v-on:click="buyItem(item)" v-bind:class="{'item__equipped': item.isEquipped}" v-bind:disabled="item.isEquipped" class="item__button"
                 v-on:mouseenter="showTooltip" v-on:mousemove="moveTooltip" v-on:mouseleave="hideTooltip" v-bind:data-desc="item.desc+'\n'+'Price:'+item.cost">
                     <img :src="require(`@/assets/${item.iconPath}`)" alt="" class="item__icon">
                 </button>
@@ -64,7 +63,11 @@
         </MenuGridModalLayout>
 
         <TooltipLayout v-if="isTooltipVisible" :style="{top: `${tooltipYpos}px`, left: `${tooltipXpos}px`}">
-            <div class="tooltip__text detail-text">{{ tooltipText }}</div>
+            <p class="tooltip__text detail-text">{{ tooltipText }}</p>
+        </TooltipLayout>
+
+        <TooltipLayout v-if="isErrorRaised" class="error-box__wrapper">
+            <p class="error-box__text detail-text">{{ errorText }}</p>
         </TooltipLayout>
     </PageLayout>
 </template>
@@ -115,13 +118,6 @@ export default {
                 'stats__change-positive': this.energyChangeStatus == 1,
                 'stats__change-negative': this.energyChangeStatus == -1
             };
-        },
-
-        charStatusClass () {
-            return {
-                'char-status-err': this.isErrorRaised,
-                '': !this.isErrorRaised
-            }
         }
     },
 
@@ -182,16 +178,10 @@ export default {
             if (!this.isErrorRaised) {
                 this.isErrorRaised = true;
 
-                let prevStatus = this.character.charStatus;
-                this.character.charStatus = message;
+                this.errorText = message;
 
                 setTimeout(() => {
                     this.isErrorRaised = false;
-
-                    if (this.character.charStatus == 'idle') {
-                        prevStatus = 'idle';
-                    }
-                    this.character.charStatus = prevStatus;
                 }, 2000)
             }
         },
@@ -243,13 +233,13 @@ export default {
 }
 
 #char-name {
-    font-size: @sizeFontLargest;
+    font-size: @sFontLargest;
     margin-bottom: 1%;
     margin-top: 1%;
 }
 
 #char-status {
-    font-size: @sizeFontBigger;
+    font-size: @sFontBigger;
     margin-top: 0px;
     margin-bottom: 1%;
 }
@@ -261,7 +251,7 @@ export default {
 
 .stats-text {
     vertical-align: middle;
-    font-size: @sizeFontBigger;
+    font-size: @sFontBigger;
 }
 
 .stats-icon {
@@ -279,7 +269,7 @@ export default {
 }
 
 .button__tag {
-    font-size: @sizeFontBigger;
+    font-size: @sFontBigger;
 }
 
 .modal-button {
@@ -299,7 +289,7 @@ export default {
 }
 
 .menu__tag {
-    font-size: @sizeFontLarge;
+    font-size: @sFontLarge;
 }
 
 .tooltip__text {
@@ -307,7 +297,7 @@ export default {
 }
 
 .stats-change__text {
-    font-size: @sizeFontNormal;
+    font-size: @sFontNormal;
 }
 
 .stats__change-positive {
@@ -320,7 +310,7 @@ export default {
 
 .char-status-err {
     color: @cBad;
-    font-size: @sizeFontLarge;
+    font-size: @sFontLarge;
 }
 
 .grid-menu__button-wrapper {
@@ -341,7 +331,21 @@ export default {
     object-fit: contain;
 }
 
-.equipped-item__button {
+.item__equipped {
     border-color: @cSecondary;
+}
+
+.error-box {
+    &__wrapper {
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    &__text {
+        margin: 6px;
+        color: @cBad;
+        font-size: @sFontLarge;
+    }
 }
 </style>
