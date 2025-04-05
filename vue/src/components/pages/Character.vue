@@ -1,57 +1,57 @@
 <template>
     <PageLayout>
-        <MenuListLayout class="side-menu-wrapper">
-            <div class="menu__block-wrapper">
+        <MenuListLayout class="side-menu__wrapper">
+            <div class="menu__block__wrapper">
                 <div class="menu__tag primary-text">Character</div>
             </div>
-            <div class="menu__block-wrapper">
-                <span class="stats-text detail-text">{{ this.character.stats.money }}</span>
-                <img class="stats-icon" src="@/assets/img/rupee.svg" alt="">
-                <span v-if="moneyChangeStatus!==0" v-bind:class="moneyChangeTypeClass" class="stats-change__text detail-text">{{ moneyChangeText }}</span>
+            <div class="menu__block__wrapper">
+                <span class="stats__text detail-text">{{ this.character.stats.money }}</span>
+                <img class="stats__icon" src="@/assets/img/rupee.svg" alt="">
+                <span v-if="moneyChangeStatus!==0" v-bind:class="moneyChangeTypeClass" class="stats__change__text detail-text">{{ moneyChangeText }}</span>
             </div>
-            <div class="menu__block-wrapper">
-                <span class="stats-text detail-text">{{ this.character.stats.energy }}/100</span>
-                <img class="stats-icon" src="@/assets/img/energy_bolt.svg" alt="">
-                <span v-if="energyChangeStatus!==0" v-bind:class="energyChangeTypeClass" class="stats-change__text detail-text">{{ energyChangeText }}</span>
+            <div class="menu__block__wrapper">
+                <span class="stats__text detail-text">{{ this.character.stats.energy }}/100</span>
+                <img class="stats__icon" src="@/assets/img/energy_bolt.svg" alt="">
+                <span v-if="energyChangeStatus!==0" v-bind:class="energyChangeTypeClass" class="stats__change__text detail-text">{{ energyChangeText }}</span>
             </div>
-            <div class="menu__block-wrapper">
+            <div class="menu__block__wrapper">
                 <button v-on:click="openItemsModal" class="modal-button">
-                    <div class="button__tag detail-text">Items</div>
+                    <div class="modal-button__tag detail-text">Items</div>
                     <img class="modal-button__icon" src="@/assets/img/items.svg" alt="">
                 </button>
             </div>
-            <div class="menu__block-wrapper">
+            <div class="menu__block__wrapper">
                 <button v-on:click="openTasksModal" class="modal-button">
-                    <div class="button__tag detail-text">Tasks</div>
+                    <div class="modal-button__tag detail-text">Tasks</div>
                     <img class="modal-button__icon" src="@/assets/img/tasks.svg" alt="">
                 </button>
             </div>
         </MenuListLayout>
 
-        <div class="char-screen-wrapper">
-            <div class="char-info-wrapper">
+        <div id="char-screen__wrapper">
+            <div id="char__info__wrapper">
                 <p class="primary-text" id="char-name">{{ character.name }}</p>
                 <p class="detail-text" id="char-status">{{ character.charStatus }}</p>
             </div>
             <img id="char-img" :src="require(`@/assets/${character.iconPath}`)" alt="">
         </div>
 
-        <MenuListLayout class="side-menu-wrapper">
-            <div class="menu__block-wrapper">
+        <MenuListLayout class="side-menu__wrapper">
+            <div class="menu__block__wrapper">
                 <div class="menu__tag primary-text">Actions</div>
             </div>
-            <div v-for="(action, index) in character.actions" :key="index" class="menu__block-wrapper">
-                <button v-on:click="charAction(action)" class="action__button"
+            <div v-for="(action, index) in character.actions" :key="index" class="menu__block__wrapper">
+                <button v-on:click="charAction(action)" class="action-button"
                 v-on:mouseenter="showTooltip" v-on:mousemove="moveTooltip" v-on:mouseleave="hideTooltip"
                 v-bind:data-desc="action.desc">
-                    <div class="button__tag detail-text">{{ action.name }}</div>
+                    <div class="action-button__tag detail-text">{{ action.name }}</div>
                 </button>
             </div>
         </MenuListLayout>
 
 
         <MenuGridModalLayout ref="itemsModal">
-            <div v-for="(item, index) in character.items" :key="index" class="grid-menu__button-wrapper">
+            <div v-for="(item, index) in character.items" :key="index" class="grid-menu__button__wrapper">
                 <button v-on:click="buyItem(item)" v-bind:class="{'item__equipped': item.isEquipped}" v-bind:disabled="item.isEquipped" class="item__button"
                 v-on:mouseenter="showTooltip" v-on:mousemove="moveTooltip" v-on:mouseleave="hideTooltip" v-bind:data-desc="item.desc+'\n'+'Price:'+item.cost">
                     <img :src="require(`@/assets/${item.iconPath}`)" alt="" class="item__icon">
@@ -108,15 +108,15 @@ export default {
     computed: {
         moneyChangeTypeClass () {
             return {
-                'stats__change-positive': this.moneyChangeStatus == 1,
-                'stats__change-negative': this.moneyChangeStatus == -1
+                'stats__change__positive': this.moneyChangeStatus == 1,
+                'stats__change__negative': this.moneyChangeStatus == -1
             };
         },
 
         energyChangeTypeClass () {
             return {
-                'stats__change-positive': this.energyChangeStatus == 1,
-                'stats__change-negative': this.energyChangeStatus == -1
+                'stats__change__positive': this.energyChangeStatus == 1,
+                'stats__change__negative': this.energyChangeStatus == -1
             };
         }
     },
@@ -211,7 +211,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style scoped lang="less">
 .contents {
     text-align: center;
     width: 100%;
@@ -219,57 +219,75 @@ export default {
     padding-top: 5%;
 }
 
-.side-menu-wrapper {
+.side-menu__wrapper {
     vertical-align: top;
     display: inline-block;
     width: 20%;
 }
 
-.char-screen-wrapper {
-    vertical-align: top;
-    display: inline-block;
-    width: 50%;
-    padding: 1%;
+#char {
+    &-name {
+        font-size: @sFontLargest;
+        margin-bottom: 1%;
+        margin-top: 1%;
+    }
+
+    &-status {
+        font-size: @sFontBigger;
+        margin-top: 0px;
+        margin-bottom: 1%;
+    }
+
+    &-img {
+        display: block;
+        margin: auto;
+    }
+
+    &-screen__wrapper {
+        vertical-align: top;
+        display: inline-block;
+        width: 50%;
+        padding: 1%;
+    }
 }
 
-#char-name {
-    font-size: @sFontLargest;
-    margin-bottom: 1%;
-    margin-top: 1%;
+.stats {
+    &__text {
+        vertical-align: middle;
+        font-size: @sFontBigger;
+    }
+
+    &__icon {
+        vertical-align: middle;
+        scale: 150%;
+        margin-left: 2%;
+        margin-right: 2%;
+    }
+
+    &__change {
+        &__text {
+            font-size: @sFontNormal;
+        }
+
+        &__positive {
+            color: @cGood;
+        }
+
+        &__negative {
+            color: @cBad;
+        }
+    }
 }
 
-#char-status {
-    font-size: @sFontBigger;
-    margin-top: 0px;
-    margin-bottom: 1%;
-}
-
-#char-img {
-    display: block;
-    margin: auto;
-}
-
-.stats-text {
-    vertical-align: middle;
-    font-size: @sFontBigger;
-}
-
-.stats-icon {
-    vertical-align: middle;
-    scale: 150%;
-    margin-left: 2%;
-    margin-right: 2%;
-}
-
-.action__button {
+.action-button {
     width: 30%;
     height: 50px;
     background-color: @cPrimary;
     border-color: @cAccent;
-}
 
-.button__tag {
-    font-size: @sFontBigger;
+    &__tag {
+        font-size: @sFontBigger;
+    }
 }
 
 .modal-button {
@@ -277,13 +295,17 @@ export default {
     height: 70px;
     background-color: @cPrimary;
     border-color: @cAccent;
+
+    &__icon {
+        scale: 150%;
+    }
+
+    &__tag {
+        font-size: @sFontBigger;
+    }
 }
 
-.modal-button__icon {
-    scale: 150%;
-}
-
-.menu__block-wrapper {
+.menu__block__wrapper {
     margin-top: 2%;
     margin-bottom: 2%;
 }
@@ -296,43 +318,38 @@ export default {
     margin: 4px;
 }
 
-.stats-change__text {
-    font-size: @sFontNormal;
-}
-
-.stats__change-positive {
-    color: @cGood;
-}
-
-.stats__change-negative {
-    color: @cBad;
-}
-
-.char-status-err {
-    color: @cBad;
-    font-size: @sFontLarge;
-}
-
-.grid-menu__button-wrapper {
+.grid-menu__button__wrapper {
     display: flex;
 }
 
-.item__button, .task__button {
-    background-color: @cPrimary;
-    border-color: @cAccent;
-    width: 200px;
-    height: 200px;
-    margin: 4px;
+.task {
+    &__button {
+        background-color: @cPrimary;
+        border-color: @cAccent;
+        width: 200px;
+        height: 200px;
+        margin: 4px;
+    }
 }
 
-.item__icon {
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
-}
+.item {
+    &__button {
+        background-color: @cPrimary;
+        border-color: @cAccent;
+        width: 200px;
+        height: 200px;
+        margin: 4px;
+    }
 
-.item__equipped {
-    border-color: @cSecondary;
+    &__icon {
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+    }
+
+    &__equipped {
+        border-color: @cSecondary;
+    }
 }
 
 .error-box {

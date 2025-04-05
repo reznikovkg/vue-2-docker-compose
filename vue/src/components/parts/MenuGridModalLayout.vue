@@ -22,16 +22,7 @@ export default {
 }
 </script>
 
-<style lang="less">
-.modal__contents-wrapper {
-    position: absolute;
-    background-color: @cPrimary;
-    border: 2px solid @cAccent;
-    height: 500px;
-    width: 1000px;
-    padding: 10px;
-}
-
+<style scoped lang="less">
 .menu-grid {
     display: flex;
     flex-wrap: wrap;

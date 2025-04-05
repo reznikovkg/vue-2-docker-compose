@@ -1,5 +1,5 @@
 <template>
-    <div  class="tooltip-wrapper">
+    <div  class="tooltip__wrapper">
         <slot />
     </div>
 </template>
@@ -11,7 +11,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-.tooltip-wrapper {
+.tooltip__wrapper {
     position: absolute;
     background-color: @cPrimary;
     border: 2px solid @cAccent;

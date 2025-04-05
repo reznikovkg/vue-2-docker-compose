@@ -1,6 +1,6 @@
 <template>
-    <div class="menu-wrapper">
-        <section class="menu-options">
+    <div class="menu__wrapper">
+        <section class="menu__options">
             <slot />
         </section>
     </div>
@@ -12,5 +12,5 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 </style>

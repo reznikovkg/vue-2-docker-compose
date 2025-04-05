@@ -28,15 +28,26 @@ export default {
 </script>
 
 <style scoped lang="less">
-.modal__overlay {
-    position: fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.5);
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
+.modal {
+    &__overlay {
+        position: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.5);
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__contents-wrapper {
+        position: absolute;
+        background-color: @cPrimary;
+        border: 2px solid @cAccent;
+        height: 500px;
+        width: 1000px;
+        padding: 10px;
+    }
 }
 </style>
