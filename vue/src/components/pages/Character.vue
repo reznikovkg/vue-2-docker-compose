@@ -126,14 +126,14 @@ export default {
         }
     },
 
-    mounted () {
+    created () {
         this.loadCharData(JSON.parse(localStorage.charInfo), JSON.parse(localStorage.charStats), JSON.parse(localStorage.charMultipliers), JSON.parse(localStorage.charItems));
     },
     watch: {
         stats: {
             handler (newStats) {
                 localStorage.charStats = JSON.stringify(newStats);
-                
+
                 if (newStats !== this.oldStatsCache) {
                     this.displayStatsChange(newStats, this.oldStatsCache);
                     this.oldStatsCache = {energy: newStats.energy, money: newStats.money};
