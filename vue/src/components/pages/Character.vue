@@ -95,6 +95,7 @@ export default {
             stats: null,
             multipliers: null,
             items: null,
+            oldStatsCache: null,
 
             isTooltipVisible: false,
             energyChangeStatus: 0,
@@ -132,6 +133,11 @@ export default {
         stats: {
             handler (newStats) {
                 localStorage.charStats = JSON.stringify(newStats);
+                
+                if (newStats !== this.oldStatsCache) {
+                    this.displayStatsChange(newStats, this.oldStatsCache);
+                    this.oldStatsCache = {energy: newStats.energy, money: newStats.money};
+                }
             },
             deep: true
         },
@@ -153,6 +159,7 @@ export default {
         loadCharData (charInfo, charStats, charMultipliers, charItems) {
             this.character = new char(charInfo.name, charInfo.iconPath, charStats, charMultipliers, charInfo.actions, charItems, charInfo.tasks);
             this.stats = this.character.stats;
+            this.oldStatsCache = {energy: this.stats.energy, money: this.stats.money};
             this.multipliers = this.character.multipliers;
             this.items = this.character.items;
         },
@@ -161,8 +168,6 @@ export default {
             if (!this.isErrorRaised) {
                 try {
                     this.character.doAction(action);
-                    this.displayStatsChange(action.returns.energy * this.character.multipliers.energy, action.returns.money * this.character.multipliers.money);
-                    setTimeout(() => { this.displayStatsChange(action.requirements.energy * -1, action.requirements.money * -1) }, 4000);
                 }
                 catch(err) {
                     this.displayErrMessage("Can't " + String(action.name).toLowerCase() + '. ' + err);
@@ -181,7 +186,9 @@ export default {
         //     // TODO
         // },
 
-        displayStatsChange (energyChange, moneyChange) {
+        displayStatsChange (newStats, oldStats) {
+            let energyChange = newStats.energy - oldStats.energy;
+            let moneyChange = newStats.money - oldStats.money;
 
             if (energyChange > 0) {
                 this.energyChangeStatus = 1;
@@ -207,6 +214,33 @@ export default {
                     this.moneyChangeText = '';
                 }, 3000);
         },
+
+        // displayStatsChange (energyChange, moneyChange) {
+
+        //     if (energyChange > 0) {
+        //         this.energyChangeStatus = 1;
+        //         this.energyChangeText = '+' + String(energyChange);
+        //     } else if (energyChange < 0) {
+        //         this.energyChangeStatus = -1;
+        //         this.energyChangeText = String(energyChange);
+        //     }
+        //     setTimeout(() => {
+        //             this.energyChangeStatus = 0;
+        //             this.energyChangeText = '';
+        //         }, 3000);
+
+        //     if (moneyChange > 0) {
+        //         this.moneyChangeStatus = 1;
+        //         this.moneyChangeText = '+' + String(moneyChange);
+        //     } else if (moneyChange < 0) {
+        //         this.moneyChangeStatus = -1;
+        //         this.moneyChangeText = String(moneyChange);
+        //     }
+        //     setTimeout(() => {
+        //             this.moneyChangeStatus = 0;
+        //             this.moneyChangeText = '';
+        //         }, 3000);
+        // },
 
         displayErrMessage (message) {
             if (!this.isErrorRaised) {
