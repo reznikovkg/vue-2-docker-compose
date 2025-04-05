@@ -5,12 +5,12 @@
                 <div class="menu__tag primary-text">Character</div>
             </div>
             <div class="menu__block__wrapper">
-                <span class="stats__text detail-text">{{ this.character.stats.money }}</span>
+                <span class="stats__text detail-text">{{ character.stats.money }}</span>
                 <img class="stats__icon" src="@/assets/img/rupee.svg" alt="">
                 <span v-if="moneyChangeStatus!==0" v-bind:class="moneyChangeTypeClass" class="stats__change__text detail-text">{{ moneyChangeText }}</span>
             </div>
             <div class="menu__block__wrapper">
-                <span class="stats__text detail-text">{{ this.character.stats.energy }}/100</span>
+                <span class="stats__text detail-text">{{ character.stats.energy }}/100</span>
                 <img class="stats__icon" src="@/assets/img/energy_bolt.svg" alt="">
                 <span v-if="energyChangeStatus!==0" v-bind:class="energyChangeTypeClass" class="stats__change__text detail-text">{{ energyChangeText }}</span>
             </div>
@@ -75,9 +75,9 @@
 <script>
 import MenuListLayout from '../parts/MenuListLayout.vue';
 import PageLayout from '../parts/PageLayout.vue';
-import catChar from '@/char';
 import TooltipLayout from '../parts/TooltipLayout.vue';
 import MenuGridModalLayout from '../parts/MenuGridModalLayout.vue';
+import { char } from '@/char.js';
 
 
 export default {
@@ -91,7 +91,8 @@ export default {
 
     data () {
         return {
-            character: catChar,
+            character: null,
+
             isTooltipVisible: false,
             energyChangeStatus: 0,
             moneyChangeStatus: 0,
@@ -121,6 +122,11 @@ export default {
         }
     },
 
+    mounted () {
+        let charJSON = JSON.parse(localStorage.character);
+        this.character = new char(charJSON.name, charJSON.iconPath, charJSON.actions, charJSON.items, charJSON.tasks);
+    },
+
     methods: {
         charAction (action) {
             if (!this.isErrorRaised) {
@@ -137,7 +143,6 @@ export default {
         buyItem (item) {
             try {
                 this.character.equipItem(item);
-
             }
             catch(err) {
                 this.displayErrMessage("Can't equip item. " + err)

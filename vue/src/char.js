@@ -97,7 +97,7 @@ class char {
 }
 
 
-export default new char(
+const catChar = new char(
     'Cat',
     'img/char/cat.png',
     // actions
@@ -164,3 +164,9 @@ export default new char(
         }
     ]
 );
+
+
+export {
+    catChar,
+    char
+};

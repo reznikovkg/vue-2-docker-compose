@@ -5,7 +5,12 @@
 </template>
 
 <script>
+import { catChar } from '@/char.js';
+
 export default {
+  created () {
+    localStorage.character = JSON.stringify(catChar);
+  }
 }
 </script>
 
