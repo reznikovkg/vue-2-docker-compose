@@ -92,6 +92,9 @@ export default {
     data () {
         return {
             character: null,
+            stats: null,
+            multipliers: null,
+            items: null,
 
             isTooltipVisible: false,
             energyChangeStatus: 0,
@@ -123,16 +126,42 @@ export default {
     },
 
     mounted () {
-        let charJSON = JSON.parse(localStorage.character);
-        this.character = new char(charJSON.name, charJSON.iconPath, charJSON.actions, charJSON.items, charJSON.tasks);
+        this.loadCharData(JSON.parse(localStorage.charInfo), JSON.parse(localStorage.charStats), JSON.parse(localStorage.charMultipliers), JSON.parse(localStorage.charItems));
+    },
+    watch: {
+        stats: {
+            handler (newStats) {
+                localStorage.charStats = JSON.stringify(newStats);
+            },
+            deep: true
+        },
+        multipliers: {
+            handler (newMultipliers) {
+                localStorage.charMultipliers = JSON.stringify(newMultipliers);
+            },
+            deep: true
+        },
+        items: {
+            handler (newItems) {
+                localStorage.charItems = JSON.stringify(newItems);
+            },
+            deep: true
+        }
     },
 
     methods: {
+        loadCharData (charInfo, charStats, charMultipliers, charItems) {
+            this.character = new char(charInfo.name, charInfo.iconPath, charStats, charMultipliers, charInfo.actions, charItems, charInfo.tasks);
+            this.stats = this.character.stats;
+            this.multipliers = this.character.multipliers;
+            this.items = this.character.items;
+        },
+
         charAction (action) {
             if (!this.isErrorRaised) {
                 try {
                     this.character.doAction(action);
-                    this.displayStatsChange(action.returns.energy * this.character.recieveMultipliers.energy, action.returns.money * this.character.recieveMultipliers.money);
+                    this.displayStatsChange(action.returns.energy * this.character.multipliers.energy, action.returns.money * this.character.multipliers.money);
                     setTimeout(() => { this.displayStatsChange(action.requirements.energy * -1, action.requirements.money * -1) }, 4000);
                 }
                 catch(err) {

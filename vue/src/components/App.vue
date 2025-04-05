@@ -5,11 +5,27 @@
 </template>
 
 <script>
-import { catChar } from '@/char.js';
+import { initialCatChar } from '@/char.js';
 
 export default {
   created () {
-    localStorage.character = JSON.stringify(catChar);
+    if (!localStorage.charInfo || !localStorage.charStats || !localStorage.charMultipliers || !localStorage.charItems) {
+      this.saveCharData(initialCatChar);
+    }
+  },
+
+  methods: {
+    saveCharData (char) {
+      localStorage.charInfo = JSON.stringify({
+        name: char.name,
+        iconPath: char.iconPath,
+        actions: char.actions,
+        tasks: char.tasks
+      });
+      localStorage.charStats = JSON.stringify(char.stats);
+      localStorage.charMultipliers = JSON.stringify(char.multipliers);
+      localStorage.charItems = JSON.stringify(char.items);
+    }
   }
 }
 </script>

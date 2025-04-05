@@ -1,8 +1,8 @@
 class char {
-    constructor (_name, _iconPath, _actions, _items, _tasks) {
+    constructor (_name, _iconPath, _stats, _multipliers, _actions, _items, _tasks) {
         this.name = _name;
-        this.stats = {energy: 100, money: 0}
-        this.recieveMultipliers = {energy: 1.0, money: 1.0}
+        this.stats = _stats;
+        this.multipliers = _multipliers;
         this.charStatus = 'idle';
         this.actions = _actions;
         this.items = _items;
@@ -11,7 +11,7 @@ class char {
     }
     
     addEnergy (amount) {
-        let multipliedAmount = amount * this.recieveMultipliers.energy;
+        let multipliedAmount = amount * this.multipliers.energy;
 
         if (this.stats.energy < 100 && this.stats.energy + multipliedAmount >= 100) {
             this.stats.energy = 100;
@@ -33,7 +33,7 @@ class char {
     }
 
     addMoney (amount) {
-        this.stats.money += amount * this.recieveMultipliers.money;
+        this.stats.money += amount * this.multipliers.money;
     }
 
     takeMoney (amount) {
@@ -91,15 +91,17 @@ class char {
 
         this.takeMoney(item.cost);
         item.isEquipped = true;
-        this.recieveMultipliers.energy += item.multipliers.energy;
-        this.recieveMultipliers.money += item.multipliers.money
+        this.multipliers.energy += item.multipliers.energy;
+        this.multipliers.money += item.multipliers.money
     }
 }
 
 
-const catChar = new char(
+const initialCatChar = new char(
     'Cat',
     'img/char/cat.png',
+    {energy: 100, money: 0},
+    {energy: 1.0, money: 1.0},
     // actions
     [
         {
@@ -167,6 +169,6 @@ const catChar = new char(
 
 
 export {
-    catChar,
+    initialCatChar,
     char
 };
