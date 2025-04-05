@@ -152,7 +152,7 @@ export default new char(
             isEquipped: false,
             cost: 1200,
             multipliers: {energy: 2.0, money: 0.0},
-            desc: 'A weird necklace that looks like a pine tree. Smells like forest after a rain.'
+            desc: 'A weird necklace that looks like a pine tree. Gives you twice as much energy.'
         }
     ],
     // tasks

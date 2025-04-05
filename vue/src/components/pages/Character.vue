@@ -62,12 +62,12 @@
             <!-- TODO TASKS MENU -->
         </MenuGridModalLayout>
 
-        <TooltipLayout v-if="isTooltipVisible" :style="{top: `${tooltipYpos}px`, left: `${tooltipXpos}px`}">
-            <p class="tooltip__text detail-text">{{ tooltipText }}</p>
+        <TooltipLayout v-if="isTooltipVisible" :style="{top: `${tooltipYpos}px`, left: `${tooltipXpos}px`}" id="tooltip__wrapper">
+            <p class="detail-text" id="tooltip__text">{{ tooltipText }}</p>
         </TooltipLayout>
 
-        <TooltipLayout v-if="isErrorRaised" class="error-box__wrapper">
-            <p class="error-box__text detail-text">{{ errorText }}</p>
+        <TooltipLayout v-if="isErrorRaised" id="error__wrapper">
+            <p class="detail-text" id="error__text">{{ errorText }}</p>
         </TooltipLayout>
     </PageLayout>
 </template>
@@ -140,7 +140,7 @@ export default {
 
             }
             catch(err) {
-                console.log("Can't equip item. " + err);
+                this.displayErrMessage("Can't equip item. " + err)
             }
         },
         // activateTask (task) {
@@ -305,17 +305,15 @@ export default {
     }
 }
 
-.menu__block__wrapper {
-    margin-top: 2%;
-    margin-bottom: 2%;
-}
-
-.menu__tag {
-    font-size: @sFontLarge;
-}
-
-.tooltip__text {
-    margin: 4px;
+.menu {
+    &__block__wrapper {
+        margin-top: 2%;
+        margin-bottom: 2%;
+    }
+    
+    &__tag {
+        font-size: @sFontLarge;
+    }
 }
 
 .grid-menu__button__wrapper {
@@ -352,7 +350,11 @@ export default {
     }
 }
 
-.error-box {
+#tooltip__text {
+    margin: 4px;
+}
+
+#error {
     &__wrapper {
         bottom: 40px;
         left: 50%;
