@@ -97,6 +97,7 @@ export default {
             items: null,
             oldStatsCache: null,
 
+            energyRegenTimeout: null,
             isTooltipVisible: false,
             energyChangeStatus: 0,
             moneyChangeStatus: 0,
@@ -128,6 +129,12 @@ export default {
 
     created () {
         this.loadCharData(JSON.parse(localStorage.charInfo), JSON.parse(localStorage.charStats), JSON.parse(localStorage.charMultipliers), JSON.parse(localStorage.charItems));
+    },
+    mounted () {
+        this.energyRegenTimeout = setInterval(this.energyRegenInterval, 5000);
+    },
+    beforeDestroy () {
+        clearInterval(this.energyRegenTimeout);
     },
     watch: {
         stats: {
@@ -186,6 +193,17 @@ export default {
         //     // TODO
         // },
 
+        energyRegenInterval () {
+            try {
+                this.character.addEnergy(5);
+            }
+            catch (err) {
+                if (err !== 'Energy already full.') {
+                    throw err;
+                }
+            }
+        },
+
         displayStatsChange (newStats, oldStats) {
             let energyChange = newStats.energy - oldStats.energy;
             let moneyChange = newStats.money - oldStats.money;
@@ -214,33 +232,6 @@ export default {
                     this.moneyChangeText = '';
                 }, 3000);
         },
-
-        // displayStatsChange (energyChange, moneyChange) {
-
-        //     if (energyChange > 0) {
-        //         this.energyChangeStatus = 1;
-        //         this.energyChangeText = '+' + String(energyChange);
-        //     } else if (energyChange < 0) {
-        //         this.energyChangeStatus = -1;
-        //         this.energyChangeText = String(energyChange);
-        //     }
-        //     setTimeout(() => {
-        //             this.energyChangeStatus = 0;
-        //             this.energyChangeText = '';
-        //         }, 3000);
-
-        //     if (moneyChange > 0) {
-        //         this.moneyChangeStatus = 1;
-        //         this.moneyChangeText = '+' + String(moneyChange);
-        //     } else if (moneyChange < 0) {
-        //         this.moneyChangeStatus = -1;
-        //         this.moneyChangeText = String(moneyChange);
-        //     }
-        //     setTimeout(() => {
-        //             this.moneyChangeStatus = 0;
-        //             this.moneyChangeText = '';
-        //         }, 3000);
-        // },
 
         displayErrMessage (message) {
             if (!this.isErrorRaised) {
