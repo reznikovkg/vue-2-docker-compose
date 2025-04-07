@@ -17,8 +17,6 @@ class char {
             this.stats.energy = 100;
         } else if (this.stats.energy < 100) {
             this.stats.energy += multipliedAmount;
-        } else {
-            throw 'Energy already full.';
         }
     }
 
@@ -54,11 +52,17 @@ class char {
         }
 
         if (action.requirements && action.returns) {
-            if (action.requirements.energy) {
-                this.reduceEnergy(action.requirements.energy);
+            if (action.returns && action.returns.energy && this.stats.energy == 100) {
+                throw 'Energy already full.';
             }
-            if (action.requirements.money) {
-                this.takeMoney(action.requirements.money)
+
+            if (action.requirements) {
+                if (action.requirements.energy) {
+                    this.reduceEnergy(action.requirements.energy);
+                }
+                if (action.requirements.money) {
+                    this.takeMoney(action.requirements.money)
+                }
             }
     
             if (action.returns) {

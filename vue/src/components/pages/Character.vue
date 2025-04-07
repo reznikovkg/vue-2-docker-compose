@@ -241,10 +241,11 @@ export default {
 
                 this.errorText = message;
 
-                setTimeout(() => {
-                    this.isErrorRaised = false;
-                }, 2000)
+                setTimeout(this.hideErrMessage, 2000);
             }
+        },
+        hideErrMessage () {
+            this.isErrorRaised = false;
         },
 
         openItemsModal () {
