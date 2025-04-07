@@ -215,10 +215,7 @@ export default {
                 this.energyChangeStatus = -1;
                 this.energyChangeText = String(energyChange);
             }
-            setTimeout(() => {
-                    this.energyChangeStatus = 0;
-                    this.energyChangeText = '';
-                }, 3000);
+            setTimeout(this.hideEnergyChange, 3000);
 
             if (moneyChange > 0) {
                 this.moneyChangeStatus = 1;
@@ -227,10 +224,15 @@ export default {
                 this.moneyChangeStatus = -1;
                 this.moneyChangeText = String(moneyChange);
             }
-            setTimeout(() => {
-                    this.moneyChangeStatus = 0;
-                    this.moneyChangeText = '';
-                }, 3000);
+            setTimeout(this.hideMoneyChange, 3000);
+        },
+        hideEnergyChange () {
+            this.energyChangeStatus = 0;
+            this.energyChangeText = '';
+        },
+        hideMoneyChange () {
+            this.moneyChangeStatus = 0;
+            this.moneyChangeText = '';
         },
 
         displayErrMessage (message) {
