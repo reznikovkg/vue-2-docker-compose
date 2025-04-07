@@ -78,14 +78,14 @@ class char {
             this.charStatus = action.verb;
         }
         
-        setTimeout(() => {
-            this.charStatus = 'idle';
-            
-        }, action.duration);
-        setTimeout(() => {
-            action.isOnCooldown = false;
-            
-        }, action.actionCooldown);
+        setTimeout(this.resetCharStatus.bind(this), action.duration);
+        setTimeout(this.resetActionCooldown.bind(action), action.actionCooldown);
+    }
+    resetCharStatus () {
+        this.charStatus = 'idle';
+    }
+    resetActionCooldown () {
+        this.isOnCooldown = false;
     }
 
     equipItem (item) {
