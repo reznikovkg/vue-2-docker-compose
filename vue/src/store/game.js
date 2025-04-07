@@ -6,6 +6,7 @@ const initialState = () => ({
     gameOver: false,
     victory: false,
     previousState: null,
+    victoryModalShown: false,
 });
 
 export default {
@@ -16,6 +17,7 @@ export default {
         getScore: (state) => state.score,
         isGameOver: (state) => state.gameOver,
         isVictory: (state) => state.victory,
+        canUndo: (state) => !!state.previousState,
         hasPossibleMoves: (state) => {
             return state.cells.some((cell, index) => {
                 return (
@@ -28,12 +30,11 @@ export default {
     mutations: {
         RESET_STATE: (state) => {
             Object.assign(state, initialState());
+            state.victoryModalShown = false;
         },
         ADD_SCORE: (state, value) => {
             if (typeof value === 'number') {
                 state.score += value;
-            } else {
-                console.error('Invalid score value:', value);
             }
         },
         SET_CELLS: (state, cells) => {
@@ -45,14 +46,17 @@ export default {
         SET_VICTORY: (state, status) => {
             state.victory = status;
         },
+        SET_VICTORY_MODAL_SHOWN: (state, status) => {
+            state.victoryModalShown = status;
+        },
         SAVE_PREVIOUS_STATE: (state) => {
-            state.previousState = {
+            const currentState = {
                 cells: [...state.cells],
                 score: state.score,
             };
-        },
-        RESET_PREVIOUS_STATE: (state) => {
-            state.previousState = null;
+            if (!state.previousState || JSON.stringify(state.previousState) !== JSON.stringify(currentState)) {
+                state.previousState = currentState;
+            }
         },
         SET_FOCUS: (state, status) => {
             state.isFocused = status;
@@ -79,24 +83,38 @@ export default {
                     dispatch('openGameEndModal', {
                         title: 'Конец игры',
                         message: 'Вы проиграли. Попробуйте снова!',
-                        textColor: 'red',
+                        buttons: [
+                            {
+                                text: 'Новая игра',
+                                click: () => dispatch('restartGame'),
+                            },
+                        ],
                     });
                 }
             }
-            if (state.cells.includes(2048)) {
+            if (state.cells.includes(2048) && !state.victoryModalShown) {
                 commit('SET_VICTORY', true);
+                commit('SET_VICTORY_MODAL_SHOWN', true);
                 dispatch('openGameEndModal', {
                     title: 'Победа!',
                     message: 'Вы выиграли! Поздравляем!',
-                    textColor: 'green',
+                    buttons: [
+                        {
+                            text: 'Продолжить',
+                            click: () => {}
+                        },
+                        {
+                            text: 'Новая игра',
+                            click: () => dispatch('restartGame'),
+                        },
+                    ],
                 });
             }
         },
-        openGameEndModal: ({ commit }, { title, message }) => {
-            commit('modals/openModal',
-                {
+        openGameEndModal: ({ commit }, { title, message, buttons }) => {
+            commit('modals/openModal', {
                     component: 'GameEndModal',
-                    params: { title, message },
+                    params: { title, message, buttons },
                 },
                 { root: true }
             );
@@ -134,7 +152,6 @@ export default {
         move: ({ dispatch, state, commit }, direction) => {
             const previousCells = [...state.cells];
             const previousScore = state.score;
-
             let cells = [...state.cells];
             let scoreIncrease = 0;
 
@@ -154,10 +171,7 @@ export default {
                 default:
                     console.error(`Unknown direction: ${direction}`);
             }
-            if (
-                JSON.stringify(previousCells) !== JSON.stringify(cells) ||
-                previousScore !== state.score + scoreIncrease
-            ) {
+            if (JSON.stringify(previousCells) !== JSON.stringify(cells) || previousScore !== state.score + scoreIncrease) {
                 commit('SAVE_PREVIOUS_STATE');
                 commit('SET_CELLS', cells);
                 if (scoreIncrease > 0) {

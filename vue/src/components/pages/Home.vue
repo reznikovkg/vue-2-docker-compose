@@ -15,9 +15,9 @@
           <span class="game__score-box__value">{{ getScore }}</span>
         </div>
         <button
-            @click="() => undoMove()"
-            :disabled="isUndoDisabled"
             class="game__undo-button"
+            :disabled="!canUndo"
+            @click="() => handleUndoMove()"
         >
           <img src="@/utils/restartbtn.png" />
         </button>
@@ -55,10 +55,8 @@ export default {
       'getScore',
       'isGameOver',
       'isVictory',
+      'canUndo',
     ]),
-    isUndoDisabled() {
-      return !this.$store.state.game.previousState;
-    },
     tilePositions() {
       return this.getCells.map((_, index) => {
         const row = Math.floor(index / 4);
@@ -70,12 +68,18 @@ export default {
       });
     },
   },
+  mounted() {
+    this.restartGame();
+    this.$refs.gameField.focus();
+    this.setFocus(true);
+  },
   methods: {
     ...mapActions('game', [
       'moveByKeyEvent',
       'restartGame',
       'setFocus',
       'addSpecificTiles', //отладочный элемент
+      'undoMove',
     ]),
     handleKeyDown(event) {
       event.preventDefault();
@@ -90,16 +94,11 @@ export default {
         this.setFocus(false);
       }, 0);
     },
-    undoMove() {
-      if (this.$store.state.game.previousState) {
-        this.$store.commit('game/UNDO_MOVE');
+    handleUndoMove() {
+      if (this.canUndo) {
+        this.undoMove();
       }
     },
-  },
-  mounted() {
-    this.restartGame();
-    this.$refs.gameField.focus();
-    this.setFocus(true);
   },
 };
 </script>
@@ -210,21 +209,6 @@ export default {
       cursor: not-allowed;
     }
   }
-}
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.modal-enter,
-.modal-leave-to {
-  opacity: 0;
-  transform: scale(0.9);
-}
-
-.tile-enter-active {
-  animation: pop-in 0.4s ease;
 }
 
 @keyframes pop-in {

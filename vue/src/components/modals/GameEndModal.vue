@@ -3,12 +3,16 @@
     <div class="modal modal--game-end">
       <h2 class="modal__title">{{ params.title }}</h2>
       <p class="modal__text">{{ params.message }}</p>
-      <button
-          class="modal__button"
-          @click="() => restartGame()"
-      >
-        Новая игра
-      </button>
+      <div class="modal__buttons">
+        <button
+            v-for="(button, index) in params.buttons"
+            :key="index"
+            class="modal__button"
+            @click="() => handleButtonClick(button)"
+        >
+          {{ button.text }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -27,9 +31,21 @@ export default {
     },
   },
   methods: {
-    restartGame() {
+    handleButtonClick(button) {
+      if (button.click) {
+        this.executeCallback(button.click);
+      }
+      if (button.afterClick) {
+        this.executeCallback(button.afterClick);
+      }
       this.$emit('close');
-      this.$emit('restart');
+    },
+    executeCallback(callback) {
+      if (typeof callback === 'function') {
+        callback();
+      } else if (callback === 'emitClose') {
+        this.$emit('close');
+      }
     },
   },
 };
@@ -48,6 +64,7 @@ export default {
   align-items: center;
   z-index: 1000;
 }
+
 .modal {
   position: relative;
   display: flex;
@@ -61,16 +78,24 @@ export default {
   max-width: 400px;
   width: 90%;
   text-align: center;
+
   &__title {
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 10px;
   }
+
   &__text {
     font-size: 18px;
     color: #656565;
     margin-bottom: 20px;
   }
+
+  &__buttons {
+    display: flex;
+    gap: 10px;
+  }
+
   &__button {
     background-color: #d26767;
     border: none;
@@ -80,9 +105,11 @@ export default {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.1s ease;
+
     &:hover {
       background-color: darken(#d26767, 10%);
     }
+
     &:active {
       transform: scale(0.95);
     }

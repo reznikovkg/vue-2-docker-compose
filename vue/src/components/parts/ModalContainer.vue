@@ -6,14 +6,13 @@
         :is="i.component"
         :params="i.params"
         :isVisible="true"
-    @close="() => removeModal(i.hash)"
-    @restart="() => restartGame()"
+        @close="() => removeModal(i.hash)"
     />
   </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
   computed: {
@@ -24,7 +23,6 @@ export default {
   },
   methods: {
     ...mapMutations('modals', ['removeModal']),
-    ...mapActions('game', ['restartGame']),
   },
 };
 </script>
@@ -39,4 +37,3 @@ export default {
   z-index: 1000;
 }
 </style>
-
