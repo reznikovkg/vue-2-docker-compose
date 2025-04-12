@@ -2,9 +2,9 @@
   <div
       class="game-board__cell"
       :style="{
-      backgroundColor: this.color,
-      border: isSelected ? '2px solid #000' : 'none'
-    }"
+        backgroundColor: this.color,
+        border: isSelected ? '2px solid #000' : 'none'
+      }"
       @click="handleClick"
   >
   </div>
@@ -25,5 +25,11 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-@import '../styles/_board-cell.less';
+.game-board__cell {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: gray;
+  transition: border 0.3s ease;
+}
 </style>

@@ -1,7 +1,5 @@
 <template>
-  <div id="app">
-    <game-board/>
-  </div>
+  <GameBoard />
 </template>
 <script>
 import GameBoard from './components/GameBoard.vue';
@@ -12,12 +10,3 @@ export default {
   }
 };
 </script>
-<style>
-#app {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-}
-</style>

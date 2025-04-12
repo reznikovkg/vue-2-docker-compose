@@ -1,15 +1,17 @@
 <template>
-  <div
-      class="game-board"
-  >
-    <BoardCell
-        v-for="(cell, index) in board"
-        :key="index"
-        :index="index"
-        :color="cell.color"
-        :isSelected="isSelected(index)"
-        :handleCellClick="handleCellClick"
-    />
+  <div class="game-board__wrapper">
+    <div
+        class="game-board"
+    >
+      <BoardCell
+          v-for="(cell, index) in board"
+          :key="index"
+          :index="index"
+          :color="cell.color"
+          :isSelected="isSelected(index)"
+          :handleCellClick="handleCellClick"
+      />
+    </div>
   </div>
 </template>
 
@@ -200,5 +202,17 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import '../styles/_game-board.less';
+.game-board__wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(8, 40px);
+  grid-template-rows: repeat(8, 40px);
+  gap: 4px;
+}
 </style>
