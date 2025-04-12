@@ -26,8 +26,8 @@ export default {
 </script>
 <style lang="less" scoped>
 .game-board__cell {
-  width: 40px;
-  height: 40px;
+  width: @cell-size;
+  height: @cell-size;
   border-radius: 50%;
   background-color: gray;
   transition: border 0.3s ease;
