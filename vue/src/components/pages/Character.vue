@@ -43,7 +43,7 @@
             <div v-for="(action, index) in character.actions" :key="index" class="menu__block__wrapper">
                 <button v-on:click="charAction(action)" class="action-button"
                 v-on:mouseenter="showTooltip" v-on:mousemove="moveTooltip" v-on:mouseleave="hideTooltip"
-                v-bind:data-desc="action.desc">
+                v-bind:data-desc="action.desc" v-bind:disabled="action.isOnCooldown">
                     <div class="action-button__tag detail-text">{{ action.name }}</div>
                 </button>
             </div>
@@ -59,7 +59,11 @@
             </div>
         </MenuGridModalLayout>
         <MenuGridModalLayout ref="tasksModal">
-            <!-- TODO TASKS MENU -->
+            <!-- <div v-for="(task, index) in character.tasks" :key="index" class="grid-menu__button__wrapper">
+                <button v-on:click="activateTask(task)" v-bind:class="{'item__equipped': item.isEquipped}" v-bind:disabled="item.isEquipped" class="task__button">
+                    <img :src="require(`@/assets/img/tasks/${task.type}.svg`)" alt="" class="task__icon">
+                </button>
+            </div> -->
         </MenuGridModalLayout>
 
         <TooltipLayout v-if="isTooltipVisible" :style="{top: `${tooltipYpos}px`, left: `${tooltipXpos}px`}" id="tooltip__wrapper">
@@ -77,7 +81,7 @@ import MenuListLayout from '../parts/MenuListLayout.vue';
 import PageLayout from '../parts/PageLayout.vue';
 import TooltipLayout from '../parts/TooltipLayout.vue';
 import MenuGridModalLayout from '../parts/MenuGridModalLayout.vue';
-import { char } from '@/char.js';
+import { CatChar } from '@/char';
 
 
 export default {
@@ -96,6 +100,9 @@ export default {
             multipliers: null,
             items: null,
             oldStatsCache: null,
+
+            inactiveTasks: [],
+            activeTasks: {},
 
             energyRegenTimeout: null,
             isTooltipVisible: false,
@@ -128,7 +135,7 @@ export default {
     },
 
     created () {
-        this.loadCharData(JSON.parse(localStorage.charInfo), JSON.parse(localStorage.charStats), JSON.parse(localStorage.charMultipliers), JSON.parse(localStorage.charItems));
+        this.loadCharData(JSON.parse(localStorage.charStats), JSON.parse(localStorage.charMultipliers), JSON.parse(localStorage.charActions), JSON.parse(localStorage.charItems));
     },
     mounted () {
         this.energyRegenTimeout = setInterval(this.energyRegenInterval, 5000);
@@ -136,6 +143,7 @@ export default {
     beforeDestroy () {
         clearInterval(this.energyRegenTimeout);
     },
+
     watch: {
         stats: {
             handler (newStats) {
@@ -163,12 +171,25 @@ export default {
     },
 
     methods: {
-        loadCharData (charInfo, charStats, charMultipliers, charItems) {
-            this.character = new char(charInfo.name, charInfo.iconPath, charStats, charMultipliers, charInfo.actions, charItems, charInfo.tasks);
+        loadCharData (charStats, charMultipliers, charActions, charItems) {
+            this.character = new CatChar(charStats, charMultipliers, charActions, charItems);
             this.stats = this.character.stats;
             this.oldStatsCache = {energy: this.stats.energy, money: this.stats.money};
             this.multipliers = this.character.multipliers;
             this.items = this.character.items;
+
+            this.populateTaskList(this.character.tasks, this.character.maxTaskCount)
+        },
+
+        populateTaskList (tasks, maxTaskCount) {
+            for (let task of tasks) {
+                let taskCountOfType = Math.floor(Math.random() * (maxTaskCount - 1) + 1);
+                let countOfType = 0;
+                while (countOfType < taskCountOfType) {
+                    this.inactiveTasks.push(new task());
+                    countOfType++;
+                }
+            }
         },
 
         charAction (action) {

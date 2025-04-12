@@ -1,13 +1,18 @@
-class char {
-    constructor (_name, _iconPath, _stats, _multipliers, _actions, _items, _tasks) {
-        this.name = _name;
+import { CharSequenceTask } from "./task-templates";
+
+
+class CatChar {
+
+    constructor (_stats, _multipliers, _actions, _items) {
+        this.name = 'Cat';
+        this.iconPath = 'img/char/cat.png';
         this.stats = _stats;
         this.multipliers = _multipliers;
         this.charStatus = 'idle';
         this.actions = _actions;
         this.items = _items;
-        this.tasks = _tasks;
-        this.iconPath = _iconPath;
+        this.tasks = [CharSequenceTask];
+        this.maxTaskCount = 4;
     }
     
     addEnergy (amount) {
@@ -101,9 +106,7 @@ class char {
 }
 
 
-const initialCatChar = new char(
-    'Cat',
-    'img/char/cat.png',
+const initialCatChar = new CatChar(
     {energy: 100, money: 0},
     {energy: 1.0, money: 1.0},
     // actions
@@ -160,19 +163,11 @@ const initialCatChar = new char(
             multipliers: {energy: 2.0, money: 0.0},
             desc: 'A weird necklace that looks like a pine tree. Gives you twice as much energy.'
         }
-    ],
-    // tasks
-    [
-        {
-            name: 'click_task',
-            returns: {energy: 100, money: 1000000},
-            desc: 'Click the button to complete the task'
-        }
     ]
 );
 
 
 export {
     initialCatChar,
-    char
+    CatChar
 };

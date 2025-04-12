@@ -9,21 +9,16 @@ import { initialCatChar } from '@/char.js';
 
 export default {
   created () {
-    if (!localStorage.charInfo || !localStorage.charStats || !localStorage.charMultipliers || !localStorage.charItems) {
+    if (!localStorage.charStats || !localStorage.charMultipliers || !localStorage.actions || !localStorage.charItems) {
       this.saveCharData(initialCatChar);
     }
   },
 
   methods: {
     saveCharData (char) {
-      localStorage.charInfo = JSON.stringify({
-        name: char.name,
-        iconPath: char.iconPath,
-        actions: char.actions,
-        tasks: char.tasks
-      });
       localStorage.charStats = JSON.stringify(char.stats);
       localStorage.charMultipliers = JSON.stringify(char.multipliers);
+      localStorage.charActions = JSON.stringify(char.actions);
       localStorage.charItems = JSON.stringify(char.items);
     }
   }
