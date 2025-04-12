@@ -7,7 +7,7 @@
           :index="index"
           :color="cell.color"
           :isSelected="isSelected(index)"
-          :handleCellClick="handleClick"
+          :handleCellClick="() => handleClick(index)"
       />
     </div>
   </div>

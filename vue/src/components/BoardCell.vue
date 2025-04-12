@@ -5,7 +5,7 @@
         backgroundColor: this.color,
         border: isSelected ? '2px solid #000' : 'none'
       }"
-      @click="handleClick"
+      @click="() => handleClick()"
   >
   </div>
 </template>
