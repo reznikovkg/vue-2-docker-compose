@@ -1,6 +1,6 @@
 <template>
   <div>
-      <RouterView />
+    <RouterView />
   </div>
 </template>
 
@@ -9,11 +9,14 @@ import { initialCatChar } from '@/char.js';
 
 export default {
   created () {
-    if (!localStorage.charStats || !localStorage.charMultipliers || !localStorage.actions || !localStorage.charItems) {
+    console.log('created app')
+    console.log(!localStorage.charStats || !localStorage.charMultipliers || !localStorage.charActions || !localStorage.charItems)
+    if (!localStorage.charStats || !localStorage.charMultipliers || !localStorage.charActions || !localStorage.charItems) {
+      console.log('restoring data')
       this.saveCharData(initialCatChar);
     }
   },
-
+  
   methods: {
     saveCharData (char) {
       localStorage.charStats = JSON.stringify(char.stats);
@@ -32,13 +35,20 @@ body {
   background-color: @cPrimary;
 }
 
-.primary-text {
-  font-family: @ffPrimary;
-  color: @cSecondary;
-}
-
-.detail-text {
-  font-family: @ffSecondary;
-  color: @cSecondary;
+.text {
+  &__primary {
+    font-family: @ffPrimary;
+    color: @cSecondary;
+  }
+  
+  &__secondary {
+    font-family: @ffSecondary;
+    color: @cSecondary;
+  }
+  
+  &__highlight {
+    font-weight: 300;
+    color: aqua;
+  }
 }
 </style>

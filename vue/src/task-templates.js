@@ -4,9 +4,6 @@ const getRandomInRange = function (min, max) {
 
 
 class CharSequenceTask {
-    
-    
-
     constructor() {
         this.returnsRanges = {
             energy: {min: 10, max: 50},
@@ -19,7 +16,7 @@ class CharSequenceTask {
             energy: getRandomInRange(this.returnsRanges.energy.min, this.returnsRanges.energy.max),
             money: getRandomInRange(this.returnsRanges.money.min, this.returnsRanges.money.max)
         };
-        this.desc = `Rewards: ${this.returns.energy} Money: ${this.returns.money}`;
+        this.reqProps = {textInput: true};
 
         this.targetLength = getRandomInRange(this.lengthRange.min, this.lengthRange.max);
         this.targetWord = ''
@@ -29,11 +26,21 @@ class CharSequenceTask {
             len++;
         }
 
+        this.name = 'Character sequence task';
+        this.howto = `Type <span class="text__highlight">${this.targetWord}</span> into the field`;
+        this.desc = `Repeat a sequence of characters`;
+
         console.log(`Created ${this.type} task for ${this.returns.energy} energy and ${this.returns.money} money`);
     }
 
-    doTask (input) {
-        return this.targetWord === input;
+    doTask (formData) {
+        const inputWord = formData.get('textInput');
+
+        console.log(`trying task ${this} of ${this.type} type with ${formData} data`)
+        console.log(`${this.targetWord} === ${inputWord}`, this.targetWord === inputWord)
+        if (this.targetWord !== inputWord) {
+            throw 'Incorrect sequence';
+        }
     }
 }
 

@@ -2,7 +2,7 @@ import { CharSequenceTask } from "./task-templates";
 
 
 class CatChar {
-
+    
     constructor (_stats, _multipliers, _actions, _items) {
         this.name = 'Cat';
         this.iconPath = 'img/char/cat.png';
@@ -17,14 +17,14 @@ class CatChar {
     
     addEnergy (amount) {
         let multipliedAmount = amount * this.multipliers.energy;
-
+        
         if (this.stats.energy < 100 && this.stats.energy + multipliedAmount >= 100) {
             this.stats.energy = 100;
         } else if (this.stats.energy < 100) {
             this.stats.energy += multipliedAmount;
         }
     }
-
+    
     reduceEnergy (amount) {
         if (this.stats.energy - amount == 0) {
             this.stats.energy = 0;
@@ -34,11 +34,11 @@ class CatChar {
             throw 'Not enough energy left.';
         }
     }
-
+    
     addMoney (amount) {
         this.stats.money += amount * this.multipliers.money;
     }
-
+    
     takeMoney (amount) {
         if (this.stats.money - amount == 0) {
             this.stats.money = 0;
@@ -48,19 +48,19 @@ class CatChar {
             throw "Not enough money left."
         }
     }
-
+    
     doAction (action) {
         if (action.isOnCooldown) {
             throw 'Action is on cooldown.';
         } else if (this.charStatus !== 'idle') {
             throw 'Character is busy.';
         }
-
+        
         if (action.requirements && action.returns) {
             if (action.returns && action.returns.energy && this.stats.energy == 100) {
                 throw 'Energy already full.';
             }
-
+            
             if (action.requirements) {
                 if (action.requirements.energy) {
                     this.reduceEnergy(action.requirements.energy);
@@ -69,7 +69,7 @@ class CatChar {
                     this.takeMoney(action.requirements.money)
                 }
             }
-    
+            
             if (action.returns) {
                 if (action.returns.energy) {
                     this.addEnergy(action.returns.energy);
@@ -78,7 +78,7 @@ class CatChar {
                     this.addMoney(action.returns.money);
                 }
             }
-
+            
             action.isOnCooldown = true;
             this.charStatus = action.verb;
         }
@@ -86,18 +86,25 @@ class CatChar {
         setTimeout(this.resetCharStatus.bind(this), action.duration);
         setTimeout(this.resetActionCooldown.bind(action), action.actionCooldown);
     }
+    
+    tryTask (task, formData) {
+        task.doTask(formData);
+        this.addEnergy(task.returns.energy);
+        this.addMoney(task.returns.money);
+    }
+    
     resetCharStatus () {
         this.charStatus = 'idle';
     }
     resetActionCooldown () {
         this.isOnCooldown = false;
     }
-
+    
     equipItem (item) {
         if (item.isEquipped) {
             throw 'Item already equipped.';
         }
-
+        
         this.takeMoney(item.cost);
         item.isEquipped = true;
         this.multipliers.energy += item.multipliers.energy;

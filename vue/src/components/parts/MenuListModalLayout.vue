@@ -1,18 +1,20 @@
 <template>
     <ModalContainer ref="rootModal">
-        <section class="menu-grid">
+        <MenuListLayout class="menu-list">
             <slot />
-        </section>
+        </MenuListLayout>
     </ModalContainer>
 </template>
 
 <script>
 import ModalContainer from '../modals/ModalContainer.vue';
+import MenuListLayout from './MenuListLayout.vue';
 
 export default {
     name: 'MenuGridModalLayout',
     components: {
-        ModalContainer
+        ModalContainer,
+        MenuListLayout
     },
     methods: {
         openModal () {
@@ -23,10 +25,9 @@ export default {
 </script>
 
 <style scoped lang="less">
-.menu-grid {
-    display: flex;
-    flex-wrap: wrap;
-    overflow-y: auto;
-    overflow-x: hidden;
+.menu-list {
+    vertical-align: top;
+    height: 100%;
+    overflow-y: scroll;
 }
 </style>
