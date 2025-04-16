@@ -158,11 +158,9 @@ export default {
     },
     
     created () {
-        console.log('created')
         this.loadCharData(JSON.parse(localStorage.charStats), JSON.parse(localStorage.charMultipliers), JSON.parse(localStorage.charActions), JSON.parse(localStorage.charItems));
     },
     mounted () {
-        console.log('mounted')
         setInterval(this.energyRegenInterval, 5000);
         this.populateTaskList(this.character.tasks, this.character.maxTaskCount);
     },
@@ -170,7 +168,6 @@ export default {
     watch: {
         stats: {
             handler (newStats) {
-                console.log('stats changed', this.oldStatsCache, newStats)
                 localStorage.charStats = JSON.stringify(newStats);
                 
                 if (newStats !== this.oldStatsCache) {
@@ -182,14 +179,12 @@ export default {
         },
         multipliers: {
             handler (newMultipliers) {
-                console.log('mult changed', newMultipliers)
                 localStorage.charMultipliers = JSON.stringify(newMultipliers);
             },
             deep: true
         },
         items: {
             handler (newItems) {
-                console.log('items changed', newItems)
                 localStorage.charItems = JSON.stringify(newItems);
             },
             deep: true
@@ -198,8 +193,6 @@ export default {
     
     methods: {
         loadCharData (charStats, charMultipliers, charActions, charItems) {
-            console.log('loading data')
-            console.log(charStats, charMultipliers, charActions, charItems)
             this.character = new CatChar(charStats, charMultipliers, charActions, charItems);
             this.stats = this.character.stats;
             this.oldStatsCache = {energy: this.stats.energy, money: this.stats.money};
@@ -207,13 +200,10 @@ export default {
             this.items = this.character.items;
         },
         saveCharData (char) {
-            console.log('saving')
-            console.log(char.stats, char.multipliers, char.actions, char.items)
             localStorage.charStats = JSON.stringify(char.stats);
             localStorage.charMultipliers = JSON.stringify(char.multipliers);
             localStorage.charActions = JSON.stringify(char.actions);
             localStorage.charItems = JSON.stringify(char.items);
-            console.log(JSON.parse(localStorage.charStats), JSON.parse(localStorage.charMultipliers), JSON.parse(localStorage.charActions), JSON.parse(localStorage.charItems))
         },
         
         populateTaskList (tasks, maxTaskCount) {

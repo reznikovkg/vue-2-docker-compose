@@ -30,14 +30,11 @@ class CharSequenceTask {
         this.howto = `Type <span class="text__highlight">${this.targetWord}</span> into the field`;
         this.desc = `Repeat a sequence of characters`;
 
-        console.log(`Created ${this.type} task for ${this.returns.energy} energy and ${this.returns.money} money`);
     }
 
     doTask (formData) {
         const inputWord = formData.get('textInput');
 
-        console.log(`trying task ${this} of ${this.type} type with ${formData} data`)
-        console.log(`${this.targetWord} === ${inputWord}`, this.targetWord === inputWord)
         if (this.targetWord !== inputWord) {
             throw 'Incorrect sequence';
         }

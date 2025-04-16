@@ -9,10 +9,7 @@ import { initialCatChar } from '@/char.js';
 
 export default {
   created () {
-    console.log('created app')
-    console.log(!localStorage.charStats || !localStorage.charMultipliers || !localStorage.charActions || !localStorage.charItems)
     if (!localStorage.charStats || !localStorage.charMultipliers || !localStorage.charActions || !localStorage.charItems) {
-      console.log('restoring data')
       this.saveCharData(initialCatChar);
     }
   },
