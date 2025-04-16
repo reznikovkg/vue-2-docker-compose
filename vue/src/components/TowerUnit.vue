@@ -1,7 +1,7 @@
 <template>
   <div class="tower">
     <div class="tower__health">
-      {{ towerHealth }} HP
+      {{ tower.health }} HP
     </div>
     <div class="tower__unit">
       <button v-if="!gameOver && !enemyDefeated"
@@ -10,8 +10,8 @@
         ❌
       </button>
       <div class="tower__dot"
-           :class="'tower__dot--grade-' + towerGrade">
-        {{ towerGrade }}
+           :class="'tower__dot--grade-' + tower.grade">
+        {{ tower.health }}
       </div>
     </div>
   </div>
@@ -22,12 +22,8 @@ import { mapGetters, mapActions } from "vuex"
 export default {
   name: 'EnemyUnit',
   props: {
-    towerGrade: {
-      type: Number,
-      required: true
-    },
-    towerHealth: {
-      type: Number,
+    tower: {
+      type: Object,
       required: true
     },
     index: {
@@ -67,12 +63,12 @@ export default {
     cursor: pointer;
     -webkit-text-stroke: 1px #000000;
     &--grade {
-      &-1 { background-color: #ff69b4; }
-      &-2 { background-color: #04e6e6; }
-      &-3 { background-color: #4e89f4; }
-      &-4 { background-color: #750101; }
-      &-5 { background-color: #7a037a; }
-      &-6 { background-color: #0808b6; }
+      &-1 { background-color: @pink-color; }
+      &-2 { background-color: @cyan-color; }
+      &-3 { background-color: @lightblue-color; }
+      &-4 { background-color: @darkred-color; }
+      &-5 { background-color: @purple-color; }
+      &-6 { background-color: @darkblue-color; }
     }
   }
   &__health {

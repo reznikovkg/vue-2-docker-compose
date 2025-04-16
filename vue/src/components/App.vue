@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <h1>Tower Defense</h1>
+  <div class="app">
+    <h1 class="header">Tower Defense</h1>
     <GameMap />
   </div>
 </template>
@@ -15,6 +15,15 @@ export default {
 };
 </script>
 
-<style scoped>
-  @import '@/less/const.less';
+<style lang="less">
+@import '@/less/const.less';
+.app {
+  text-align: center;
+  font-family: @font-family;
+}
+.header {
+  font-size: @font-size-heading;
+  margin: @margin-base;
+  font-family: @font-family;
+}
 </style>

@@ -2,7 +2,7 @@
   <div
       class="cell"
       :class="cellClasses"
-      @click="handleClick"
+      @click="() => handleClick()"
   >
     <EnemyUnit
         v-if="isEnemy"
@@ -10,8 +10,7 @@
     />
     <TowerUnit
         v-if="isTower"
-        :towerGrade="tower.grade"
-        :towerHealth="tower.health"
+        :tower="tower"
         :index="index"
     />
   </div>

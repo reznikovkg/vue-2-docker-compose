@@ -12,7 +12,8 @@
       <p class="game__level-buttons">
         <button
             v-for="level in levels.length"
-            :key="level" @click="() => changeLevel(level-1)"
+            :key="level"
+            @click="() => changeLevel(level-1)"
             class="game__level-button">
           Уровень {{level}}
         </button>
@@ -32,16 +33,20 @@
             :canPlaceTower="canPlaceTower(index)"
             :enemyHealth="enemyHealth"
             :tower="getTower(index)"
-            @cellClick="handleCellClick"
+            @cellClick="(index) => handleCellClick(index)"
         />
       </div>
       </div>
-      <dialog ref="modal" class="game__modal">
+      <dialog ref="modal" class="game__modal modal">
         <p>{{ gameOver ? "GAME OVER!" : "ENEMY DEFEATED!" }}</p>
-        <button v-if="enemyDefeated" @click="() => closeModal()">
+        <button class="modal__button modal__button--ok"
+                v-if="enemyDefeated"
+                @click="() => closeModal()">
           OK
         </button>
-        <button v-if="gameOver" @click="() => switchLevel(currentLevel)">
+        <button class="modal__button modal__button--ok"
+                v-if="gameOver"
+                @click="() => switchLevel(currentLevel)">
           Играть снова
         </button>
       </dialog>
@@ -158,18 +163,31 @@ export default {
     margin: 0;
     background-color: #222222;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: @border-radius;
   }
   &__level {
-    font-size: 16px;
+    font-size: @font-size-base;
+    margin: 0;
   }
   &__coins {
-    font-size: 18px;
+    font-size: @font-size-base;
     color: gold;
-    margin-bottom: 10px;
+    margin: 0;
   }
   &__level-buttons {
     margin: 5px 0;
+  }
+  &__level-button {
+    margin: 5px;
+    padding: 10px;
+    background-color: #636161;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: @border-radius;
+  }
+  &__level-button:hover {
+    background-color: #4e4b4b;
   }
   &__status {
     display: flex;
@@ -177,12 +195,8 @@ export default {
     align-items: center;
     background-color: #222222;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: @border-radius;
     width: 500px;
-    & h3 {
-      margin: 0;
-      font-size: 18px;
-    }
   }
   &__controls {
     display: flex;
@@ -195,32 +209,32 @@ export default {
     color: #ffffff;
     padding: 10px 20px;
     font-size: 18px;
-    border-radius: 8px;
+    border-radius: @border-radius;
     text-align: center;
     z-index: 1000;
   }
-  &__modal {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    z-index: 1000;
-    &::backdrop {
-      background: rgba(0, 0, 0, 0.5);
-    }
-    & button {
-      margin-top: 10px;
-      padding: 10px 15px;
-      background: #222;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    & button:hover {
-      background: #444;
-    }
+}
+.modal {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: @border-radius;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  z-index: 1000;
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  &__button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background: #222;
+    color: white;
+    border: none;
+    border-radius: @border-radius;
+    cursor: pointer;
+  }
+  &__button:hover {
+    background: #444;
   }
 }
 .grid {
@@ -232,4 +246,5 @@ export default {
   border: 5px solid #000000;
   padding: 5px;
 }
+
 </style>
