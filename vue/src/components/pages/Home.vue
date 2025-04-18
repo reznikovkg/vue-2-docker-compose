@@ -35,9 +35,10 @@
     <div class="game__board">
       <div class="game__grid">
         <GameTile
-            v-for="(cell, index) in getCells"
+            v-for="(cell, index) in getFormattedCells"
             :key="index"
-            :tile="cell"
+            :tile="getCells[index]"
+            :formattedValue="cell"
             :style="tilePositions[index]"
         />
       </div>
@@ -61,6 +62,7 @@ export default {
       'isGameOver',
       'isVictory',
       'canUndo',
+      'getFormattedCells',
     ]),
     tilePositions() {
       return this.getCells.map((_, index) => {
@@ -86,6 +88,7 @@ export default {
       'setFocus',
       'addSpecificTiles', //отладочный элемент
       'undoMove',
+
 
     ]),
     handleKeyDown(event) {

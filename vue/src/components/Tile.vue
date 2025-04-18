@@ -1,9 +1,9 @@
 <template>
   <span
       class="game__tile"
-      :class="`game__tile--${tile}`"
+      :class="getTileClass(tile)"
   >
-    {{ tile > 0 ? tile : '' }}
+    {{ formattedValue }}
   </span>
 </template>
 
@@ -14,6 +14,22 @@ export default {
     tile: {
       type: Number,
       required: true,
+    },
+    formattedValue: {
+      type: String,
+      required: true,
+    },
+  },
+  methods: {
+    getTileClass(value) {
+      if (value === 0) {
+        return 'game__tile--0';
+      }
+      if (value < 2049) {
+        return `game__tile--${value}`;
+      }
+      const baseValue = Math.floor(value / 1000);
+      return `game__tile--${baseValue}`;
     },
   },
 };

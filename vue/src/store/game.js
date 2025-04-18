@@ -28,6 +28,27 @@ export default {
                 );
             });
         },
+        getFormattedCells: (state) => {
+            const formatCellValue = (value) => {
+                if (value === 0) {
+                    return '';
+                }
+                if (value < 2049) {
+                    return value.toString();
+                }
+                const suffixes = ['', 'k', 'kk', 'kkk'];
+                let suffixIndex = 0;
+                let formattedValue = value;
+
+                while (formattedValue >= 2049 && suffixIndex < suffixes.length - 1) {
+                    formattedValue /= 1000;
+                    suffixIndex++;
+                }
+
+                return `${Math.floor(formattedValue)}${suffixes[suffixIndex]}`;
+            };
+            return state.cells.map((cell) => formatCellValue(cell));
+        },
     },
     mutations: {
         RESET_STATE: (state) => {
@@ -208,6 +229,7 @@ export default {
                 dispatch('move', direction);
             }
         },
+
     },
 };
 
