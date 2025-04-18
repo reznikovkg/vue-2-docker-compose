@@ -3,6 +3,7 @@ import { KEY_MAP } from '@/utils/keyMap.js';
 const initialState = () => ({
     cells: Array(16).fill(0),
     score: 0,
+    highScore: parseInt(localStorage.getItem('highScore')) || 0,
     gameOver: false,
     victory: false,
     previousState: null,
@@ -15,6 +16,7 @@ export default {
     getters: {
         getCells: (state) => state.cells,
         getScore: (state) => state.score,
+        getHighScore: (state) => state.highScore,
         isGameOver: (state) => state.gameOver,
         isVictory: (state) => state.victory,
         canUndo: (state) => !!state.previousState,
@@ -29,12 +31,24 @@ export default {
     },
     mutations: {
         RESET_STATE: (state) => {
+            const { highScore } = state;
             Object.assign(state, initialState());
+            state.highScore = highScore;
             state.victoryModalShown = false;
+
         },
         ADD_SCORE: (state, value) => {
             if (typeof value === 'number') {
                 state.score += value;
+                if (state.score > state.highScore) {
+                    state.highScore = state.score;
+                    localStorage.setItem('highScore', state.highScore);
+                }
+            }
+        },
+        SET_HIGH_SCORE: (state, value) => {
+            if (typeof value === 'number' && value > state.highScore) {
+                state.highScore = value;
             }
         },
         SET_CELLS: (state, cells) => {
@@ -124,6 +138,7 @@ export default {
             dispatch('addRandomTile');
             dispatch('addRandomTile');
         },
+
         addRandomTile: ({ state, commit }) => {
             const emptyCells = state.cells
                 .map((value, index) => (value === 0 ? index : -1))

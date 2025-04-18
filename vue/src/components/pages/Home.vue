@@ -14,6 +14,10 @@
           <span class="game__score-box__label">Счет:</span>
           <span class="game__score-box__value">{{ getScore }}</span>
         </div>
+        <div class="game__score-box">
+          <span class="game__score-box__label">Рекорд:</span>
+          <span class="game__score-box__value">{{ getHighScore }}</span>
+        </div>
         <button
             class="game__undo-button"
             :disabled="!canUndo"
@@ -53,6 +57,7 @@ export default {
     ...mapGetters('game', [
       'getCells',
       'getScore',
+      'getHighScore',
       'isGameOver',
       'isVictory',
       'canUndo',
@@ -73,6 +78,7 @@ export default {
     this.$refs.gameField.focus();
     this.setFocus(true);
   },
+
   methods: {
     ...mapActions('game', [
       'moveByKeyEvent',
@@ -80,6 +86,7 @@ export default {
       'setFocus',
       'addSpecificTiles', //отладочный элемент
       'undoMove',
+
     ]),
     handleKeyDown(event) {
       event.preventDefault();
