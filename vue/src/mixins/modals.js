@@ -1,16 +1,19 @@
 import { mapMutations } from "vuex";
-import HelpModal from "@/components/modals/HelpModal";
+import HelpModal from "@/components/modals/HelpModal.vue";
 
-export const helpModal = {
+export default {
   methods: {
-    ...mapMutations('modals', [
-      'openModal'
-    ]),
-    openHelpModal (params = {}) {
+    ...mapMutations('modals', ['openModal']),
+    openGameOverModal(score, restartCallback) {
       this.openModal({
         component: HelpModal,
-        params
-      })
+        params: {
+          score,
+          onRestart: () => {
+            restartCallback();
+          }
+        }
+      });
     }
   }
 }

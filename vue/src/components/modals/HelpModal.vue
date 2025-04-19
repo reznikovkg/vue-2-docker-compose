@@ -1,23 +1,35 @@
 <template>
   <ModalComponent>
-    <div>
-      {{ params.title || 'HelpModal' }}
-    </div>
-    <button @click="() => $emit('close')">
-      Close
-    </button>
-    <div>
-      {{ params.message || 'HelpMessage' }}
-    </div>
-    <div>
+    <div class="game-over-container">
+      <h2 class="game-over-title">{{ params.title || 'Game Over' }}</h2>
+
+      <div class="score-display">
+        Your score: <span class="score-value">{{ params.score || 0 }}</span>
+      </div>
+
       <button
-        v-for="(btn, index) in params.buttons"
-        :key="index"
-        :type="btn.type || 'default'"
-        @click="() => click(btn)"
+          class="restart-button"
+          @click="handleRestart"
       >
-        {{ btn.text }}
+        Play Again
       </button>
+
+      <div v-if="params.title && params.title !== 'Game Over'" class="custom-title">
+        {{ params.title }}
+      </div>
+      <div v-if="params.message" class="custom-message">
+        {{ params.message }}
+      </div>
+      <div v-if="params.buttons" class="custom-buttons">
+        <button
+            v-for="(btn, index) in params.buttons"
+            :key="index"
+            :class="'custom-button ' + (btn.type || 'default')"
+            @click="() => click(btn)"
+        >
+          {{ btn.text }}
+        </button>
+      </div>
     </div>
   </ModalComponent>
 </template>
@@ -31,9 +43,24 @@ export default {
     ModalComponent
   },
   props: {
-    params: Object
+    params: {
+      type: Object,
+      default: () => ({
+        score: 0,
+        title: '',
+        message: '',
+        buttons: [],
+        onRestart: null
+      })
+    }
   },
   methods: {
+    handleRestart() {
+      if (this.params.onRestart && typeof this.params.onRestart === 'function') {
+        this.params.onRestart();
+      }
+      this.$emit('close');
+    },
     click (btn) {
       if (btn.click) {
         this.clickHandler(btn.click)
@@ -56,6 +83,25 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+.game-over-container {
+  text-align: center;
+  padding: 50px;
+  background: @cBaseThree;
+  color: @cBaseOne;
+  min-width: 200px;
+}
 
+button {
+  background: @cButtonPrimary;
+  color: @cBaseOne;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
 </style>
+
+
