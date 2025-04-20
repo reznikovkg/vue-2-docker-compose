@@ -1,11 +1,13 @@
+import Vue from 'vue';
+import Vuex from 'vuex';
+import board from './board';
 import modals from './modals'
 
-export default {
-  namespaced: true,
-  state: {},
-  getters: {},
-  mutations: {},
+Vue.use(Vuex);
+
+export default new Vuex.Store({
   modules: {
-    modals
-  }
-}
+    modals,
+    board,
+  },
+});
