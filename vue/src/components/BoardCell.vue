@@ -10,7 +10,7 @@
       border: isSelected ? '2px solid #000' : 'none',
       transform: `translate(${position.x}px, ${position.y}px)`
     }"
-    @click="() => handleClick()"
+    @click="emitClick"
   />
 </template>
 
@@ -22,12 +22,11 @@ export default {
     isSelected: Boolean,
     isFading: Boolean,
     position: Object,
-    handleCellClick: Function,
     isAppearing: Boolean
   },
   methods: {
-    handleClick() {
-      this.handleCellClick(this.index);
+    emitClick() {
+      this.$emit('cell-click', this.index);
     }
   }
 };

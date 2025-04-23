@@ -10,7 +10,7 @@
         :isFading="cell.isFading"
         :position="getCellPosition(index)"
         :isAppearing="cell.isAppearing"
-        :handleCellClick="() => handleClick(index)"
+        @cell-click="handleClick"
       />
     </div>
   </div>
