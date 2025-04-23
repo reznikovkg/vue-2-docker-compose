@@ -92,40 +92,43 @@ export default {
     },
 
     async processMatches({ state, dispatch }) {
-      do {
-        if (!dispatch('hasMatches', state.board)) break;
-        await new Promise(resolve => setTimeout(resolve));
+      while (await dispatch('hasMatches', state.board)) {
+        await dispatch('clearMatches');
+        await new Promise(resolve => setTimeout(resolve, 600));
 
-        dispatch('clearMatches');
-        await new Promise(resolve => setTimeout(resolve));
+        await dispatch('dropBalls');
+        await new Promise(resolve => setTimeout(resolve, 600));
 
-        dispatch('dropBalls');
-        await new Promise(resolve => setTimeout(resolve));
-
-        dispatch('generateNewBalls');
-        await new Promise(resolve => setTimeout(resolve));
-
-      } while (dispatch('hasMatches', state.board));
+        await dispatch('generateNewBalls');
+        await new Promise(resolve => setTimeout(resolve, 600));
+      }
     },
 
     dropBalls({ state, dispatch, commit }) {
       const size = state.boardSize;
 
       for (let col = 0; col < size; col++) {
-        let emptySpaces = 0;
         for (let row = size - 1; row >= 0; row--) {
-          const index = row * size + col;
+          const index = getIndex(size, row, col);
           if (state.board[index].color === '') {
-            emptySpaces++;
-          } else if (emptySpaces > 0) {
-            const targetIndex = (row + emptySpaces) * size + col;
-            const temp = state.board[index].color;
-            commit('updateBoardCell', { index: targetIndex, color: temp });
-            commit('updateBoardCell', { index, color: '' });
+            for (let k = row - 1; k >= 0; k--) {
+              const upperIndex = getIndex(size, k, col);
+              if (state.board[upperIndex].color !== '') {
+                commit('updateBoardCell', {
+                  index,
+                  color: state.board[upperIndex].color,
+                });
+                commit('updateBoardCell', {
+                  index: upperIndex,
+                  color: '',
+                });
+                break;
+              }
+            }
           }
-          dispatch('updateAllPositions');
         }
       }
+      dispatch('updateAllPositions');
     },
 
     hasMatches(_, board) {
@@ -146,7 +149,7 @@ export default {
       });
     },
 
-    clearMatches({ state, commit }) {
+    clearMatches({ state, commit, dispatch}) {
       const size = state.boardSize;
       const toClear = new Set();
       state.board.forEach((cell, i) => {
@@ -184,6 +187,7 @@ export default {
           commit('updateBoardCell', { index, color: '' });
           state.board[index].isFading = false;
         });
+        dispatch('updateAllPositions');
       }, 600);
     },
 
