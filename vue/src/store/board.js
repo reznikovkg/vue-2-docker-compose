@@ -56,13 +56,14 @@ export default {
   },
 
   actions: {
-    generateBoard({ state, dispatch, commit }) {
+    async generateBoard({ state, dispatch, commit }) {
       const board = Array.from({ length: state.boardSize ** 2 }, () => ({
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
         position: { x: 0, y: 0 },
       }));
       commit('setBoard', board);
       dispatch('updateAllPositions');
+      await dispatch('processMatches');
     },
 
     async handleCellClick({ state, dispatch, commit }, clickedCellIndex) {
@@ -157,45 +158,81 @@ export default {
       });
     },
 
-    clearMatches({ state, commit, dispatch}) {
+    clearMatches({ state, commit, dispatch }) {
       const size = state.boardSize;
-      const toClear = new Set();
-      state.board.forEach((cell, i) => {
-        if (!cell.color) return;
+      const board = state.board;
+      const matchedGroups = [];
+      const visited = new Set();
+
+      // Поиск всех горизонтальных и вертикальных цепочек
+      for (let i = 0; i < board.length; i++) {
+        if (!board[i].color) continue;
+
         const row = getRow(size, i);
         const col = getCol(size, i);
 
-        if (
-            col < size - 2 &&
-            cell.color === state.board[i + 1]?.color &&
-            cell.color === state.board[i + 2]?.color
-        ) {
-          toClear.add(i);
-          toClear.add(i + 1);
-          toClear.add(i + 2);
+        // Горизонтальные совпадения
+        if (col <= size - 3) {
+          const color = board[i].color;
+          const line = [i];
+          for (let offset = 1; col + offset < size; offset++) {
+            const next = i + offset;
+            if (board[next].color === color) {
+              line.push(next);
+            } else break;
+          }
+          if (line.length >= 3) {
+            matchedGroups.push(line);
+            line.forEach(idx => visited.add(idx));
+          }
         }
 
-        if (
-            row < size - 2 &&
-            cell.color === state.board[i + size]?.color &&
-            cell.color === state.board[i + size * 2]?.color
-        ) {
-          toClear.add(i);
-          toClear.add(i + size);
-          toClear.add(i + size * 2);
+        // Вертикальные совпадения
+        if (row <= size - 3) {
+          const color = board[i].color;
+          const line = [i];
+          for (let offset = 1; row + offset < size; offset++) {
+            const next = i + offset * size;
+            if (board[next].color === color) {
+              line.push(next);
+            } else break;
+          }
+          if (line.length >= 3) {
+            matchedGroups.push(line);
+            line.forEach(idx => visited.add(idx));
+          }
         }
+      }
+
+      const toClear = new Set();
+      matchedGroups.forEach(group => group.forEach(i => toClear.add(i)));
+
+      // Подсчёт очков с множителями
+      let score = 0;
+      matchedGroups.forEach(group => {
+        const base = group.length * 10;
+        const multiplier = group.length === 3 ? 1 : group.length === 4 ? 1.5 : 2;
+        score += Math.floor(base * multiplier);
       });
 
-      commit('addScore', toClear.size * 10);
+      // Проверка на перекрёстные совпадения
+      const intersectMap = {};
+      matchedGroups.flat().forEach(i => {
+        intersectMap[i] = (intersectMap[i] || 0) + 1;
+      });
+      const crossBonus = Object.values(intersectMap).filter(c => c > 1).length * 20;
+      score += crossBonus;
 
-      toClear.forEach(index => {
-        state.board[index].isFading = true;
+      commit('addScore', score);
+
+      toClear.forEach(i => {
+        state.board[i].isFading = true;
       });
 
       setTimeout(() => {
-        toClear.forEach(index => {
-          commit('updateBoardCell', { index, color: '' });
-          state.board[index].isFading = false;
+        toClear.forEach(i => {
+          commit('updateBoardCell', { index: i, color: '' });
+          state.board[i].isFading = false;
         });
         dispatch('updateAllPositions');
       }, 600);
