@@ -6,11 +6,11 @@
         :key="index"
         :index="index"
         :color="cell.color"
-        :isSelected="isSelected(index)"
+        :isSelected="selectedIndexes.has(index)"
         :isFading="cell.isFading"
         :position="getCellPosition(index)"
         :isAppearing="cell.isAppearing"
-        @cell-click="handleClick"
+        @cell-click="() => handleClick(index)"
       />
     </div>
   </div>
@@ -27,16 +27,18 @@ export default {
     board() {
       return this.$store.state.board.board;
     },
+
     boardSize() {
       return this.$store.state.board.boardSize;
     },
     cellSize() {
-      return parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--cell-size') || '60', 10);
+      return this.$store.state.board.cellSize;
     },
     gapSize() {
-      return parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--gap-size') || '4', 10);
+      return this.$store.state.board.gapSize;
+    },
+    selectedIndexes() {
+      return new Set([this.$store.state.board.selectedCell]);
     }
   },
   methods: {

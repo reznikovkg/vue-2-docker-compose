@@ -10,7 +10,7 @@
       border: isSelected ? '2px solid #000' : 'none',
       transform: `translate(${position.x}px, ${position.y}px)`
     }"
-    @click="emitClick"
+    @click="() => emitClick()"
   />
 </template>
 

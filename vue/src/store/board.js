@@ -6,6 +6,7 @@ const COLORS = [
 const getIndex = (boardSize, row, col) => row * boardSize + col;
 const getRow = (boardSize, index) => Math.floor(index / boardSize);
 const getCol = (boardSize, index) => index % boardSize;
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export default {
   namespaced: true,
@@ -19,7 +20,8 @@ export default {
       count: 0,
       manualMatch: false,
     },
-
+    cellSize: 60,
+    gapSize: 4,
   },
 
   getters: {
@@ -38,7 +40,9 @@ export default {
       state.selectedCell = null;
     },
     updateBoardCell(state, { index, color }) {
-      if (color !== undefined) state.board[index].color = color;
+      if (color !== undefined) {
+        state.board[index].color = color;
+      }
       if ('isAppearing' in arguments[0]) {
         state.board[index].isAppearing = arguments[0].isAppearing;
       }
@@ -95,7 +99,9 @@ export default {
       }
 
       const neighbors = await dispatch('getNeighbors', state.selectedCell);
-      if (!neighbors.includes(clickedCellIndex)) return;
+      if (!neighbors.includes(clickedCellIndex)) {
+        return;
+      }
 
       const afterSwapBoard = [...state.board.map(cell => ({ ...cell }))];
       [afterSwapBoard[clickedCellIndex], afterSwapBoard[state.selectedCell]] =
@@ -125,28 +131,24 @@ export default {
     },
 
     async processMatches({ state, dispatch, commit }) {
-      const isManual = state.combo.manualMatch;
-      const color = state.combo.lastColor;
-      const comboCount = state.combo.count;
+      const { manualMatch: isManual, lastColor: color, count: comboCount } = state.combo;
 
       while (await dispatch('hasMatches', state.board)) {
         await dispatch('clearMatches');
-        await new Promise(resolve => setTimeout(resolve, 600));
+        await wait(600);
 
         await dispatch('dropBalls');
-        await new Promise(resolve => setTimeout(resolve, 600));
+        await wait(600);
 
         await dispatch('generateNewBalls');
-        await new Promise(resolve => setTimeout(resolve, 600));
+        await wait(600);
       }
 
       if (isManual && comboCount >= 2) {
         await dispatch('triggerComboEffect', color);
-        await commit('resetCombo');
+        commit('resetCombo');
       }
-
     },
-
 
     dropBalls({ state, dispatch, commit }) {
       const size = state.boardSize;
@@ -194,103 +196,109 @@ export default {
     },
 
     clearMatches({ state, commit, dispatch }) {
-      const size = state.boardSize;
-      const board = state.board;
-      const matchedGroups = [];
-      const visited = new Set();
+      return new Promise((resolve) => {
+        const size = state.boardSize;
+        const board = state.board;
+        const matchedGroups = [];
+        const visited = new Set();
 
-      // Поиск всех горизонтальных и вертикальных цепочек
-      for (let i = 0; i < board.length; i++) {
-        if (!board[i].color) continue;
+        // Поиск всех горизонтальных и вертикальных цепочек
+        for (let i = 0; i < board.length; i++) {
+          if (!board[i].color) continue;
 
-        const row = getRow(size, i);
-        const col = getCol(size, i);
+          const row = getRow(size, i);
+          const col = getCol(size, i);
 
-        // Горизонтальные совпадения
-        if (col <= size - 3) {
-          const color = board[i].color;
-          const line = [i];
-          for (let offset = 1; col + offset < size; offset++) {
-            const next = i + offset;
-            if (board[next].color === color) {
-              line.push(next);
-            } else break;
+          // Горизонтальные совпадения
+          if (col <= size - 3) {
+            const color = board[i].color;
+            const line = [i];
+            for (let offset = 1; col + offset < size; offset++) {
+              const next = i + offset;
+              if (board[next].color === color) {
+                line.push(next);
+              } else break;
+            }
+            if (line.length >= 3) {
+              matchedGroups.push(line);
+              line.forEach(idx => visited.add(idx));
+            }
           }
-          if (line.length >= 3) {
-            matchedGroups.push(line);
-            line.forEach(idx => visited.add(idx));
+
+          // Вертикальные совпадения
+          if (row <= size - 3) {
+            const color = board[i].color;
+            const line = [i];
+            for (let offset = 1; row + offset < size; offset++) {
+              const next = i + offset * size;
+              if (board[next].color === color) {
+                line.push(next);
+              } else break;
+            }
+            if (line.length >= 3) {
+              matchedGroups.push(line);
+              line.forEach(idx => visited.add(idx));
+            }
           }
         }
 
-        // Вертикальные совпадения
-        if (row <= size - 3) {
-          const color = board[i].color;
-          const line = [i];
-          for (let offset = 1; row + offset < size; offset++) {
-            const next = i + offset * size;
-            if (board[next].color === color) {
-              line.push(next);
-            } else break;
-          }
-          if (line.length >= 3) {
-            matchedGroups.push(line);
-            line.forEach(idx => visited.add(idx));
-          }
-        }
-      }
+        const toClear = new Set();
+        matchedGroups.forEach(group => group.forEach(i => toClear.add(i)));
 
-      const toClear = new Set();
-      matchedGroups.forEach(group => group.forEach(i => toClear.add(i)));
-
-      // Подсчёт очков с множителями
-      let score = 0;
-      matchedGroups.forEach(group => {
-        const base = group.length * 10;
-        const multiplier = group.length === 3 ? 1 : group.length === 4 ? 1.5 : 2;
-        score += Math.floor(base * multiplier);
-      });
-
-      // Проверка на перекрёстные совпадения
-      const intersectMap = {};
-      matchedGroups.flat().forEach(i => {
-        intersectMap[i] = (intersectMap[i] || 0) + 1;
-      });
-      const crossBonus = Object.values(intersectMap).filter(c => c > 1).length * 20;
-      score += crossBonus;
-
-      commit('addScore', score);
-
-      toClear.forEach(i => {
-        state.board[i].isFading = true;
-      });
-
-      setTimeout(() => {
-        toClear.forEach(i => {
-          commit('updateBoardCell', { index: i, color: '' });
-          state.board[i].isFading = false;
+        // Подсчёт очков с множителями
+        let score = 0;
+        matchedGroups.forEach(group => {
+          const base = group.length * 10;
+          const multiplier = group.length === 3 ? 1 : group.length === 4 ? 1.5 : 2;
+          score += Math.floor(base * multiplier);
         });
-        dispatch('updateAllPositions');
-      }, 600);
+
+        // Проверка на перекрёстные совпадения
+        const intersectMap = {};
+        matchedGroups.flat().forEach(i => {
+          intersectMap[i] = (intersectMap[i] || 0) + 1;
+        });
+        const crossBonus = Object.values(intersectMap).filter(c => c > 1).length * 20;
+        score += crossBonus;
+
+        commit('addScore', score);
+
+        toClear.forEach(i => {
+          state.board[i].isFading = true;
+        });
+
+        setTimeout(() => {
+          toClear.forEach(i => {
+            commit('updateBoardCell', { index: i, color: '' });
+            state.board[i].isFading = false;
+          });
+          dispatch('updateAllPositions');
+          resolve();
+        }, 600);
+      });
     },
 
     generateNewBalls({ state, dispatch, commit }) {
-      const newAppeared = [];
-      state.board.forEach((cell, index) => {
-        if (cell.color === '') {
-          commit('updateBoardCell', {
-            index,
-            color: COLORS[Math.floor(Math.random() * COLORS.length)],
-            isAppearing: true
-          });
-          newAppeared.push(index);
-        }
-      });
-      setTimeout(() => {
-        newAppeared.forEach(index => {
-          state.board[index].isAppearing = false;
+      return new Promise((resolve) => {
+        const newAppeared = [];
+        state.board.forEach((cell, index) => {
+          if (cell.color === '') {
+            commit('updateBoardCell', {
+              index,
+              color: COLORS[Math.floor(Math.random() * COLORS.length)],
+              isAppearing: true
+            });
+            newAppeared.push(index);
+          }
         });
-      }, 600);
-      dispatch('updateAllPositions');
+        setTimeout(() => {
+          newAppeared.forEach(index => {
+            state.board[index].isAppearing = false;
+          });
+          dispatch('updateAllPositions');
+          resolve();
+        }, 600);
+      });
     },
 
     updateAllPositions({ state, commit }) {
@@ -309,32 +317,24 @@ export default {
     async triggerComboEffect({ dispatch }, color) {
       switch (color) {
         case '#FF0000':
-          dispatch('triggerBlockExplosion');
-          break;
         case '#024217':
           dispatch('triggerBlockExplosion');
           break;
         case '#0000FF':
-          dispatch('triggerBonusScore');
-          break;
         case '#FFFF00':
           dispatch('triggerBonusScore');
           break;
+        case '#00FFFF':
         case '#FF00FF':
           dispatch('triggerLineClear');
           break;
-        case '#00FFFF':
-          dispatch('triggerLineClear');
-          break;
         case '#a87532':
-          dispatch('triggerColorRepaint');
-          break;
         case '#28fa6e':
           dispatch('triggerColorRepaint');
           break;
       }
 
-      await dispatch('dropBalls');
+      dispatch('dropBalls');
       await dispatch('generateNewBalls');
     },
 
