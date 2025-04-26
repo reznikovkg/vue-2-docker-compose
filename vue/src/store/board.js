@@ -13,10 +13,12 @@ export default {
     boardSize: 8,
     board: [],
     selectedCell: null,
+    score: 0,
   },
 
   getters: {
     isSelected: (state) => (index) => state.selectedCell === index,
+    getScore: (state) => state.score,
   },
 
   mutations: {
@@ -44,6 +46,12 @@ export default {
     },
     updateCellPosition(state, { index, position }) {
       state.board[index].position = position;
+    },
+    addScore(state, points) {
+      state.score += points;
+    },
+    resetScore(state) {
+      state.score = 0;
     },
   },
 
@@ -177,6 +185,8 @@ export default {
           toClear.add(i + size * 2);
         }
       });
+
+      commit('addScore', toClear.size * 10);
 
       toClear.forEach(index => {
         state.board[index].isFading = true;
