@@ -14,6 +14,12 @@ export default {
     board: [],
     selectedCell: null,
     score: 0,
+    combo: {
+      lastColor: null,
+      count: 0,
+      manualMatch: false,
+    },
+
   },
 
   getters: {
@@ -53,6 +59,22 @@ export default {
     resetScore(state) {
       state.score = 0;
     },
+    setCombo(state, { color, manual }) {
+      if (manual && state.combo.lastColor === color) {
+        state.combo.count += 1;
+      } else {
+        state.combo.count = 1;
+      }
+      state.combo.lastColor = color;
+      state.combo.manualMatch = manual;
+    },
+    resetCombo(state) {
+      state.combo = {
+        lastColor: null,
+        count: 0,
+        manualMatch: false,
+      };
+    },
   },
 
   actions: {
@@ -80,7 +102,9 @@ export default {
           [afterSwapBoard[state.selectedCell], afterSwapBoard[clickedCellIndex]];
 
       if (await dispatch('hasMatches', afterSwapBoard)) {
+        const matchedColor = afterSwapBoard[clickedCellIndex].color;
         commit('setBoard', afterSwapBoard);
+        commit('setCombo', { color: matchedColor, manual: true });
         dispatch('processMatches');
       }
 
@@ -100,7 +124,11 @@ export default {
       return neighbors;
     },
 
-    async processMatches({ state, dispatch }) {
+    async processMatches({ state, dispatch, commit }) {
+      const isManual = state.combo.manualMatch;
+      const color = state.combo.lastColor;
+      const comboCount = state.combo.count;
+
       while (await dispatch('hasMatches', state.board)) {
         await dispatch('clearMatches');
         await new Promise(resolve => setTimeout(resolve, 600));
@@ -111,7 +139,14 @@ export default {
         await dispatch('generateNewBalls');
         await new Promise(resolve => setTimeout(resolve, 600));
       }
+
+      if (isManual && comboCount >= 2) {
+        await dispatch('triggerComboEffect', color);
+        await commit('resetCombo');
+      }
+
     },
+
 
     dropBalls({ state, dispatch, commit }) {
       const size = state.boardSize;
@@ -268,6 +303,85 @@ export default {
         const x = col * (cellSize + gapSize);
         const y = row * (cellSize + gapSize);
         commit("updateCellPosition", { index, position: { x, y } });
+      });
+    },
+
+    async triggerComboEffect({ dispatch }, color) {
+      switch (color) {
+        case '#FF0000':
+          dispatch('triggerBlockExplosion');
+          break;
+        case '#024217':
+          dispatch('triggerBlockExplosion');
+          break;
+        case '#0000FF':
+          dispatch('triggerBonusScore');
+          break;
+        case '#FFFF00':
+          dispatch('triggerBonusScore');
+          break;
+        case '#FF00FF':
+          dispatch('triggerLineClear');
+          break;
+        case '#00FFFF':
+          dispatch('triggerLineClear');
+          break;
+        case '#a87532':
+          dispatch('triggerColorRepaint');
+          break;
+        case '#28fa6e':
+          dispatch('triggerColorRepaint');
+          break;
+      }
+
+      await dispatch('dropBalls');
+      await dispatch('generateNewBalls');
+    },
+
+    triggerBlockExplosion({ state, commit }) {
+      const size = state.boardSize;
+      const row = Math.floor(Math.random() * (size - 2));
+      const col = Math.floor(Math.random() * (size - 2));
+
+      for (let r = row; r < row + 3; r++) {
+        for (let c = col; c < col + 3; c++) {
+          const index = getIndex(size, r, c);
+          commit('updateBoardCell', { index, color: '' });
+        }
+      }
+    },
+
+    triggerBonusScore({ commit }) {
+      commit('addScore', 100);
+    },
+
+    triggerLineClear({ state, commit }) {
+      const size = state.boardSize;
+      const isVertical = Math.random() > 0.5;
+      if (isVertical) {
+        const col = Math.floor(Math.random() * size);
+        for (let row = 0; row < size; row++) {
+          const index = getIndex(size, row, col);
+          commit('updateBoardCell', { index, color: '' });
+        }
+      } else {
+        const row = Math.floor(Math.random() * size);
+        for (let col = 0; col < size; col++) {
+          const index = getIndex(size, row, col);
+          commit('updateBoardCell', { index, color: '' });
+        }
+      }
+    },
+
+    triggerColorRepaint({ state, commit }) {
+      const emptyIndexes = state.board
+        .map((_, index) => index)
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 10);
+
+      emptyIndexes.forEach(index => {
+        const newColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+        commit('updateBoardCell', { index, color: newColor });
       });
     },
   },
