@@ -20,6 +20,8 @@ export default {
 
 <style lang="less" scoped>
 .score-display__wrapper {
+  display: flex;
+  justify-content: center;
   font-size: 20px;
   font-weight: bold;
   padding: 10px;
