@@ -32,8 +32,20 @@
         </button>
       </div>
     </div>
+    <div class="game__grid-size-selector">
+      <label v-for="size in gridSizes" :key="size" class="game__grid-size-selector__button">
+        <input
+            type="radio"
+            :value="size"
+            v-model="selectedGridSize"
+            @change="updateGridSize"
+            class="game__grid-size-selector__radio"
+        />
+        <span>{{ size }}</span>
+      </label>
+    </div>
     <div class="game__board">
-      <div class="game__grid">
+      <div class="game__grid" :style="gridStyle">
         <GameTile
             v-for="(cell, index) in getFormattedCells"
             :key="index"
@@ -63,11 +75,20 @@ export default {
       'isVictory',
       'canUndo',
       'getFormattedCells',
+      'getGridSize',
     ]),
+    gridStyle() {
+      const gridSize = this.getGridSize;
+      return {
+        gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+        gridTemplateRows: `repeat(${gridSize}, 1fr)`,
+      };
+    },
     tilePositions() {
+      const gridSize = this.getGridSize;
       return this.getCells.map((_, index) => {
-        const row = Math.floor(index / 4);
-        const col = index % 4;
+        const row = Math.floor(index / gridSize);
+        const col = index % gridSize;
         return {
           gridRow: row + 1,
           gridColumn: col + 1,
@@ -80,17 +101,21 @@ export default {
     this.$refs.gameField.focus();
     this.setFocus(true);
   },
-
   methods: {
     ...mapActions('game', [
       'moveByKeyEvent',
       'restartGame',
       'setFocus',
-      'addSpecificTiles', //отладочный элемент
+      'addSpecificTiles',
       'undoMove',
-
-
+      'setGridSize',
+      'restartGameWithGridSize'
     ]),
+      updateGridSize() {
+        this.restartGameWithGridSize(this.selectedGridSize);
+        this.restartGame();
+      },
+
     handleKeyDown(event) {
       event.preventDefault();
       this.moveByKeyEvent(event);
@@ -110,9 +135,14 @@ export default {
       }
     },
   },
+  data() {
+    return {
+      selectedGridSize: 4,
+      gridSizes: [4, 5, 6, 7, 8, 9, 10],
+    };
+  },
 };
 </script>
-
 
 <style scoped lang="less">
 .game {
@@ -172,29 +202,39 @@ export default {
   }
 
   &__board {
-    display: grid;
-    gap: clamp(5px, 1vw, 10px);
-    width: clamp(200px, 80vw, 430px);
+
+    --cell-size: clamp(60px, 8vw, 100px); // Размер ячейки
+    --gap-size: clamp(5px, 1vw, 10px); // Расстояние между ячейками
+
+    width: clamp(200px, 80vw, 600px); // Максимальная ширина доски
     padding: clamp(8px, 1vw, 15px);
+    display: grid;
+    gap: var(--gap-size); // Используем переменную для gap
     background-color: #d0d6da;
     border-radius: 8px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
-    @media (max-width: 400px) {
-      gap: 5px;
+    @media (max-width: 600px) {
+      width: 100%;
       padding: 5px;
+      --cell-size: clamp(40px, 10vw, 80px); // Уменьшаем размер ячейки на маленьких экранах
+      --gap-size: 5px; // Уменьшаем расстояние между ячейками
     }
   }
 
   &__grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
     gap: clamp(5px, 1vw, 10px);
     width: 100%;
     max-width: 100%;
-    max-height: calc(100% - 50px);
+    max-height: calc(100%);
     height: auto;
+    background-color: #d0d6da;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
   }
 
   &__undo-button {
@@ -219,8 +259,60 @@ export default {
       cursor: not-allowed;
     }
   }
-}
+  &__grid-size-selector {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 
+    &__button {
+      position: relative;
+      cursor: pointer;
+    }
+
+    &__radio {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #d9d9d9;
+      color: #333;
+      font-size: 14px;
+      cursor: pointer;
+
+    }
+
+    .game__grid-size-selector__radio:checked + span {
+      background-color: #edc12e;
+      color: #3f3b3b;
+
+    }
+  }
+}
+.game__grid-size-selector {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  &__button {
+    position: relative;
+    cursor: pointer;
+  }
+
+  &__radio:checked + span {
+    background-color: #edc12e;
+    color: #3f3b3b;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+}
 @keyframes pop-in {
   0% {
     transform: scale(0);

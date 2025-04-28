@@ -1,7 +1,8 @@
 import { KEY_MAP } from '@/utils/keyMap.js';
 
-const initialState = () => ({
-    cells: Array(16).fill(0),
+const initialState = (gridSize = 4) => ({
+    cells: Array(gridSize * gridSize).fill(0),
+    gridSize,
     score: 0,
     highScore: parseInt(localStorage.getItem('highScore')) || 0,
     gameOver: false,
@@ -20,11 +21,13 @@ export default {
         isGameOver: (state) => state.gameOver,
         isVictory: (state) => state.victory,
         canUndo: (state) => !!state.previousState,
+        getGridSize: (state) => state.gridSize,
         hasPossibleMoves: (state) => {
+            const gridSize = state.gridSize;
             return state.cells.some((cell, index) => {
                 return (
-                    (index % 4 < 3 && cell === state.cells[index + 1]) ||
-                    (index < 12 && cell === state.cells[index + 4])
+                    (index % gridSize < gridSize - 1 && cell === state.cells[index + 1]) ||
+                    (index < gridSize * (gridSize - 1) && cell === state.cells[index + gridSize])
                 );
             });
         },
@@ -39,24 +42,25 @@ export default {
                 const suffixes = ['', 'k', 'kk', 'kkk'];
                 let suffixIndex = 0;
                 let formattedValue = value;
-
                 while (formattedValue >= 2049 && suffixIndex < suffixes.length - 1) {
                     formattedValue /= 1000;
                     suffixIndex++;
                 }
-
-                return `${Math.floor(formattedValue)}${suffixes[suffixIndex]}`;
+                return `${Math.floor(formattedValue)}${suffixes[suffixIndex]}`.slice(0, 6);
             };
             return state.cells.map((cell) => formatCellValue(cell));
         },
     },
     mutations: {
-        RESET_STATE: (state) => {
+        SET_GRID_SIZE: (state, size) => {
+            state.gridSize = size;
+            state.cells = Array(size * size).fill(0);
+        },
+        RESET_STATE: (state, gridSize = state.gridSize) => {
             const { highScore } = state;
-            Object.assign(state, initialState());
+            Object.assign(state, initialState(gridSize));
             state.highScore = highScore;
             state.victoryModalShown = false;
-
         },
         ADD_SCORE: (state, value) => {
             if (typeof value === 'number') {
@@ -105,12 +109,29 @@ export default {
         },
     },
     actions: {
+        setGridSize: ({ commit }, size) => {
+            return new Promise((resolve) => {
+                commit('SET_GRID_SIZE', size);
+                commit('RESET_STATE');
+                resolve();
+            });
+        },
+        restartGameWithGridSize: ({ commit }, gridSize) => {
+            commit('RESET_STATE', gridSize);
+            commit('SET_GRID_SIZE', gridSize);
+        },
+        restartGame: ({ dispatch, state }) => {
+            dispatch('restartGameWithGridSize', state.gridSize);
+            dispatch('addRandomTile');
+            dispatch('addRandomTile');
+        },
         checkGameState: ({ state, commit, dispatch }) => {
+            const gridSize = state.gridSize;
             if (!state.cells.includes(0)) {
                 const hasMoves = state.cells.some((cell, index) => {
                     return (
-                        (index % 4 < 3 && cell === state.cells[index + 1]) ||
-                        (index < 12 && cell === state.cells[index + 4])
+                        (index % gridSize < gridSize - 1 && cell === state.cells[index + 1]) ||
+                        (index < gridSize * (gridSize - 1) && cell === state.cells[index + gridSize])
                     );
                 });
                 if (!hasMoves) {
@@ -154,12 +175,6 @@ export default {
                 { root: true }
             );
         },
-        restartGame: ({ commit, dispatch }) => {
-            commit('RESET_STATE');
-            dispatch('addRandomTile');
-            dispatch('addRandomTile');
-        },
-
         addRandomTile: ({ state, commit }) => {
             const emptyCells = state.cells
                 .map((value, index) => (value === 0 ? index : -1))
@@ -177,11 +192,10 @@ export default {
             const emptyCells = cells
                 .map((value, index) => (value === 0 ? index : -1))
                 .filter((index) => index !== -1);
-
             if (emptyCells.length >= 2) {
                 const [index1, index2] = emptyCells.slice(0, 2);
-                cells[index1] = 1024;
-                cells[index2] = 1024;
+                cells[index1] = 16777216*8;
+                cells[index2] = 16777216*8;
                 commit('SET_CELLS', cells);
             }
         },
@@ -190,19 +204,19 @@ export default {
             const previousScore = state.score;
             let cells = [...state.cells];
             let scoreIncrease = 0;
-
+            const gridSize = state.gridSize;
             switch (direction) {
                 case KEY_MAP.ArrowLeft:
-                    ({ cells, scoreIncrease } = processMove(cells, 'left', moveRow));
+                    ({ cells, scoreIncrease } = processMove(cells, 'left', moveRow, gridSize));
                     break;
                 case KEY_MAP.ArrowRight:
-                    ({ cells, scoreIncrease } = processMove(cells, 'right', moveRow));
+                    ({ cells, scoreIncrease } = processMove(cells, 'right', moveRow, gridSize));
                     break;
                 case KEY_MAP.ArrowUp:
-                    ({ cells, scoreIncrease } = processMove(cells, 'up', moveColumn));
+                    ({ cells, scoreIncrease } = processMove(cells, 'up', moveColumn, gridSize));
                     break;
                 case KEY_MAP.ArrowDown:
-                    ({ cells, scoreIncrease } = processMove(cells, 'down', moveColumn));
+                    ({ cells, scoreIncrease } = processMove(cells, 'down', moveColumn, gridSize));
                     break;
                 default:
                     console.error(`Unknown direction: ${direction}`);
@@ -229,11 +243,10 @@ export default {
                 dispatch('move', direction);
             }
         },
-
     },
 };
 
-const compressAndMerge = (array, direction) => {
+const compressAndMerge = (array, direction, gridSize) => {
     const sanitizedArray = array.map((cell) => (typeof cell === 'number' ? cell : 0));
     const compressed = sanitizedArray.filter((cell) => cell !== 0);
     let scoreIncrease = 0;
@@ -248,7 +261,7 @@ const compressAndMerge = (array, direction) => {
             i--;
         }
     }
-    while (compressed.length < 4) {
+    while (compressed.length < gridSize) {
         compressed.push(0);
     }
     if (direction === 'right' || direction === 'down') {
@@ -256,48 +269,43 @@ const compressAndMerge = (array, direction) => {
     }
     return { compressed, scoreIncrease };
 };
-
-const moveRow = (cells, direction) => {
+const moveRow = (cells, direction, gridSize) => {
     let moved = false;
     let totalScoreIncrease = 0;
-
-    for (let row = 0; row < 4; row++) {
-        const start = row * 4;
-        const end = start + 4;
+    for (let row = 0; row < gridSize; row++) {
+        const start = row * gridSize;
+        const end = start + gridSize;
         const currentRow = cells.slice(start, end);
-        const { compressed, scoreIncrease } = compressAndMerge(currentRow, direction);
-
+        const { compressed, scoreIncrease } = compressAndMerge(currentRow, direction, gridSize);
         if (JSON.stringify(currentRow) !== JSON.stringify(compressed)) {
-            cells.splice(start, 4, ...compressed);
+            cells.splice(start, gridSize, ...compressed);
             moved = true;
             totalScoreIncrease += scoreIncrease;
         }
     }
     return { cells, moved, scoreIncrease: totalScoreIncrease };
 };
-
-const moveColumn = (cells, direction) => {
+const moveColumn = (cells, direction, gridSize) => {
     let moved = false;
     let totalScoreIncrease = 0;
-
-    for (let col = 0; col < 4; col++) {
-        const column = [cells[col], cells[col + 4], cells[col + 8], cells[col + 12]];
-        const { compressed, scoreIncrease } = compressAndMerge(column, direction);
-
+    for (let col = 0; col < gridSize; col++) {
+        const column = [];
+        for (let i = 0; i < gridSize; i++) {
+            column.push(cells[col + i * gridSize]);
+        }
+        const { compressed, scoreIncrease } = compressAndMerge(column, direction, gridSize);
         if (JSON.stringify(column) !== JSON.stringify(compressed)) {
-            cells[col] = compressed[0];
-            cells[col + 4] = compressed[1];
-            cells[col + 8] = compressed[2];
-            cells[col + 12] = compressed[3];
+            for (let i = 0; i < gridSize; i++) {
+                cells[col + i * gridSize] = compressed[i];
+            }
             moved = true;
             totalScoreIncrease += scoreIncrease;
         }
     }
     return { cells, moved, scoreIncrease: totalScoreIncrease };
 };
-
-const processMove = (cells, direction, moveFunction) => {
-    const result = moveFunction(cells, direction);
+const processMove = (cells, direction, moveFunction, gridSize) => {
+    const result = moveFunction(cells, direction, gridSize);
     return {
         cells: result.cells,
         moved: result.moved,
