@@ -9,18 +9,6 @@
 export default{
   name: 'GameTimer',
   props:{
-    time: {
-      type: Number,
-      required: true
-    },
-    health: {
-      type: Number,
-      required: true
-    },
-    coins:{
-      type: Number,
-      required: true
-    },
     gameStatus: {
       type: String,
       required: true

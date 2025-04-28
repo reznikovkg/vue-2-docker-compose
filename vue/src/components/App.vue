@@ -1,10 +1,8 @@
 <template>
   <div id="app" @mousemove="($event)=>{moveCursor($event)}">
     <GameWorld
-      :w="width"
-      :h="height" 
-      :attackPrototype="attackPrototype"
-      :enemyPrototype="enemyPrototype"
+      :attackPrototypes="attackPrototypes"
+      :enemyPrototypes="enemyPrototypes"
     />
     <PlayerAim 
       :player-radius="playerPrototype.radius" 
@@ -13,6 +11,7 @@
       v-if="gameStatus != 'end'"
       :health="health"
       :coins="score"
+      :manna="manna"
     />
     <div class="control-panel">
       <GameTimer
@@ -33,6 +32,7 @@
     >
       Играть
     </button>
+    <GamePauseImprover v-if="gameStatus == 'pause'" />
   </div>
 </template>
 
@@ -42,57 +42,39 @@ import GameWorld from './Game/GameWorld.vue';
 import PlayerAim from './Game/PlayerAim.vue';
 import PlayerStats from './Game/PlayerSats.vue';
 import GameTimer from './Game/GameTimer.vue';
+import GamePauseImprover from './Game/GamePauseImprover.vue';
 export default {
   name: 'App',
   components: {
     GameWorld,
     PlayerAim,
     PlayerStats,
-    GameTimer
+    GameTimer,
+    GamePauseImprover
   },
   data () {
     return{
-      width:1100,
-      height:1100,
-      playerPrototype:{
-        score:0,
-        health: 100,
-        speed: 100,
-        radius: 15,
-      },
-      enemyPrototype:{
-        speed: 90,
-        radius: 15,
-        maxEnemies:50,
-        spawnSpan: 2000,
-        spawnRadius: 300
-      },
-      attackPrototype:{ 
-        radius: 10,
-        lifeRadius: 180,
-        speed: 400,
-        spawnSpan: 2000
-      },
     }
   },
   computed: {
       ...mapGetters([
         'score',
         'health',
-        'gameStatus'
+        'manna',
+        'gameStatus',
+        'attackPrototypes',
+        'enemyPrototypes',
+        'playerPrototype'
       ])
   },
   mounted () {
     window.addEventListener('keydown', this.keyDownHandler);
     window.addEventListener('keyup', this.keyUpHandler);
     this.init({
-      gameWidth: this.width, 
-      gameHeight: this.height, 
+      gameWidth: 1000, 
+      gameHeight: 1000, 
       windowWidth: document.documentElement.scrollWidth, 
-      windowHeight: document.documentElement.scrollHeight,
-      playerPrototype: this.playerPrototype,
-      enemyPrototype: this.enemyPrototype,
-      attackPrototype: this.attackPrototype
+      windowHeight: document.documentElement.scrollHeight
     });
   },
   beforeDestroy () {
