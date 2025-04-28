@@ -11,6 +11,8 @@
         :position="getCellPosition(index)"
         :isAppearing="cell.isAppearing"
         @cell-click="() => handleClick(index)"
+        @transition-end="() => handleTransitionEnd(index)"
+        @animation-end="() => handleAnimationEnd(index)"
       />
     </div>
   </div>
@@ -23,26 +25,19 @@ import BoardCell from "./BoardCell.vue";
 export default {
   components: { BoardCell },
   computed: {
-    ...mapGetters("board", ["isSelected"]),
-    board() {
-      return this.$store.state.board.board;
-    },
-
-    boardSize() {
-      return this.$store.state.board.boardSize;
-    },
-    cellSize() {
-      return this.$store.state.board.cellSize;
-    },
-    gapSize() {
-      return this.$store.state.board.gapSize;
-    },
+    ...mapGetters("board", [
+      "board",
+      "boardSize",
+      "cellSize",
+      "gapSize",
+      "isSelected",
+    ]),
     selectedIndexes() {
       return new Set([this.$store.state.board.selectedCell]);
     }
   },
   methods: {
-    ...mapActions("board", ["handleCellClick", "generateBoard"]),
+    ...mapActions("board", ["handleCellClick", "generateBoard", "notifyTransitionEnd", "notifyAnimationEnd"]),
     handleClick(index) {
       this.handleCellClick(index);
     },
@@ -52,6 +47,12 @@ export default {
       const x = col * (this.cellSize + this.gapSize);
       const y = row * (this.cellSize + this.gapSize);
       return { x, y };
+    },
+    handleTransitionEnd(index) {
+      this.notifyTransitionEnd(index);
+    },
+    handleAnimationEnd(index) {
+      this.notifyAnimationEnd(index);
     }
   },
   created() {
