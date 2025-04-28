@@ -6,7 +6,6 @@ const COLORS = [
 const getIndex = (boardSize, row, col) => row * boardSize + col;
 const getRow = (boardSize, index) => Math.floor(index / boardSize);
 const getCol = (boardSize, index) => index % boardSize;
-const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export default {
   namespaced: true,
@@ -22,11 +21,16 @@ export default {
     },
     cellSize: 60,
     gapSize: 4,
+    activeAnimations: 0,
   },
 
   getters: {
     isSelected: (state) => (index) => state.selectedCell === index,
     getScore: (state) => state.score,
+    board: (state) => state.board,
+    boardSize: (state) => state.boardSize,
+    cellSize: (state) => state.cellSize,
+    gapSize: (state) => state.gapSize
   },
 
   mutations: {
@@ -135,13 +139,13 @@ export default {
 
       while (await dispatch('hasMatches', state.board)) {
         await dispatch('clearMatches');
-        await wait(600);
+        await dispatch('waitForAnimations');
 
         await dispatch('dropBalls');
-        await wait(600);
+        await dispatch('waitForAnimations');
 
         await dispatch('generateNewBalls');
-        await wait(600);
+        await dispatch('waitForAnimations');
       }
 
       if (isManual && comboCount >= 2) {
@@ -202,14 +206,12 @@ export default {
         const matchedGroups = [];
         const visited = new Set();
 
-        // Поиск всех горизонтальных и вертикальных цепочек
         for (let i = 0; i < board.length; i++) {
           if (!board[i].color) continue;
 
           const row = getRow(size, i);
           const col = getCol(size, i);
 
-          // Горизонтальные совпадения
           if (col <= size - 3) {
             const color = board[i].color;
             const line = [i];
@@ -225,7 +227,6 @@ export default {
             }
           }
 
-          // Вертикальные совпадения
           if (row <= size - 3) {
             const color = board[i].color;
             const line = [i];
@@ -245,7 +246,6 @@ export default {
         const toClear = new Set();
         matchedGroups.forEach(group => group.forEach(i => toClear.add(i)));
 
-        // Подсчёт очков с множителями
         let score = 0;
         matchedGroups.forEach(group => {
           const base = group.length * 10;
@@ -376,12 +376,29 @@ export default {
     triggerColorRepaint({ state, commit }) {
       const emptyIndexes = state.board
         .map((_, index) => index)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 10);
-
+        .filter(i => state.board[i].color === '');
       emptyIndexes.forEach(index => {
-        const newColor = COLORS[Math.floor(Math.random() * COLORS.length)];
-        commit('updateBoardCell', { index, color: newColor });
+        commit('updateBoardCell', {
+          index: index,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)]});
+      });
+    },
+    notifyTransitionEnd: ({ commit }) => {
+      commit('decreaseActiveAnimations');
+    },
+    notifyAnimationEnd: ({ commit }) => {
+      commit('decreaseActiveAnimations');
+    },
+    waitForAnimations: ({ state }) => {
+      return new Promise((resolve) => {
+        const check = () => {
+          if (state.activeAnimations === 0) {
+            resolve();
+          } else {
+            setTimeout(check, 50);
+          }
+        };
+        check();
       });
     },
   },

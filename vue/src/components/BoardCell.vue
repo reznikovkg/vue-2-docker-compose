@@ -11,6 +11,8 @@
       transform: `translate(${position.x}px, ${position.y}px)`
     }"
     @click="() => emitClick()"
+    @transitionend="() => handleTransitionEnd(event)"
+    @animationend="() => handleAnimationEnd()"
   />
 </template>
 
@@ -27,6 +29,14 @@ export default {
   methods: {
     emitClick() {
       this.$emit('cell-click', this.index);
+    },
+    handleTransitionEnd(event) {
+      if (event.propertyName === 'transform') {
+        this.$emit('transition-end', this.index);
+      }
+    },
+    handleAnimationEnd() {
+      this.$emit('animation-end', this.index);
     }
   }
 };
@@ -42,8 +52,8 @@ export default {
   transition:
     transform 0.3s ease,
     border 0.2s ease,
-    opacity 0.6s ease,
-    scale 0.6s ease;
+    opacity 0.4s ease,
+    scale 0.4s ease;
 
   &--fading {
     opacity: 0;
@@ -57,11 +67,11 @@ export default {
   }
   @keyframes appear {
     from {
-      transform: scale(0.2);
+      transform: scale(0.3);
       opacity: 0;
     }
     to {
-      transform: scale(1);
+      transform: scale(0.3);
       opacity: 1;
     }
   }
