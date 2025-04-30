@@ -14,6 +14,12 @@
     >
       {{coins}}
     </div>
+      |
+    <div
+      class="stats-panel__manna"
+    >
+      {{manna}}
+    </div>
   </div>
 </template>
   
@@ -22,11 +28,11 @@
 export default{
   name: 'PlayerStats',
   props:{
-    time: {
+    health: {
       type: Number,
       required: true
     },
-    health: {
+    manna: {
       type: Number,
       required: true
     },
@@ -50,9 +56,9 @@ export default{
 .stats-panel{
   display: flex;
   top: 60vh;
-  left: 45vw;
+  left: 42.5vw;
   position: fixed;
-  width: 10vw;
+  width: 15vw;
   height: 5vh;
   text-align: center;
   font-size: 4vh;
@@ -69,7 +75,11 @@ export default{
     color: @cBaseCoin;  
   }
 
-  &__health,&__coins{
+  &__manna{
+    color: @cBaseManna;  
+  }
+
+  &__health,&__coins,&__manna{
     width: 5vw;
   }
 }

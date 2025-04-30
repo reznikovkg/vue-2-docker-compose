@@ -8,14 +8,29 @@
       :key="enemy.id"
       :x="enemy.x"
       :y="enemy.y"
-      :enemy-radius="enemyPrototype.radius"
+      :health="enemy.health"
+      :enemy-radius="enemy.radius"
     />
     <SimpleAttack
       v-for="attack in attacks"
-      :key="'attak' + attack.id"
+      :key="'attack' + attack.id"
       :x="attack.x"
       :y="attack.y"
-      :attack-radius="attackPrototype.radius"
+      :attack-radius="attack.radius"
+    />
+    <RadiusAttack
+      v-for="attack in radiusAttacks"
+      :key="'radiusAttack' + attack.id"
+      :x="attack.x"
+      :y="attack.y"
+      :attack-radius="attack.radius"
+    />
+    <DeadAttack
+      v-for="attack in deadAttacks"
+      :key="'deadAttack' + attack.id"
+      :x="attack.x"
+      :y="attack.y"
+      :attack-radius="attack.radius"
     />
     <CoinSprite
       v-for="coin in coins"
@@ -31,37 +46,36 @@ import {mapGetters, mapActions} from 'vuex';
 import CoinSprite from './CoinSprite.vue';
 import EnemySprite from './EnemySprite.vue';
 import SimpleAttack from './SimpleAttack.vue';
+import RadiusAttack from './RadiusAttack.vue';
+import DeadAttack from './DeadAttack.vue';
 
 export default{
   name: 'GameWorld',
   components:{
     EnemySprite,
     SimpleAttack,
-    CoinSprite
+    CoinSprite,
+    RadiusAttack,
+    DeadAttack
   },
   data(){
     return{
       deltaTime:0,
       lastTime:0,
-      enemyTimerId: 0,
+      enemyTimerGoonId: 0,
+      enemyTimerArcherId: 0,
       attackTimerId: 0,
+      attackTimerArcherId: 0,
+      mannaIncreasTimerId: 0,
       enemyCounter: 0,
     }
   },
   props:{
-    w: {
-      type: Number,
-      required: true
-    },
-    h: {
-      type: Number,
-      required: true
-    },
-    enemyPrototype: {
+    enemyPrototypes: {
       type: Object,
       required: true
     },
-    attackPrototype: {
+    attackPrototypes: {
       type: Object,
       required: true
     }
@@ -74,26 +88,42 @@ export default{
       'xWorld',
       'yWorld',
       'worldStyle',
-      'enemiesCounter'
+      'enemiesCounter',
+      'radiusAttacks',
+      'deadAttacks'
     ])
   },
   mounted() {
     this.lastTime = 0;
     this.gameLoop();
+    this.enemyTimerArcherId =  setInterval(()=>
+    {
+      this.addArchersAttack();
+    } ,this.attackPrototypes['archers'].spawnSpan);
+
     this.attackTimerId =  setInterval(()=>
     {
       this.addAttack();
-    } ,this.attackPrototype.spawnSpan);
+    } ,this.attackPrototypes['simple'].spawnSpan);
 
-    this.enemyTimerId =  setInterval(()=>
+    this.enemyTimerGoonId =  setInterval(()=>
     {
-      if(this.enemiesCounter < this.enemyPrototype.maxEnemies ){
-        this.addEnemy();
-      }
-    } ,this.enemyPrototype.spawnSpan);
+        this.addEnemy({protoName: "goon"});
+    } ,this.enemyPrototypes["goon"].spawnSpan);
+
+    this.enemyTimerArcherId =  setInterval(()=>
+    {
+        this.addEnemy({protoName: "archer"});
+    } ,this.enemyPrototypes["archer"].spawnSpan);
+    this.mannaIncreasTimerId = setInterval(()=>
+    {
+        this.mannaIncrease();
+    } ,1000);
   },
   beforeDestroy() {
+    clearInterval(this.enemyTimerGoonId);
     clearInterval(this.attackTimerId);
+    clearInterval(this.enemyTimerArcherId);
     clearInterval(this.enemyTimerId);
   },
   methods:{
@@ -101,7 +131,9 @@ export default{
       'updateInput',
       'updateState',
       'addEnemy',
-      'addAttack'
+      'addAttack',
+      'addArchersAttack',
+      'mannaIncrease'
     ]), 
     gameLoop() {
       const loop = (currentTime) => {
@@ -123,6 +155,6 @@ export default{
 <style lang="less" scoped>
 .world{
   position: relative;
-  background-color: @cBaseWorld;
+  // background-color: @cBaseWorld;
 }
 </style>

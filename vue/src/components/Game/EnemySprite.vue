@@ -3,6 +3,7 @@
     :style="enemyStyle"
     class="enemy"
   >
+    {{ health }}
   </div>
 </template>
  
@@ -16,6 +17,10 @@ export default{
       required: true
     },
     y: {
+      type: Number,
+      required: true
+    },
+    health: {
       type: Number,
       required: true
     },
@@ -45,5 +50,7 @@ export default{
   border: 2px solid @cBorderEnemy;
   opacity: 50%;
   z-index: 555;
+  text-align: center;
+  font-size: 4vh;
 }
 </style>
