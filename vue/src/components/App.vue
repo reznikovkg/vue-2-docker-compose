@@ -1,91 +1,34 @@
 <template>
-  <div>
-    <RouterView />
-    <ModalContainer />
+  <div id="app">
+    <div id="nav">
+      <router-link to="/">Главная</router-link> |
+      <router-link to="/about">О проекте</router-link>
+    </div>
+    <router-view/>
+    <agreement-modal/>
   </div>
 </template>
 
+
 <script>
-import ModalContainer from "@/components/parts/ModalContainer";
+import AgreementModal from './parts/AgreementModal.vue'
+
 
 export default {
   components: {
-    ModalContainer
+    AgreementModal
+  },
+  created() {
+    this.$store.dispatch('agreement/initialize')
   }
 }
 </script>
 
-<style lang="less">
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: @cBaseTwo;
-}
-
-a {
-  text-decoration: none;
-}
-
-section {
-  background-color: @cBaseOne;
-  margin-bottom: 20px;
-  border-radius: 2px;
-  box-sizing: border-box;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-h1, h2, h3, h4, h5 {
-  font-family: @ffOne;
-  color: @cBaseThree;
-  margin: 0;
-}
-
-h2 {
-  font-size: 32px;
-}
-
-.p-16 {
-  padding: 16px;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.rcms {
-
-  &-divider {
-
-    &-h {
-      width: 100%;
-      height: @sizeBorderDefault;
-      background-color: @cBaseTwo;
-    }
-
-    &-v {
-
-    }
-  }
-
-  &-loading {
-    position: relative;
-
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background: rgba(100, 100, 100, 0.5);
-      cursor: wait;
-    }
-  }
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
 }
 </style>

@@ -1,11 +1,11 @@
-import modals from './modals'
+import Vue from 'vue'
+import Vuex from 'vuex'
+import agreement from './modules/agreement'
 
-export default {
-  namespaced: true,
-  state: {},
-  getters: {},
-  mutations: {},
+Vue.use(Vuex)
+
+export default new Vuex.Store({
   modules: {
-    modals
+     agreement
   }
-}
+})
