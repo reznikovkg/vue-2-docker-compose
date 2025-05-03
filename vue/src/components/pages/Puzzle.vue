@@ -1,6 +1,21 @@
 <template>
   <PageLayout>
     <h1 class="puzzle__head">This is your puzzle</h1>
+    <div class="puzzle">
+      <button
+        class="puzzle__hint-button"
+        @click="() => giveHintAndCheck()"
+      >
+        Hint
+      </button>
+      <h1 class="puzzle__timer">{{ getFormattedTime }}</h1>
+      <button
+        class="puzzle__undo-button"
+        @click="() => undo()"
+      >
+        Undo
+      </button>
+    </div>
     <div
       class="puzzle"
       @mouseleave="() => onMouseLeave()"
@@ -24,6 +39,14 @@
         </div>
       </div>
     </div>
+    <div class="puzzle">
+      <button
+        class="puzzle__reset-button"
+        @click="() => resetPuzzle()"
+      >
+        Reset
+      </button>
+    </div>
   </PageLayout>
 </template>
 
@@ -43,6 +66,7 @@ export default {
       isDragging: false,
       dragIndex: null,
       offset: { x: 0, y: 0 },
+      isSolvedModalOpen: false
     }
   },
   computed: {
@@ -50,6 +74,9 @@ export default {
       'getPuzzlePieces',
       'getPuzzleContainerWidth',
       'getPuzzleContainerHeight'
+    ]),
+    ...mapGetters('timer', [
+      'getFormattedTime'
     ]),
     pieces () {
       return this.getPuzzlePieces.map(piece => ({
@@ -67,7 +94,8 @@ export default {
     }
   },
   mounted () {
-    this.initializePuzzle();
+    this.initializePuzzle()
+    this.startTimer()
   },
   methods: {
     ...mapMutations('modals', [
@@ -75,7 +103,15 @@ export default {
     ]),
     ...mapActions('puzzle', [
       'updatePuzzlePieces',
-      'initializePuzzle'
+      'initializePuzzle',
+      'giveHint',
+      'recordMove',
+      'undo'
+    ]),
+    ...mapActions('timer', [
+      'startTimer',
+      'stopTimer',
+      'resetTimer'
     ]),
     startDrag (event, index) {
       this.isDragging = true
@@ -87,6 +123,7 @@ export default {
       if (!(this.isDragging && this.dragIndex === index)) {
         this.isDragging = false
         this.dragIndex = null
+        this.recordMove()
         return
       }
       const piece = this.getPuzzlePieces[index];
@@ -117,6 +154,7 @@ export default {
         piece.y = cellY
         this.updatePuzzlePieces(this.getPuzzlePieces)
       }
+      this.recordMove()
       this.checkIfPuzzleIsSolved()
       this.isDragging = false
       this.dragIndex = null
@@ -134,7 +172,10 @@ export default {
       this.dragIndex = null
     },
     checkIfPuzzleIsSolved () {
-      const pieces = this.getPuzzlePieces;
+      if (this.isSolvedModalOpen) {
+        return
+      }
+      const pieces = this.getPuzzlePieces
       const isSolved = pieces.every(piece => {
         return (
           Math.abs(piece.x - piece.correctX) === 0 &&
@@ -142,14 +183,27 @@ export default {
         )
       })
       if (isSolved) {
+        this.isSolvedModalOpen = true
+        this.stopTimer()
         this.openModal({
           component: HelpModal,
           params: {
-            title: 'Congratulate',
+            title: 'Congratulations',
             message: 'You completed the puzzle'
           }
         })
       }
+    },
+    giveHintAndCheck () {
+      this.giveHint()
+      this.checkIfPuzzleIsSolved()
+    },
+    resetPuzzle () {
+      this.isSolvedModalOpen = false
+      this.stopTimer()
+      this.resetTimer()
+      this.initializePuzzle()
+      this.startTimer()
     }
   }
 }
@@ -164,20 +218,78 @@ export default {
     font-size: 32px;
     text-align: center;
     margin-top: 30px;
-    font-family: @ffThree
+    font-family: @ffThree;
   }
   &__assembly {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
+    position: relative;
     border: 2px dashed @cBorderOne;
     overflow: visible;
   }
   &__piece {
     user-select: none;
     border: 1px solid @cBorderOne;
-    overflow: hidden
+    overflow: hidden;
+  }
+  &__timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 7%;
+    padding: 2% 3%;
+    border: 1px solid @cBorderOne;
+    border-radius: 10px;
+    margin-left: 1%;
+    font-size: 20px;
+    font-family: @ffThree;
+  }
+  &__hint-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10%;
+    padding: 2% 3%;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    background-color: #7C7C7C;
+    &:hover {
+      background-color: #707070;
+    }
+  }
+  &__undo-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 10%;
+    padding: 2% 3%;
+    border: none;
+    border-radius: 10px;
+    margin-left: 1%;
+    font-size: 16px;
+    color: white;
+    background-color: #7C7C7C;
+    &:hover {
+      background-color: #707070;
+    }
+  }
+  &__reset-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36%;
+    padding: 2% 3%;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    background-color: @cBaseFive;
+    &:hover {
+      background-color: #772534;
+    }
   }
 }
 </style>

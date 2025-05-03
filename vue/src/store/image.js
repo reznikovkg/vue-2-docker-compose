@@ -1,10 +1,11 @@
 const state = {
-  imageUrl: '',
+  imageUrl: null,
   puzzleCount: 0
 }
 
 const getters = {
-  getImageUrl: state => state.imageUrl
+  getImageUrl: state => state.imageUrl,
+  getPuzzleCount: state => state.puzzleCount
 }
 
 const mutations = {
@@ -18,19 +19,24 @@ const mutations = {
 
 const actions = {
   updateImage: ({ commit }, url) => {
-    commit('setImageUrl', url);
+    commit('setImageUrl', url)
   },
   updatePuzzleCount: ({ commit }, count) => {
-    commit('setPuzzleCount', count);
+    commit('setPuzzleCount', count)
   },
   loadImage: ({ commit }, file) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const imageUrl = e.target.result;
-      localStorage.setItem('imageUrl', JSON.stringify(imageUrl));
-      commit('setImageUrl', imageUrl);
+    if (typeof file === "string") {
+      localStorage.setItem('imageUrl', JSON.stringify(file))
+      commit('setImageUrl', file)
+    } else {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const imageUrl = e.target.result
+        localStorage.setItem('imageUrl', JSON.stringify(imageUrl))
+        commit('setImageUrl', imageUrl)
+      }
+      reader.readAsDataURL(file)
     }
-    reader.readAsDataURL(file);
   }
 }
 
