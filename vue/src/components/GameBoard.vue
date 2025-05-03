@@ -31,6 +31,7 @@ export default {
       "cellSize",
       "gapSize",
       "isSelected",
+      "selectedIndexes",
     ]),
     selectedIndexes() {
       return new Set([this.$store.state.board.selectedCell]);

@@ -28,7 +28,8 @@ const getters = {
   board: (state) => state.board,
   boardSize: (state) => state.boardSize,
   cellSize: (state) => state.cellSize,
-  gapSize: (state) => state.gapSize
+  gapSize: (state) => state.gapSize,
+  selectedIndexes: (state) => new Set([state.selectedCell]),
 }
 
 const mutations = {
@@ -80,6 +81,11 @@ const mutations = {
       count: 0,
       manualMatch: false,
     };
+  },
+  clearAllAppearingFlags(state) {
+    state.board.forEach((cell) => {
+      cell.isAppearing = false;
+    });
   },
 }
 
