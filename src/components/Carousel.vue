@@ -1,0 +1,179 @@
+<template>
+  <div>
+    <!-- Заглушка вне .carousel-container -->
+    <div
+      v-if="returningFromDetail && lastReturnedHeroPosition"
+      class="hero-placeholder"
+      :style="imageStyle"
+    />
+
+```
+<!-- Основной контейнер с каруселью -->
+<div class="carousel-container" :class="{ visible: isVisible }">
+  <div class="carousel" :style="{ transform: `translateX(${offset}px)` }">
+    <div
+      v-for="(hero, i) in heroes"
+      :key="i"
+      class="carousel-item"
+      @click="handleClick(hero, $event)"
+    >
+      <HeroCard :hero="hero" />
+    </div>
+  </div>
+  <div class="buttons">
+    <button @click="moveLeft">◄</button>
+    <button @click="moveRight">►</button>
+  </div>
+</div>
+```
+
+  </div>
+</template>
+
+<script>
+  import { SCALE_FACTOR } from '@/constants'
+  import { mapState, mapMutations } from 'vuex'
+  import HeroCard from './HeroCard.vue'
+
+  export default {
+    components: { HeroCard },
+    computed: {
+      ...mapState([
+        'returningFromDetail',
+        'lastReturnedHeroName',
+        'lastReturnedHeroPosition',
+        'index'
+      ]),
+      offset() {
+        return -this.index * (350 + 30); // ширина карточки + отступ
+      },
+      imageStyle() {
+        if (!this.lastReturnedHeroPosition) return {};
+        
+        const { top, left, width, height } = this.lastReturnedHeroPosition;
+        const scaledWidth = width / SCALE_FACTOR;
+        const scaledHeight = height / SCALE_FACTOR;
+
+        const deltaX = (width - scaledWidth) / 2;
+        const deltaY = (height - scaledHeight) / 2;
+
+        return {
+          position: 'fixed',
+          top: top + deltaY + 'px',
+          left: left + deltaX + 'px',
+          width: scaledWidth + 'px',
+          height: scaledHeight + 'px',
+          backgroundImage: `url(${this.getHeroImage(this.lastReturnedHeroName)})`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          zIndex: 2000,
+          pointerEvents: 'none'
+        };
+      }
+    },
+    data() {
+      return {
+        heroes: [
+          { name: 'Dragon Knight', image: require('@/assets/dragon_knight.png') },
+          { name: 'Drow Ranger', image: require('@/assets/drow_ranger.png') },
+          { name: 'Marci', image: require('@/assets/marci.png') },
+          { name: 'Ancient Apparition', image: require('@/assets/ancient_apparition.png') },
+          { name: 'Luna', image: require('@/assets/luna.png') },
+          { name: 'Crystal Maiden', image: require('@/assets/crystal_maiden.png') },
+          { name: 'Lina', image: require('@/assets/lina.png') },
+          { name: 'Mirana', image: require('@/assets/mirana.png') },
+        ],
+        isVisible: false,
+      }
+    },
+    mounted() {
+      window.addEventListener('keydown', this.handleKey);
+      setTimeout(() => {
+        this.isVisible = true;
+      }, 70);
+      if (this.returningFromDetail) {
+      setTimeout(() => {
+        this.clearReturningHero();
+      }, 1000);
+      }
+    },
+    beforeDestroy() {
+      window.removeEventListener('keydown', this.handleKey);
+    },
+    methods: {
+      ...mapMutations(['moveLeft', 'moveRight', 'selectHero', 'clearReturningHero']),
+      handleKey(event) {
+        event.preventDefault();
+        if (event.key === 'ArrowRight') {
+          this.moveRight();
+        }
+        if (event.key === 'ArrowLeft') {
+          this.moveLeft();
+        }
+      },
+      handleClick(hero, event) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const offsetX = (rect.width * SCALE_FACTOR - rect.width) / 2;
+        const offsetY = (rect.height * SCALE_FACTOR - rect.height) / 2 + 15;
+        this.selectHero({
+          hero,
+          position: {
+            top: (rect.top - offsetY),
+            left: (rect.left - offsetX),
+            width: rect.width*SCALE_FACTOR,
+            height: rect.height*SCALE_FACTOR
+          },
+          scale: SCALE_FACTOR
+        });
+        this.$router.push(`/hero/${encodeURIComponent(hero.name)}`);
+      },
+      getHeroImage(name) {
+        const hero = this.heroes.find(h => h.name === name);
+        return hero ? hero.image : '';
+      }
+    },
+  }
+</script>
+
+<style scoped>
+  .carousel-container {
+    overflow: hidden;
+    border: none;
+    position: relative;
+    margin: 0 auto;
+    padding-left: 70px;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+  .carousel-container.visible {
+    opacity: 1;
+  }
+  .carousel {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    white-space: nowrap;
+    gap: 30px;
+  }
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .buttons button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  .buttons button:hover {
+    color: red;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+</style>
