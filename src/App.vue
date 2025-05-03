@@ -4,7 +4,6 @@
       <router-view :key="$route.fullPath"/>
     </div>
   </template>
-
   <script>
   import Header from './components/Header.vue'
   export default {
@@ -14,12 +13,10 @@
     }
   }
   </script>
-
   <style>
   html, body, #app {
     height: 100%;
   }
-
   body {
     background-image: url('./assets/gray_black_shadow.jpg');
     background-size: cover;

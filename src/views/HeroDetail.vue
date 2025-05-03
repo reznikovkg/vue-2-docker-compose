@@ -14,8 +14,6 @@
     </div>
   </div>
 </template>
-
-
 <script>
 import { SCALE_FACTOR } from '@/constants'
 import { mapState, mapMutations } from 'vuex'
@@ -130,33 +128,26 @@ export default {
     },
   },
   mounted() {
-    // После монтирования компонента, сначала анимируем картинку
     setTimeout(() => {
-      this.isMoved = true; // Анимация перемещения картинки
-    }, 100);  // Задержка перед началом анимации
-
-    // После завершения анимации картинки (1 секунда), текст начинает плавно появляться
+      this.isMoved = true;
+    }, 100);
     setTimeout(() => {
-      this.textStyle.opacity = 1;  // Текст становится видимым
-    }, 1000);  // Задержка для появления текста
+      this.textStyle.opacity = 1;
+    }, 1000);
   }
 }
 </script>
-
-
 <style scoped>
 .hero-detail {
   padding: 0;
   margin: 0;
   color: white;
 }
-
 .hero-info {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .hero-info img {
   width: 200px;
   height: 200px;
@@ -164,7 +155,6 @@ export default {
   transition: transform 1s ease-in-out;
   gap: 20px;
 }
-
 button {
   background: none;
   color: white;
@@ -175,11 +165,9 @@ button {
   border-radius: 5px;
   margin-left: 20px;
 }
-
 button:hover {
   border: 3px solid red;
 }
-
 h1 {
   font-size: 24px;
   margin-top: 20px;
@@ -189,7 +177,7 @@ p {
   font-size: 18px;
   margin-top: 10px;
   text-align: left;
-  max-width: calc(100% - 700px);  /* Ограничение ширины, например, на ширину изображения */
-  word-wrap: break-word;  /* Для переноса длинных слов, если они не помещаются */
+  max-width: calc(100% - 700px);
+  word-wrap: break-word;
 }
 </style>

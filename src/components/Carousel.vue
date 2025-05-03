@@ -1,40 +1,32 @@
 <template>
   <div>
-    <!-- Заглушка вне .carousel-container -->
     <div
       v-if="returningFromDetail && lastReturnedHeroPosition"
       class="hero-placeholder"
       :style="imageStyle"
     />
-
-```
-<!-- Основной контейнер с каруселью -->
-<div class="carousel-container" :class="{ visible: isVisible }">
-  <div class="carousel" :style="{ transform: `translateX(${offset}px)` }">
-    <div
-      v-for="(hero, i) in heroes"
-      :key="i"
-      class="carousel-item"
-      @click="handleClick(hero, $event)"
-    >
-      <HeroCard :hero="hero" />
+    <div class="carousel-container" :class="{ visible: isVisible }">
+      <div class="carousel" :style="{ transform: `translateX(${offset}px)` }">
+        <div
+          v-for="(hero, i) in heroes"
+          :key="i"
+          class="carousel-item"
+          @click="handleClick(hero, $event)"
+        >
+          <HeroCard :hero="hero" />
+        </div>
+      </div>
+      <div class="buttons">
+        <button @click="moveLeft">◄</button>
+        <button @click="moveRight">►</button>
+      </div>
     </div>
   </div>
-  <div class="buttons">
-    <button @click="moveLeft">◄</button>
-    <button @click="moveRight">►</button>
-  </div>
-</div>
-```
-
-  </div>
 </template>
-
 <script>
   import { SCALE_FACTOR } from '@/constants'
   import { mapState, mapMutations } from 'vuex'
   import HeroCard from './HeroCard.vue'
-
   export default {
     components: { HeroCard },
     computed: {
@@ -45,7 +37,7 @@
         'index'
       ]),
       offset() {
-        return -this.index * (350 + 30); // ширина карточки + отступ
+        return -this.index * (350 + 30);
       },
       imageStyle() {
         if (!this.lastReturnedHeroPosition) return {};
@@ -135,7 +127,6 @@
     },
   }
 </script>
-
 <style scoped>
   .carousel-container {
     overflow: hidden;

@@ -10,13 +10,11 @@
     <button class="header__menu-button">Меню</button>
   </header>
 </template>
-
 <script>
 export default {
   name: 'Header',
 }
 </script>
-
 <style scoped>
 .header {
   color: white;
@@ -27,28 +25,23 @@ export default {
   font-size: 40px;
   font-weight: bold;
 }
-
 .header__logo {
   display: flex;
   align-items: center;
 }
-
 .header__logo-image {
   width: 100px;
   height: auto;
   margin-right: 10px;
 }
-
 .header__title {
   /* gradient-text оставляем как есть, если он стилизован глобально */
 }
-
 .header__search {
   flex-grow: 1;
   display: flex;
   justify-content: center;
 }
-
 .header__search-input {
   width: 50%;
   padding: 8px;
@@ -56,7 +49,6 @@ export default {
   border: 2px solid #ccc;
   border-radius: 5px;
 }
-
 .header__menu-button {
   background: none;
   color: white;
@@ -66,7 +58,6 @@ export default {
   cursor: pointer;
   border-radius: 5px;
 }
-
 .header__menu-button:hover {
   border: 3px solid red;
 }
