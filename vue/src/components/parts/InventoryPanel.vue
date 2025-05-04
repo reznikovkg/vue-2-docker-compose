@@ -1,17 +1,20 @@
 <template>
   <div class="inventory-panel">
     <div
-        v-for="item in items"
-        :key="item.id"
-        class="inventory-panel__item"
-        :class="{ 'inventory-panel__item--selected': selectedItem?.id === item.id }"
-        @click="$emit('select', item)"
-        :title="item.description"
+      v-for="item in items"
+      :key="item.id"
+      class="inventory-panel__item"
+      :class="{
+      'inventory-panel__item--selected': selectedItem?.id === item.id,
+      [`inventory-panel__item--${item.id}`]: true
+      }"
+      @click="$emit('select', item)"
+      :title="item.description"
     >
       <img
-          :src="item.image"
-          :alt="item.name"
-          class="inventory-panel__image"
+        :src="item.image"
+        :alt="item.name"
+        class="inventory-panel__image"
       >
     </div>
   </div>
@@ -19,19 +22,23 @@
 
 <script>
 export default {
+  name: 'InventoryPanel',
   props: {
-    items: Array
+    items: Array,
+    selectedItem: Object
   }
-}
+};
 </script>
 
 <style lang="less">
+@import '@/less/const.less';
+
 .inventory-panel {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 80px;
+  height: @inventory-height;
   background-color: @cBaseNine;
   display: flex;
   padding: 10px;
@@ -39,35 +46,37 @@ export default {
   z-index: 10;
   overflow-x: auto;
   gap: 10px;
-}
 
-.inventory-panel__item {
-  width: 60px;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 5px 10px;
-  background-color: @cBaseSix;
-  color: @cBaseOne;
-  border-radius: 3px;
-  cursor: pointer;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
+  &__item {
+    width: @item-size;
+    height: @item-size;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: @cBaseSix;
+    border-radius: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.3s;
 
-.inventory-panel__image {
-  max-width: 90%;
-  max-height: 90%;
-  object-fit: contain;
-}
+    &:hover {
+      transform: scale(1.1);
+    }
 
-.inventory-panel__item:hover {
-  background-color: @cBaseSix;
-}
+    &--selected {
+      outline: 2px solid @cBaseOne;
+      transform: scale(1.1);
+    }
 
-.inventory-panel__item--selected {
-  background-color: @cBaseSeven;
-  outline: 2px solid @cBaseOne;
+    &--key {
+      background-color: @cBaseSeven;
+    }
+  }
+
+  &__image {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 import { mapMutations } from "vuex";
-import DialogModal from "@/components/modals/DialogModal.vue";
+import HelpModal from "@/components/modals/HelpModal";
 
 export const helpModal = {
   methods: {
@@ -8,7 +8,7 @@ export const helpModal = {
     ]),
     openHelpModal (params = {}) {
       this.openModal({
-        component: DialogModal,
+        component: HelpModal,
         params
       })
     }

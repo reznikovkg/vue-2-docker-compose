@@ -3,6 +3,7 @@
     <section class="p-16">
       Homepage
       <button @click="() => openHelpModal()">Open modal</button>
+      <button @click="startGame">Start Game</button>
     </section>
   </PageLayout>
 </template>
@@ -16,6 +17,11 @@ export default {
   mixins: [helpModal],
   components: {
     PageLayout
+  },
+  methods: {
+    startGame() {
+      this.$router.push('/game')
+    }
   }
 }
 </script>

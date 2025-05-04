@@ -1,89 +1,104 @@
 <template>
   <div
-      class="game-scene-view"
-      :style="{ backgroundImage: `url(${scene.background})`}"
+    class="scene"
+    :style="{
+    backgroundImage: `url(${currentBackground})`,
+    backgroundColor: '#ddd'
+    }"
   >
+    <div class="game-scene-view">
     <div
-        v-for="item in scene.items"
-        :key="item.id"
-        class="game-scene-view__item"
-        :style="{
-          left: item.x ,
-          top: item.y }"
-        @click="() => $emit('click-item', item)"
-        :title="item.name"
+      v-for="item in scene.items"
+      :key="item.id"
+      class="game-scene-view__item"
+      :class="`game-scene-view__item--${item.id}`"
+      :style="{ left: item.x, top: item.y }"
+      @click="$emit('click-item', item)"
+      :title="item.description"
     >
-      <img
-          :src="item.image"
-          :alt="item.name"
-          class="game-scene-view__image"
-      >
     </div>
 
     <div
-        v-for="spot in scene.spots"
-        :key="spot.id"
-        class="game-scene-view__spot"
-        :style="{
-          left: spot.x ,
-          top: spot.y,
-          width: `${spot.width}px`,
-          height: `${spot.height}px`
-       }"
-        @click="() => $emit('click-spot', spot)"
-        :title="spot.description"
+      v-for="spot in scene.spots"
+      :key="spot.id"
+      class="game-scene-view__spot"
+      :class="`game-scene-view__spot--${spot.id}`"
+      :style="{
+      left: spot.x,
+      top: spot.y,
+      width: `${spot.width}px`,
+      height: `${spot.height}px`
+      }"
+        @click="$emit('click-spot', spot)"
+        :title="spot.name"
     ></div>
+  </div>
   </div>
 </template>
 
 <script>
+import roomBg from '@/assets/room-bg.png';
+import hallwayBg from '@/assets/hallway-bg.png';
+
 export default {
+  name: 'GameSceneView',
   props: {
-    scene: Object,
+    scene: {
+      type: Object,
+      required: true
+    },
     selectedItem: Object
+  },
+  computed: {
+    currentBackground() {
+      return this.scene.id === 'room' ? roomBg : hallwayBg;
+    }
   }
-}
+};
 </script>
 
 <style lang="less">
+@import '@/less/const.less';
+
+
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 80px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 .game-scene-view {
   position: relative;
   width: 100%;
   height: 100%;
   background-size: cover;
   background-position: center;
-}
 
-.game-scene-view__item {
-  position: absolute;
-  padding: 5px 10px;
-  background-color: @cBaseOne;
-  border: 1px solid @cBaseNine;
-  border-radius: 1px;
-  cursor: pointer;
-  transform: translate(-50%, -50%);
-}
+  &__item {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: yellow;
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+  }
 
-.game-scene-view__image {
-  width: 10px;
-  height: 10px;
-}
+  &__image {
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+  }
 
-.game-scene-view__item:hover .game-scene-view__image {
-  transform: scale(1);
-}
-
-.game-scene-view__item:hover {
-  background-color: @cBaseOne;
-}
-
-.game-scene-view__spot {
-  position: absolute;
-  border: 2px dashed @cBaseFour;
-  cursor: pointer;
-}
-
-.game-scene-view__spot:hover {
-  background-color: @cBaseFive;
+  &__spot {
+    position: absolute;
+    border: 2px dashed @cBaseFour;
+    cursor: pointer;
+    opacity: 0.7;
+  }
 }
 </style>
