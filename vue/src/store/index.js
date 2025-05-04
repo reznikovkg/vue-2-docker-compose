@@ -1,11 +1,22 @@
-import modals from './modals'
+import Vue from 'vue'
+import Vuex from 'vuex'
+import movement from "@/store/movement"
+import areas from "@/store/areas"
+import inventory from './inventory'
+Vue.use(Vuex)
 
-export default {
-  namespaced: true,
-  state: {},
-  getters: {},
-  mutations: {},
+export default new Vuex.Store({
+  state: {
+  },
+  getters: {
+  },
+  mutations: {
+  },
+  actions: {
+  },
   modules: {
-    modals
+    movement,
+    areas,
+    inventory
   }
-}
+})
