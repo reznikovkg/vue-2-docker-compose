@@ -121,9 +121,12 @@ export default {
             commit('SET_GRID_SIZE', gridSize);
         },
         restartGame: ({ dispatch, state }) => {
-            dispatch('restartGameWithGridSize', state.gridSize);
-            dispatch('addRandomTile');
-            dispatch('addRandomTile');
+            dispatch('restartGameWithGridSize', state.gridSize)
+                .then(() => dispatch('addRandomTile'))
+                .then(() => dispatch('addRandomTile'))
+                .catch(error => {
+                    console.error('Ошибка при перезапуске игры:', error);
+                });
         },
         checkGameState: ({ state, commit, dispatch }) => {
             const gridSize = state.gridSize;
@@ -194,8 +197,8 @@ export default {
                 .filter((index) => index !== -1);
             if (emptyCells.length >= 2) {
                 const [index1, index2] = emptyCells.slice(0, 2);
-                cells[index1] = 16777216*8;
-                cells[index2] = 16777216*8;
+                cells[index1] = 1024;
+                cells[index2] = 1024;
                 commit('SET_CELLS', cells);
             }
         },

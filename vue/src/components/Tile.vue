@@ -26,7 +26,7 @@ export default {
         return 'game__tile--0';
       }
       let baseValue = this.tile;
-      while (baseValue >= 2048) {
+      while (baseValue > 2048) {
         baseValue /= 1024;
       }
       const powersOfTwo = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];

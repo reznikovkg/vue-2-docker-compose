@@ -33,15 +33,20 @@
       </div>
     </div>
     <div class="game__grid-size-selector">
-      <label v-for="size in gridSizes" :key="size" class="game__grid-size-selector__button">
+      <label v-for="size in gridSizes" :key="size" class="game__grid-size-selector__item">
         <input
+            v-model="selectedGridSize"
+            class="game__grid-size-selector__radio"
             type="radio"
             :value="size"
-            v-model="selectedGridSize"
-            @change="updateGridSize"
-            class="game__grid-size-selector__radio"
+            @change="()=>updateGridSize()"
         />
-        <span>{{ size }}</span>
+        <span
+            class="game__grid-size-selector__button"
+            :class="{ 'game__grid-size-selector__button--active': selectedGridSize === size }"
+        >
+      {{ size }}
+    </span>
       </label>
     </div>
     <div class="game__board">
@@ -111,10 +116,10 @@ export default {
       'setGridSize',
       'restartGameWithGridSize'
     ]),
-      updateGridSize() {
-        this.restartGameWithGridSize(this.selectedGridSize);
-        this.restartGame();
-      },
+    updateGridSize() {
+      this.restartGameWithGridSize(this.selectedGridSize);
+      this.restartGame();
+    },
 
     handleKeyDown(event) {
       event.preventDefault();
@@ -203,13 +208,13 @@ export default {
 
   &__board {
 
-    --cell-size: clamp(60px, 8vw, 100px); // Размер ячейки
-    --gap-size: clamp(5px, 1vw, 10px); // Расстояние между ячейками
+    --cell-size: clamp(60px, 8vw, 100px);
+    --gap-size: clamp(5px, 1vw, 10px);
 
-    width: clamp(200px, 80vw, 600px); // Максимальная ширина доски
+    width: clamp(200px, 80vw, 600px);
     padding: clamp(8px, 1vw, 15px);
     display: grid;
-    gap: var(--gap-size); // Используем переменную для gap
+    gap: var(--gap-size);
     background-color: #d0d6da;
     border-radius: 8px;
     position: relative;
@@ -218,8 +223,8 @@ export default {
     @media (max-width: 600px) {
       width: 100%;
       padding: 5px;
-      --cell-size: clamp(40px, 10vw, 80px); // Уменьшаем размер ячейки на маленьких экранах
-      --gap-size: 5px; // Уменьшаем расстояние между ячейками
+      --cell-size: clamp(40px, 10vw, 80px);
+      --gap-size: 5px;
     }
   }
 
@@ -259,12 +264,13 @@ export default {
       cursor: not-allowed;
     }
   }
-  &__grid-size-selector {
+
+  .game__grid-size-selector {
     display: flex;
     gap: 10px;
     align-items: center;
 
-    &__button {
+    &__item {
       position: relative;
       cursor: pointer;
     }
@@ -275,8 +281,11 @@ export default {
       width: 100%;
       height: 100%;
       z-index: 1;
+      margin: 0;
+      cursor: pointer;
     }
-    span {
+
+    &__button {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -287,31 +296,22 @@ export default {
       color: #333;
       font-size: 14px;
       cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 0;
 
+      &:hover {
+        background-color: #cfcfcf;
+      }
     }
 
-    .game__grid-size-selector__radio:checked + span {
+    &__button--active {
       background-color: #edc12e;
       color: #3f3b3b;
-
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     }
   }
-}
-.game__grid-size-selector {
-  display: flex;
-  gap: 10px;
-  align-items: center;
 
-  &__button {
-    position: relative;
-    cursor: pointer;
-  }
-
-  &__radio:checked + span {
-    background-color: #edc12e;
-    color: #3f3b3b;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  }
 }
 @keyframes pop-in {
   0% {
