@@ -1,8 +1,5 @@
-const towers = (state) => state.levels[state.currentLevel].towers;
+const towers = (state) => state.levels[state.currentLevel].towers
 export default {
-    stopTowerAttacks: ({commit}) => {
-        commit("stopTowerAttacks")
-    },
     updateCoins: ({commit}, amount) => {
         commit("setCoins", amount)
     },
@@ -24,70 +21,84 @@ export default {
     pushTower: ({commit}, index) => {
         commit("pushTower", index)
     },
-    startEnemyAttacks: ({ state, commit, dispatch }) => {
-        const interval = setInterval(() => {
-            if (state.enemyHealth > 0 && !state.gameOver) {
-                dispatch("enemyAttack")
-            }
-        }, 200)
-        commit("setEnemyAttackInterval", interval)
-    },
-
-    enemyAttack: ({ state, commit }) => {
-        towers(state).forEach((tower, index) => {
-            const enemyRow = Math.floor(state.enemyPosition / 10)
-            const enemyCol = state.enemyPosition % 10
-            const towerRow = Math.floor(tower.position / 10)
-            const towerCol = tower.position % 10
-            const isInRange = Math.abs(enemyRow - towerRow) <= 1 && Math.abs(enemyCol - towerCol) <= 1
-            if (isInRange) {
-                commit("damageTower", index)
-            }
-        })
-    },
-    moveEnemy: ({ state, commit, dispatch }) => {
-        let step = 0
-        commit("setEnemyHealth", 100)
-        commit("setEnemyDefeated", false)
-        commit("setGameOver", false)
-        const interval = setInterval(() => {
-            if (step < state.levels[state.currentLevel].path.length) {
-                commit("setEnemyPosition", state.levels[state.currentLevel].path[step])
-                step++
-            } else {
-                commit("setGameOver", true)
-            }
-        }, 700)
-        commit("setEnemyInterval", interval)
-        dispatch("startEnemyAttacks")
-    },
     showMessage: ({ commit }, text) => {
         commit("setMessage", text)
     },
-    startTowerAttacks: ({ state, commit, dispatch }) => {
-        dispatch('stopTowerAttacks')
-        towers(state).forEach((tower) => {
-            let attackSpeed = 1000 / tower.fireRate
-            let attackInterval = setInterval(() => {
-                const enemyRow = Math.floor(state.enemyPosition / state.cols)
-                const enemyCol = state.enemyPosition % state.cols
-                const towerRow = Math.floor(tower.position / state.cols)
-                const towerCol = tower.position % state.cols
-                const inDistance = Math.abs(enemyRow - towerRow) <= tower.range && Math.abs(enemyCol - towerCol) <= tower.range
-                if (state.enemyHealth > 0 && !state.gameOver && inDistance) {
-                    commit('setEnemyHealth', state.enemyHealth - tower.damage)
-                    if (state.enemyHealth <= 0) {
-                        clearInterval(state.enemyInterval)
-                        commit('setEnemyInterval', null)
-                        commit('setEnemyPosition', -1)
-                        commit('setEnemyDefeated', true)
-                        commit('setCoins', 150)
-                        dispatch('stopTowerAttacks')
-                    }
-                }
-            }, attackSpeed)
-            state.attackIntervals.push(attackInterval)
+    stopTowerAttacks: ({ state, commit }) => {
+        state.attackIntervals.forEach(interval => clearInterval(interval))
+        commit("clearAttackIntervals")
+    },
+    startTowerAttacks: ({ state, dispatch, commit }) => {
+        dispatch("stopTowerAttacks")
+        const attackIntervals = []
+
+        towers(state).forEach(tower => {
+            dispatch("startTowerAttack", tower).then(interval => {
+                attackIntervals.push(interval)
+            })
         })
+        commit("setAttackIntervals", attackIntervals)
+    },
+    startTowerAttack: ({ state, dispatch }, tower) => {
+        return new Promise(resolve => {
+            const attackSpeed = 1000 / tower.fireRate
+            const cols = state.cols
+            const interval = setInterval(() => {
+                if (tower.health <= 0 || state.gameOver || state.enemyDefeated) return
+                const towerRow = Math.floor(tower.position / cols)
+                const towerCol = tower.position % cols
+                const enemiesInRange = state.enemies.filter(enemy => {
+                    if (enemy.health <= 0 || enemy.isDead) return false
+                    const enemyRow = Math.floor(enemy.index / cols)
+                    const enemyCol = enemy.index % cols
+                    return (
+                        Math.abs(enemyRow - towerRow) <= tower.range &&
+                        Math.abs(enemyCol - towerCol) <= tower.range
+                    )
+                })
+                if (enemiesInRange.length === 0) return
+                const target = enemiesInRange[0]
+                dispatch("handleTowerShot", { tower, target })
+            }, attackSpeed)
+            resolve(interval)
+        })
+    },
+    handleTowerShot: ({ state, commit, dispatch }, { tower, target }) => {
+        const cols = state.cols
+        const cellSize = state.cell_size
+        const updatedHealth = Math.max(0, target.health - tower.damage)
+        commit("updateEnemy", {
+            id: target.id,
+            updates: { health: updatedHealth },
+        })
+        const allDead = state.enemies.every(e => e.health <= 0 || e.isDead)
+        if (allDead && state.enemies.length > 0) {
+            commit('setEnemyDefeated', true)
+            commit('setCoins', 150)
+            dispatch('stopTowerAttacks')
+        }
+        const towerCol = tower.position % cols
+        const towerRow = Math.floor(tower.position / cols)
+        const startX = towerCol * cellSize + cellSize / 2
+        const startY = towerRow * cellSize + cellSize / 2
+        const endX = target.pixel.x
+        const endY = target.pixel.y
+        const projectile = {
+            id: Math.random(),
+            startX,
+            startY,
+            endX,
+            endY,
+            currentX: startX,
+            currentY: startY,
+        }
+        commit("addProjectile", projectile)
+        setTimeout(() => {
+            const idx = state.projectiles.findIndex(p => p.id === projectile.id)
+            if (idx !== -1) {
+                commit("removeProjectile", idx)
+            }
+        }, 200)
     },
     placeTower: ({ state, commit, getters, dispatch }, index) => {
         if (state.gameOver || state.enemyDefeated) return
@@ -108,7 +119,7 @@ export default {
                 commit("updateCoins", -state.upgradeCost)
                 if (tower.grade < 6) {
                     commit("upgradeTowerStats", tower)
-                    dispatch("startTowerAttacks") // Перезапуск атак башен
+                    dispatch("startTowerAttacks")
                     dispatch("showMessage", `Башня улучшена до уровня: ${tower.grade}`)
                 } else {
                     dispatch("showMessage", "❌ Больше уровней не предусмотрено")
@@ -136,12 +147,129 @@ export default {
             clearInterval(state.enemyInterval)
             commit('setEnemyInterval', null)
         }
+        commit('clearEnemies')
         dispatch('stopTowerAttacks')
         commit('setCurrentLevel', level)
-        commit('setEnemyPosition', state.levels[level].path[0])
-        commit('setEnemyHealth', 100)
         commit('clearTowers')
         dispatch('startTowerAttacks')
-        dispatch('moveEnemy')
+        dispatch('spawnEnemies')
+    },
+    setHoveredTowerData({ commit }, { index, tower }) {
+        commit('setHoveredTowerIndex', index)
+        commit('setHoveredRadius', tower.range)
+    },
+    handleCellHoverLeave({ commit }) {
+        commit('clearHoveredTowerIndex')
+    },
+    spawnEnemies: ({ commit, state, dispatch }) => {
+        commit("clearEnemies")
+        commit("setEnemyDefeated", false)
+        commit("setGameOver", false)
+        const enemies_amount = 5
+        const level = state.levels[state.currentLevel]
+        const path = level.path
+        const cellSize = state.cell_size
+        const types = state.enemyTypes
+        const enemyIntervals = []
+        for (let i = 0; i < enemies_amount; i++) {
+            setTimeout(() => {
+                const id = Date.now() + i
+                const index = path[0]
+                const pixel = {
+                    x: (index % state.cols) * cellSize + 5,
+                    y: Math.floor(index / state.cols) * cellSize + 5,
+                }
+                const enemyType = types[Math.floor(Math.random() * types.length)]
+                const enemy = {
+                    id,
+                    index,
+                    pixel,
+                    health: enemyType.health,
+                    pathStep: 0,
+                    isDead: false,
+                    type: enemyType.type,
+                    speed: enemyType.speed,
+                    attackInterval: enemyType.attackInterval,
+                }
+                commit("addEnemy", enemy)
+                dispatch("startEnemyMovement", { id, speed: enemy.speed }).then(interval => {
+                    enemyIntervals.push(interval)
+                })
+                dispatch("startEnemyAttack", { id, interval: enemy.attackInterval }).then(interval => {
+                    enemyIntervals.push(interval)
+                })
+            }, i * 700)
+        }
+        setTimeout(() => {
+            commit("setEnemyIntervals", enemyIntervals)
+        }, enemies_amount * 1000)
+    },
+    startEnemyMovement: ({ state, commit }, { id, speed }) => {
+        return new Promise((resolve) => {
+            const path = state.levels[state.currentLevel].path
+            const cellSize = state.cell_size
+            const interval = setInterval(() => {
+                const currentEnemy = state.enemies.find(e => e.id === id)
+                if (!currentEnemy || currentEnemy.isDead || currentEnemy.health <= 0) {
+                    if (currentEnemy && !currentEnemy.isDead) {
+                        commit("markEnemyAsDead", id)
+                        setTimeout(() => commit("removeEnemy", id), 400)
+                    }
+                    clearInterval(interval)
+                    return
+                }
+                const nextStep = currentEnemy.pathStep + 1
+                if (nextStep >= path.length) {
+                    commit("setGameOver", true)
+                    clearInterval(interval)
+                    return
+                }
+                const newIndex = path[nextStep]
+                const row = Math.floor(newIndex / state.cols)
+                const col = newIndex % state.cols
+                commit("updateEnemy", {
+                    id,
+                    updates: {
+                        index: newIndex,
+                        pathStep: nextStep,
+                        pixel: {
+                            x: col * cellSize + 5,
+                            y: row * cellSize + 5,
+                        },
+                    },
+                })
+            }, speed)
+            resolve(interval)
+        })
+    },
+    startEnemyAttack: ({ state, commit }, { id, interval }) => {
+        return new Promise((resolve) => {
+            const attackInterval = setInterval(() => {
+                if (state.gameOver) {
+                    clearInterval(attackInterval)
+                    return
+                }
+                const currentEnemy = state.enemies.find(e => e.id === id)
+                if (!currentEnemy || currentEnemy.isDead || currentEnemy.health <= 0) {
+                    clearInterval(attackInterval)
+                    return
+                }
+                const enemyRow = Math.floor(currentEnemy.index / state.cols)
+                const enemyCol = currentEnemy.index % state.cols
+                const towersInRange = towers(state).filter((tower) => {
+                    const towerRow = Math.floor(tower.position / state.cols)
+                    const towerCol = tower.position % state.cols
+                    return (
+                        Math.abs(towerRow - enemyRow) <= 1 &&
+                        Math.abs(towerCol - enemyCol) <= 1
+                    )
+                })
+                towersInRange.forEach((tower) => {
+                    const towerIndex = towers(state).findIndex(t => t.position === tower.position)
+                    commit("damageTower", towerIndex)
+                })
+            }, interval)
+            resolve(attackInterval)
+        })
     },
 }

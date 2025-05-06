@@ -3,11 +3,9 @@
       class="cell"
       :class="cellClasses"
       @click="() => handleClick()"
+      @mouseenter="$emit('cellHover', index)"
+      @mouseleave="$emit('cellHoverLeave')"
   >
-    <EnemyUnit
-        v-if="isEnemy"
-        :enemyHealth="enemyHealth"
-    />
     <TowerUnit
         v-if="isTower"
         :tower="tower"
@@ -17,21 +15,19 @@
 </template>
 
 <script>
-import EnemyUnit from "@/components/EnemyUnit.vue"
 import TowerUnit from "@/components/TowerUnit.vue"
 export default {
   name: "GameCell",
-  components: { EnemyUnit, TowerUnit },
+  components: { TowerUnit },
   props: {
     index: Number,
     isRoad: Boolean,
     isFirstRoadCell: Boolean,
     isLastRoadCell: Boolean,
-    isEnemy: Boolean,
     isTower: Boolean,
     canPlaceTower: Boolean,
-    enemyHealth: Number,
-    tower: Object
+    tower: Object,
+    isInRange: Boolean
   },
   computed: {
     cellClasses() {
@@ -39,9 +35,9 @@ export default {
         "cell--road": this.isRoad,
         "cell--road-first": this.isRoad && this.isFirstRoadCell,
         "cell--road-last": this.isRoad && this.isLastRoadCell,
-        "cell--enemy": this.isEnemy,
         "cell--tower": this.isTower,
-        "cell--can-place-tower": this.canPlaceTower
+        "cell--can-place-tower": this.canPlaceTower,
+        "cell--in-range": this.isInRange
       };
     }
   },
@@ -54,6 +50,24 @@ export default {
 </script>
 
 <style lang="less">
+.cell.cell--in-range {
+  background-image: repeating-linear-gradient(
+      45deg,
+      rgb(200, 1, 1),
+      transparent 2px,
+      transparent 6px
+  );
+}
+.cell.cell--in-range::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
 .cell {
   width: 40px;
   height: 40px;
