@@ -98,7 +98,7 @@ export default {
             if (idx !== -1) {
                 commit("removeProjectile", idx)
             }
-        }, 200)
+        }, 1000 / tower.fireRate)
     },
     placeTower: ({ state, commit, getters, dispatch }, index) => {
         if (state.gameOver || state.enemyDefeated) return

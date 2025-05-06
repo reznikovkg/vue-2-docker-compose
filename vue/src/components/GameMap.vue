@@ -282,5 +282,4 @@ export default {
   position: relative;
   height: 420px;
 }
-
 </style>
