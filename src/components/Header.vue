@@ -10,11 +10,13 @@
     <button class="header__menu-button">Меню</button>
   </header>
 </template>
+
 <script>
 export default {
-  name: 'Header',
+  name: 'Header'
 }
 </script>
+
 <style scoped>
 .header {
   color: white;
@@ -33,9 +35,6 @@ export default {
   width: 100px;
   height: auto;
   margin-right: 10px;
-}
-.header__title {
-  /* gradient-text оставляем как есть, если он стилизован глобально */
 }
 .header__search {
   flex-grow: 1;

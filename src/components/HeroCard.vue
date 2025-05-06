@@ -1,23 +1,62 @@
 <template>
-  <div class="carousel-item">
-    <img :id="`hero-img-${hero.name}`" :src="hero.image" :alt="hero.name" />
-    <figcaption>{{ hero.name }}</figcaption>
+  <div class="carousel__item">
+    <img 
+      :id="`hero-img-${hero.name}`" 
+      :src="hero.image" 
+      :alt="hero.name"
+      class="carousel__image"
+      :class="{ 'carousel__image--highlighted': isRecentlySelected }"
+      :style="imageStyle"
+    >
+    <figcaption class="carousel__caption">{{ hero.name }}</figcaption>
   </div>
 </template>
+
 <script>
 import { mapState } from 'vuex'
 
 export default {
   props: ['hero'],
+  data() {
+    return {
+      shouldAnimate: false,
+    }
+  },
   computed: {
-    ...mapState(['index'])
+    ...mapState(['index', 'lastReturnedHeroName']),
+    isRecentlySelected() {
+      return this.lastReturnedHeroName === this.hero.name;
+    },
+    imageStyle() {
+      if (this.isRecentlySelected && this.shouldAnimate) {
+        return {
+          transform: `scale(${this.getScaleFactor()})`,
+          transition: 'transform 0.5s ease-in-out 1s',
+        };
+      }
+      return {};
+    }
   },
   methods: {
+    getScaleFactor() {
+      return getComputedStyle(document.documentElement).getPropertyValue('--scale-factor') || 1.2;
+    }
+  },
+  watch: {
+    isRecentlySelected(newVal) {
+      if (newVal) {
+        this.shouldAnimate = true;
+        setTimeout(() => {
+          this.shouldAnimate = false;
+        }, 1500);
+      }
+    }
   }
 }
 </script>
+
 <style scoped>
-.carousel-item {
+.carousel__item {
   min-width: 350px;
   height: 400px;
   display: flex;
@@ -28,24 +67,34 @@ export default {
   cursor: pointer;
   position: relative;
 }
-.carousel-item img {
+
+.carousel__image {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transform: scale(1);
   transition: transform 0.3s ease-in-out;
 }
-.carousel-item:hover img {
+
+.carousel__image--highlighted {
+  transform: scale(var(--scale-factor));
+  transition: none;
+}
+
+.carousel__item:hover .carousel__image {
   transform: scale(var(--scale-factor));
 }
-figcaption {
+
+.carousel__caption {
   text-align: center;
   color: white;
   font-size: 18px;
-  background-color: none; /* rgba(0, 0, 0, 0.5); */
+  background-color: none;
   padding: 5px 0;
   position: relative;
 }
-.carousel-item figcaption::after {
+
+.carousel__caption::after {
   content: "Подробнее...";
   position: absolute;
   bottom: -20px;
@@ -57,7 +106,8 @@ figcaption {
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-.carousel-item:hover figcaption::after {
+
+.carousel__item:hover .carousel__caption::after {
   opacity: 1;
   visibility: visible;
 }

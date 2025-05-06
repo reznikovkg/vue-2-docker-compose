@@ -1,8 +1,8 @@
 <template>
   <div class="hero-detail">
-    <button @click="goBack">Назад</button>
-    <div class="hero-info">
-      <h1 :style="textStyle">{{ hero.name }}</h1>
+    <button class="hero-detail__button" @click="goBack">Назад</button>
+    <div class="hero-detail__info">
+      <h1 class="hero-detail__heading" :style="textStyle">{{ hero.name }}</h1>
       <img
         v-if="selectedHero"
         :src="selectedHero.image"
@@ -10,12 +10,12 @@
         class="hero-detail__image"
         :style="imageStyle"
       />
-      <p :style="textStyle">{{ hero.description }}</p>
+      <p class="hero-detail__text" :style="textStyle">{{ hero.description }}</p>
     </div>
   </div>
 </template>
+
 <script>
-import { SCALE_FACTOR } from '@/constants'
 import { mapState, mapMutations } from 'vuex'
 
 export default {
@@ -65,14 +65,14 @@ export default {
           description: 'Mirana — универсальный персонаж, который может быть как сильным стрелком, так и магом, с уникальными способностями для контроля и урона.'
         }
       ],
-      isMoved: false, // переменная для отслеживания анимации
-      isReversed: false, // флаг для обратной анимации
+      isMoved: false,
+      isReversed: false,
       targetXRatio: 0.7,
       textStyle: {
-        opacity: 0,  // Изначально текст невидим
-        transition: 'opacity 1s ease-in-out 500ms', // Плавное изменение прозрачности с задержкой
-      },
-    };
+        opacity: 0,
+        transition: 'opacity 1s ease-in-out 500ms'
+      }
+    }
   },
   computed: {
     ...mapState({
@@ -80,11 +80,11 @@ export default {
       position: state => state.heroPosition
     }),
     hero() {
-      const heroName = decodeURIComponent(this.name);
-      return this.heroes.find(h => h.name === heroName);
+      const heroName = decodeURIComponent(this.name)
+      return this.heroes.find(h => h.name === heroName)
     },
     imageStyle() {
-      const targetX = this.targetXRatio * window.innerWidth;
+      const targetX = this.targetXRatio * window.innerWidth
       return {
         position: 'absolute',
         top: this.position.top + 'px',
@@ -98,64 +98,68 @@ export default {
         objectFit: 'contain',
         zIndex: 1000,
         transition: this.isReversed
-          ? 'left 1s ease, transform 1s ease'
+          ? 'left 1s ease'
           : 'left 1s ease-in-out',
-        transform: this.isReversed ? `scale(${1/SCALE_FACTOR})` : 'scale(1)',
-      };
+        transform: 'scale(1)'
+      }
     }
   },
   methods: {
     ...mapMutations(['setReturningHero', 'clearHero']),
     goBack() {
-      this.textStyle.opacity = 0;  // Текст начинает исчезать
+      this.textStyle.opacity = 0
       setTimeout(() => {
-        this.isReversed = true;
+        this.isReversed = true
         if (this.selectedHero && this.position) {
           this.setReturningHero({
             name: this.selectedHero.name,
-            position: this.position,
-          });
+            position: this.position
+          })
         }
-        const heroDetail = document.querySelector('.hero-detail');
-        heroDetail.classList.add('fade-out');
+        const heroDetail = document.querySelector('.hero-detail')
+        heroDetail.classList.add('fade-out')
         setTimeout(() => {
-          this.$router.back();
+          this.$router.back()
           setTimeout(() => {
-            this.clearHero();
-          }, 100); 
-        }, 1000);
-      }, 1000); 
-    },
+            this.clearHero()
+          }, 100) 
+        }, 1000)
+      }, 1000) 
+    }
   },
   mounted() {
     setTimeout(() => {
-      this.isMoved = true;
-    }, 100);
+      this.isMoved = true
+    }, 100)
     setTimeout(() => {
-      this.textStyle.opacity = 1;
-    }, 1000);
+      this.textStyle.opacity = 1
+    }, 1000)
   }
 }
 </script>
+
 <style scoped>
 .hero-detail {
   padding: 0;
   margin: 0;
   color: white;
 }
-.hero-info {
+
+.hero-detail__info {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.hero-info img {
+
+.hero-detail__image {
   width: 200px;
   height: 200px;
   object-fit: contain;
   transition: transform 1s ease-in-out;
   gap: 20px;
 }
-button {
+
+.hero-detail__button {
   background: none;
   color: white;
   border: 3px solid white;
@@ -165,15 +169,17 @@ button {
   border-radius: 5px;
   margin-left: 20px;
 }
-button:hover {
+
+.hero-detail__button:hover {
   border: 3px solid red;
 }
-h1 {
+
+.hero-detail__heading {
   font-size: 24px;
   margin-top: 20px;
 }
 
-p {
+.hero-detail__text {
   font-size: 18px;
   margin-top: 10px;
   text-align: left;
