@@ -58,16 +58,6 @@ export default {
       transparent 6px
   );
 }
-.cell.cell--in-range::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
 .cell {
   width: 40px;
   height: 40px;
@@ -80,7 +70,7 @@ export default {
       background-color: #f2aaff;
     }
     &-last {
-      background-color: #ff5722;
+      background-color: #dfbc73;
     }
   }
   &--can-place-tower {
