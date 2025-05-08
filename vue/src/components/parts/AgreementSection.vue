@@ -21,43 +21,58 @@
 import AgreementToggle from './AgreementToggle.vue';
 
 export default {
+  name: 'AgreementSection',
   components: { AgreementToggle },
   props: {
     section: {
       type: Object,
-      required: true
+      required: true,
+      validator: (section) => {
+        return ['id', 'title', 'description', 'required', 'items'].every(
+            (key) => key in section
+        );
+      }
     }
   }
 };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+@import "@/less/const.less";
+
 .section {
-  margin-bottom: 25px;
-  padding: 15px;
-  border-radius: 6px;
-  background-color: #f9f9f9;
+  margin-bottom: @padding-large;
+  padding: @padding-medium;
+  border-radius: @border-radius;
+  background-color: lighten(@secondary-color, 4%);
 }
 
 .section-header {
-  margin-bottom: 15px;
+  margin-bottom: @padding-medium;
+  text-align: left;
 }
 
 .section-title {
-  margin: 0 0 5px 0;
-  font-size: 18px;
-  color: #333;
+  margin: 0 0 @padding-small 0;
+  font-size: @font-size-large;
+  color: @text-color;
+  font-weight: 600;
+  text-align: left;
 }
 
 .section-description {
   margin: 0;
-  font-size: 14px;
-  color: #666;
+  font-size: @font-size-base;
+  color: @text-secondary;
+  line-height: 1.5;
+  text-align: left;
 }
 
 .section-items {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: @gap;
+  padding-left: 0;
+  margin-left: -10px;
 }
 </style>

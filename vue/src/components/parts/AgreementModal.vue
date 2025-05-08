@@ -1,6 +1,6 @@
 <template>
   <transition name="modal">
-    <div v-if="shouldShow" class="agreement-modal" role="dialog" aria-modal="true">
+    <div v-if="shouldShowModal" class="agreement-modal" role="dialog" aria-modal="true">
       <div class="modal-overlay" @click.self="handleOverlayClick"></div>
 
       <div class="modal-container">
@@ -61,47 +61,51 @@
 
 <script>
 import AgreementSection from './AgreementSection.vue';
-import { mapGetters, mapActions, mapState } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'AgreementModal',
   components: { AgreementSection },
 
   computed: {
-    ...mapState('agreement', ['config', 'settings']),
-    ...mapGetters('agreement', ['shouldShowModal', 'isSectionRequired']),
-
-    shouldShow() {
-      return this.shouldShowModal;
-    },
+    ...mapGetters('agreement', [
+      'shouldShowModal',
+      'isSectionRequired',
+      'getConfig',
+      'getSettings'
+    ]),
 
     modalTitle() {
-      return this.config?.modal?.title || 'Privacy Settings';
+      return this.getConfig?.modal?.title || 'Privacy Settings';
     },
 
     modalDescription() {
-      return this.config?.modal?.description || '';
+      return this.getConfig?.modal?.description || '';
     },
 
     filteredSections() {
-      return this.config?.sections?.filter(section => !section.hidden) || [];
+      return this.getConfig?.sections?.filter(section => !section.hidden) || [];
     },
 
     saveButtonText() {
-      return this.config?.modal?.saveButton || 'Save Settings';
+      return this.getConfig?.modal?.saveButton || 'Save Settings';
     },
 
     acceptAllButtonText() {
-      return this.config?.modal?.acceptAllButton || 'Accept All';
+      return this.getConfig?.modal?.acceptAllButton || 'Accept All';
     },
 
     rejectAllButtonText() {
-      return this.config?.modal?.rejectAllButton || 'Reject All';
+      return this.getConfig?.modal?.rejectAllButton || 'Reject All';
     },
 
     isRejectAllDisabled() {
       return this.filteredSections.every(section => section.required);
     },
+
+    isSaveDisabled() {
+      return false;
+    }
   },
 
   methods: {
@@ -111,11 +115,17 @@ export default {
       'saveSettings',
       'hideModal'
     ]),
+
+    handleOverlayClick() {
+      this.hideModal();
+    }
   }
 };
 </script>
 
-<style scoped>
+<style lang="less">
+@import "@/less/const.less";
+
 .agreement-modal {
   position: fixed;
   top: 0;
@@ -125,149 +135,151 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-}
+  z-index: @modal-z-index;
 
-.modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(2px);
-}
+  .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: @overlay-color;
+    backdrop-filter: blur(2px);
+  }
 
-.modal-container {
-  position: relative;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.modal-header {
-  padding: 20px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-content {
-  padding: 20px;
-  overflow-y: auto;
-  flex-grow: 1;
-}
-
-.modal-footer {
-  padding: 15px 20px;
-  border-top: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f9f9f9;
-}
-
-.buttons-group {
-  display: flex;
-  gap: 10px;
-}
-
-.btn {
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.btn-primary {
-  background-color: #42b983;
-  color: white;
-  border: none;
-}
-
-.btn-primary:hover {
-  background-color: #3aa876;
-}
-
-.btn-primary:disabled {
-  background-color: #a0d9bb;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ddd;
-}
-
-.btn-secondary:hover {
-  background-color: #e0e0e0;
-}
-
-.btn-secondary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.close-button {
-  font-size: 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #666;
-  padding: 0 10px;
-}
-
-.close-button:hover {
-  color: #333;
-}
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.modal-enter,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active .modal-container,
-.modal-leave-active .modal-container {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.modal-enter .modal-container,
-.modal-leave-to .modal-container {
-  transform: translateY(-20px);
-  opacity: 0;
-}
-
-@media (max-width: 768px) {
   .modal-container {
-    width: 95%;
+    position: relative;
+    width: 90%;
+    max-width: @modal-max-width;
+    max-height: @modal-max-height;
+    background-color: @white;
+    border-radius: @border-radius;
+    box-shadow: @box-shadow;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    padding: @padding-large;
+    border-bottom: 1px solid @border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-content {
+    padding: @padding-large;
+    overflow-y: auto;
+    flex-grow: 1;
   }
 
   .modal-footer {
-    flex-direction: column;
-    gap: 10px;
+    padding: @padding-medium @padding-large;
+    border-top: 1px solid @border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: @secondary-color;
   }
 
   .buttons-group {
-    width: 100%;
-    justify-content: space-between;
+    display: flex;
+    gap: @gap;
   }
 
   .btn {
-    flex-grow: 1;
+    padding: @padding-small @padding-large;
+    border-radius: @border-radius / 2;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all @transition-duration @transition-timing;
+  }
+
+  .btn-primary {
+    background-color: @primary-color;
+    color: @white;
+    border: none;
+
+    &:hover {
+      background-color: @primary-hover;
+    }
+
+    &:disabled {
+      background-color: lighten(@primary-color, 20%);
+      cursor: not-allowed;
+    }
+  }
+
+  .btn-secondary {
+    background-color: @secondary-color;
+    color: @text-color;
+    border: 1px solid darken(@secondary-color, 10%);
+
+    &:hover {
+      background-color: @secondary-hover;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .close-button {
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: @text-secondary;
+    padding: 0 @padding-small;
+
+    &:hover {
+      color: @text-color;
+    }
+  }
+
+  /* Анимации */
+  .modal-enter-active,
+  .modal-leave-active {
+    transition: opacity @transition-duration @transition-timing;
+  }
+
+  .modal-enter,
+  .modal-leave-to {
+    opacity: 0;
+  }
+
+  .modal-enter-active .modal-container,
+  .modal-leave-active .modal-container {
+    transition: transform @transition-duration @transition-timing,
+    opacity @transition-duration @transition-timing;
+  }
+
+  .modal-enter .modal-container,
+  .modal-leave-to .modal-container {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  @media (max-width: @mobile-breakpoint) {
+    .modal-container {
+      width: 95%;
+    }
+
+    .modal-footer {
+      flex-direction: column;
+      gap: @gap;
+    }
+
+    .buttons-group {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .btn {
+      flex-grow: 1;
+    }
   }
 }
 </style>

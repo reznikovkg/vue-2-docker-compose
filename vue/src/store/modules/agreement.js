@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import agreementConfig from '@/config/agreementConfig.js';
 import { getStorageItem, setStorageItem } from '@/utils/storage.js';
 
@@ -12,6 +13,9 @@ const state = {
 };
 
 const getters = {
+    getConfig: (state) => state.config,
+    getSettings: (state) => state.settings,
+    isInitialized: (state) => state.initialized,
     getSetting: (state) => (sectionId, itemId) => {
         return state.settings[sectionId]?.[itemId] ??
             state.config.sections
@@ -23,7 +27,9 @@ const getters = {
     },
     shouldShowModal: (state) => {
         return (state.firstVisit && state.config.modal.showOnFirstVisit) || state.modalVisible;
-    }
+    },
+    getModalVisibility: (state) => state.modalVisible,
+    isFirstVisit: (state) => state.firstVisit
 };
 
 const mutations = {
@@ -36,21 +42,20 @@ const mutations = {
         } else {
             state.settings = state.config.sections.reduce((acc, section) => {
                 acc[section.id] = section.items.reduce((sectionAcc, item) => {
-                    sectionAcc[item.id] = item.enabled;
+                    sectionAcc[item.id] = item.enabled || false;
                     return sectionAcc;
                 }, {});
                 return acc;
             }, {});
         }
-
         state.initialized = true;
     },
 
     TOGGLE_SETTING(state, { sectionId, itemId, value }) {
         if (!state.settings[sectionId]) {
-            state.settings[sectionId] = {};
+            Vue.set(state.settings, sectionId, {});
         }
-        state.settings[sectionId][itemId] = value;
+        Vue.set(state.settings[sectionId], itemId, value);
     },
 
     ACCEPT_ALL(state) {
@@ -66,7 +71,7 @@ const mutations = {
     REJECT_ALL(state) {
         state.settings = state.config.sections.reduce((acc, section) => {
             acc[section.id] = section.items.reduce((sectionAcc, item) => {
-                sectionAcc[item.id] = section.required ? true : false;
+                sectionAcc[item.id] = section.required;
                 return sectionAcc;
             }, {});
             return acc;
@@ -79,12 +84,8 @@ const mutations = {
         state.modalVisible = false;
     },
 
-    SHOW_MODAL(state) {
-        state.modalVisible = true;
-    },
-
-    HIDE_MODAL(state) {
-        state.modalVisible = false;
+    SET_MODAL_VISIBILITY(state, visible) {
+        state.modalVisible = visible;
     }
 };
 
@@ -93,8 +94,10 @@ const actions = {
         commit('INITIALIZE');
     },
 
-    toggleSetting({ commit, state }, { sectionId, itemId, value }) {
-        const section = state.config.sections.find(s => s.id === sectionId);
+    toggleSetting({ commit, getters }, { sectionId, itemId, value }) {
+        if (getters.isSectionRequired(sectionId)) return;
+
+        const section = getters.getConfig.sections.find(s => s.id === sectionId);
         if (!section) return;
 
         const item = section.items.find(i => i.id === itemId);
@@ -105,10 +108,12 @@ const actions = {
 
     acceptAll({ commit }) {
         commit('ACCEPT_ALL');
+        //commit('SAVE_SETTINGS');
     },
 
     rejectAll({ commit }) {
         commit('REJECT_ALL');
+        //commit('SAVE_SETTINGS');
     },
 
     saveSettings({ commit }) {
@@ -116,11 +121,11 @@ const actions = {
     },
 
     showModal({ commit }) {
-        commit('SHOW_MODAL');
+        commit('SET_MODAL_VISIBILITY', true);
     },
 
     hideModal({ commit }) {
-        commit('HIDE_MODAL');
+        commit('SET_MODAL_VISIBILITY', false);
     }
 };
 
