@@ -1,9 +1,9 @@
 <template>
   <span
       class="game__tile"
-      :class="`game__tile--${tile}`"
+      :class="tileClass"
   >
-    {{ tile > 0 ? tile : '' }}
+    {{ formattedValue }}
   </span>
 </template>
 
@@ -14,6 +14,24 @@ export default {
     tile: {
       type: Number,
       required: true,
+    },
+    formattedValue: {
+      type: String,
+      required: true,
+    },
+  },
+  computed: {
+    tileClass() {
+      if (this.tile === 0) {
+        return 'game__tile--0';
+      }
+      let baseValue = this.tile;
+      while (baseValue > 2048) {
+        baseValue /= 1024;
+      }
+      const powersOfTwo = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
+      const closestPowerOfTwo = powersOfTwo.find((power) => power >= baseValue) || 2048;
+      return `game__tile--${closestPowerOfTwo}`;
     },
   },
 };
@@ -27,9 +45,14 @@ export default {
   background-color: #cecdcd;
   border-radius: 5px;
   aspect-ratio: 1;
-  font-size: clamp(12px, 2vw, 24px);
   font-weight: bold;
   transition: transform 0.1s ease, background-color 0.3s ease;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+
 
   &:hover {
     transform: scale(1.05);
