@@ -47,11 +47,7 @@
         <ProjectileUnit
             v-for="projectile in projectiles"
             :key="projectile.id"
-            :id="projectile.id"
-            :startX="projectile.startX"
-            :startY="projectile.startY"
-            :endX="projectile.endX"
-            :endY="projectile.endY"
+            :value="projectile"
         />
       </div>
     </div>

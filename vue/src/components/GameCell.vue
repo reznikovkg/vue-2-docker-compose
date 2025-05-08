@@ -3,8 +3,8 @@
       class="cell"
       :class="cellClasses"
       @click="() => handleClick()"
-      @mouseenter="$emit('cellHover', index)"
-      @mouseleave="$emit('cellHoverLeave')"
+      @mouseenter="() => handleMouseEnter()"
+      @mouseleave="() => handleMouseLeave"
   >
     <TowerUnit
         v-if="isTower"
@@ -44,6 +44,12 @@ export default {
   methods: {
     handleClick() {
       this.$emit("cellClick", this.index);
+    },
+    handleMouseEnter() {
+      this.$emit("cellHover", this.index);
+    },
+    handleMouseLeave() {
+      this.$emit("cellHoverLeave");
     }
   },
 };

@@ -11,11 +11,10 @@
 <script>
 export default {
   props: {
-    id: Number,
-    startX: Number,
-    startY: Number,
-    endX: Number,
-    endY: Number,
+    value: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -30,17 +29,17 @@ export default {
     animate() {
       const duration = 200;
       const startTime = performance.now();
-      const deltaX = this.endX - this.startX;
-      const deltaY = this.endY - this.startY;
+      const deltaX = this.value.endX - this.value.startX;
+      const deltaY = this.value.endY - this.value.startY;
       const step = (now) => {
         const elapsed = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        this.currentX = this.startX + deltaX * progress;
-        this.currentY = this.startY + deltaY * progress;
+        this.currentX = this.value.startX + deltaX * progress;
+        this.currentY = this.value.startY + deltaY * progress;
         if (progress < 1) {
           requestAnimationFrame(step);
         } else {
-          this.$emit("done", this.id);
+          this.$emit("done", this.value.id);
         }
       };
       requestAnimationFrame(step);
