@@ -10,30 +10,24 @@
 export default {
   name: 'PlayerShip',
   props: {
-    x: {
-      type: Number,
-      required: true
+    position: {  // Вместо отдельных x, y
+      type: Object,
+      required: true,
+      default: () => ({ x: 0, y: 0 })
     },
-    y: {
-      type: Number,
-      required: true
-    },
-    width: {
-      type: Number,
-      required: true
-    },
-    height: {
-      type: Number,
-      required: true
+    dimensions: {  // Вместо отдельных width, height
+      type: Object,
+      required: true,
+      default: () => ({ width: 40, height: 40 })
     }
   },
   computed: {
     playerStyle () {
       return {
-        left: `${this.x}px`,
-        top: `${this.y}px`,
-        width: `${this.width}px`,
-        height: `${this.height}px`
+        left: `${this.position.x}px`,
+        top: `${this.position.y}px`,
+        width: `${this.dimensions.width}px`,
+        height: `${this.dimensions.height}px`
       }
     }
   },

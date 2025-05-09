@@ -9,13 +9,10 @@
 export default {
   name: 'AsteroidObject',
   props: {
-    x: {
-      type: Number,
-      required: true
-    },
-    y: {
-      type: Number,
-      required: true
+    position: {
+      type: Object,
+      required: true,
+      default: () => ({ x: 0, y: 0 })
     },
     size: {
       type: Number,
@@ -25,8 +22,8 @@ export default {
   computed: {
     asteroidObjectStyle () {
       return {
-        left: `${this.x}px`,
-        top: `${this.y}px`,
+        left: `${this.position.x}px`,
+        top: `${this.position.y}px`,
         width: `${this.size}px`,
         height: `${this.size}px`
       }
