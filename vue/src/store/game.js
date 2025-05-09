@@ -1,22 +1,62 @@
 import gameScenes from '@/game/gameScenes';
 
+const DEFAULT_DIALOG = {
+  title: 'Информация',
+  buttons: [{ text: 'OK', afterClick: 'emitClose' }]
+};
+
 export default {
   namespaced: true,
   state: {
-    currentSceneId: 'bedroom',
+    currentSceneId: 'house',
     inventory: [],
     selectedItem: null,
     scenes: gameScenes,
-    openedDoors: []
+    openedDoors: [],
+    gameFlags: {},
+    gameCompleted: false,
+    dialog: {
+      show: false,
+      params: { ...DEFAULT_DIALOG }
+    }
   },
   getters: {
     currentScene: (state) => state.scenes[state.currentSceneId],
     inventory: (state) => state.inventory,
-    selectedItem: (state) => state.selectedItem
+    selectedItem: (state) => state.selectedItem,
+    gameCompleted: (state) => state.gameCompleted
   },
   mutations: {
+    setDialog(state, dialog) {
+      state.dialog = dialog;
+    },
+    resetDialog(state) {
+      state.dialog = {
+        show: false,
+        params: {
+          title: 'Информация',
+          message: '',
+          buttons: [{ text: 'OK', afterClick: 'emitClose' }]
+        }
+      };
+    },
     setCurrentScene(state, sceneId) {
       state.currentSceneId = sceneId;
+    },
+    setGameFlag(state, { flag, value }) {
+      state.gameFlags[flag] = value;
+    },
+    completeGame(state) {
+      state.gameCompleted = true;
+    },
+    resetGame(state) {
+      state.currentSceneId = 'house'
+      state.inventory = []
+      state.selectedItem = null
+      state.scenes = gameScenes
+      state.openedDoors = []
+      state.gameFlags = {}
+      state.gameCompleted = false
     },
     addToInventory(state, item) {
       state.inventory.push(item);
@@ -91,8 +131,60 @@ export default {
             return message || 'Что-то написано';
           }
           return 'Написанного не разобрать';
+        case 'mechanism':
+          if (spot.requires && hasRequiredItem) {
+            commit('removeFromInventory', spot.requires);
+            if (spot.setFlags) {
+              spot.setFlags.forEach(flag => {
+                commit('setGameFlag', { flag, value: true });
+              });
+            }
+            if (spot.winCondition && spot.winCondition.every(flag => state.gameFlags[flag])) {
+              commit('completeGame');
+              return {
+                message: spot.successMessage,
+                gameCompleted: true
+              };
+            }
+            return spot.successMessage;
+          }
+          return spot.description;
         default:
           return spot.description || 'Ничего интересного';
+      }
+    },
+    restartGame({ commit }) {
+      commit('resetGame');
+      commit('resetDialog');
+    },
+
+    closeDialog({ commit }) {
+      commit('setDialog', { show: false });
+    },
+
+    showDialog({ commit }, params) {
+      commit('setDialog', {
+        show: true,
+        params: { ...DEFAULT_DIALOG, ...params }
+      });
+    },
+
+    handleGameComplete({ dispatch, state }, message) {
+      console.log('handleGameComplete called', { gameCompleted: state.gameCompleted });
+      if (state.gameCompleted) {
+        dispatch('showDialog', {
+          title: 'Поздравляем!',
+          message: `${message}\n\nИгра завершена!`,
+          buttons: [
+            {
+              text: 'Начать заново',
+              action: () => dispatch('restartGame')
+            },
+            { text: 'Осмотреться', afterClick: 'emitClose' }
+          ]
+        });
+      } else {
+        dispatch('showDialog', { message });
       }
     }
   }

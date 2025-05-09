@@ -162,6 +162,47 @@ export default {
         description: 'Дверь в коридор',
         successMessage: 'Вы вышли в коридор',
         isOpen: true
+      },
+      {
+        id: 'bed',
+        type: 'container',
+        x: '4%',
+        y: '48%',
+        width: 359,
+        height: 170,
+        requires: null,
+        description: 'Кровать'
+      },
+      {
+        id: 'mirror',
+        type: 'container',
+        x: '87%',
+        y: '25%',
+        width: 70,
+        height: 300,
+        description: 'Зеркало со стикером'
+      },
+      {
+        id: 'board-room',
+        type: 'info',
+        x: '93%', y: '56%',
+        width: 25,
+        height: 35,
+        messages: [
+          'Кот любит играть с бумагой'
+        ]
+      },
+      {
+        id: 'cat',
+        type: 'mechanism',
+        x: '30%',
+        y: '60%',
+        width: 100,
+        height: 80,
+        requires: 'list',
+        description: 'Кот спит под кроватью',
+        successMessage: 'Кот играет с бумагой!',
+        setFlags: ['catPlayed']
       }
     ]
   },
@@ -181,6 +222,19 @@ export default {
         description: 'Дверь в коридор',
         successMessage: 'Вы вышли в коридор',
         isOpen: true
+      },
+      {
+        id: 'dish',
+        type: 'mechanism',
+        x: '3%',
+        y: '80%',
+        width: 50,
+        height: 50,
+        requires: 'food',
+        description: 'Миска для корма',
+        successMessage: 'Вы покормили кота!',
+        setFlags: ['catFed'],
+        winCondition: ['catFed', 'catPlayed']
       }
     ]
   }

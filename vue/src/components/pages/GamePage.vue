@@ -3,7 +3,7 @@
     <div class="game-page">
       <InventoryPanel
         :items="inventory"
-        :selected-item="selectItem"
+        :selected-item="selectedItem"
         @select="handleItemSelect"
       />
       <GameSceneView
@@ -15,14 +15,14 @@
       <HelpModal
         v-if="dialog.show"
         :params="dialog.params"
-        @close="dialog.show = false"
+        @close="handleDialogClose"
       />
     </div>
   </PageLayout>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 import PageLayout from '@/components/parts/PageLayout.vue';
 import GameSceneView from '@/components/parts/GameSceneView.vue';
 import InventoryPanel from '@/components/parts/InventoryPanel.vue';
@@ -35,49 +35,44 @@ export default {
     InventoryPanel,
     HelpModal
   },
-  data() {
-    return {
-      dialog: {
-        show: false,
-        params: {
-          title: 'Информация',
-          message: '',
-          buttons: [{ text: 'OK', afterClick: 'emitClose' }]
-        }
-      }
-    };
-  },
   computed: {
-    ...mapGetters('game', ['currentScene', 'inventory', 'selectedItem'])
+    ...mapGetters('game', ['currentScene', 'inventory', 'selectedItem']),
+    ...mapState('game', ['dialog'])
   },
   methods: {
-    ...mapActions('game', ['selectItem', 'takeItem', 'interactWithSpot']),
+    ...mapActions('game', ['selectItem', 'takeItem', 'interactWithSpot', 'restartGame', 'showDialog', 'closeDialog', 'handleGameComplete']),
 
     handleItemSelect(item) {
       this.selectItem(item);
-      this.showItemDescription(item);
+      this.showDialog({
+        title: item.name,
+        message: item.description || 'Описание отсутствует'
+      });
     },
 
     async handleItemClick(item) {
       const itemTaken = await this.takeItem(item);
-      this.showDialog(itemTaken ? `Вы подобрали: ${item.name}` : item.description);
+      this.showDialog({
+        message: itemTaken ? `Вы подобрали: ${item.name}` : item.description
+      });
     },
 
     async interact(spot) {
-      const message = await this.interactWithSpot(spot);
-      this.showDialog(message);
+      const result = await this.interactWithSpot(spot);
+      console.log('Interaction result:', result);
+      if (result?.gameCompleted) {
+        console.log('Game completed! Flags:', this.$store.state.game.gameFlags);
+        await this.handleGameComplete(result.message);
+      } else {
+        this.showDialog({ message: result });
+      }
     },
 
-    showItemDescription(item) {
-      this.dialog.params.title = item.name;
-      this.dialog.params.message = item.description || 'Описание отсутствует';
-      this.dialog.show = true;
-    },
-
-    showDialog(message) {
-      this.dialog.params.title = 'Информация';
-      this.dialog.params.message = message;
-      this.dialog.show = true;
+    handleDialogClose(action) {
+      this.closeDialog();
+      if (action === 'restart') {
+        this.restartGame();
+      }
     }
   }
 };

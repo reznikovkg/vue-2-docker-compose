@@ -14,7 +14,7 @@
           v-for="(btn, index) in params.buttons"
           :key="index"
           :type="btn.type || 'default'"
-          @click="() => click(btn)"
+          @click="handleButtonClick(btn)"
       >
         {{ btn.text }}
       </button>
@@ -34,23 +34,9 @@ export default {
     params: Object
   },
   methods: {
-    click (btn) {
-      if (btn.click) {
-        this.clickHandler(btn.click)
-      }
-
-      if (btn.afterClick) {
-        this.clickHandler(btn.afterClick)
-      }
-    },
-    clickHandler (click) {
-      if (typeof click === 'string') {
-        if (click === 'emitClose') {
-          return this.$emit('close')
-        }
-      }
-
-      return click()
+    handleButtonClick(btn) {
+      if (btn.action) btn.action();
+      this.$emit('close', btn.afterClick);
     }
   }
 }
