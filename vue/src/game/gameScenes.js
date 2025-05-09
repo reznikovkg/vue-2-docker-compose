@@ -92,6 +92,18 @@ export default {
         description: 'Зеркало со стикером'
       },
       {
+        id: 'board',
+        type: 'info',
+        x: '95%', y: '56%',
+        width: 25,
+        height: 35,
+        messages: [
+          'Первое сообщение на доске',
+          'Второе сообщение на доске',
+          'Третье сообщение на доске'
+        ]
+      },
+      {
         id: 'wardrobe',
         type: 'container',
         x: '8%',

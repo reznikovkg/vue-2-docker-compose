@@ -47,50 +47,52 @@ export default {
       }
       return false;
     },
+    showItemDescription(item) {
+      return item.description || 'Описание отсутствует';
+    },
     interactWithSpot({ commit, state }, spot) {
-      if (!spot.requires) {
-        if (spot.type === 'door') {
-          commit('setCurrentScene', spot.targetScene);
-          return spot.successMessage || `Вы перешли в ${spot.name}`;
-        }
-        if (spot.type === 'container') {
-          if (spot.rewards && !state.inventory.some(i => i.id === spot.rewards.id)) {
-            commit('addToInventory', {
-              ...spot.rewards,
-              collected: true
-            });
-            return `Вы нашли: ${spot.rewards.name}`;
-          }
-          return spot.description || 'Контейнер пуст';
-        }
-        return spot.description || 'Ничего интересного';
-      }
-      if (spot.type === 'door' && state.openedDoors.includes(spot.id)) {
-        commit('setCurrentScene', spot.targetScene);
-        return spot.successMessage;
-      }
       const hasRequiredItem = state.inventory.some(item => item.id === spot.requires);
-      if (!hasRequiredItem) {
-        return spot.description;
-      }
       switch (spot.type) {
         case 'door':
+          if (!spot.requires) {
+            commit('setCurrentScene', spot.targetScene);
+            return spot.successMessage || `Вы перешли в ${spot.name}`;
+          }
           if (hasRequiredItem) {
             commit('setCurrentScene', spot.targetScene);
             commit('removeFromInventory', spot.requires);
             commit('markDoorOpened', spot.id);
             return spot.successMessage || 'Дверь открыта!';
           }
-          return spot.failMessage;
+          if (state.openedDoors.includes(spot.id)) {
+          commit('setCurrentScene', spot.targetScene);
+          return spot.successMessage;
+          }
+          return spot.description;
         case 'container':
+          if (!spot.requires && spot.rewards && !state.inventory.some(i => i.id === spot.rewards.id)) {
+            commit('addToInventory', {
+              ...spot.rewards,
+              collected: true
+            });
+            return `Вы нашли: ${spot.rewards.name}`;
+          }
           if (hasRequiredItem) {
             commit('addToInventory', spot.rewards);
             commit('removeFromInventory', spot.requires);
             return spot.successMessage || `Вы открыли ${spot.name}`;
           }
-          return spot.failMessage;
+          return spot.description || 'Пусто';
+        case 'info':
+          if (!spot.requires) {
+            if (!spot.currentMessageIndex) spot.currentMessageIndex = 0;
+            const message = spot.messages[spot.currentMessageIndex];
+            spot.currentMessageIndex = (spot.currentMessageIndex + 1) % spot.messages.length;
+            return message || 'Что-то написано';
+          }
+          return 'Написанного не разобрать';
         default:
-          return spot.description || 'Произошло взаимодействие';
+          return spot.description || 'Ничего интересного';
       }
     }
   }
