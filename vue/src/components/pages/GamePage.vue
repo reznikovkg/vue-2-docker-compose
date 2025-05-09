@@ -3,7 +3,8 @@
     <div class="game-page">
       <InventoryPanel
         :items="inventory"
-        @select="selectItem"
+        :selected-item="selectItem"
+        @select="handleItemSelect"
       />
       <GameSceneView
         :scene="currentScene"
@@ -52,6 +53,11 @@ export default {
   methods: {
     ...mapActions('game', ['selectItem', 'takeItem', 'interactWithSpot']),
 
+    handleItemSelect(item) {
+      this.selectItem(item);
+      this.showItemDescription(item);
+    },
+
     async handleItemClick(item) {
       const itemTaken = await this.takeItem(item);
       this.showDialog(itemTaken ? `Вы подобрали: ${item.name}` : item.description);
@@ -62,7 +68,14 @@ export default {
       this.showDialog(message);
     },
 
+    showItemDescription(item) {
+      this.dialog.params.title = item.name;
+      this.dialog.params.message = item.description || 'Описание отсутствует';
+      this.dialog.show = true;
+    },
+
     showDialog(message) {
+      this.dialog.params.title = 'Информация';
       this.dialog.params.message = message;
       this.dialog.show = true;
     }

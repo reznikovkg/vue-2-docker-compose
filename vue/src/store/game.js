@@ -75,7 +75,7 @@ export default {
               ...spot.rewards,
               collected: true
             });
-            return `Вы нашли: ${spot.rewards.name}`;
+            return `Вы нашли ${spot.rewards.name}`;
           }
           if (hasRequiredItem) {
             commit('addToInventory', spot.rewards);
