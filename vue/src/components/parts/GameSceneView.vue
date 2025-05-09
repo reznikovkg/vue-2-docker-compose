@@ -37,8 +37,10 @@
 </template>
 
 <script>
-import roomBg from '@/assets/room-bg.png';
+import roomBg from '@/assets/bedroom.png';
 import hallwayBg from '@/assets/hallway-bg.png';
+import kitchenBg from '@/assets/kitchen.png';
+import houseBg from '@/assets/room-bg.png';
 
 export default {
   name: 'GameSceneView',
@@ -51,7 +53,18 @@ export default {
   },
   computed: {
     currentBackground() {
-      return this.scene.id === 'room' ? roomBg : hallwayBg;
+      switch (this.scene.id) {
+        case 'house':
+          return houseBg;
+        case 'hallway':
+          return hallwayBg;
+        case 'kitchen':
+          return kitchenBg;
+        case 'bedroom':
+          return roomBg;
+        default:
+          return houseBg;
+      }
     }
   }
 };

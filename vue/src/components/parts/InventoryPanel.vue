@@ -68,9 +68,6 @@ export default {
       transform: scale(1.1);
     }
 
-    &--key {
-      background-color: @cBaseSeven;
-    }
   }
 
   &__image {

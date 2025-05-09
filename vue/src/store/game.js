@@ -3,7 +3,7 @@ import gameScenes from '@/game/gameScenes';
 export default {
   namespaced: true,
   state: {
-    currentSceneId: 'room',
+    currentSceneId: 'bedroom',
     inventory: [],
     selectedItem: null,
     scenes: gameScenes,

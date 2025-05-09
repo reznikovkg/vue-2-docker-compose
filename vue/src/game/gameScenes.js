@@ -1,6 +1,6 @@
 export default {
-  room: {
-    id: 'room',
+  house: {
+    id: 'house',
     background: require('@/assets/room-bg.png'),
     spots: [
       {
@@ -77,9 +77,35 @@ export default {
         width: 59,
         height: 370,
         requires: null,
-        targetScene: 'room',
+        targetScene: 'house',
         description: 'Дверь на улицу',
         successMessage: 'Вы вышли из дома',
+        isOpen: true
+      },
+      {
+        id: 'kitchen-door',
+        type: 'door',
+        x: '36%',
+        y: '8%',
+        width: 90,
+        height: 300,
+        requires: null,
+        targetScene: 'kitchen',
+        description: 'Проход на кухню',
+        successMessage: 'Вы вошли в кухню',
+        isOpen: true
+      },
+      {
+        id: 'room-door',
+        type: 'door',
+        x: '50%',
+        y: '8%',
+        width: 145,
+        height: 250,
+        requires: null,
+        targetScene: 'bedroom',
+        description: 'Дверь в спальню',
+        successMessage: 'Вы вошли в спальню',
         isOpen: true
       },
       {
@@ -98,9 +124,9 @@ export default {
         width: 25,
         height: 35,
         messages: [
-          'Первое сообщение на доске',
-          'Второе сообщение на доске',
-          'Третье сообщение на доске'
+          'Еда в шкафу',
+          'Миска на кухне',
+          'Кот под кроватью'
         ]
       },
       {
@@ -112,11 +138,49 @@ export default {
         height: 370,
         description: 'Шкаф',
         rewards: {
-          id: 'case',
-          name: 'Рюкзак',
+          id: 'food',
+          name: 'корм',
           image: require('@/assets/items/key.png'),
-          description: 'Забытый рюкзак'
+          description: 'Кошачья еда'
         }
+      }
+    ]
+  },
+  bedroom: {
+    id: 'bedroom',
+    background: require('@/assets/bedroom.png'),
+    spots: [
+      {
+        id: 'hallway-door',
+        type: 'door',
+        x: '74%',
+        y: '18%',
+        width: 59,
+        height: 370,
+        requires: null,
+        targetScene: 'hallway',
+        description: 'Дверь в коридор',
+        successMessage: 'Вы вышли в коридор',
+        isOpen: true
+      }
+    ]
+  },
+  kitchen: {
+    id: 'kitchen',
+    background: require('@/assets/kitchen.png'),
+    spots: [
+      {
+        id: 'hallway-door',
+        type: 'door',
+        x: '74%',
+        y: '18%',
+        width: 59,
+        height: 370,
+        requires: null,
+        targetScene: 'hallway',
+        description: 'Дверь в коридор',
+        successMessage: 'Вы вышли в коридор',
+        isOpen: true
       }
     ]
   }
