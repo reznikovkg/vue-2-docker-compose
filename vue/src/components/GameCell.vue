@@ -4,7 +4,7 @@
       :class="cellClasses"
       @click="() => handleClick()"
       @mouseenter="() => handleMouseEnter()"
-      @mouseleave="() => handleMouseLeave"
+      @mouseleave="() => handleMouseLeave()"
   >
     <TowerUnit
         v-if="isTower"
