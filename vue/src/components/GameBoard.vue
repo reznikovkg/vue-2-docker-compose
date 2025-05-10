@@ -1,6 +1,6 @@
 <template>
   <div class="game-board" ref="gameContainer">
-    <GameStatus :score="score" />
+    <GameStatus :score="score" :health="playerHealth" />
     <PlayerShip
         :position="{ x: player.x, y: player.y }"
         :dimensions="{ width: player.width, height: player.height }"
@@ -10,13 +10,36 @@
         v-for="(star, index) in stars"
         :key="'star-' + index"
         :position="star.position"
-    :size="starSize"
+        :size="starSize"
     />
     <AsteroidObject
         v-for="(asteroid, index) in asteroids"
         :key="'asteroid-'+index"
         :position="asteroid.position"
-    :size="asteroidSize"
+        :size="asteroidSize"
+        :health="asteroid.health"
+    />
+    <EnemyShip
+        v-for="(enemy, index) in enemies"
+        :key="'enemy-'+index"
+        :position="enemy.position"
+        :dimensions="{ width: enemySize, height: enemySize }"
+        :health="enemy.health"
+    />
+    <!-- снаряды игрока -->
+    <BulletObject
+        v-for="(bullet, index) in bullets.filter(b => !b.isEnemy)"
+        :key="'player-bullet-'+index"
+        :position="bullet.position"
+        :size="bulletSize"
+    />
+    <!-- снарды врагов -->
+    <BulletObject
+        v-for="(bullet, index) in bullets.filter(b => b.isEnemy)"
+        :key="'enemy-bullet-'+index"
+        :position="bullet.position"
+        :size="enemyBulletSize"
+        :is-enemy="true"
     />
   </div>
 </template>
@@ -25,6 +48,8 @@
 import PlayerShip from '@/components/parts/PlayerShip.vue'
 import StarObject from '@/components/parts/StarObject.vue'
 import AsteroidObject from '@/components/parts/AsteroidObject.vue'
+import EnemyShip from '@/components/parts/EnemyShip.vue'
+import BulletObject from '@/components/parts/BulletObject.vue'
 import GameStatus from '@/components/parts/GameStatus.vue'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
@@ -34,11 +59,22 @@ export default {
     PlayerShip,
     StarObject,
     AsteroidObject,
+    EnemyShip,
+    BulletObject,
     GameStatus
   },
   computed: {
-    ...mapState('game', ['player', 'stars', 'asteroids']),
-    ...mapGetters('game', ['starSize', 'asteroidSize', 'score', 'isGameRunning'])
+    ...mapState('game', ['player', 'stars', 'asteroids', 'enemies', 'bullets']),
+    ...mapGetters('game', [
+      'starSize',
+      'asteroidSize',
+      'enemySize',
+      'bulletSize',
+      'enemyBulletSize',
+      'score',
+      'playerHealth',
+      'isGameRunning'
+    ])
   },
   mounted() {
     this.initGame(this.$refs.gameContainer.clientWidth)
@@ -60,7 +96,8 @@ export default {
       'stopGame',
       'handlePlayerMove',
       'handleKeyDown',
-      'handleKeyUp'
+      'handleKeyUp',
+      'fireBullet'
     ]),
     handleResize() {
       if (this.$refs.gameContainer) {
