@@ -1,6 +1,6 @@
 <template>
   <div class="game-status">
-    Score: {{ score }}
+    Score: {{ score }} | Health: {{ health }}
   </div>
 </template>
 
@@ -9,6 +9,10 @@ export default {
   name: 'GameStatus',
   props: {
     score: {
+      type: Number,
+      required: true
+    },
+    health: {
       type: Number,
       required: true
     }
