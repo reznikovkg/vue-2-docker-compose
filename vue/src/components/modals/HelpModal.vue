@@ -8,7 +8,7 @@
         {{ params.message || 'HelpMessage' }}
       </div>
     </div>
-    <div>
+    <div class="buttons-container">
       <button
           class="ok-button"
           v-for="(btn, index) in params.buttons"
@@ -43,6 +43,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import '@/less/const.less';
 
 .help-content {
   color: #333;
@@ -50,14 +51,21 @@ export default {
   text-align: center;
 }
 
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 .ok-button {
   padding: 8px 16px;
-  background: #4CAF50;
+  background: @cBaseSix;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   margin: 0 auto;
-  width: 80px;
+  width: @inventory-height;
 }
 </style>

@@ -10,7 +10,7 @@
       </div>
 
       <button class="start-button" @click="startGame">
-        Начать игру
+        К игре
       </button>
     </div>
   </PageLayout>

@@ -27,7 +27,8 @@ export default {
         rewards: {
           id: 'list',
           name: 'Рекламные листовки',
-          image: require('@/assets/items/key.png')
+          description: 'Исписанные листы',
+          image: require('@/assets/items/paper.png')
         }
       },
       {
@@ -41,7 +42,7 @@ export default {
         rewards: {
           id: 'key',
           name: 'Ключ от дома',
-          image: require('@/assets/items/key.png'),
+          image: require('@/assets/items/door-key.png'),
           description: 'Запасной ключ'
         }
       },
@@ -140,7 +141,7 @@ export default {
         rewards: {
           id: 'food',
           name: 'корм',
-          image: require('@/assets/items/key.png'),
+          image: require('@/assets/items/food.png'),
           description: 'Кошачья еда'
         }
       }
@@ -165,22 +166,28 @@ export default {
       },
       {
         id: 'bed',
-        type: 'container',
+        type: 'info',
         x: '4%',
         y: '48%',
         width: 359,
         height: 170,
         requires: null,
-        description: 'Кровать'
+        description: 'Кровать',
+        messages: [
+          'Заправленная кровать'
+        ]
       },
       {
         id: 'mirror',
-        type: 'container',
+        type: 'info',
         x: '87%',
         y: '25%',
         width: 70,
         height: 300,
-        description: 'Зеркало со стикером'
+        description: 'Зеркало со стикером',
+        messages: [
+          'Зеркало со стикером'
+        ]
       },
       {
         id: 'board-room',
