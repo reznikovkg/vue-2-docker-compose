@@ -28,7 +28,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, 0.25);
   }
 }
 </style>

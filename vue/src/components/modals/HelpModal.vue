@@ -1,20 +1,20 @@
 <template>
   <ModalComponent>
-    <div>
-      {{ params.title || 'HelpModal' }}
+    <div class="help-content">
+      <div>
+        {{ params.title || 'HelpModal' }}
+      </div>
+      <div >
+        {{ params.message || 'HelpMessage' }}
+      </div>
     </div>
-    <button @click="() => $emit('close')">
-      Close
-    </button>
-    <div>
-      {{ params.message || 'HelpMessage' }}
-    </div>
-    <div>
+    <div class="buttons-container">
       <button
-        v-for="(btn, index) in params.buttons"
-        :key="index"
-        :type="btn.type || 'default'"
-        @click="() => click(btn)"
+          class="ok-button"
+          v-for="(btn, index) in params.buttons"
+          :key="index"
+          :type="btn.type || 'default'"
+          @click="handleButtonClick(btn)"
       >
         {{ btn.text }}
       </button>
@@ -34,28 +34,38 @@ export default {
     params: Object
   },
   methods: {
-    click (btn) {
-      if (btn.click) {
-        this.clickHandler(btn.click)
-      }
-
-      if (btn.afterClick) {
-        this.clickHandler(btn.afterClick)
-      }
-    },
-    clickHandler (click) {
-      if (typeof click === 'string') {
-        if (click === 'emitClose') {
-          return this.$emit('close')
-        }
-      }
-
-      return click()
+    handleButtonClick(btn) {
+      if (btn.action) btn.action();
+      this.$emit('close', btn.afterClick);
     }
   }
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+@import '@/less/const.less';
 
+.help-content {
+  color: #333;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.ok-button {
+  padding: 8px 16px;
+  background: @cBaseSix;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 auto;
+  width: @inventory-height;
+}
 </style>
