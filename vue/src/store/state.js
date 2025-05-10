@@ -1,5 +1,6 @@
 export default {
     cols: 10,
+    cell_size: 41.6,
     startHealth: 10,
     startDamage: 1,
     startFireRate: 5,
@@ -53,4 +54,15 @@ export default {
     enemyAttackInterval: null,
     enemyInterval: null,
     message: "",
-}
+    hoveredTowerIndex: null,
+    towerRange: 1,
+    enemyPixelPosition: { x: 0, y: 0 },
+    projectiles: [],
+    enemies: [], // список врагов
+    enemyIntervals: [],
+    enemyTypes: [
+        { type: 'slow', speed: 900, health: 150, attackInterval: 400},
+        { type: 'normal', speed: 650, health: 100, attackInterval: 300 },
+        { type: 'fast', speed: 450, health: 60, attackInterval: 200 }
+    ],
+};

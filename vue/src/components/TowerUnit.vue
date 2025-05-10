@@ -11,7 +11,7 @@
       </button>
       <div class="tower__dot"
            :class="'tower__dot--grade-' + tower.grade">
-        {{ tower.health }}
+        {{ tower.grade }}
       </div>
     </div>
   </div>
@@ -20,7 +20,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 export default {
-  name: 'EnemyUnit',
+  name: 'TowerUnit',
   props: {
     tower: {
       type: Object,

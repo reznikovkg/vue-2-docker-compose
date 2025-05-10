@@ -28,41 +28,57 @@
             :isRoad="isRoad(index)"
             :isFirstRoadCell="isFirstRoadCell(index)"
             :isLastRoadCell="isLastRoadCell(index)"
-            :isEnemy="enemyPosition === index && enemyHealth > 0"
             :isTower="isTower(index)"
             :canPlaceTower="canPlaceTower(index)"
-            :enemyHealth="enemyHealth"
             :tower="getTower(index)"
+            :isInRange="inRangeIndices.includes(index)"
             @cellClick="(index) => handleCellClick(index)"
+            @cellHover="(index) => handleCellHover(index)"
+            @cellHoverLeave="() => handleCellHoverLeave()"
+        />
+        <EnemyUnit
+            v-for="enemy in enemies"
+            :key="enemy.id"
+            :enemyHealth="enemy.health"
+            :enemyPixelPosition="enemy.pixel"
+            :isDead="enemy.isDead"
+            :enemyType="enemy.type"
+        />
+        <ProjectileUnit
+            v-for="projectile in projectiles"
+            :key="projectile.id"
+            :value="projectile"
         />
       </div>
-      </div>
-      <dialog ref="modal" class="game__modal modal">
-        <p>{{ gameOver ? "GAME OVER!" : "ENEMY DEFEATED!" }}</p>
-        <button class="modal__button modal__button--ok"
-                v-if="enemyDefeated"
-                @click="() => closeModal()">
-          OK
-        </button>
-        <button class="modal__button modal__button--ok"
-                v-if="gameOver"
-                @click="() => switchLevel(currentLevel)">
-          Играть снова
-        </button>
-      </dialog>
-      <div v-if="message && !gameOver && !enemyDefeated"
-           class="game__message">
-        {{ message }}
-      </div>
+    </div>
+    <dialog ref="modal" class="game__modal modal">
+      <p>{{ gameOver ? "GAME OVER!" : "ENEMY DEFEATED!" }}</p>
+      <button class="modal__button modal__button--ok"
+              v-if="enemyDefeated"
+              @click="() => closeModal()">
+        OK
+      </button>
+      <button class="modal__button modal__button--ok"
+              v-if="gameOver"
+              @click="() => switchLevel(currentLevel)">
+        Играть снова
+      </button>
+    </dialog>
+    <div v-if="message && !gameOver && !enemyDefeated"
+         class="game__message">
+      {{ message }}
+    </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
+import {mapGetters, mapActions} from "vuex"
 import GameCell from "@/components/GameCell.vue"
+import EnemyUnit from "@/components/EnemyUnit.vue";
+import ProjectileUnit from "@/components/ProjectileUnit.vue";
 export default {
   name: 'GameMap',
-  components: {GameCell},
+  components: {ProjectileUnit, EnemyUnit, GameCell},
   data() {
     return {
       rows: 10,
@@ -70,7 +86,7 @@ export default {
     }
   },
   computed: {
-     ...mapGetters([
+    ...mapGetters([
       "coins",
       "currentLevel",
       "levels",
@@ -82,7 +98,10 @@ export default {
       "canPlaceTower",
       "path",
       "buildableCells",
-      "towers"
+      "towers",
+      "inRangeIndices",
+      "projectiles",
+      "enemies",
     ]),
     grid() {
       return new Array(this.rows * this.cols).fill(null)
@@ -100,15 +119,17 @@ export default {
   },
   mounted() {
     this.startTowerAttacks()
-    this.moveEnemy()
+    this.spawnEnemies()
   },
   methods: {
     ...mapActions([
-      "moveEnemy",
       "startTowerAttacks",
       "placeTower",
       "upgradeTower",
       "changeLevel",
+      "handleCellHoverLeave",
+      "setHoveredTowerData",
+      "spawnEnemies"
     ]),
     isRoad(index) {
       return this.path.includes(index)
@@ -139,13 +160,22 @@ export default {
     switchLevel(level) {
       this.closeModal();
       this.changeLevel(level)
-    }
+    },
+    handleCellHover(index) {
+      if (this.isTower(index)) {
+        const tower = this.getTower(index);
+        if (tower) {
+          this.setHoveredTowerData({ index, tower });
+        }
+      }
+    },
   },
 }
 </script>
 
 <style lang="less">
 .game {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -245,6 +275,7 @@ export default {
   background-color: #023902;
   border: 5px solid #000000;
   padding: 5px;
+  position: relative;
+  height: 420px;
 }
-
 </style>

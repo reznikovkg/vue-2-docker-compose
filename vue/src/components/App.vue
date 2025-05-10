@@ -7,7 +7,6 @@
 
 <script>
 import GameMap from "@/components/GameMap.vue";
-
 export default {
   components: {
     GameMap
