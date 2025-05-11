@@ -42,20 +42,24 @@ const mutations = {
   clearSelectedCell(state) {
     state.selectedCell = null;
   },
-  updateBoardCell(state, { index, color }) {
+  updateBoardCell(state, payload) {
+    const { index, color, isAppearing } = payload || {};
+
+    if (index === undefined) return;
+
     if (color !== undefined) {
       state.board[index].color = color;
     }
-    if ('isAppearing' in arguments[0]) {
-      state.board[index].isAppearing = arguments[0].isAppearing;
+
+    if (isAppearing !== undefined) {
+      state.board[index].isAppearing = isAppearing;
     }
-    setTimeout(() => {
-      state.board.forEach((cell) => {
-        if (cell.isAppearing) {
-          cell.isAppearing = false;
-        }
-      });
-    }, 600);
+
+    state.board.forEach((cell) => {
+      if (cell.isAppearing) {
+        cell.isAppearing = false;
+      }
+    });
   },
   updateCellPosition(state, { index, position }) {
     state.board[index].position = position;
@@ -384,24 +388,6 @@ const actions = {
       commit('updateBoardCell', {
         index: index,
         color: COLORS[Math.floor(Math.random() * COLORS.length)]});
-    });
-  },
-  notifyTransitionEnd: ({ commit }) => {
-    commit('decreaseActiveAnimations');
-  },
-      notifyAnimationEnd: ({ commit }) => {
-    commit('decreaseActiveAnimations');
-  },
-      waitForAnimations: ({ state }) => {
-    return new Promise((resolve) => {
-      const check = () => {
-        if (state.activeAnimations === 0) {
-          resolve();
-        } else {
-          setTimeout(check, 50);
-        }
-      };
-      check();
     });
   },
 }
