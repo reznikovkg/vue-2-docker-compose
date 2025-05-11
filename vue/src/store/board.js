@@ -384,24 +384,6 @@ const actions = {
         color: COLORS[Math.floor(Math.random() * COLORS.length)]});
     });
   },
-  notifyTransitionEnd: ({ commit }) => {
-    commit('decreaseActiveAnimations');
-  },
-      notifyAnimationEnd: ({ commit }) => {
-    commit('decreaseActiveAnimations');
-  },
-      waitForAnimations: ({ state }) => {
-    return new Promise((resolve) => {
-      const check = () => {
-        if (state.activeAnimations === 0) {
-          resolve();
-        } else {
-          setTimeout(check, 50);
-        }
-      };
-      check();
-    });
-  },
 }
 
 export default {
