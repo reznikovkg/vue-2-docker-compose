@@ -11,8 +11,6 @@
         :position="getCellPosition(index)"
         :isAppearing="cell.isAppearing"
         @cell-click="() => handleClick(index)"
-        @transition-end="() => handleTransitionEnd(index)"
-        @animation-end="() => handleAnimationEnd(index)"
       />
     </div>
   </div>
@@ -33,12 +31,12 @@ export default {
       "isSelected",
       "selectedIndexes",
     ]),
-    selectedIndexes() {
-      return new Set([this.$store.state.board.selectedCell]);
-    }
   },
   methods: {
-    ...mapActions("board", ["handleCellClick", "generateBoard", "notifyTransitionEnd", "notifyAnimationEnd"]),
+    ...mapActions("board", [
+      "handleCellClick",
+      "generateBoard",
+    ]),
     handleClick(index) {
       this.handleCellClick(index);
     },
@@ -49,12 +47,6 @@ export default {
       const y = row * (this.cellSize + this.gapSize);
       return { x, y };
     },
-    handleTransitionEnd(index) {
-      this.notifyTransitionEnd(index);
-    },
-    handleAnimationEnd(index) {
-      this.notifyAnimationEnd(index);
-    }
   },
   created() {
     this.generateBoard();

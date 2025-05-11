@@ -67,9 +67,6 @@ const mutations = {
   addScore(state, points) {
     state.score += points;
   },
-  resetScore(state) {
-    state.score = 0;
-  },
   setCombo(state, { color, manual }) {
     if (manual && state.combo.lastColor === color) {
       state.combo.count += 1;
@@ -85,11 +82,6 @@ const mutations = {
       count: 0,
       manualMatch: false,
     };
-  },
-  clearAllAppearingFlags(state) {
-    state.board.forEach((cell) => {
-      cell.isAppearing = false;
-    });
   },
 }
 
