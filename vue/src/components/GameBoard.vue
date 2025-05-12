@@ -2,12 +2,15 @@
   <div class="game-board__wrapper">
     <div class="game-board">
       <BoardCell
-          v-for="(cell, index) in board"
-          :key="index"
-          :index="index"
-          :color="cell.color"
-          :isSelected="isSelected(index)"
-          :handleCellClick="() => handleClick(index)"
+        v-for="(cell, index) in board"
+        :key="index"
+        :index="index"
+        :color="cell.color"
+        :isSelected="selectedIndexes.has(index)"
+        :isFading="cell.isFading"
+        :position="getCellPosition(index)"
+        :isAppearing="cell.isAppearing"
+        @cell-click="() => handleClick(index)"
       />
     </div>
   </div>
@@ -20,15 +23,29 @@ import BoardCell from "./BoardCell.vue";
 export default {
   components: { BoardCell },
   computed: {
-    ...mapGetters("board", ["isSelected"]),
-    board() {
-      return this.$store.state.board.board;
-    },
+    ...mapGetters("board", [
+      "board",
+      "boardSize",
+      "cellSize",
+      "gapSize",
+      "isSelected",
+      "selectedIndexes",
+    ]),
   },
   methods: {
-    ...mapActions("board", ["handleCellClick", "generateBoard"]),
+    ...mapActions("board", [
+      "handleCellClick",
+      "generateBoard",
+    ]),
     handleClick(index) {
       this.handleCellClick(index);
+    },
+    getCellPosition(index) {
+      const row = Math.floor(index / this.boardSize);
+      const col = index % this.boardSize;
+      const x = col * (this.cellSize + this.gapSize);
+      const y = row * (this.cellSize + this.gapSize);
+      return { x, y };
     },
   },
   created() {
@@ -46,9 +63,8 @@ export default {
   height: 100vh;
 }
 .game-board {
-  display: grid;
-  grid-template-columns: repeat(8, @cell-size);
-  grid-template-rows: repeat(8, @cell-size);
-  gap: @gap-size;
+  position: relative;
+  width: calc((@cell-size + @gap-size) * 8 - @gap-size);
+  height: calc((@cell-size + @gap-size) * 8 - @gap-size);
 }
 </style>

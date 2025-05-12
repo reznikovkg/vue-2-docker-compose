@@ -7,169 +7,387 @@ const getIndex = (boardSize, row, col) => row * boardSize + col;
 const getRow = (boardSize, index) => Math.floor(index / boardSize);
 const getCol = (boardSize, index) => index % boardSize;
 
-export default {
-  namespaced: true,
-  state: {
-    boardSize: 8,
-    board: [],
-    selectedCell: null,
+const state = {
+  boardSize: 8,
+  board: [],
+  selectedCell: null,
+  score: 0,
+  combo: {
+    lastColor: null,
+    count: 0,
+    manualMatch: false,
   },
+  cellSize: 60,
+  gapSize: 4,
+  activeAnimations: 0,
+}
 
-  getters: {
-    isSelected: (state) => (index) => state.selectedCell === index,
+const getters = {
+  isSelected: (state) => (index) => state.selectedCell === index,
+  getScore: (state) => state.score,
+  board: (state) => state.board,
+  boardSize: (state) => state.boardSize,
+  cellSize: (state) => state.cellSize,
+  gapSize: (state) => state.gapSize,
+  selectedIndexes: (state) => new Set([state.selectedCell]),
+}
+
+const mutations = {
+  setBoard(state, board) {
+    state.board = board;
   },
+  setSelectedCell(state, index) {
+    state.selectedCell = index;
+  },
+  clearSelectedCell(state) {
+    state.selectedCell = null;
+  },
+  updateBoardCell(state, payload) {
+    const { index, color, isAppearing } = payload || {};
 
-  mutations: {
-    setBoard(state, board) {
-      state.board = board;
-    },
-    setSelectedCell(state, index) {
-      state.selectedCell = index;
-    },
-    clearSelectedCell(state) {
-      state.selectedCell = null;
-    },
-    updateBoardCell(state, { index, color }) {
+    if (index === undefined) return;
+
+    if (color !== undefined) {
       state.board[index].color = color;
-    },
+    }
+
+    if (isAppearing !== undefined) {
+      state.board[index].isAppearing = isAppearing;
+    }
+
+    state.board.forEach((cell) => {
+      if (cell.isAppearing) {
+        cell.isAppearing = false;
+      }
+    });
+  },
+  updateCellPosition(state, { index, position }) {
+    state.board[index].position = position;
+  },
+  addScore(state, points) {
+    state.score += points;
+  },
+  setCombo(state, { color, manual }) {
+    if (manual && state.combo.lastColor === color) {
+      state.combo.count += 1;
+    } else {
+      state.combo.count = 1;
+    }
+    state.combo.lastColor = color;
+    state.combo.manualMatch = manual;
+  },
+  resetCombo(state) {
+    state.combo = {
+      lastColor: null,
+      count: 0,
+      manualMatch: false,
+    };
+  },
+}
+
+const actions = {
+  async generateBoard({ state, dispatch, commit }) {
+    const board = Array.from({ length: state.boardSize ** 2 }, () => ({
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      position: { x: 0, y: 0 },
+    }));
+    commit('setBoard', board);
+    dispatch('updateAllPositions');
+    await dispatch('processMatches');
   },
 
-  actions: {
-    generateBoard({ state, commit }) {
-      const board = Array.from({ length: state.boardSize ** 2 }, () => ({
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      }));
-      commit('setBoard', board);
-    },
+  async handleCellClick({ state, dispatch, commit }, clickedCellIndex) {
+    if (state.selectedCell === null) {
+      commit('setSelectedCell', clickedCellIndex);
+      return;
+    }
 
-    async handleCellClick({ state, dispatch, commit }, clickedCellIndex) {
-      if (state.selectedCell === null) {
-        commit('setSelectedCell', clickedCellIndex);
-        return;
-      }
+    const neighbors = await dispatch('getNeighbors', state.selectedCell);
+    if (!neighbors.includes(clickedCellIndex)) {
+      return;
+    }
 
-      const neighbors = await dispatch('getNeighbors', state.selectedCell);
-      if (!neighbors.includes(clickedCellIndex)) return;
-
-      const afterSwapBoard = [...state.board.map(cell => ({ ...cell }))];
-      [afterSwapBoard[clickedCellIndex], afterSwapBoard[state.selectedCell]] =
+    const afterSwapBoard = [...state.board.map(cell => ({ ...cell }))];
+    [afterSwapBoard[clickedCellIndex], afterSwapBoard[state.selectedCell]] =
         [afterSwapBoard[state.selectedCell], afterSwapBoard[clickedCellIndex]];
 
-      if (dispatch('hasMatches', afterSwapBoard)) {
-        commit('setBoard', afterSwapBoard);
-        dispatch('processMatches');
-      }
+    if (await dispatch('hasMatches', afterSwapBoard)) {
+      const matchedColor = afterSwapBoard[clickedCellIndex].color;
+      commit('setBoard', afterSwapBoard);
+      commit('setCombo', { color: matchedColor, manual: true });
+      dispatch('processMatches');
+    }
 
-      commit('clearSelectedCell');
-    },
+    commit('clearSelectedCell');
+  },
 
-    getNeighbors({ state }, index) {
-      const row = getRow(state.boardSize, index);
-      const col = getCol(state.boardSize, index);
-      const neighbors = [];
+  getNeighbors({ state }, index) {
+    const row = getRow(state.boardSize, index);
+    const col = getCol(state.boardSize, index);
+    const neighbors = [];
 
-      if (row > 0) neighbors.push(getIndex(state.boardSize, row - 1, col));
-      if (row < state.boardSize - 1) neighbors.push(getIndex(state.boardSize, row + 1, col));
-      if (col > 0) neighbors.push(getIndex(state.boardSize, row, col - 1));
-      if (col < state.boardSize - 1) neighbors.push(getIndex(state.boardSize, row, col + 1));
+    if (row > 0) neighbors.push(getIndex(state.boardSize, row - 1, col));
+    if (row < state.boardSize - 1) neighbors.push(getIndex(state.boardSize, row + 1, col));
+    if (col > 0) neighbors.push(getIndex(state.boardSize, row, col - 1));
+    if (col < state.boardSize - 1) neighbors.push(getIndex(state.boardSize, row, col + 1));
 
-      return neighbors;
-    },
+    return neighbors;
+  },
 
-    async processMatches({ state, dispatch }) {
-      do {
-        if (!dispatch('hasMatches', state.board)) break;
-        await new Promise(resolve => setTimeout(resolve));
+  async processMatches({ state, dispatch, commit }) {
+    const { manualMatch: isManual, lastColor: color, count: comboCount } = state.combo;
 
-        dispatch('clearMatches');
-        await new Promise(resolve => setTimeout(resolve));
+    while (await dispatch('hasMatches', state.board)) {
+      await dispatch('clearMatches');
+      await dispatch('waitForAnimations');
 
-        dispatch('dropBalls');
-        await new Promise(resolve => setTimeout(resolve));
+      await dispatch('dropBalls');
+      await dispatch('waitForAnimations');
 
-        dispatch('generateNewBalls');
-        await new Promise(resolve => setTimeout(resolve));
+      await dispatch('generateNewBalls');
+      await dispatch('waitForAnimations');
+    }
 
-      } while (dispatch('hasMatches', state.board));
-    },
+    if (isManual && comboCount >= 2) {
+      await dispatch('triggerComboEffect', color);
+      commit('resetCombo');
+    }
+  },
 
-    dropBalls({ state, commit }) {
-      const size = state.boardSize;
+  dropBalls({ state, dispatch, commit }) {
+    const size = state.boardSize;
 
-      for (let col = 0; col < size; col++) {
-        let emptySpaces = 0;
-        for (let row = size - 1; row >= 0; row--) {
-          const index = row * size + col;
-
-          if (state.board[index].color === '') {
-            emptySpaces++;
-          } else if (emptySpaces > 0) {
-            const targetIndex = (row + emptySpaces) * size + col;
-            const temp = state.board[index].color;
-            commit('updateBoardCell', { index: targetIndex, color: temp });
-            commit('updateBoardCell', { index, color: '' });
+    for (let col = 0; col < size; col++) {
+      for (let row = size - 1; row >= 0; row--) {
+        const index = getIndex(size, row, col);
+        if (state.board[index].color === '') {
+          for (let k = row - 1; k >= 0; k--) {
+            const upperIndex = getIndex(size, k, col);
+            if (state.board[upperIndex].color !== '') {
+              commit('updateBoardCell', {
+                index,
+                color: state.board[upperIndex].color,
+              });
+              commit('updateBoardCell', {
+                index: upperIndex,
+                color: '',
+              });
+              break;
+            }
           }
         }
       }
-    },
+    }
+    dispatch('updateAllPositions');
+  },
 
-    hasMatches(_, board) {
-      const size = Math.sqrt(board.length);
-      return board.some((cell, i) => {
-        if (!cell.color) return false;
-        const row = getRow(size, i);
-        const col = getCol(size, i);
-
-        return (
+  hasMatches(_, board) {
+    const size = Math.sqrt(board.length);
+    return board.some((cell, i) => {
+      if (!cell.color) return false;
+      const row = getRow(size, i);
+      const col = getCol(size, i);
+      return (
           col < size - 2 &&
           cell.color === board[i + 1]?.color &&
           cell.color === board[i + 2]?.color
-        ) || (
+      ) || (
           row < size - 2 &&
           cell.color === board[i + size]?.color &&
           cell.color === board[i + size * 2]?.color
-        );
-      });
-    },
+      );
+    });
+  },
 
-    clearMatches({ state, commit }) {
+  clearMatches({ state, commit, dispatch }) {
+    return new Promise((resolve) => {
       const size = state.boardSize;
-      state.board.forEach((cell, i) => {
-        if (!cell.color) return;
+      const board = state.board;
+      const matchedGroups = [];
+      const visited = new Set();
+
+      for (let i = 0; i < board.length; i++) {
+        if (!board[i].color) continue;
+
         const row = getRow(size, i);
         const col = getCol(size, i);
 
-        if (
-          col < size - 2 &&
-          cell.color === state.board[i + 1]?.color &&
-          cell.color === state.board[i + 2]?.color
-        ) {
-          commit('updateBoardCell', { index: i, color: '' });
-          commit('updateBoardCell', { index: i + 1, color: '' });
-          commit('updateBoardCell', { index: i + 2, color: '' });
+        if (col <= size - 3) {
+          const color = board[i].color;
+          const line = [i];
+          for (let offset = 1; col + offset < size; offset++) {
+            const next = i + offset;
+            if (board[next].color === color) {
+              line.push(next);
+            } else break;
+          }
+          if (line.length >= 3) {
+            matchedGroups.push(line);
+            line.forEach(idx => visited.add(idx));
+          }
         }
 
-        if (
-          row < size - 2 &&
-          cell.color === state.board[i + size]?.color &&
-          cell.color === state.board[i + size * 2]?.color
-        ) {
-          commit('updateBoardCell', { index: i, color: '' });
-          commit('updateBoardCell', { index: i + size, color: '' });
-          commit('updateBoardCell', { index: i + size * 2, color: '' });
+        if (row <= size - 3) {
+          const color = board[i].color;
+          const line = [i];
+          for (let offset = 1; row + offset < size; offset++) {
+            const next = i + offset * size;
+            if (board[next].color === color) {
+              line.push(next);
+            } else break;
+          }
+          if (line.length >= 3) {
+            matchedGroups.push(line);
+            line.forEach(idx => visited.add(idx));
+          }
         }
+      }
+
+      const toClear = new Set();
+      matchedGroups.forEach(group => group.forEach(i => toClear.add(i)));
+
+      let score = 0;
+      matchedGroups.forEach(group => {
+        const base = group.length * 10;
+        const multiplier = group.length === 3 ? 1 : group.length === 4 ? 1.5 : 2;
+        score += Math.floor(base * multiplier);
       });
-    },
 
-    generateNewBalls({ state, commit }) {
+      const intersectMap = {};
+      matchedGroups.flat().forEach(i => {
+        intersectMap[i] = (intersectMap[i] || 0) + 1;
+      });
+      const crossBonus = Object.values(intersectMap).filter(c => c > 1).length * 20;
+      score += crossBonus;
+
+      commit('addScore', score);
+
+      toClear.forEach(i => {
+        state.board[i].isFading = true;
+      });
+
+      setTimeout(() => {
+        toClear.forEach(i => {
+          commit('updateBoardCell', { index: i, color: '' });
+          state.board[i].isFading = false;
+        });
+        dispatch('updateAllPositions');
+        resolve();
+      }, 600);
+    });
+  },
+
+  generateNewBalls({ state, dispatch, commit }) {
+    return new Promise((resolve) => {
+      const newAppeared = [];
       state.board.forEach((cell, index) => {
         if (cell.color === '') {
           commit('updateBoardCell', {
             index,
             color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            isAppearing: true
           });
+          newAppeared.push(index);
         }
       });
-    },
+      setTimeout(() => {
+        newAppeared.forEach(index => {
+          state.board[index].isAppearing = false;
+        });
+        dispatch('updateAllPositions');
+        resolve();
+      }, 600);
+    });
   },
+
+  updateAllPositions({ state, commit }) {
+    const cellSize = 60;
+    const gapSize = 4;
+    const size = state.boardSize;
+    state.board.forEach((_, index) => {
+      const row = Math.floor(index / size);
+      const col = index % size;
+      const x = col * (cellSize + gapSize);
+      const y = row * (cellSize + gapSize);
+      commit("updateCellPosition", { index, position: { x, y } });
+    });
+  },
+
+  async triggerComboEffect({ dispatch }, color) {
+    switch (color) {
+      case '#FF0000':
+      case '#024217':
+        dispatch('triggerBlockExplosion');
+        break;
+      case '#0000FF':
+      case '#FFFF00':
+        dispatch('triggerBonusScore');
+        break;
+      case '#00FFFF':
+      case '#FF00FF':
+        dispatch('triggerLineClear');
+        break;
+      case '#a87532':
+      case '#28fa6e':
+        dispatch('triggerColorRepaint');
+        break;
+    }
+
+    dispatch('dropBalls');
+    await dispatch('generateNewBalls');
+  },
+
+  triggerBlockExplosion({ state, commit }) {
+    const size = state.boardSize;
+    const row = Math.floor(Math.random() * (size - 2));
+    const col = Math.floor(Math.random() * (size - 2));
+
+    for (let r = row; r < row + 3; r++) {
+      for (let c = col; c < col + 3; c++) {
+        const index = getIndex(size, r, c);
+        commit('updateBoardCell', { index, color: '' });
+      }
+    }
+  },
+
+  triggerBonusScore({ commit }) {
+    commit('addScore', 100);
+  },
+
+  triggerLineClear({ state, commit }) {
+    const size = state.boardSize;
+    const isVertical = Math.random() > 0.5;
+    if (isVertical) {
+      const col = Math.floor(Math.random() * size);
+      for (let row = 0; row < size; row++) {
+        const index = getIndex(size, row, col);
+        commit('updateBoardCell', { index, color: '' });
+      }
+    } else {
+      const row = Math.floor(Math.random() * size);
+      for (let col = 0; col < size; col++) {
+        const index = getIndex(size, row, col);
+        commit('updateBoardCell', { index, color: '' });
+      }
+    }
+  },
+
+  triggerColorRepaint({ state, commit }) {
+    const emptyIndexes = state.board
+        .map((_, index) => index)
+        .filter(i => state.board[i].color === '');
+    emptyIndexes.forEach(index => {
+      commit('updateBoardCell', {
+        index: index,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)]});
+    });
+  },
+}
+
+export default {
+  namespaced: true,
+  state,
+  getters,
+  mutations,
+  actions
 };

@@ -1,6 +1,5 @@
 export const randomInteger = (min, max) => {
-  const rand = min + Math.random() * (max - min);
-  return Math.round(rand);
+  return Math.floor(min + Math.random() * (max - min + 1));
 }
 
 export const genHash = (length = 32) => {

@@ -1,35 +1,79 @@
 <template>
   <div
-      class="game-board__cell"
-      :style="{
-        backgroundColor: this.color,
-        border: isSelected ? '2px solid #000' : 'none'
-      }"
-      @click="() => handleClick()"
-  >
-  </div>
+    class="game-board__cell"
+    :class="{
+      'game-board__cell--fading': isFading,
+      'game-board__cell--appearing': isAppearing
+    }"
+    :style="{
+      backgroundColor: this.color,
+      border: isSelected ? '2px solid #000' : 'none',
+      transform: `translate(${position.x}px, ${position.y}px)`
+    }"
+    @click="() => emitClick()"
+    @transitionend="() => handleTransitionEnd(event)"
+    @animationend="() => handleAnimationEnd()"
+  />
 </template>
+
 <script>
 export default {
   props: {
     index: Number,
     color: String,
     isSelected: Boolean,
-    handleCellClick: Function,
+    isFading: Boolean,
+    position: Object,
+    isAppearing: Boolean
   },
   methods: {
-    handleClick() {
-      this.handleCellClick(this.index);
+    emitClick() {
+      this.$emit('cell-click', this.index);
+    },
+    handleTransitionEnd(event) {
+      if (event.propertyName === 'transform') {
+        this.$emit('transition-end', this.index);
+      }
+    },
+    handleAnimationEnd() {
+      this.$emit('animation-end', this.index);
     }
   }
 };
 </script>
+
 <style lang="less" scoped>
 .game-board__cell {
+  position: absolute;
   width: @cell-size;
   height: @cell-size;
   border-radius: 50%;
   background-color: gray;
-  transition: border 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    border 0.2s ease,
+    opacity 0.4s ease,
+    scale 0.4s ease;
+
+  &--fading {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+
+  &--appearing {
+    transform: scale(0.2);
+    opacity: 0;
+    animation: appear 0.3s ease forwards;
+  }
+  @keyframes appear {
+    from {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    to {
+      transform: scale(0.3);
+      opacity: 1;
+    }
+  }
 }
 </style>
