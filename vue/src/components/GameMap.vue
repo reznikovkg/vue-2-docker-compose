@@ -11,56 +11,81 @@
       </div>
       <p class="game__level-buttons">
         <button
-            v-for="level in levels.length"
-            :key="level"
-            @click="() => changeLevel(level-1)"
-            class="game__level-button">
+          v-for="level in levels.length"
+          :key="level"
+          :disabled="!unlockedLevels.includes(level - 1)"
+          class="game__level-button"
+          @click="() => changeLevel(level-1)"
+        >
           Уровень {{level}}
         </button>
       </p>
+      <button
+        class="game__defender-button"
+        :disabled="gameOver || enemyDefeated"
+        @click="() => spawnDefender()"
+      >
+        Вызвать бойца
+      </button>
     </div>
     <div class="game__content">
       <div class="game__grid grid">
         <GameCell
-            v-for="(cell, index) in grid"
-            :key="index"
-            :index="index"
-            :isRoad="isRoad(index)"
-            :isFirstRoadCell="isFirstRoadCell(index)"
-            :isLastRoadCell="isLastRoadCell(index)"
-            :isTower="isTower(index)"
-            :canPlaceTower="canPlaceTower(index)"
-            :tower="getTower(index)"
-            :isInRange="inRangeIndices.includes(index)"
-            @cellClick="(index) => handleCellClick(index)"
-            @cellHover="(index) => handleCellHover(index)"
-            @cellHoverLeave="() => handleCellHoverLeave()"
+          v-for="(cell, index) in grid"
+          :key="index"
+          :index="index"
+          :isRoad="isRoad(index)"
+          :isFirstRoadCell="isFirstRoadCell(index)"
+          :isLastRoadCell="isLastRoadCell(index)"
+          :isTower="isTower(index)"
+          :canPlaceTower="canPlaceTower(index)"
+          :tower="getTower(index)"
+          :isInRange="inRangeIndices.includes(index)"
+          @cellClick="(index) => handleCellClick(index)"
+          @cellHover="(index) => handleCellHover(index)"
+          @cellHoverLeave="() => handleCellHoverLeave()"
         />
         <EnemyUnit
-            v-for="enemy in enemies"
-            :key="enemy.id"
-            :enemyHealth="enemy.health"
-            :enemyPixelPosition="enemy.pixel"
-            :isDead="enemy.isDead"
-            :enemyType="enemy.type"
+          v-for="enemy in enemies"
+          :key="enemy.id"
+          :enemyHealth="enemy.health"
+          :enemyPixelPosition="enemy.pixel"
+          :isDead="enemy.isDead"
+          :enemyType="enemy.type"
         />
         <ProjectileUnit
-            v-for="projectile in projectiles"
-            :key="projectile.id"
-            :value="projectile"
+          v-for="projectile in projectiles"
+          :key="projectile.id"
+          :value="projectile"
+        />
+        <DefenderUnit
+          v-for="def in defenders"
+          :key="def.id"
+          :pixel="def.pixel"
+          :defenderHealth="def.health"
+          :isDead="def.isDead"
         />
       </div>
     </div>
     <dialog ref="modal" class="game__modal modal">
-      <p>{{ gameOver ? "GAME OVER!" : "ENEMY DEFEATED!" }}</p>
+      <p>{{ gameOver ? "Вы проиграли!" : "Вы поразили врагов!" }}</p>
       <button class="modal__button modal__button--ok"
-              v-if="enemyDefeated"
-              @click="() => closeModal()">
+        v-if="enemyDefeated && !isLastLevel"
+        @click="() => switchLevel(currentLevel + 1)"
+      >
+        Следующий уровень
+      </button>
+      <button
+        class="modal__button modal__button--ok"
+        v-if="enemyDefeated && isLastLevel"
+        @click="() => closeModal()"
+      >
         OK
       </button>
       <button class="modal__button modal__button--ok"
-              v-if="gameOver"
-              @click="() => switchLevel(currentLevel)">
+        v-if="gameOver"
+        @click="() => switchLevel(currentLevel)"
+      >
         Играть снова
       </button>
     </dialog>
@@ -74,11 +99,17 @@
 <script>
 import {mapGetters, mapActions} from "vuex"
 import GameCell from "@/components/GameCell.vue"
-import EnemyUnit from "@/components/EnemyUnit.vue";
-import ProjectileUnit from "@/components/ProjectileUnit.vue";
+import EnemyUnit from "@/components/EnemyUnit.vue"
+import ProjectileUnit from "@/components/ProjectileUnit.vue"
+import DefenderUnit from "@/components/DefenderUnit.vue"
 export default {
   name: 'GameMap',
-  components: {ProjectileUnit, EnemyUnit, GameCell},
+  components: {
+    ProjectileUnit,
+    EnemyUnit,
+    GameCell,
+    DefenderUnit
+  },
   data() {
     return {
       rows: 10,
@@ -99,13 +130,18 @@ export default {
       "path",
       "buildableCells",
       "towers",
-      "inRangeIndices",
       "projectiles",
       "enemies",
+      "defenders",
+      "unlockedLevels",
+      "inRangeIndices",
     ]),
     grid() {
       return new Array(this.rows * this.cols).fill(null)
-    }
+    },
+    isLastLevel() {
+      return this.currentLevel === this.levels.length - 1
+    },
   },
   watch: {
     gameOver(newValue) {
@@ -129,7 +165,8 @@ export default {
       "changeLevel",
       "handleCellHoverLeave",
       "setHoveredTowerData",
-      "spawnEnemies"
+      "spawnEnemies",
+      "spawnDefender",
     ]),
     isRoad(index) {
       return this.path.includes(index)
@@ -174,6 +211,7 @@ export default {
 </script>
 
 <style lang="less">
+@import '@/less/const.less';
 .game {
   position: relative;
   display: flex;
@@ -219,6 +257,11 @@ export default {
   &__level-button:hover {
     background-color: #4e4b4b;
   }
+  &__level-button:disabled {
+    background-color: #444;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
   &__status {
     display: flex;
     justify-content: space-evenly;
@@ -238,10 +281,33 @@ export default {
     background-color: rgba(0, 0, 0, 0.8);
     color: #ffffff;
     padding: 10px 20px;
+    margin-top: 10px;
     font-size: 18px;
     border-radius: @border-radius;
     text-align: center;
     z-index: 1000;
+  }
+  &__defender-button {
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    font-size: @font-size-base;
+    background-color: #007b34;
+    color: #ffffff;
+    border: none;
+    border-radius: @border-radius;
+    cursor: pointer;
+    &:hover {
+      background-color: #005c26;
+      transform: scale(1.05);
+    }
+    &:active {
+      background-color: #00491d;
+      transform: scale(0.98);
+    }
+    &:disabled {
+      background-color: #8a8a8a;
+      transform: none;
+    }
   }
 }
 .modal {

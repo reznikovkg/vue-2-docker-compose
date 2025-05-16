@@ -12,12 +12,6 @@ export default {
     setEnemyDefeated: (state, value) => {
         state.enemyDefeated = value
     },
-    setEnemyPosition: (state, position) => {
-        state.enemyPosition = position
-    },
-    setEnemyHealth: (state, health) => {
-        state.enemyHealth = health
-    },
     pushTower: (state, index) => {
         towers(state).push({
             position: index,
@@ -27,13 +21,6 @@ export default {
             range: state.startRange,
             grade: 1
         })
-    },
-    stopTowerAttacks: (state) => {
-        state.attackIntervals.forEach(interval => clearInterval(interval))
-        state.attackIntervals = []
-    },
-    setEnemyAttackInterval: (state, interval) => {
-        state.enemyAttackInterval = interval
     },
     damageTower: (state, index) => {
         if (towers(state)[index]) {
@@ -45,12 +32,6 @@ export default {
     },
     setEnemyInterval: (state, interval) => {
         state.enemyInterval = interval
-    },
-    clearEnemyInterval: (state) => {
-        if (state.enemyInterval) {
-            clearInterval(state.enemyInterval)
-            state.enemyInterval = null
-        }
     },
     setMessage: (state, text) => {
         state.message = text
@@ -73,7 +54,7 @@ export default {
             tower.fireRate += state.fireRateIncrease
         }
         if (tower.grade >= 4) {
-            tower.range += state.rangeIncrease;
+            tower.range += state.rangeIncrease
         }
         tower.range = Math.floor(tower.grade / 2) + 1
         tower.grade += 1
@@ -90,17 +71,14 @@ export default {
     clearHoveredTowerIndex(state) {
         state.hoveredTowerIndex = null
     },
-    setEnemyPixelPosition(state, pos) {
-        state.enemyPixelPosition = pos
-    },
     addProjectile(state, projectile) {
         state.projectiles.push(projectile)
     },
     removeProjectile(state, index) {
         state.projectiles.splice(index, 1)
     },
-    clearProjectiles(state) {
-        state.projectiles = []
+    removeProjectileById(state, id) {
+        state.projectiles = state.projectiles.filter(p => p.id !== id)
     },
     addEnemy(state, enemy) {
         state.enemies.push(enemy)
@@ -131,5 +109,37 @@ export default {
     },
     setEnemyIntervals(state, intervals) {
         state.enemyIntervals = intervals
+    },
+    setDefenders(state, defenders) {
+        state.defenders = defenders
+    },
+    addDefender(state, defender) {
+        state.defenders.push(defender)
+    },
+    updateDefender(state, updated) {
+        const index = state.defenders.findIndex(d => d.id === updated.id)
+        if (index !== -1) {
+            state.defenders[index] = { ...state.defenders[index], ...updated }
+        }
+    },
+    damageDefender(state, { id }) {
+        const defender = state.defenders.find(d => d.id === id)
+        if (defender) {
+            defender.health = Math.max(0, defender.health - 1)
+            if (defender.health === 0) {
+                defender.isDead = true
+            }
+        }
+    },
+    removeDefender(state, id) {
+        state.defenders = state.defenders.filter(d => d.id !== id)
+    },
+    unlockLevel(state, levelIndex) {
+        if (!state.unlockedLevels.includes(levelIndex)) {
+            state.unlockedLevels.push(levelIndex)
+        }
+    },
+    setSpawnWaveId(state, id) {
+        state.spawnWaveId = id
     },
 }

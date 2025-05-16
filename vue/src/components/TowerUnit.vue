@@ -1,16 +1,19 @@
 <template>
   <div class="tower">
     <div class="tower__health">
-      {{ tower.health }} HP
+      💙{{ tower.health }}
     </div>
     <div class="tower__unit">
       <button v-if="!gameOver && !enemyDefeated"
-              class="tower__delete"
-              @click.stop="() => deleteTower(index)">
+        class="tower__delete"
+        @click.stop="() => deleteTower(index)"
+      >
         ❌
       </button>
-      <div class="tower__dot"
-           :class="'tower__dot--grade-' + tower.grade">
+      <div
+        class="tower__dot"
+        :class="'tower__dot--grade-' + tower.grade"
+      >
         {{ tower.grade }}
       </div>
     </div>
@@ -38,12 +41,15 @@ export default {
     ]),
   },
   methods: {
-    ...mapActions(["deleteTower"])
+    ...mapActions([
+        "deleteTower"
+    ])
   },
 }
 </script>
 
 <style lang="less">
+@import '@/less/const.less';
 .tower {
   position: relative;
   width: 100%;

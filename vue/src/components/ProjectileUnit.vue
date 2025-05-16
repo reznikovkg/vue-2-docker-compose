@@ -1,7 +1,7 @@
 <template>
   <div
-      class="projectile"
-      :style="{
+    :class="['projectile', isFromDefender ? 'from-defender' : '']"
+    :style="{
       left: `${currentX}px`,
       top: `${currentY}px`,
     }"
@@ -10,11 +10,17 @@
 
 <script>
 export default {
+  name: 'ProjectileUnit',
   props: {
     value: {
       type: Object,
       required: true,
     },
+  },
+  computed: {
+    isFromDefender() {
+      return this.value.isFromDefender === true
+    }
   },
   data() {
     return {
@@ -48,7 +54,8 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="less">
+@import '@/less/const.less';
 .projectile {
   position: absolute;
   width: 10px;
@@ -56,5 +63,11 @@ export default {
   background-color: #000000;
   border-radius: 50%;
   pointer-events: none;
+  &.from-defender {
+    background-color: #770000;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
 }
 </style>

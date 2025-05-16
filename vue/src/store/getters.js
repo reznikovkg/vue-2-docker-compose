@@ -4,18 +4,7 @@ export default {
     levels: (state) => state.levels,
     gameOver: (state) => state.gameOver,
     enemyDefeated: (state) => state.enemyDefeated,
-    towerCost:(state) => state.towerCost,
-    upgradeCost: (state) => state.upgradeCost,
-    sellRefund: (state) => state.sellRefund,
-    enemyPosition: (state) => state.enemyPosition,
     enemyHealth: (state) => state.enemyHealth,
-    attackIntervals: (state) => state.attackIntervals,
-    healthIncrease: (state) => state.healthIncrease,
-    damageIncrease: (state) => state.damageIncrease,
-    fireRateIncrease: (state) => state.fireRateIncrease,
-    rangeIncrease: (state) => state.rangeIncrease,
-    enemyAttackInterval: (state) => state.enemyAttackInterval,
-    enemyInterval: (state) => state.enemyInterval,
     message: (state) => state.message,
     towers: (state) => state.levels[state.currentLevel].towers,
     buildableCells: (state) => state.levels[state.currentLevel].buildableCells,
@@ -44,16 +33,20 @@ export default {
         }
         return result
     },
-    enemyPixelPosition: (state) => {
-        const step_size = state.cell_size
-        const index = state.enemyPosition
-        const row = Math.floor(index / state.cols)
-        const col = index % state.cols
-        return {
-            x: col * step_size,
-            y: row * step_size,
-        }
-    },
     projectiles: (state) => state.projectiles,
     enemies: (state) => state.enemies,
+    defenders: (state) => state.defenders,
+    unlockedLevels: (state) => state.unlockedLevels,
+    isCellBlockedByDefender: (state) => (index, currentDefenderId = null) => {
+        const blockedByEnemy = state.enemies.some(
+            enemy => !enemy.isDead && enemy.index === index
+        )
+        const blockedByDefender = state.defenders.some(
+            defender =>
+                !defender.isDead &&
+                defender.index === index &&
+                defender.id !== currentDefenderId
+        )
+        return blockedByEnemy || blockedByDefender
+    }
 }

@@ -9,22 +9,17 @@ export default {
     damageIncrease: 2,
     fireRateIncrease: 1,
     rangeIncrease: 1,
-    towerCost: 20,
+    towerCost: 40,
     upgradeCost: 10,
+    defenderCost: 20,
     sellRefund: 0.8,
     gameOver: false,
     enemyDefeated: false,
-    coins: 500,
+    coins: 1000,
     currentLevel: 0,
-    enemyPosition: 0,
     enemyHealth: 100,
     attackIntervals: [],
     levels: [
-        {
-            path: [0, 10, 20, 30, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49], // Дорога
-            buildableCells: [1, 31, 35, 53, 57], // Разрешенные клетки для строительства
-            towers: []
-        },
         {
             path: [10, 11, 12, 13, 14, 15, 16, 17, 18, 28, 38, 48, 58, 68, 78, 88, 87, 86, 85, 84, 83, 82, 81, 80],
             buildableCells: [2, 24, 26, 57, 64,94,96,99],
@@ -51,18 +46,21 @@ export default {
             towers: []
         }
     ],
-    enemyAttackInterval: null,
-    enemyInterval: null,
     message: "",
     hoveredTowerIndex: null,
     towerRange: 1,
-    enemyPixelPosition: { x: 0, y: 0 },
     projectiles: [],
     enemies: [], // список врагов
     enemyIntervals: [],
     enemyTypes: [
-        { type: 'slow', speed: 900, health: 150, attackInterval: 400},
-        { type: 'normal', speed: 650, health: 100, attackInterval: 300 },
+        { type: 'slow', speed: 800, health: 150, attackInterval: 400},
+        { type: 'normal', speed: 600, health: 100, attackInterval: 300 },
         { type: 'fast', speed: 450, health: 60, attackInterval: 200 }
     ],
-};
+    defenders: [],
+    startDefenderHealth: 50,
+    defenderSpeedInterval: 500,
+    defenderAttackInterval: 100,
+    unlockedLevels: [0],
+    spawnWaveId: 0,
+}
