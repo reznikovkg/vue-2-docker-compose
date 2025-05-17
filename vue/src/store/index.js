@@ -5,10 +5,11 @@ const state = {
   score:0,
   manna:0,
   damageImprove:0,
+  playerDirection: "w", // w s a d as sd aw wd
   prices:{
     health:{
       value: "max",
-      amount: 10
+      amount: 1
     },
     damage:{
       value: 1,
@@ -16,11 +17,11 @@ const state = {
     },
     manna:{
       value: "max",
-      amount: 10
+      amount: 1
     },
     maxHealth:{
       value: 10,
-      amount: 10
+      amount: 1
     },
     maxManna:{
       value: 1,
@@ -127,6 +128,7 @@ const getters = {
   },
   coins: (state) => state.coins,
   manna: (state) => state.manna,
+  playerDirection: (state) => state.playerDirection,
   enemiesCounter: (state) => state.enemiesCounter,
   xWorld: (state) => state.xWorld,
   yWorld: (state) => state.yWorld,
@@ -365,96 +367,207 @@ export const updateGameState = (state, deltaTime) => {
 
   state.xWorld = newWorldPos[0];
   state.yWorld = newWorldPos[1];
-  keyInputAddAttack(state);
-  enemyMove(state, deltaTime);
-  attackEnemyCollision(state);
-  playerCoinsCollision(state);
-  attackMove(state, deltaTime);
-  playerAttackCollision(state);
+  state.playerDirection = newWorldPos[2];
+
+  const [newManna, newAttacksCounter] = keyInputAddAttack(
+    state.keys,
+    state.radiusAttacks,
+    state.deadAttacks,
+    state.attackPrototypes,
+    state.windowWidth,
+    state.windowHeight,
+    state.xWorld,
+    state.yWorld,
+    state.xCursor,
+    state.yCursor,
+    state.attacksCounter,
+    state.manna);
+  state.manna = newManna;
+  state.attacksCounter = newAttacksCounter;
+
+  state.health = enemyMove( 
+    state.enemies,
+    state.xWorld,
+    state.yWorld,
+    state.windowWidth,
+    state.windowHeight,
+    state.playerPrototype,
+    state.health,
+    deltaTime);
+
+  const [newEnemyCounter, newCoinsCounter] = attackEnemyCollision(
+    state.enemies,
+    state.attacks,
+    state.radiusAttacks,
+    state.deadAttacks,
+    state.damageImprove,
+    state.enemiesCounter,
+    state.coinsCounter);
+
+  state.enemiesCounter = newEnemyCounter;
+  state.coinsCounter = newCoinsCounter;
+  state.attacks = state.attacks.filter((attack) => attack.deactivate != true);
+  state.enemies = state.enemies.filter((enemy) => enemy.deactivate != true);
+  
+  state.score = playerCoinsCollision(
+    state.score,
+    state.coins,
+    state.xWorld,
+    state.yWorld, 
+    state.windowWidth,
+    state.windowHeight,
+    state.coinRadius,
+    state.playerPrototype.radius);
+  state.coins = state.coins.filter((coin) => coin.deactivate != true);
+
+  attackMove(state.attacks, state.radiusAttacks, state.deadAttacks, deltaTime);
+
+  state.attacks = state.attacks.filter((attack) => attack.deactivate != true);
+  state.radiusAttacks = state.radiusAttacks.filter((attack) => attack.deactivate != true);
+  state.deadAttacks = state.deadAttacks.filter((attack) => attack.deactivate != true);
+
+  state.health = playerAttackCollision(
+    state.health,
+    state.attacks,
+    state.xWorld,
+    state.yWorld,
+    state.windowWidth,
+    state.windowHeight,
+    state.playerPrototype.radius);
+
+  state.attacks = state.attacks.filter((attack) => attack.deactivate != true);
+
   if(state.health <= 0){
     state.gameStatus = 'end';
   }
 }
 
-export const keyInputAddAttack = (state) => {
-  if (state.keys['KeyQ']) {
-    if(state.radiusAttacks.length != 0 || state.manna - state.attackPrototypes['radius'].manna < 0){
-      return;
+export const keyInputAddAttack = (
+  keys,
+  radiusAttacks,
+  deadAttacks,
+  attackPrototypes,
+  windowWidth,
+  windowHeight,
+  xWorld,
+  yWorld,
+  xCursor,
+  yCursor,
+  attacksCounter,
+  manna) => {
+  if (keys['KeyQ']) {
+    if(radiusAttacks.length != 0 || manna - attackPrototypes['radius'].manna < 0){
+      return [manna, attacksCounter];
     }
-    state.manna -= state.attackPrototypes['radius'].manna;
-    const x = state.windowWidth/2 - state.xWorld;
-    const y = state.windowHeight/2 - state.yWorld;
-    state.radiusAttacks.push({
-      id: state.attacksCounter,
+    manna -= attackPrototypes['radius'].manna;
+    const x = windowWidth/2 - xWorld;
+    const y = windowHeight/2 - yWorld;
+    radiusAttacks.push({
+      id: attacksCounter,
       x: x,
       y: y,
       xStart: x,
       yStart: y,
       R: 10,
-      dX: state.attackPrototypes['radius'].speed,
+      dX: attackPrototypes['radius'].speed,
       player: true,
-      radius: state.attackPrototypes['radius'].radius,
-      damageRadius: state.attackPrototypes['radius'].lifeRadius,
-      damage: state.attackPrototypes['radius'].damage,
+      radius: attackPrototypes['radius'].radius,
+      damageRadius: attackPrototypes['radius'].lifeRadius,
+      damage: attackPrototypes['radius'].damage,
       deactivate: false,
     });                 
-    state.attacksCounter++;
-  } else if (state.keys['KeyE']) {
-    if(state.deadAttacks.length != 0 || state.manna - state.attackPrototypes['dead'].manna < 0){
-      return;
+    attacksCounter++;
+  } else if (keys['KeyE']) {
+    if(deadAttacks.length != 0 || manna - attackPrototypes['dead'].manna < 0){
+      return [manna, attacksCounter];
     }
-    state.manna -= state.attackPrototypes['dead'].manna;
-    const x = state.windowWidth/2 - state.xWorld;
-    const y = state.windowHeight/2 - state.yWorld;
-    const distanceXAim = state.windowWidth/2 - state.xCursor;
-    const distanceYAim = state.windowHeight/2 - state.yCursor;
-    const [dX, dY] = linearIncrementByStep(distanceXAim, distanceYAim, state.attackPrototypes['dead'].speed);
-    state.deadAttacks.push({
-      id: state.attacksCounter,
+    manna -= attackPrototypes['dead'].manna;
+    const x = windowWidth/2 - xWorld;
+    const y = windowHeight/2 - yWorld;
+    const distanceXAim = windowWidth/2 - xCursor;
+    const distanceYAim = windowHeight/2 - yCursor;
+    const [dX, dY] = linearIncrementByStep(distanceXAim, distanceYAim, attackPrototypes['dead'].speed);
+    deadAttacks.push({
+      id: attacksCounter,
       x: x,
       y: y,
       xStart: x,
       yStart: y,
-      R: state.attackPrototypes['dead'].lifeRadius,
+      R: attackPrototypes['dead'].lifeRadius,
       dX: dX,
       dY: dY,
       player: true,
-      radius: state.attackPrototypes['dead'].radius,
-      damageRadius: state.attackPrototypes['dead'].lifeRadius,
+      radius: attackPrototypes['dead'].radius,
+      damageRadius: attackPrototypes['dead'].lifeRadius,
       deactivate: false,
     });                 
-    state.attacksCounter++;
+    attacksCounter++;
   }
+
+  return [manna, attacksCounter];
 }
 
 export const worldMove = (player, xWorld, yWorld, keys, deltaTime) => {
   const movement = player.speed * deltaTime;
   let dyWorld = 0;
   let dxWorld = 0;
+  let playerDirection = 'i';
   if (keys['KeyW']) {
     dyWorld = movement;
+    playerDirection = 'w';
+    if (keys['KeyD']) {
+      dxWorld = -movement/Math.sqrt(2);
+      dyWorld = movement/Math.sqrt(2);
+      playerDirection = 'wd';
+    }
+    else if (keys['KeyA']) {
+      dxWorld = movement/Math.sqrt(2);
+      dyWorld = movement/Math.sqrt(2);
+      playerDirection = 'wa';
+    }
   }
-  if (keys['KeyS']) {
+  else if (keys['KeyS']) {
     dyWorld = -movement;
+    playerDirection = 's';
+    if (keys['KeyD']) {
+      dxWorld = -movement/Math.sqrt(2);
+      dyWorld = -movement/Math.sqrt(2);
+      playerDirection = 'sd';
+    }
+    else if (keys['KeyA']) {
+      dxWorld = movement/Math.sqrt(2);
+      dyWorld = -movement/Math.sqrt(2);
+      playerDirection = 'sa';
+    }
   }
-  if (keys['KeyA']) {
+  else if (keys['KeyA']) {
     dxWorld = movement;
+    playerDirection = 'a';
   }
-  if (keys['KeyD']) {
+  else if (keys['KeyD']) {
     dxWorld = -movement;
+    playerDirection = 'd';
   }
   xWorld += dxWorld;
   yWorld += dyWorld;
-  return [xWorld, yWorld];
+  return [xWorld, yWorld, playerDirection];
 }
 
-export const enemyMove = (state, deltaTime) => {
-  state.enemies.forEach( (enemy) => {
-    let enemyDistanceX = (state.xWorld-state.windowWidth/2) + enemy.x;
-    let enemyDistanceY = (state.yWorld-state.windowHeight/2) + enemy.y;
+export const enemyMove = (
+  enemies,
+  xWorld,
+  yWorld,
+  windowWidth,
+  windowHeight,
+  playerPrototype,
+  health,
+  deltaTime) => {
+  enemies.forEach( (enemy) => {
+    let enemyDistanceX = (xWorld - windowWidth/2) + enemy.x;
+    let enemyDistanceY = (yWorld - windowHeight/2) + enemy.y;
     let [dX, dY] = linearIncrement(enemyDistanceX, enemyDistanceY, enemy.speed, deltaTime);
-    if(circleCollision(enemyDistanceX, enemyDistanceY, enemy.radius, state.playerPrototype.radius)){
-      state.health--;
+    if(circleCollision(enemyDistanceX, enemyDistanceY, enemy.radius, playerPrototype.radius)){
+      health--;
       enemy.x += dX;
       enemy.y += dY;
     }
@@ -463,11 +576,19 @@ export const enemyMove = (state, deltaTime) => {
       enemy.y -= dY;
     }
   });
+  return health;
 }
 
-export const attackEnemyCollision = (state) => {
-  state.enemies.forEach( (enemy) => {
-    state.attacks.forEach( (attack) => {
+export const attackEnemyCollision = (
+    enemies, 
+    attacks,
+    radiusAttacks,
+    deadAttacks, 
+    damageImprove,
+    enemyCounter,
+    coinsCounter) => {
+  enemies.forEach( (enemy) => {
+    attacks.forEach( (attack) => {
       if (!attack.player) {
         return;
       }
@@ -476,32 +597,37 @@ export const attackEnemyCollision = (state) => {
       const colisionFlag = circleCollision(distanceX, distanceY, enemy.radius, attack.radius);
       if (!attack.deactivate && !enemy.deactivate && colisionFlag) {
         attack.deactivate = true;
-        enemyDamage(enemy, attack.damage + state.damageImprove);
+        enemyDamage(enemy, attack.damage + damageImprove);
+        enemyCounter--;
+        coinsCounter++;
       }
     });
-    state.radiusAttacks.forEach( (attack) => {
+    radiusAttacks.forEach( (attack) => {
       let distanceX = enemy.x - attack.x;
       let distanceY = enemy.y - attack.y;
       const colisionFlag = circleCollision(distanceX, distanceY, enemy.radius, attack.damageRadius+10);
       if (!attack.deactivate && !enemy.deactivate && colisionFlag) {
         enemyDamage(enemy, attack.damage);
+        enemyCounter--;
+        coinsCounter++;
       }
     });
-    state.deadAttacks.forEach( (attack) => {
+    deadAttacks.forEach( (attack) => {
       let distanceX = enemy.x - attack.x;
       let distanceY = enemy.y - attack.y;
       const colisionFlag = circleCollision(distanceX, distanceY, enemy.radius, attack.radius);
       if (!attack.deactivate && !enemy.deactivate && colisionFlag) {
         enemyDamage(enemy, enemy.health+1);
+        enemyCounter--;
+        coinsCounter++;
       }
     });
   });
 
-  if(state.radiusAttacks.length != 0)
-    state.radiusAttacks[0].damage = 0;
+  if(radiusAttacks.length != 0)
+    radiusAttacks[0].damage = 0;
 
-  state.attacks = state.attacks.filter((attack) => attack.deactivate != true);
-  state.enemies = state.enemies.filter((enemy) => enemy.deactivate != true);
+  return [enemyCounter, coinsCounter];
 }
 
 
@@ -510,41 +636,47 @@ export const enemyDamage = (enemy, damage) => {
   if(enemy.health <= 0){
     enemy.deactivate = true;
     addCoin(state, enemy.x, enemy.y);
-    state.enemyCounter--;
-    state.coinsCounter++;
   }
 }
 
-export const playerAttackCollision = (state) => {
-  state.attacks.forEach( (attack) => {
+export const playerAttackCollision = (health, attacks, xWorld, yWorld, windowWidth, windowHeight, playerRadius) => {
+  attacks.forEach( (attack) => {
     if(attack.player){
       return;
     }
-    let distanceX = attack.x + (state.xWorld-state.windowWidth/2);
-    let distanceY = attack.y + (state.yWorld-state.windowHeight/2);
-    const colisionFlag = circleCollision(distanceX, distanceY, attack.radius, state.playerPrototype.radius);
+    let distanceX = attack.x + (xWorld - windowWidth/2);
+    let distanceY = attack.y + (yWorld - windowHeight/2);
+    const colisionFlag = circleCollision(distanceX, distanceY, attack.radius, playerRadius);
     if(!attack.deactivate && colisionFlag){
       attack.deactivate = true;
-      state.health-=attack.damage;
+      health -= attack.damage;
     }
   });
-  state.attacks = state.attacks.filter((attack) => attack.deactivate != true);
+  return health;
 }
 
-export const playerCoinsCollision = (state) => {
-  state.coins.forEach( (coin) => {
-    let distanceX = coin.x + (state.xWorld-state.windowWidth/2);
-    let distanceY = coin.y + (state.yWorld-state.windowHeight/2);
-    const colisionFlag = circleCollision(distanceX, distanceY, state.coinRadius, state.playerPrototype.radius);
+export const playerCoinsCollision = (
+    score,
+    coins,
+    xWorld,
+    yWorld, 
+    windowWidth,
+    windowHeight,
+    coinRadius,
+    playerRadius) => {
+  coins.forEach( (coin) => {
+    let distanceX = coin.x + (xWorld - windowWidth/2);
+    let distanceY = coin.y + (yWorld - windowHeight/2);
+    const colisionFlag = circleCollision(distanceX, distanceY, coinRadius, playerRadius);
     if(!coin.deactivate && colisionFlag){
       coin.deactivate = true;
-      state.score++;
+      score++;
     }
   });
-  state.coins = state.coins.filter((coin) => coin.deactivate != true);
+  return score;
 }
-export const attackMove = (state, deltaTime) => {
-  state.attacks.forEach( (attack) => {
+export const attackMove = (attacks, radiusAttacks, deadAttacks, deltaTime) => {
+  attacks.forEach( (attack) => {
     let dX = attack.dX*deltaTime;
     let dY = attack.dY*deltaTime;
     attack.x += dX;
@@ -556,18 +688,16 @@ export const attackMove = (state, deltaTime) => {
       attack.deactivate = true;
     }
   });
-  state.attacks = state.attacks.filter((attack) => attack.deactivate != true);
 
-  state.radiusAttacks.forEach( (attack) => {
+  radiusAttacks.forEach( (attack) => {
     let dX = attack.dX*deltaTime;
     attack.R += dX;
     if(attack.R > attack.damageRadius){
       attack.deactivate = true;
     }
   });
-  state.radiusAttacks = state.radiusAttacks.filter((attack) => attack.deactivate != true);
 
-  state.deadAttacks.forEach( (attack) => {
+  deadAttacks.forEach( (attack) => {
     let dX = attack.dX*deltaTime;
     let dY = attack.dY*deltaTime;
     attack.x += dX;
@@ -579,7 +709,7 @@ export const attackMove = (state, deltaTime) => {
       attack.deactivate = true;
     }
   });
-  state.deadAttacks = state.deadAttacks.filter((attack) => attack.deactivate != true);
+
 }
 
 export const addCoin = (state, x, y) =>{

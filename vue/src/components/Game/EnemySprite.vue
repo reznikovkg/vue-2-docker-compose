@@ -3,7 +3,9 @@
     :style="enemyStyle"
     class="enemy"
   >
-    {{ health }}
+    <div class="enemy__health">
+      {{ health }}
+    </div>
   </div>
 </template>
  
@@ -44,13 +46,18 @@ export default{
   
 <style lang="less" scoped>
 .enemy{
-  border-radius: 50%;
   position: absolute;
-  background: @cBaseEnemy;
-  border: 2px solid @cBorderEnemy;
-  opacity: 50%;
-  z-index: 555;
-  text-align: center;
-  font-size: 4vh;
+  background-image: url("@/assets/slime.gif");
+  background-size: cover;
+  background-position: center;
+  &__health{
+    position: absolute;
+    top:100%;
+    width: 100%;
+    height: 2.5vh;
+    background: @cBaseUi;
+    text-align: center;
+    font-size: auto;
+  }
 }
 </style>

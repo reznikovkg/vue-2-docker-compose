@@ -15,6 +15,14 @@
 
 <script>
 import {mapGetters} from 'vuex';
+import playerGifW from '@/assets/player/w.gif';
+import playerGifWD from '@/assets/player/wd.gif';
+import playerGifWA from '@/assets/player/wa.gif';
+import playerGifA from '@/assets/player/a.gif';
+import playerGifD from '@/assets/player/d.gif';
+import playerGifS from '@/assets/player/s.gif';
+import playerGifSA from '@/assets/player/sa.gif';
+import playerGifSD from '@/assets/player/sd.gif';
 
 export default{
   name: 'GameAim',
@@ -27,7 +35,8 @@ export default{
   computed:{
     ...mapGetters([
       'xCursor',
-      'yCursor'
+      'yCursor',
+      'playerDirection'
     ]),
     cursor(){
       let R = 100;
@@ -45,7 +54,37 @@ export default{
       }
     },
     playerStyle(){
+      let sprite;
+      switch (this.playerDirection) {
+        case 'w':
+          sprite = playerGifW;
+          break;
+        case 's':
+          sprite = playerGifS;
+          break;
+        case 'a':
+          sprite = playerGifA;
+          break;
+        case 'd':
+          sprite = playerGifD;
+          break;
+        case 'wd':
+          sprite = playerGifWD;
+          break;
+        case 'wa':
+          sprite = playerGifWA;
+          break;
+        case 'sd':
+          sprite = playerGifSD;
+          break;
+        case 'sa':
+          sprite = playerGifSA;
+          break;
+        default:
+          sprite = playerGifS;
+      }
       return {
+        'background-image': `url(${sprite})`,
         width: (this.playerRadius*2) + 'px',
         height: (this.playerRadius*2) + 'px',
         top: (window.innerHeight/2-this.playerRadius)+'px',
@@ -58,12 +97,11 @@ export default{
 
 <style lang="less" scoped>
 .player{
-  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
   position: fixed;
-  width: 30px;
-  height: 30px;
-  background-color: @cBasePlayer;
-  border: 2px solid @cBorderPlayer;
+  width: 40px;
+  height: 40px;
   z-index: 555;
 }
 .aim{
