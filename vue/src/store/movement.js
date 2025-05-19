@@ -16,13 +16,13 @@ export default {
       getPos: (state) => state.pos,
     },
     mutations: {
-      SET_POS(state, { x, y }) {
+      SET_POS:(state, { x, y }) => {
         state.pos = { x, y };
       },
-      SET_KEY(state, {  key, value }) {
+      SET_KEY:(state, {  key, value }) =>{
         state.keys[key] = value;
       },
-      UPDATE_POSITION(state) {
+      UPDATE_POSITION:(state) => {
         let dx = 0, dy = 0;
         if (state.keys['w']) dy -= state.step;
         if (state.keys['s']) dy += state.step;
@@ -39,7 +39,7 @@ export default {
       }
     },
     actions: {
-      init({commit}) {
+      init:({commit}) => {
         const savedPos = localStorage.getItem('shipPos');
         if (savedPos) {
           commit('SET_POS', JSON.parse(savedPos));

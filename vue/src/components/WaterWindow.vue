@@ -1,10 +1,12 @@
 <template>
   <div class="water-window">
-    <svg class="wave-svg" viewBox="0 0 1000 1000" preserveAspectRatio="none">
-      <path 
+    <svg class="water-window__wave-svg"
+     viewBox="0 0 1000 1000" 
+     preserveAspectRatio="none"
+    >
+      <path class="water-window__wave"
         v-for="(wave, index) in waves" 
         :key="index"
-        class="wave"
         :d="generateWavePath(index)"
         :style="getWaveStyle()"
       />
@@ -22,13 +24,21 @@
       timer: null
     }
   },
-  methods: {
 
+  mounted() {
+    this.timer = setInterval(() => {
+      this.isSine = !this.isSine;
+    }, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
+  },
+  
+  methods: {
     generateWavePath(index) {
       const amplitude = 25;
       const frequency = 0.05;
       const verticalOffset = 90 + index * 150;
-      
       let path = `M 0 ${verticalOffset}`;
       for (let x = 0; x <= 1000; x += 10) {
         const func = this.isSine ? 
@@ -42,25 +52,17 @@
     },
 
     getWaveStyle() {
-  return {
-    'stroke-width': 3,
-    'opacity': 0.8,
-    'stroke': `hsl(210, 80%, 70%)`
-  }
-}
-  },
-  mounted() {
-    this.timer = setInterval(() => {
-      this.isSine = !this.isSine;
-    }, 1000);
-  },
-  beforeDestroy() {
-    clearInterval(this.timer);
+      return {
+        'stroke-width': 3,
+        'opacity': 0.8,
+        'stroke': `hsl(210, 80%, 70%)`
+      }
+    }
   }
 }
 </script>
   
-<style scoped>
+<style scoped lang="scss">
 
 .water-window {
   position: fixed;
@@ -70,16 +72,16 @@
   height: 100vh;
   background: rgb(51, 51, 199); 
   z-index:1;
-}
 
-.wave-svg {
-  width: 100vw;
-  height: 100vh;
-}
+  &__wave-svg{
+    width: 100vw;
+    height: 100vh;
+  }
 
-.wave {
-  fill: none;
-  stroke-linecap: round;
-  transition: d 0.8s ease-in-out;
+  &__wave{
+    fill: none;
+    stroke-linecap: round;
+    transition: d 0.8s ease-in-out;
+  }
 }
   </style>

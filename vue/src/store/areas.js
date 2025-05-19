@@ -12,32 +12,19 @@ export default {
       }
     },
     actions: {
-      checkArea({ commit, rootGetters }) {
-        const pos = rootGetters['movement/getPos'] || {};
-        const x = pos.x;
-        const y = pos.y;
-  
-        if ( ((Math.pow((x-290),2)) + (Math.pow((y-213),2))) < 50 **2 )  {
-          commit('SET_AREA', 'Высокий');
-          return;
-        }
-        if ( ((Math.pow((x-960),2)) + (Math.pow((y-446),2))) < 50 **2 )  {
-          commit('SET_AREA', 'Высокий');
-          return;
-        }
-        if ( ((Math.pow((x-843),2)) + (Math.pow((y-1),2))) < 150 **2 )  {
-          commit('SET_AREA', 'Средний');
-          return;
-        }
-        if ( ((Math.pow((x-668),2)) + (Math.pow((y-350),2))) < 150 **2 ) {
-          commit('SET_AREA', 'Средний');
-          return;
-        }
-        if ( ((Math.pow((x+213),2)) + (Math.pow((y-109),2))) < 150 **2 ) {
-          commit('SET_AREA', 'Средний');
-          return;
-        }
-        commit('SET_AREA', 'Низкий');
+      checkArea:({ commit, rootGetters }) => {
+        const { x = 0, y = 0 } = rootGetters['movement/getPos'] || {};
+        const zones = [
+          { x: 290,  y: 213,  r: 50,  level: 'Высокий' },
+          { x: 960,  y: 446,  r: 50,  level: 'Высокий' },
+          { x: 843,  y: 1,    r: 150, level: 'Средний' },
+          { x: 668,  y: 350,  r: 150, level: 'Средний' },
+          { x: -213, y: 109,  r: 150, level: 'Средний' }
+        ];
+        const activeZone = zones.find(({ x: zx, y: zy, r }) => 
+          Math.pow(x - zx, 2) + Math.pow(y - zy, 2) < Math.pow(r, 2)
+        );
+        commit('SET_AREA', activeZone?.level || 'Низкий');
       }
     }
   }

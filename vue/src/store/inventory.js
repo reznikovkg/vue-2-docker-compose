@@ -14,46 +14,46 @@ export default{
       getInv: (state) => state.cellItems,
     },
     mutations:{
-      ADD_ITEM(state, {id, pos}) {
-        const newItem = {
+      ADD_ITEM: (state, { id, pos }) => (
+        state.cellItems[pos].push({
           src: state.items[id].url,
           id: state.itemId++,
           type: id
-        };
-        state.cellItems[pos].push(newItem);
-      },
-      CLEAR_INVENTORY(state) {
-        state.cellItems = Array(9).fill().map(() => []);
+        })
+      ),
+      CLEAR_INVENTORY: state => {
+        state.cellItems = Array.from({ length: 9 }, () => []);
         state.itemId = 0;
       },
-      LOAD_INVENTORY(state, inventoryData) {
-        state.cellItems = Array(9).fill().map(() => []);
-        inventoryData.forEach((type, index) => {
-          if (type !== null && state.items[type]) {
-            state.cellItems[index] = [{
-              src: state.items[type].url,
-              id: index,
-              type: type
-            }];
-          }
-        });
-        state.itemId = state.cellItems.reduce((max, cell) => {
-        return cell.length > 0 ? Math.max(max, cell[0].id + 1) : max;}, 0);
+      LOAD_INVENTORY: (state, inventoryData) => {
+        state.cellItems = inventoryData.map((type, index) => 
+          type && state.items[type] 
+            ? [{ src: state.items[type].url, id: index, type }]
+            : []
+        );
+        state.itemId = Math.max(
+          0,
+          ...state.cellItems
+            .filter(cell => cell.length)
+            .map(cell => cell[0].id + 1)
+        );
       }
     },
     actions:{
-      addItem({ commit, state }, id) {
+      addItem: ({ commit, state }, id) => {
         for (let i = 0; i < state.cellItems.length; i++) {
           if (state.cellItems[i].length === 0) {
-            commit('ADD_ITEM', {id, pos: i});
-            localStorage.setItem('inventory', JSON.stringify(
-              state.cellItems.map(cell => cell.length ? cell[0].type : null)));
+            commit('ADD_ITEM', { id, pos: i });
+            localStorage.setItem(
+              'inventory',
+              JSON.stringify(state.cellItems.map(cell => cell.length ? cell[0].type : null))
+            );
             return;
-            }
+          }
         }
-        },
-      clearInventory({ commit }) {commit('CLEAR_INVENTORY');},
-      loadInventory({ commit }) {
+      },
+      clearInventory:({ commit }) => {commit('CLEAR_INVENTORY');},
+      loadInventory:({ commit }) => {
         const saved = localStorage.getItem('inventory');
         if (saved) {
           commit('LOAD_INVENTORY', JSON.parse(saved));

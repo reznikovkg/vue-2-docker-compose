@@ -1,12 +1,18 @@
 <template>
-  <div>
-    <div class="bar-design" v-show="!visible">
-      <div id="slider" class="slider-design">
-      </div>
-      <div id="zone" class="zone-design">
-      </div>
+  <div class="fishing-minigame">
+    <div class="fishing-minigame__progress-bar"
+      v-show="!visible"
+    >
+      <div class="fishing-minigame__slider"
+        id="slider" 
+      ></div>
+      <div class="fishing-minigame__zone"
+        id="zone" 
+      ></div>
     </div>
-    <InventoryWindow ref="inventory" />
+    <InventoryWindow 
+      ref="inventory"
+    />
   </div>
 </template>
 
@@ -14,10 +20,13 @@
 import {mapGetters} from "vuex";
 import lockControl from '@/mixins/lockControl';
 import InventoryWindow from "@/components/InventoryWindow.vue";
+
 export default{
   name: 'FishingGame',
   mixins: [lockControl],
-  components: {InventoryWindow},
+  components: {
+    InventoryWindow
+  },
   data() {
     return{
       visible:true,
@@ -28,10 +37,20 @@ export default{
     }
   },
   computed:{
-    ...mapGetters('areas',['getArea'])
+    ...mapGetters('areas',[
+      'getArea'
+    ])
   },
 
-  methods:{
+  mounted() {
+    window.addEventListener('keydown', this.startFishing);
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.startFishing);
+    clearTimeout(this.gameInterval);
+  },
+  
+  methods: {
     startFishing(event){
       if (event.key === 'f'){
         this.visible = false;
@@ -112,47 +131,37 @@ export default{
       });
     }
   },
-
-  mounted() {
-    window.addEventListener('keydown', this.startFishing);
-  },
-
-  beforeDestroy() {
-    window.removeEventListener('keydown', this.startFishing);
-    clearTimeout(this.gameInterval);
-  }
 }
 </script>
 
-<style>
-.bar-design
-{
-  margin-left: 580px;
-  height: 50px;
-  display: flex;
-  bottom:0;
-  margin-bottom: 30px;
-  width: 400px;
-  position:fixed;
-  z-index:3;
-  background-color: rgb(200, 146, 10);
-  border-radius: 1em;
-}
+<style lang="scss">
+.fishing-minigame{
+  &__progress-bar
+  {
+    margin-left: 580px;
+    height: 50px;
+    display: flex;
+    bottom:0;
+    margin-bottom: 30px;
+    width: 400px;
+    position:fixed;
+    z-index:3;
+    background-color: rgb(200, 146, 10);
+    border-radius: 1em;
+  }
+  &__slider{
+    left: 600px;
+    height:50px;
+    width:10px;
+    position:fixed;
+    background-color: red;
+  }
 
-.slider-design
-{
-  left: 600px;
-  height:50px;
-  width:10px;
-  position:fixed;
-  background-color: red;
-}
-
-.zone-design
-{
-  height: 50px;
-  width: 60px;
-  margin-left: 150px;
-  background-color: rgb(7, 218, 7);
+  &__zone{
+    height: 50px;
+    width: 60px;
+    margin-left: 150px;
+    background-color: rgb(7, 218, 7);
+  }
 }
 </style>

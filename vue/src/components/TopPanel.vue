@@ -1,26 +1,30 @@
 <template>
-    <div class="panel-design">
-      <div class="coords-design">
+    <div class="top-panel">
+      <div class="top-panel__coords">
         Координаты: <br>{{getPos.x-325}}, {{-getPos.y+137}}
       </div>
-      <div class="area-design">          
+      <div class="top-panel__area">          
         Клёв:{{getArea}}
       </div>
     </div>
-
-    
-  </template>
+</template>
   
 <script>
-import {mapActions, mapGetters} from "vuex";
+import {mapActions, mapGetters} from 'vuex';
 export default {
   name: "TopPanel",
-  computed:{
-    ...mapGetters('movement',['getPos']),
-    ...mapGetters('areas',['getArea'])
+  computed: {
+    ...mapGetters('movement',[
+      'getPos'
+    ]),
+    ...mapGetters('areas',[
+      'getArea'
+    ])
   },
   methods:{
-    ...mapActions('areas',['checkArea'])
+    ...mapActions('areas',[
+      'checkArea'
+    ])
   },
   mounted() {
   setInterval(() => {
@@ -30,8 +34,8 @@ export default {
 }
   </script>
   
-  <style>
-  .panel-design
+  <style lang="scss">
+  .top-panel
   {
     margin-left: 500px;
     top:0;
@@ -43,21 +47,21 @@ export default {
     border-right: 30px solid transparent;
     opacity: 0.7;
     z-index: 3;
-  }
 
-  .coords-design
-  {
-    margin-left: 190px;
-    top:0;
-    position: fixed;
-    font-size: 25px;
-  }
+    &__coords
+    {
+      margin-left: 190px;
+      top:0;
+      position: fixed;
+      font-size: 25px;
+    }
 
-  .area-design
-  {
-    margin-left: 190px;
-    top:55px;
-    position: fixed;
-    font-size: 25px;
+    &__area
+    {
+      margin-left: 190px;
+      top:55px;
+      position: fixed;
+      font-size: 25px;
+    }
   }
   </style>
