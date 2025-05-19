@@ -1,10 +1,13 @@
 <template>
   <div
-      class="cell"
-      :class="{ 'has-mole': hasMole, 'pressed': isPressed }"
-      @click="handleClick"
+      class="grid-cell"
+      :class="{
+        'was-hit': wasHit,
+        'was-missed': wasMissed
+      }"
+      @click="() => $emit('cell-click', index)"
   >
-    <span v-if="hasMole">🐹</span>
+    <div v-if="hasMole" class="mole">🐹</div>
   </div>
 </template>
 
@@ -13,47 +16,50 @@ export default {
   name: 'GridCell',
   props: {
     hasMole: Boolean,
-  },
-  data() {
-    return {
-      isPressed: false,
-    };
-  },
-  methods: {
-    handleClick() {
-      this.isPressed = true;
-      setTimeout(() => {
-        this.isPressed = false;
-      }, 100);
-
-      this.$emit('cell-click');
-    },
+    index: Number,
+    wasHit: Boolean,
+    wasMissed: Boolean
   },
 };
 </script>
 
-<style scoped>
-.cell {
-  width: 100px;
-  height: 100px;
-  background-color: #eee;
+<style lang="less" scoped>
+@import '@/less/const.less';
+
+.grid-cell {
+  width: @size-cell;
+  height: @size-cell;
+  background-color: @color-bg-default;
+  border-radius: @border-radius-cell;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #ccc;
-  font-size: 2rem;
-  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
-}
+  user-select: none;
+  transition: @transition-bg-color, transform 0.1s ease;
 
-.cell.has-mole {
-  background-color: #ffe0e0;
-  box-shadow: 0 0 10px red;
-}
+  &:hover {
+    background-color: @color-bg-hover;
+  }
 
-.cell.pressed {
-  transform: scale(0.95);
-  background-color: #ddd;
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &.has-mole {
+    //background-color: @color-bg-mole;
+  }
+
+  &.was-hit {
+    background-color: @color-hit;
+  }
+
+  &.was-missed {
+    background-color: @color-missed;
+  }
+
+  .mole {
+    font-size: @size-mole;
+  }
 }
 </style>

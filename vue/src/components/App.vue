@@ -5,14 +5,14 @@
 </template>
 
 <script>
-import GameController from './GameController.vue';
+import GameController from './components/GameController.vue';
 
 export default {
   name: 'App',
   components: {
     GameController
   }
-};
+}
 </script>
 
 <style>

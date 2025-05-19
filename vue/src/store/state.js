@@ -1,0 +1,18 @@
+export default {
+    gameStarted: false,
+    gameOver: false,
+    score: 0,
+    comboCount: 0,
+    comboBonus: 0,
+    misses: 0,
+    maxMisses: 5,
+    statusMessage: '',
+    activeCell: null,
+    moleWasHit: false,
+    moleWasMissed: false,
+    moleTimeout: null,
+    moleInterval: null,
+    statusTimeout: null,
+    missedIndex: null,
+    hitIndex: null,
+}
