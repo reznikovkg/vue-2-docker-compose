@@ -1,91 +1,31 @@
-<template>
-  <div>
-    <RouterView />
-    <ModalContainer />
-  </div>
-</template>
-
-<script>
-import ModalContainer from "@/components/parts/ModalContainer";
-
-export default {
-  components: {
-    ModalContainer
-  }
-}
-</script>
-
-<style lang="less">
-@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap');
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: @cBaseTwo;
-}
-
-a {
-  text-decoration: none;
-}
-
-section {
-  background-color: @cBaseOne;
-  margin-bottom: 20px;
-  border-radius: 2px;
-  box-sizing: border-box;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-h1, h2, h3, h4, h5 {
-  font-family: @ffOne;
-  color: @cBaseThree;
-  margin: 0;
-}
-
-h2 {
-  font-size: 32px;
-}
-
-.p-16 {
-  padding: 16px;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.rcms {
-
-  &-divider {
-
-    &-h {
-      width: 100%;
-      height: @sizeBorderDefault;
-      background-color: @cBaseTwo;
-    }
-
-    &-v {
-
+  <template>
+    <div id="app">
+      <Header />
+      <router-view :key="$route.fullPath"/>
+    </div>
+  </template>
+  <script>
+  import Header from '@/components/pages/Header.vue'
+  export default {
+    name: 'App',
+    components: {
+      Header
     }
   }
+  </script>
+	
+ <style lang="less">
+	@import "@/less/const.less";
 
-  &-loading {
-    position: relative;
+	html, body, #app {
+		height: 100%;
+	}
 
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background: rgba(100, 100, 100, 0.5);
-      cursor: wait;
-    }
-  }
-}
+	body {
+		background-image: url('/public/assets/gray_black_shadow.jpg');
+		background-size: cover;
+		background-position: center center;
+		background-repeat: no-repeat;
+		margin: 0;
+	}
 </style>
