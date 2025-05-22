@@ -1,0 +1,68 @@
+@import "./base.css";
+
+#app {
+  max-width: 680px;
+  margin: 10px auto;
+  background-color: #DDD;
+  color: black;
+  font-weight: normal;
+}
+
+.gr{
+  padding: 5px;
+  border: 1px solid #BBB;
+  border-collapse: collapse;
+}
+
+a,
+.green {
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: hsla(160, 100%, 37%, 0.2);
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    -display: flex;
+    -place-items: center;
+  }
+
+  #game {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    padding: 10px 10px;
+  }
+
+}
+
+text.lbl{
+  font-size:  10px;
+  fill:  #888;
+}
+
+circle.knot{
+  stroke:  blue;
+  fill:  lightblue;
+}
+
+circle.knot_small{
+  stroke:  green;
+  fill:  lightgreen;
+  opacity: 30%;
+}
+
+circle.knot:first-of-type {
+  stroke:  red;
+  fill:  pink;
+}
+
+polygon.area{
+  fill: green;
+  opacity: 10%;
+}
