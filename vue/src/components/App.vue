@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <div id="nav">
+  <div class="app">
+    <div class="nav">
       <RouterLink to="/" class="nav-link">Главная</RouterLink>
       <span class="nav-separator">|</span>
       <RouterLink to="/about" class="nav-link">О проекте</RouterLink>
@@ -54,7 +54,7 @@ export default {
 <style lang="less">
 @import "@/less/const.less";
 
-#app {
+.app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   text-align: center;
   color: @text-color;
@@ -66,7 +66,7 @@ export default {
   min-height: 100vh;
 }
 
-#nav {
+.nav {
   padding: @padding-medium 0;
   margin-bottom: @padding-large;
   border-bottom: 1px solid @border-color;
@@ -102,11 +102,11 @@ export default {
 }
 
 @media (max-width: @mobile-breakpoint) {
-  #app {
+  .app {
     padding: @padding-medium;
   }
 
-  #nav {
+  .nav {
     margin-bottom: @padding-medium;
 
     .nav-link {
