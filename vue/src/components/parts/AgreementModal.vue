@@ -11,7 +11,7 @@
 
       <div class="modal-container">
         <div class="modal-header">
-          <h2 id="agreement-modal-title" class="modal-title">
+          <h2 class="modal-title">
             {{ modalTitle }}
           </h2>
           <button
