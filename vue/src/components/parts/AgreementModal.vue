@@ -239,7 +239,6 @@ export default {
     }
   }
 
-  /* Анимации */
   .modal-enter-active,
   .modal-leave-active {
     transition: opacity @transition-duration @transition-timing;

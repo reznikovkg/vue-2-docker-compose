@@ -1,21 +1,20 @@
 <template>
-  <div class="toggle-item" :class="{ disabled }">
+  <div class="toggle-item" :class="{ disabled: disabled }">
     <label class="toggle-label">
       <div class="toggle-control">
         <input
             type="checkbox"
             :checked="isEnabled"
             :disabled="disabled"
-            @change="handleChange"
+            @change="(e) => handleChange(e)"
             class="toggle-input"
             aria-hidden="true"
         />
-        <span class="toggle-slider" :aria-checked="isEnabled.toString()" />
+        <span class="toggle-slider" :aria-checked="isEnabled"></span>
       </div>
-
       <div class="toggle-content">
-        <div class="toggle-title">{{ item.title }}</div>
-        <div class="toggle-description">{{ item.description }}</div>
+        <span class="toggle-title">{{ item.title }}</span>
+        <span class="toggle-description">{{ item.description }}</span>
       </div>
     </label>
   </div>
@@ -30,12 +29,12 @@ export default {
     sectionId: {
       type: String,
       required: true,
-      validator: value => Boolean(value?.trim())
+      validator: (value) => !!value.trim()
     },
     item: {
       type: Object,
       required: true,
-      validator: item => ['id', 'title', 'description'].every(key => key in item)
+      validator: (item) => ['id', 'title', 'description'].every(key => key in item)
     },
     disabled: {
       type: Boolean,
@@ -46,13 +45,15 @@ export default {
   computed: {
     ...mapGetters('agreement', ['getSetting']),
 
-    isEnabled: ({ getSetting, sectionId, item }) => getSetting(sectionId, item.id)
+    isEnabled() {
+      return this.getSetting(this.sectionId, this.item.id);
+    }
   },
 
   methods: {
     ...mapActions('agreement', ['toggleSetting']),
 
-    handleChange: function(event) {
+    handleChange(event) {
       if (!this.disabled) {
         this.toggleSetting({
           sectionId: this.sectionId,
@@ -70,7 +71,7 @@ export default {
 
 .toggle-item {
   padding: @padding-medium @padding-large;
-  border-radius: (@border-radius - 2px);
+  border-radius: @border-radius - 2px;
   background-color: @white;
   border: 1px solid @border-color;
   transition: all @transition-duration @transition-timing;
@@ -107,8 +108,18 @@ export default {
   height: 0;
 
   &:focus-visible {
-    & + .toggle-slider {
+    ~ .toggle-slider {
       box-shadow: 0 0 0 2px fade(@primary-color, 30%);
+    }
+  }
+
+  &:checked {
+    ~ .toggle-slider {
+      background-color: @primary-color;
+
+      &:before {
+        transform: translateX(26px);
+      }
     }
   }
 }
@@ -116,12 +127,15 @@ export default {
 .toggle-slider {
   position: absolute;
   cursor: pointer;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: @text-secondary;
   transition: all @transition-duration @transition-timing;
   border-radius: 24px;
 
-  &::before {
+  &:before {
     position: absolute;
     content: "";
     height: 16px;
@@ -134,22 +148,10 @@ export default {
   }
 }
 
-.toggle-input {
-  &:checked {
-    & + .toggle-slider {
-      background-color: @primary-color;
-
-      &::before {
-        transform: translateX(26px);
-      }
-    }
-  }
-
-  &:disabled {
-    & + .toggle-slider {
-      cursor: not-allowed;
-      background-color: lighten(@text-secondary, 30%);
-    }
+.toggle-input:disabled {
+  ~ .toggle-slider {
+    cursor: not-allowed;
+    background-color: lighten(@text-secondary, 30%);
   }
 }
 
@@ -172,5 +174,4 @@ export default {
   color: @text-secondary;
   line-height: 1.4;
 }
-
 </style>
