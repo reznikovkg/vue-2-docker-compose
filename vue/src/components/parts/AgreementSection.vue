@@ -40,39 +40,48 @@ export default {
 <style lang="less" scoped>
 @import "@/less/const.less";
 
-.section {
+.section-base() {
   margin-bottom: @padding-large;
   padding: @padding-medium;
-  border-radius: @border-radius;
+  border-radius: @padding-small;
   background-color: lighten(@secondary-color, 4%);
 }
 
-.section-header {
-  margin-bottom: @padding-medium;
-  text-align: left;
-}
-
-.section-title {
-  margin: 0 0 @padding-small 0;
-  font-size: @font-size-large;
-  color: @text-color;
-  font-weight: 600;
-  text-align: left;
-}
-
-.section-description {
+.text-base() {
   margin: 0;
-  font-size: @font-size-base;
-  color: @text-secondary;
-  line-height: 1.5;
   text-align: left;
+  color: @text-color;
 }
 
-.section-items {
-  display: flex;
-  flex-direction: column;
-  gap: @gap;
-  padding-left: 0;
-  margin-left: -10px;
+.section {
+  .section-base();
+
+  &-header {
+    margin-bottom: @padding-medium;
+    .text-base();
+  }
+
+  &-title {
+    .text-base();
+    font-size: @font-size-large;
+    font-weight: 600;
+    margin-bottom: @padding-small;
+  }
+
+  &-description {
+    .text-base();
+    font-size: @font-size-base;
+    color: @text-secondary;
+    line-height: 1.5;
+  }
+
+  &-items {
+    display: flex;
+    flex-direction: column;
+    gap: @gap;
+    padding-left: 0;
+    margin-left: -10px;
+    .text-base();
+  }
 }
 </style>

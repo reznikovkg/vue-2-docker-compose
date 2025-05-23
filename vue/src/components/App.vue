@@ -10,13 +10,19 @@
       <RouterView/>
     </main>
 
-    <agreement-modal v-if="shouldShowModal"/>
+    <component
+        v-for="modal in activeModals"
+        :key="modal.name"
+        :is="modal.component"
+        v-bind="modal.props"
+        @close="closeModal(modal.name)"
+    />
   </div>
 </template>
 
 <script>
 import AgreementModal from '@/components/parts/AgreementModal.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'App',
@@ -24,10 +30,23 @@ export default {
     AgreementModal
   },
   computed: {
+    ...mapGetters('modals', ['activeModals']),
     ...mapGetters('agreement', ['shouldShowModal'])
   },
+  methods: {
+    ...mapActions('modals', ['openModal', 'closeModal']),
+    ...mapActions('agreement', ['initialize']),
+  },
   created() {
-    this.$store.dispatch('agreement/initialize');
+    this.initialize();
+    if (this.shouldShowModal) {
+      this.openModal({
+        name: 'agreement',
+        component: 'AgreementModal',
+        props: {
+        }
+      });
+    }
   }
 };
 </script>
