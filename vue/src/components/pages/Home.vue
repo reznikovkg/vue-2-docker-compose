@@ -4,18 +4,18 @@
     <p class="home__text">On this page you can create a puzzle from any photo from your device</p>
     <div class="home">
       <div
-          class="home__upload"
-          @dragover.prevent="(event) => event.preventDefault()"
-          @drop.prevent="(event) => onFileSelection(event)"
+        class="home__upload"
+        @dragover.prevent="(event) => event.preventDefault()"
+        @drop.prevent="(event) => onFileSelection(event)"
       >
         <label>
           <input
-              id="input-image"
-              accept=".jpg,.png,.webp"
-              type="file"
-              name="file"
-              :style="{display: 'none'}"
-              @change="(event) => onFileSelection(event)"
+            id="input-image"
+            accept=".jpg,.png,.webp"
+            type="file"
+            name="file"
+            :style="{display: 'none'}"
+            @change="(event) => onFileSelection(event)"
           >
           <span class="home__upload__input">Select a photo or drag it here</span>
         </label>
@@ -25,34 +25,58 @@
       <div class="home__number">
         <label>
           <input
-              v-model="puzzleSize"
-              type="number"
-              class="home__number__input"
-              placeholder="Enter number of pieces (e.g., 3x3)"
+            v-model="puzzleSize"
+            type="number"
+            class="home__number__input"
+            placeholder="Enter number of pieces (e.g., 3x3)"
+            @change="() => updatePuzzleCount(puzzleSize)"
           >
         </label>
       </div>
+    </div>
+    <div class="home__text">or choose one of these levels</div>
+    <div class="home">
       <button
-          class="home__create-button"
-          @click="() => choosePuzzleSize()"
+        class="home__level-button"
+        @click="() => chooseLevel(3, imageOne)"
+      >
+        Easy
+      </button>
+      <button
+        class="home__level-button"
+        @click="() => chooseLevel(5, imageTwo)"
+      >
+        Medium
+      </button>
+      <button
+        class="home__level-button"
+        @click="() => chooseLevel(10, imageThree)"
+      >
+        Hard
+      </button>
+    </div>
+    <div class="home">
+      <button
+        class="home__create-button"
+        @click="() => createPuzzle()"
       >
         Create
       </button>
     </div>
     <h1
-        v-if="getImageUrl"
-        class="home__head"
+      v-if="getImageUrl"
+      class="home__head"
     >
       Preview:
     </h1>
     <div
-        v-if="getImageUrl"
-        class="home"
+      v-if="getImageUrl"
+      class="home"
     >
       <img
-          :src="getImageUrl"
-          class="home__preview"
-          alt="Preview Image"
+        :src="getImageUrl"
+        class="home__preview"
+        alt="Preview Image"
       />
     </div>
   </PageLayout>
@@ -63,6 +87,9 @@ import PageLayout from '../parts/PageLayout'
 import { ROUTER_NAMES } from "@/router/routes";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import HelpModal from "@/components/modals/HelpModal.vue";
+import PineForest from '@/assets/PineForest.webp';
+import MonaLisa from '@/assets/MonaLisa.webp';
+import PearlEarring from '@/assets/PearlEarring.webp';
 
 export default {
   name: ROUTER_NAMES.HOME,
@@ -72,15 +99,19 @@ export default {
   data () {
     return {
       puzzleSize: null,
+      imageOne: PearlEarring,
+      imageTwo: MonaLisa,
+      imageThree: PineForest
     }
   },
   computed: {
     ...mapGetters('image', [
-      'getImageUrl'
+      'getImageUrl',
+      'getPuzzleCount'
     ])
   },
   created () {
-    const savedImageUrl = localStorage.getItem('imageUrl');
+    const savedImageUrl = localStorage.getItem('imageUrl')
     if (savedImageUrl) {
       this.updateImage(JSON.parse(savedImageUrl))
     }
@@ -103,12 +134,25 @@ export default {
       }
       this.loadImage(file)
     },
-    choosePuzzleSize () {
-      if (this.puzzleSize > 1) {
-        const puzzleSizeNumber = parseInt(this.puzzleSize)
-        this.updatePuzzleCount(puzzleSizeNumber)
-        this.$router.push({ name: ROUTER_NAMES.PUZZLE})
-      } else {
+    chooseLevel(size, image) {
+      this.loadImage(image)
+      this.puzzleSize = size
+      this.updatePuzzleCount(this.puzzleSize)
+    },
+    createPuzzle () {
+      if (this.getImageUrl && this.getPuzzleCount >= 2) {
+        this.$router.push({name: ROUTER_NAMES.PUZZLE})
+      }
+      if (!this.getImageUrl) {
+        this.openModal({
+          component: HelpModal,
+          params: {
+            title: 'Warning',
+            message: 'Select an image'
+          }
+        })
+      }
+      if (!(this.getPuzzleCount >= 2)) {
         this.openModal({
           component: HelpModal,
           params: {
@@ -157,7 +201,7 @@ export default {
     }
   }
   &__number {
-    width: 30%;
+    width: 40%;
     border: 2px dashed @cBorderOne;
     padding: 2% 3%;
     border-radius: 10px;
@@ -175,22 +219,38 @@ export default {
   }
   &__preview {
     width: 46%;
-    border: 1px solid @cBorderOne;
     border-radius: 10px;
   }
-  &__create-button {
+  &__level-button {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 10%;
-    padding: 2% 3%;
+    width: 14%;
+    padding: 1% 2%;
     border: none;
     border-radius: 10px;
+    margin-left: 1%;
+    margin-right: 1%;
     font-size: 16px;
     color: white;
     background-color: #7C7C7C;
     &:hover {
       background-color: #707070;
+    }
+  }
+  &__create-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 46%;
+    padding: 2% 3%;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    background-color: @cBaseFive;
+    &:hover {
+      background-color: #7e2738;
     }
   }
 }

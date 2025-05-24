@@ -1,5 +1,6 @@
 import modals from './modals'
 import image from './image'
+import timer from './timer'
 import puzzle from './puzzle'
 
 export default {
@@ -7,6 +8,7 @@ export default {
   modules: {
     modals,
     image,
+    timer,
     puzzle
   }
 }
