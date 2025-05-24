@@ -5,6 +5,10 @@ import Vuex from 'vuex';
 import storeRoot from './store';
 import { sync } from 'vuex-router-sync';
 import GameEndModal from '@/components/modals/GameEndModal.vue';
+import { ChaosManager, ChaosSettings } from '@/utils/chaos';
+
+Vue.prototype.$chaosManager = ChaosManager;
+Vue.prototype.$chaosSettings = ChaosSettings;
 
 Vue.use(Vuex);
 Vue.config.productionTip = false;

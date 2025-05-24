@@ -1,11 +1,11 @@
 <template>
-<span
-    class="game__tile"
-    :class="tileClass"
-    :style="tileStyle"
->
-    {{ formattedValue }}
-  </span>
+  <div
+      class="game__tile"
+      :class="tileClass"
+      :style="tileStyle"
+  >
+  {{ formattedValue }}
+  </div>
 </template>
 
 <script>
@@ -14,49 +14,53 @@ export default {
   props: {
     tile: {
       type: Number,
-      required: true,
+      required: true
     },
     formattedValue: {
       type: String,
-      required: true,
+      required: true
     },
-    fromRow: Number,
-    fromCol: Number,
-    toRow: Number,
-    toCol: Number,
-    animate: Boolean,
-    isNew: Boolean
+    isFrozen: {
+      type: Boolean,
+      default: false
+    },
+    position: {
+      type: Object,
+      required: true
+    },
+    moveFrom: {
+      type: Object,
+      default: null
+    },
   },
   computed: {
     tileClass() {
       if (this.tile === 0) return 'game__tile--0';
       let baseValue = this.tile;
       while (baseValue > 2048) baseValue /= 1024;
+
       const powersOfTwo = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
-      const closestPowerOfTwo = powersOfTwo.find((power) => power >= baseValue) || 2048;
-      return `game__tile--${closestPowerOfTwo}`;
+      const closestPowerOfTwo = powersOfTwo.find(power => power >= baseValue) || 2048;
+
+      const classes = [`game__tile--${closestPowerOfTwo}`];
+      if (this.isFrozen) classes.push('game__tile--frozen');
+      if (this.moveFrom) classes.push('game__tile--moving');
+      return classes.join(' ');
     },
     tileStyle() {
-      const style = {};
-      if (this.animate && this.fromRow !== undefined) {
-        style.transform = `translate(${(this.toCol - this.fromCol) * 100}%, ${(this.toRow - this.fromRow) * 100}%)`;
-        style.transition = 'transform 0.1s ease-out';
-        style.zIndex = 1;
-      }
-      if (this.isNew) {
-        style.animation = 'appear 0.15s ease-out forwards';
-        style.opacity = '0';
-        style.transform = 'scale(0.8)';
-      }
-      return style;
-    },
-  },
-  //попробовать заменить watch
-  watch: {
-    toRow() {
-      setTimeout(() => {
-        this.$emit('animation-end');
-      }, 150);
+      const gridSize = this.$store.getters['game/getGridSize'];
+      const cellSize = 100 / gridSize;
+
+      return {
+        position: 'absolute',
+        left: `${this.position.x * cellSize}%`,
+        top: `${this.position.y * cellSize}%`,
+        width: `${cellSize - 2}%`,
+        height: `${cellSize - 2}%`,
+        fontSize: `${Math.max(14, cellSize * 0.7)}px`,
+        transition: this.moveFrom ? 'transform 0.15s ease-out' : 'none',
+        zIndex: this.moveFrom ? 10 : 'auto'
+      };
     }
   }
 };
@@ -67,21 +71,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #cecdcd;
   border-radius: 5px;
   aspect-ratio: 1;
   font-weight: bold;
-  transition: transform 0.07s ease, background-color 0.3s ease;
   text-align: center;
-  width: 100%;
-  height: 100%;
   box-sizing: border-box;
-  font-size: 14px;
   will-change: transform;
 
-
-  &:hover {
-    transform: scale(1.05);
+  &--moving {
+    transition: transform 0.1s ease-out;
   }
 
   @media (max-width: 400px) {
@@ -149,5 +147,9 @@ export default {
   &--default {
     background-color: #3c3a32;
   }
+}
+.game__tile--frozen {
+  background-color: rgba(173, 216, 230, 0.7); /* Light blue with transparency */
+  box-shadow: inset 0 0 10px rgba(0, 128, 255, 0.5); /* Icy glow effect */
 }
 </style>
