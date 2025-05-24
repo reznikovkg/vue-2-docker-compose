@@ -28,6 +28,24 @@
         }"
         @mousemove="(event) => onMouseMove(event)"
       >
+        <svg
+          width="0"
+          height="0"
+          style="position: absolute"
+        >
+          <defs>
+            <mask
+              v-for="piece in pieces"
+              :key="piece.id"
+              :id="piece.maskId"
+            >
+              <path
+                :d="piece.svgPath"
+                fill="white"
+              />
+            </mask>
+          </defs>
+        </svg>
         <div
           v-for="(piece, index) in pieces"
           :key="piece.id"
@@ -35,8 +53,7 @@
           :style="piece.style"
           @mousedown="(event) => startDrag(event, index)"
           @mouseup="() => stopDrag(index)"
-        >
-        </div>
+        />
       </div>
     </div>
     <div class="puzzle">
@@ -52,9 +69,9 @@
 
 <script>
 import PageLayout from '../parts/PageLayout'
-import { ROUTER_NAMES } from "@/router/routes";
-import { mapGetters, mapMutations, mapActions } from "vuex";
-import HelpModal from "@/components/modals/HelpModal.vue";
+import { ROUTER_NAMES } from "@/router/routes"
+import { mapGetters, mapMutations, mapActions } from "vuex"
+import HelpModal from "@/components/modals/HelpModal.vue"
 
 export default {
   name: ROUTER_NAMES.PUZZLE,
@@ -80,15 +97,18 @@ export default {
     ]),
     pieces () {
       return this.getPuzzlePieces.map(piece => ({
+        maskId: piece.maskId,
+        svgPath: piece.svgPath,
         style: {
           left: piece.x + 'px',
           top: piece.y + 'px',
-          width: piece.width + 'px',
-          height: piece.height + 'px',
+          width: piece.width * 1.2 + 'px',
+          height: piece.height * 1.2 + 'px',
           position: 'absolute',
-          backgroundImage: "url(" + piece.src + ")",
-          backgroundPosition: "-" + piece.initialX + "px -" + piece.initialY + "px",
-          backgroundSize: this.getPuzzleContainerWidth + "px " + this.getPuzzleContainerHeight + "px",
+          backgroundImage: 'url(' + piece.src + ')',
+          backgroundPosition: '-' + piece.initialX + 'px -' + piece.initialY + 'px',
+          backgroundSize: this.getPuzzleContainerWidth + 'px ' + this.getPuzzleContainerHeight + 'px',
+          mask: 'url(#' + piece.maskId + ')'
         }
       }))
     }
@@ -126,27 +146,27 @@ export default {
         this.recordMove()
         return
       }
-      const piece = this.getPuzzlePieces[index];
+      const piece = this.getPuzzlePieces[index]
       const cellX = Math.round(piece.x / piece.width) * piece.width
       const cellY = Math.round(piece.y / piece.height) * piece.height
       const inContainer = (
-        cellX >= 0 &&
-        cellY >= 0 &&
-        cellX < this.getPuzzleContainerWidth &&
-        cellY < this.getPuzzleContainerHeight
+          cellX >= 0 &&
+          cellY >= 0 &&
+          cellX < this.getPuzzleContainerWidth &&
+          cellY < this.getPuzzleContainerHeight
       )
       const distanceX = Math.abs(piece.x - cellX)
       const distanceY = Math.abs(piece.y - cellY)
-      const distanceXToJoin = piece.width * 0.5
-      const distanceYToJoin = piece.height * 0.5
+      const distanceXToJoin = piece.width * 0.2
+      const distanceYToJoin = piece.height * 0.2
       const isJoin = (
-        distanceX < distanceXToJoin &&
-        distanceY < distanceYToJoin
+          distanceX < distanceXToJoin &&
+          distanceY < distanceYToJoin
       )
       const isBusy = this.getPuzzlePieces.some((otherPiece, i) =>
-        i !== this.dragIndex &&
-        this.getPuzzlePieces[i].x === cellX &&
-        this.getPuzzlePieces[i].y === cellY
+          i !== this.dragIndex &&
+          this.getPuzzlePieces[i].x === cellX &&
+          this.getPuzzlePieces[i].y === cellY
       )
       if (inContainer && !isBusy && isJoin)
       {
@@ -213,7 +233,7 @@ export default {
 .puzzle {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 35px;
   &__head {
     font-size: 32px;
     text-align: center;
@@ -230,18 +250,19 @@ export default {
   }
   &__piece {
     user-select: none;
-    border: 1px solid @cBorderOne;
-    overflow: hidden;
+    border: none;
+    overflow: visible;
   }
   &__timer {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 7%;
-    padding: 2% 3%;
+    padding: 20px 30px;
     border: 1px solid @cBorderOne;
     border-radius: 10px;
-    margin-left: 1%;
+    margin-left: 5px;
+    margin-right: 5px;
     font-size: 20px;
     font-family: @ffThree;
   }
@@ -250,9 +271,11 @@ export default {
     justify-content: center;
     align-items: center;
     width: 10%;
-    padding: 2% 3%;
+    padding: 20px 30px;
     border: none;
     border-radius: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
     font-size: 16px;
     color: white;
     background-color: #7C7C7C;
@@ -265,10 +288,11 @@ export default {
     justify-content: center;
     align-items: center;
     width: 10%;
-    padding: 2% 3%;
+    padding: 20px 30px;
     border: none;
     border-radius: 10px;
-    margin-left: 1%;
+    margin-left: 5px;
+    margin-right: 5px;
     font-size: 16px;
     color: white;
     background-color: #7C7C7C;
@@ -280,8 +304,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 36%;
-    padding: 2% 3%;
+    width: 34%;
+    padding: 25px;
     border: none;
     border-radius: 10px;
     font-size: 16px;

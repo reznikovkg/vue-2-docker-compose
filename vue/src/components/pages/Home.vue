@@ -84,12 +84,12 @@
 
 <script>
 import PageLayout from '../parts/PageLayout'
-import { ROUTER_NAMES } from "@/router/routes";
-import { mapGetters, mapActions, mapMutations } from "vuex";
-import HelpModal from "@/components/modals/HelpModal.vue";
-import PineForest from '@/assets/PineForest.webp';
-import MonaLisa from '@/assets/MonaLisa.webp';
-import PearlEarring from '@/assets/PearlEarring.webp';
+import { ROUTER_NAMES } from "@/router/routes"
+import { mapGetters, mapActions, mapMutations } from "vuex"
+import HelpModal from "@/components/modals/HelpModal.vue"
+import PineForest from '@/assets/PineForest.webp'
+import MonaLisa from '@/assets/MonaLisa.webp'
+import PearlEarring from '@/assets/PearlEarring.webp'
 
 export default {
   name: ROUTER_NAMES.HOME,
@@ -189,7 +189,7 @@ export default {
     align-items: center;
     width: 40%;
     border: 2px dashed @cBorderOne;
-    padding: 5% 3%;
+    padding: 55px 30px;
     border-radius: 10px;
     background-color: @cBaseOne;
     &__input {
@@ -203,7 +203,7 @@ export default {
   &__number {
     width: 40%;
     border: 2px dashed @cBorderOne;
-    padding: 2% 3%;
+    padding: 25px 30px;
     border-radius: 10px;
     background-color: @cBaseOne;
     &__input {
@@ -226,11 +226,11 @@ export default {
     justify-content: center;
     align-items: center;
     width: 14%;
-    padding: 1% 2%;
+    padding: 15px;
     border: none;
     border-radius: 10px;
-    margin-left: 1%;
-    margin-right: 1%;
+    margin-left: 9px;
+    margin-right: 9px;
     font-size: 16px;
     color: white;
     background-color: #7C7C7C;
@@ -242,8 +242,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 46%;
-    padding: 2% 3%;
+    width: 45%;
+    padding: 20px;
     border: none;
     border-radius: 10px;
     font-size: 16px;
