@@ -5,17 +5,15 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'GameStatus',
-  props: {
-    score: {
-      type: Number,
-      required: true
-    },
-    health: {
-      type: Number,
-      required: true
-    }
+  computed: {
+    ...mapGetters('game', {
+      score: 'getScore',
+      health: 'getPlayerHealth'
+    })
   }
 }
 </script>

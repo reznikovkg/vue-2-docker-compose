@@ -1,6 +1,12 @@
 <template>
   <div v-if="showModalContainer" class="modal-container">
-    <component v-for="i in getModals" :key="i.hash" :is="i.component" :params="i.params" @close="() => removeModal(i.hash)" />
+    <component
+        v-for="modal in modalsList"
+        :key="modal.hash"
+        :is="modal.component"
+        :params="modal.params"
+        @close="() => removeModal(modal.hash)"
+    />
   </div>
 </template>
 
@@ -13,8 +19,11 @@ export default {
     ...mapGetters('modals', [
       'getModals'
     ]),
-    showModalContainer () {
-      return Object.keys(this.getModals).length
+    modalsList() {
+      return Object.values(this.getModals);
+    },
+    showModalContainer() {
+      return this.modalsList.length > 0;
     }
   },
   methods: {

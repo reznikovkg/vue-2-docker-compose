@@ -27,12 +27,12 @@ export default {
       delete state.modals[hash]
       state.modals = { ...state.modals }
     },
-    openModal: (state, { component, params }) => {
+    openModal(state, payload) {
       const hash = genHash()
       state.modals[hash] = {
-        component,
+        component: payload.component,
         hash,
-        params
+        params: payload.params
       }
       state.modals = { ...state.modals }
     }

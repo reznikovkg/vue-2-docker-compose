@@ -55,7 +55,27 @@ export default {
         enemyBulletSize: state => state.enemyBulletSize,
         score: state => state.score,
         playerHealth: state => state.playerHealth,
-        isGameRunning: state => state.isGameRunning
+        isGameRunning: state => state.isGameRunning,
+        getPlayer: state => ({
+            x: state.player.x,
+            y: state.player.y,
+            width: state.player.width,
+            height: state.player.height
+        }),
+        getStars: state => state.stars.map(star => ({
+            position: star.position
+        })),
+        getAsteroids: state => state.asteroids.map(asteroid => ({
+            position: asteroid.position,
+            health: asteroid.health
+        })),
+        getEnemies: state => state.enemies.map(enemy => ({
+            position: enemy.position,
+            health: enemy.health
+        })),
+        getBullets: state => state.bullets,
+        getScore: state => state.score,
+        getPlayerHealth: state => state.playerHealth,
     },
 
     mutations: {
@@ -144,9 +164,16 @@ export default {
             state.asteroids[index].position.y = y
         },
 
-        UPDATE_ENEMY_POSITION(state, { index, x, y }) {
-            if (x !== undefined) state.enemies[index].position.x = x
-            if (y !== undefined) state.enemies[index].position.y = y
+        UPDATE_ENEMY_POSITION(state, payload) {
+            const { index, x, y } = payload;
+
+            if (x !== undefined) {
+                state.enemies[index].position.x = x;
+            }
+
+            if (y !== undefined) {
+                state.enemies[index].position.y = y;
+            }
         },
 
         UPDATE_ENEMY_DIRECTION(state, { index, direction }) {
@@ -357,7 +384,7 @@ export default {
                             commit('SET_GAME_RUNNING', false)
                             cancelAnimationFrame(state.gameLoop)
                             commit('SET_GAME_LOOP', null)
-                            dispatch('gameOver', null, { root: true })
+                            dispatch('game/gameOver', null, { root: true })
                             break
                         } else {
                             commit('REMOVE_ASTEROID', i)
@@ -410,7 +437,7 @@ export default {
                             commit('SET_GAME_RUNNING', false)
                             cancelAnimationFrame(state.gameLoop)
                             commit('SET_GAME_LOOP', null)
-                            dispatch('gameOver', null, { root: true })
+                            dispatch('game/gameOver', null, { root: true })
                             break
                         }
                     } else if (newY > state.gameHeight) {
@@ -442,7 +469,7 @@ export default {
                                 commit('SET_GAME_RUNNING', false)
                                 cancelAnimationFrame(state.gameLoop)
                                 commit('SET_GAME_LOOP', null)
-                                dispatch('gameOver', null, { root: true })
+                                dispatch('game/gameOver', null, { root: true })
                                 break
                             }
                             continue
@@ -582,18 +609,25 @@ export default {
             }
         },
 
-        gameOver({dispatch, state }) {
-            dispatch('modals/openModal', {
+        gameOver({ commit, state, dispatch }) {
+            const restartAction = () => {
+                commit('modals/removeAllModals', null, { root: true });
+                dispatch('resetGame');
+                dispatch('startGame');
+            };
+
+            commit('modals/openModal', {
                 component: 'HelpModal',
                 params: {
                     score: state.score,
                     title: 'Game Over',
                     buttons: [{
                         text: 'Play Again',
-                        click: () => dispatch('game/resetGame', null, { root: true })
-                    }],
+                        class: 'primary',
+                        click: restartAction
+                    }]
                 }
-            }, { root: true })
+            }, { root: true });
         }
     }
 }

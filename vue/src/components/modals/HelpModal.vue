@@ -7,25 +7,13 @@
         Your score: <span class="score-value">{{ params.score || 0 }}</span>
       </div>
 
-      <button
-          class="restart-button"
-          @click="handleRestart"
-      >
-        Play Again
-      </button>
-
-      <div v-if="params.title && params.title !== 'Game Over'" class="custom-title">
-        {{ params.title }}
-      </div>
-      <div v-if="params.message" class="custom-message">
-        {{ params.message }}
-      </div>
-      <div v-if="params.buttons" class="custom-buttons">
+      <!-- Удалена статичная кнопка и оставлены только кнопки из params -->
+      <div class="custom-buttons">
         <button
             v-for="(btn, index) in params.buttons"
             :key="index"
-            :class="'custom-button ' + (btn.type || 'default')"
-            @click="() => click(btn)"
+            :class="'custom-button ' + (btn.class || '')"
+            @click="() => handleButtonClick(btn)"
         >
           {{ btn.text }}
         </button>
@@ -48,36 +36,16 @@ export default {
       default: () => ({
         score: 0,
         title: '',
-        message: '',
-        buttons: [],
-        onRestart: null
+        buttons: [] // Оставляем только buttons
       })
     }
   },
   methods: {
-    handleRestart() {
-      if (this.params.onRestart && typeof this.params.onRestart === 'function') {
-        this.params.onRestart();
+    handleButtonClick(btn) {
+      if (typeof btn.click === 'function') {
+        btn.click();
       }
       this.$emit('close');
-    },
-    click (btn) {
-      if (btn.click) {
-        this.clickHandler(btn.click)
-      }
-
-      if (btn.afterClick) {
-        this.clickHandler(btn.afterClick)
-      }
-    },
-    clickHandler (click) {
-      if (typeof click === 'string') {
-        if (click === 'emitClose') {
-          return this.$emit('close')
-        }
-      }
-
-      return click()
     }
   }
 }
@@ -90,17 +58,33 @@ export default {
   background: @cBaseThree;
   color: @cBaseOne;
   min-width: 200px;
+  border-radius: 8px;
 }
 
-button {
+.custom-button {
   background: @cButtonPrimary;
   color: @cBaseOne;
   border: none;
   padding: 10px 20px;
-  margin-top: 15px;
+  margin: 20px 5px 0 5px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: darken(@cButtonPrimary, 10%);
+  }
+}
+
+.score-display {
+  font-size: 24px;
+  margin: 20px 0;
+}
+
+.score-value {
+  font-weight: bold;
+  color: gold;
 }
 </style>
 
