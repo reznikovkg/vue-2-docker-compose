@@ -11,6 +11,22 @@ export default {
     UPDATE_CELLS: (state, { index, updates }) => {
       Object.assign(state.cells[index], updates);
     },
+
+    INCREMENT_COUNTER: (state, index) => {
+      console.log("incrementCounter action called", index);
+      console.log(state.cells[index]);
+      if (state.cells[index]) {
+        state.cells[index].counter++;
+      }
+    },
+
+    DECREMENT_COUNTER: (state, index) => {
+      console.log(state.cells[index].counter);
+      if (state.cells[index]) {
+        state.cells[index].counter--;
+      }
+    },
+
     SET_BUILDING: (state, { key, building }) => {
       state.buildings.set(key, building);
     },
@@ -30,6 +46,15 @@ export default {
     updateCells: ({ commit }, payload) => {
       commit("UPDATE_CELLS", payload);
     },
+
+    incrementCounter: ({ commit }, index) => {
+      commit("INCREMENT_COUNTER", index);
+    },
+
+    decrementCounter: ({ commit }, index) => {
+      commit("DECREMENT_COUNTER", index);
+    },
+
     setBuilding: ({ commit }, payload) => {
       commit("SET_BUILDING", payload);
     },
@@ -50,6 +75,8 @@ export default {
             activeClass: null,
             children: null,
             temp: null,
+            type: null,
+            counter: 0,
           });
         }
       }

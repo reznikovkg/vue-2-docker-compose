@@ -17,7 +17,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 .build-item {
   background: #444;
   padding: 10px 20px;
@@ -30,5 +30,9 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  div img {
+    max-width: 100px !important;
+  }
 }
 </style>
