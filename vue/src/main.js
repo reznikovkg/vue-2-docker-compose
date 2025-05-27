@@ -6,7 +6,6 @@ import storeRoot from './store';
 import { sync } from 'vuex-router-sync';
 import GameEndModal from '@/components/modals/GameEndModal.vue';
 
-
 Vue.use(Vuex);
 Vue.config.productionTip = false;
 
