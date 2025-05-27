@@ -4,11 +4,19 @@
       :class="tileClass"
       :style="tileStyle"
   >
-  {{ formattedValue }}
+    {{ formattedValue }}
+    <div v-if="freezeEffect" class="game__tile__frost-effect">
+      <div class="freeze-progress" :style="{ width: `${freezeEffect.progress}%` }"></div>
+      <span class="freeze-counter" v-if="freezeEffect.expiresIn > 0">
+        {{ freezeEffect.expiresIn }}
+      </span>
+    </div>
   </div>
 </template>
 
 <script>
+import {mapGetters} from "vuex";
+
 export default {
   name: 'GameTile',
   props: {
@@ -34,6 +42,13 @@ export default {
     },
   },
   computed: {
+    ...mapGetters('game', [
+        'getFreezeEffectByPosition',
+        'getGridSize',
+        ]),
+    freezeEffect() {
+      return this.getFreezeEffectByPosition({ x: this.position.x, y: this.position.y });
+    },
     tileClass() {
       if (this.tile === 0) return 'game__tile--0';
       let baseValue = this.tile;
@@ -42,13 +57,17 @@ export default {
       const powersOfTwo = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
       const closestPowerOfTwo = powersOfTwo.find(power => power >= baseValue) || 2048;
 
-      const classes = [`game__tile--${closestPowerOfTwo}`];
-      if (this.isFrozen) classes.push('game__tile--frozen');
-      if (this.moveFrom) classes.push('game__tile--moving');
-      return classes.join(' ');
+      const classes = [
+        `game__tile--${closestPowerOfTwo}`,
+        {
+          'game__tile--frozen': this.isFrozen,
+          'game__tile--moving': this.moveFrom
+        }
+      ];
+      return classes;
     },
     tileStyle() {
-      const gridSize = this.$store.getters['game/getGridSize'];
+      const gridSize = this.getGridSize;
       const cellSize = 100 / gridSize;
 
       return {
@@ -77,6 +96,8 @@ export default {
   text-align: center;
   box-sizing: border-box;
   will-change: transform;
+  position: relative;
+  overflow: hidden;
 
   &--moving {
     transition: transform 0.1s ease-out;
@@ -84,16 +105,6 @@ export default {
 
   @media (max-width: 400px) {
     font-size: clamp(10px, 3vw, 18px);
-  }
-  @keyframes appear {
-    0% {
-      opacity: 0;
-      transform: scale(0.5);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
   }
 
   &--0 {
@@ -147,9 +158,63 @@ export default {
   &--default {
     background-color: #3c3a32;
   }
+
+  &--frozen {
+    position: relative;
+    box-shadow: inset 0 0 15px rgba(52, 152, 219, 0.7);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.3) 0%,
+          rgba(255, 255, 255, 0) 50%,
+          rgba(255, 255, 255, 0.3) 100%
+      );
+      border-radius: 5px;
+    }
+  }
+
+  &__frost-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0) 50%,
+        rgba(255, 255, 255, 0.4) 100%
+    );
+    border-radius: 5px;
+    z-index: 1;
+    animation: frostGlow 2s infinite alternate;
+  }
 }
-.game__tile--frozen {
-  background-color: rgba(173, 216, 230, 0.7); /* Light blue with transparency */
-  box-shadow: inset 0 0 10px rgba(0, 128, 255, 0.5); /* Icy glow effect */
+
+@keyframes frostGlow {
+  0% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>

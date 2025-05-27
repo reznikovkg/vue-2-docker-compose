@@ -3,9 +3,9 @@
       class="game"
       tabindex="0"
       ref="gameField"
-      @focus="handleFocus"
-      @blur="handleBlur"
-      @keydown="handleKeyDown"
+      @focus="()=>handleFocus()"
+      @blur="()=>handleBlur()"
+      @keydown="(event)=>handleKeyDown(event)"
   >
     <div class="game__header">
       <div class="game__header__content">
@@ -21,21 +21,18 @@
         <button
             class="game__undo-button"
             :disabled="!canUndo"
-            @click="undoMove"
+            @click="()=>undoMove()"
         >
           <img src="@/utils/restartbtn.png" />
         </button>
         <button
-            @click="addSpecificTiles"
+            @click="()=>addSpecificTiles()"
         >
           Add 1024 Tiles
         </button>
         <div class="game__chaos-toggle">
-          <button
-              class="game__chaos-button"
-              @click="toggleChaosMode"
-          >
-            {{ isChaosEnabled ? 'Отключить хаос' : 'Включить хаос' }}
+          <button @click="()=>testChaosButton()" :aria-pressed="isChaosActive">
+            Режим Хаоса: <strong>{{ isChaosActive ? 'Активен' : 'Выключен' }}</strong>
           </button>
         </div>
       </div>
@@ -48,7 +45,7 @@
             class="game__grid-size-selector__radio"
             type="radio"
             :value="size"
-            @change="updateGridSize"
+            @change="()=>updateGridSize()"
         />
         <span
             class="game__grid-size-selector__button"
@@ -99,11 +96,12 @@ export default {
       'canUndo',
       'getGridSize',
       'getFormattedCells',
-      'hasPossibleMoves'
+      'hasPossibleMoves',
+      'isChaosActive',
+      'frozenCells',
+      'getMovedTiles',
+
     ]),
-    isChaosEnabled() {
-      return this.$store.state.game.isChaosEnabled;
-    },
     gridStyle() {
       const gridSize = this.getGridSize;
       return {
@@ -120,27 +118,31 @@ export default {
       };
     },
     flatGrid() {
-      return this.$store.getters['game/getFormattedCells'] || [];
+      return this.getFormattedCells || [];
     },
     animatedTiles() {
-      const movedTiles = this.$store.state.game.movedTiles || [];
+      const movedTiles = this.getMovedTiles;
+      const frozenCells = this.frozenCells || [];
       const tilesMap = new Map();
 
-      // Сначала добавляем все текущие плитки
       this.flatGrid.forEach(cell => {
         const key = `tile-${cell.x}-${cell.y}`;
         tilesMap.set(key, {
           ...cell,
+          frozen: frozenCells.some(f => f.x === cell.x && f.y === cell.y),
           moveFrom: null,
-          uniqueKey: `${key}-${Date.now()}` // Добавляем временную метку
+          uniqueKey: `${key}-${Date.now()}`
         });
       });
 
-      // Затем обновляем информацию о перемещениях
       movedTiles.forEach(move => {
         const key = `tile-${move.to.x}-${move.to.y}`;
         if (tilesMap.has(key)) {
-          tilesMap.get(key).moveFrom = { x: move.from.x, y: move.from.y };
+          const tile = tilesMap.get(key);
+          tilesMap.set(key, {
+            ...tile,
+            moveFrom: { x: move.from.x, y: move.from.y }
+          });
         }
       });
 
@@ -156,14 +158,19 @@ export default {
       'undoMove',
       'setGridSize',
       'toggleChaosMode',
-      'restartGameWithGridSize'
+      'restartGameWithGridSize',
+      'applyRandomEffect',
     ]),
+    testChaosButton() {
+      this.toggleChaosMode();
+      this.applyRandomEffect();
+    },
     handleFocus() {
       this.setFocus(true);
     },
     handleBlur() {
       setTimeout(() => {
-        this.$refs.gameField.focus(); // Защищаем вызов focus
+        this.$refs.gameField.focus();
         this.setFocus(false);
       }, 0);
     },
@@ -181,7 +188,7 @@ export default {
       this.restartGameWithGridSize(this.selectedGridSize).then(() => {
         this.restartGame();
       });
-    }
+    },
   },
   mounted() {
     this.restartGame();
@@ -191,7 +198,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-/* Стили остаются без изменений */
 .game {
   outline: none;
   display: flex;
@@ -340,12 +346,16 @@ export default {
   }
 }
 
+
 .game__chaos-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 10px;
 }
 
-.game__chaos-button {
-  background-color: #f44336;
+.game__chaos-toggle button {
+  background-color: #f44336; /* Красный фон */
   color: white;
   border: none;
   padding: 8px 16px;
@@ -357,6 +367,11 @@ export default {
   &:hover {
     background-color: #d32f2f;
   }
+}
+
+.game__chaos-toggle button[aria-pressed="true"] {
+  background-color: #2196f3;
+  color: white;
 }
 
 @keyframes pop-in {

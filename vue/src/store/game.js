@@ -1,5 +1,27 @@
 import { KEY_MAP } from '@/utils/keyMap';
-import { ChaosManager, ChaosType } from '@/utils/chaos';
+
+const ChaosManager = {
+    effects: [
+        {
+            type: 'FREEZE',
+            target: 'cell',
+            duration: 3,
+            apply(grid, position) {
+                grid[position.y][position.x].effects.push({
+                    type: 'FREEZE',
+                    expiresIn: this.duration
+                });
+                return grid;
+            }
+        }
+    ],
+    getRandomEffect() {
+        return this.effects[Math.floor(Math.random() * this.effects.length)];
+    },
+    getEffectConfig(type) {
+        return this.effects.find(e => e.type === type);
+    }
+};
 
 const initialState = (gridSize = 4) => ({
     grid: Array.from({ length: gridSize }, (_, y) =>
@@ -7,7 +29,7 @@ const initialState = (gridSize = 4) => ({
             x,
             y,
             value: 0,
-            frozen: false,
+            effects: []
         }))
     ),
     gridSize,
@@ -17,14 +39,13 @@ const initialState = (gridSize = 4) => ({
     victory: false,
     previousState: null,
     victoryModalShown: false,
+
     isAnimating: false,
     movedTiles: [],
-
-    notifications: [],
-    chaosDuration: 0,
-    chaosType: null,
-    chaosEffects: {},
-    isChaosEnabled: false,
+    isActive: false,
+    counter: 0,
+    effectCycleCounter: 0,
+    notifications: []
 });
 
 export default {
@@ -39,6 +60,7 @@ export default {
         isVictory: (state) => state.victory,
         canUndo: (state) => !!state.previousState,
         getGridSize: (state) => state.gridSize,
+        getMovedTiles: state => state.movedTiles || [],
         hasPossibleMoves: (state) => {
             const { gridSize, grid } = state;
             const frozenTiles = state.chaosEffects.frozenTiles || [];
@@ -46,13 +68,13 @@ export default {
             for (let y = 0; y < gridSize; y++) {
                 for (let x = 0; x < gridSize; x++) {
                     const cell = grid[y][x];
-                    if (cell.value === 0) continue;
-
-                    // Проверяем, не заморожена ли текущая клетка
+                    if (cell.value === 0) {
+                        continue;
+                    }
                     const isFrozen = frozenTiles.some(ft => ft.x === x && ft.y === y);
-                    if (isFrozen) continue;
-
-                    // Проверка соседей
+                    if (isFrozen) {
+                        continue;
+                    }
                     const directions = [
                         { x: x + 1, y }, // right
                         { x, y: y + 1 }  // down
@@ -62,7 +84,6 @@ export default {
                         if (dir.x < gridSize && dir.y < gridSize) {
                             const neighbor = grid[dir.y][dir.x];
                             const neighborFrozen = frozenTiles.some(ft => ft.x === dir.x && ft.y === dir.y);
-
                             if (!neighborFrozen && neighbor.value === cell.value) {
                                 return true;
                             }
@@ -92,7 +113,6 @@ export default {
                 }
                 return `${Math.floor(formattedValue)}${suffixes[suffixIndex]}`;
             };
-
             if (!state.grid || !Array.isArray(state.grid)) {
                 return [];
             }
@@ -105,74 +125,60 @@ export default {
                     formattedValue: formatCellValue(cell.value)
                 }))
             );
+        },
+        isChaosActive: state => state.isActive || false,
+        frozenCells: state => {
+            return state.grid.flat()
+                .filter(cell => cell.effects.some(e => e.type === 'FREEZE'))
+                .map(cell => ({ x: cell.x, y: cell.y }));
+        },
+        getFreezeEffectByPosition: (state) => ({ x, y }) => {
+            const cell = state.grid[y]?.[x];
+            if (!cell) return null;
+            return cell.effects.find(e => e.type === 'FREEZE') || null;
         }
     },
     mutations: {
-        SET_CHAOS_EFFECTS(state, effects) {
-            state.chaosEffects = { ...effects };
+        CLEAR_CHAOS_EFFECTS(state) {
+            state.grid = state.grid.map(row =>
+                row.map(cell => {
+                    cell.effects = cell.effects.filter(e => e.type !== 'FREEZE');
+                    return cell;
+                })
+            );
         },
-        ADD_NOTIFICATION(state, notification) {
-            state.notifications.push({
-                ...notification,
-                id: Date.now()
+        SET_CHAOS_ACTIVE(state, isActive) {
+            state.isActive = isActive;
+        },
+        ADD_CHAOS_EFFECT(state, { effect, position }) {
+            const cell = state.grid[position.y][position.x];
+            cell.effects.push({
+                ...effect,
+                expiresIn: ChaosManager.getEffectConfig(effect.type).duration
             });
         },
-        REMOVE_NOTIFICATION(state, id) {
-            state.notifications = state.notifications.filter(n => n.id !== id);
-        },
-        CLEAR_EXPIRED_CHAOS(state) {
-            // Уменьшаем длительность всех эффектов
-            Object.keys(state.chaosEffects).forEach(type => {
-                if (state.chaosEffects[type]?.expiresIn !== undefined) {
-                    state.chaosEffects[type].expiresIn--;
-
-                    if (state.chaosEffects[type].expiresIn <= 0) {
-                        delete state.chaosEffects[type];
-
-                        // Особые случаи очистки
-                        if (type === ChaosType.FROZEN_TILES) {
-                            // Размораживаем все плитки
-                            state.grid.forEach(row => {
-                                row.forEach(cell => {
-                                    cell.frozen = false;
-                                });
-                            });
+        UPDATE_CHAOS_EFFECTS(state) {
+            state.grid.forEach(row => {
+                row.forEach(cell => {
+                    cell.effects.forEach(effect => {
+                        if (effect.expiresIn !== undefined) {
+                            effect.expiresIn--;
                         }
-                    }
-                }
+                    });
+                    cell.effects = cell.effects.filter(e => e.expiresIn > 0);
+                });
             });
         },
-        SET_CHAOS_ENABLED(state, status) {
-            state.isChaosEnabled = status;
+        INCREMENT_EFFECT_CYCLE_COUNTER(state) {
+            state.effectCycleCounter++;
         },
         INCREMENT_CHAOS_COUNTER(state) {
-            if (state.chaosDuration === 0) {
-                state.chaosCounter++;
-            }
+            state.counter++;
         },
         RESET_CHAOS_COUNTER(state) {
-            state.chaosCounter = 0;
+            state.counter = 0;
         },
-        SET_CHAOS_DURATION(state, duration) {
-            state.chaosDuration = duration;
-        },
-        DECREASE_CHAOS_DURATION(state) {
-            if (state.chaosDuration > 0) {
-                state.chaosDuration--;
-            }
-        },
-        SET_CHAOS_TYPE(state, type) {
-            state.chaosType = type;
-        },
-        CLEAR_CHAOS_EFFECTS(state) {
-            state.chaosEffects = {};
-            state.chaosType = null;
-            state.chaosDuration = 0;
-            state.chaosCounter = 0;
-        },
-        APPLY_CHAOS_EFFECTS(state, effects) {
-            state.chaosEffects = { ...state.chaosEffects, ...effects };
-        },
+
         SET_ANIMATING(state, status) {
             state.isAnimating = status;
         },
@@ -182,7 +188,12 @@ export default {
         SET_GRID_SIZE(state, size) {
             state.gridSize = size;
             state.grid = Array.from({ length: size }, (_, y) =>
-                Array.from({ length: size }, (_, x) => ({ x, y, value: 0, frozen: false }))
+                Array.from({ length: size }, (_, x) => ({
+                    x,
+                    y,
+                    value: 0,
+                    effects: []
+                }))
             );
         },
         SET_MOVED_TILES(state, tiles) {
@@ -208,12 +219,10 @@ export default {
                 state.highScore = value;
             }
         },
-
         SET_CELLS(state, grid) {
             if (!Array.isArray(grid)) {
                 return;
             }
-
             state.grid = grid.map(row => {
                 if (!Array.isArray(row)) {
                     return [];
@@ -251,63 +260,78 @@ export default {
         }
     },
     actions: {
-        applyRandomChaos({ state, commit, dispatch }) {
-            if (!state.isChaosEnabled) return;
-
-            const newState = ChaosManager.applyRandomChaos(JSON.parse(JSON.stringify(state)));
-
-            console.log('Применяем хаос:', newState.chaosEffects); // Для отладки
-
-            if (newState.chaosEffects) {
-                commit('APPLY_CHAOS_EFFECTS', newState.chaosEffects);
-
-                // Обновляем grid если были заморожены плитки
-                if (newState.chaosEffects.frozenTiles) {
-                    commit('SET_CELLS', newState.grid);
-                }
-
-                const newEffectType = Object.keys(newState.chaosEffects)
-                    .find(type => !state.chaosEffects[type]);
-
-                if (newEffectType) {
-                    const notification = ChaosManager.getChaosNotification(newEffectType);
-                    dispatch('showNotification', notification);
-                }
-            }
-        },
-
-        showNotification({ commit }, notification) {
-            commit('ADD_NOTIFICATION', notification);
-            setTimeout(() => {
-                commit('REMOVE_NOTIFICATION', notification.id);
-            }, notification.duration);
-        },
-        checkChaos({ state, dispatch, commit }) {
-            if (!state.isChaosEnabled) {
+        applyScheduledChaosEffect({ commit, state }) {
+            const cycleInterval = 8;
+            if (!state.isActive) {
                 return;
             }
-            if (state.chaosDuration > 0) {
-                dispatch('decreaseChaosDuration');
-            } else if (state.chaosCounter >= 5) {
-                dispatch('applyRandomChaos');
-                commit('RESET_CHAOS_COUNTER');
-            } else {
-                commit('INCREMENT_CHAOS_COUNTER');
-            }
-        },
-        decreaseChaosDuration({ commit, state }) {
-            if (state.chaosDuration > 0) {
-                commit('DECREASE_CHAOS_DURATION');
-            }
-            if (state.chaosDuration === 0 && state.chaosType) {
-                commit('CLEAR_CHAOS_EFFECTS');
+            if (
+                state.counter > 0 &&
+                state.counter % cycleInterval === 0
+            ) {
+                const effect = ChaosManager.effects.find(e => e.type === 'FREEZE');
+                if (!effect) {
+                    return;
+                }
+                const nonEmptyCells = state.grid.flat()
+                    .filter(cell => cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE'));
+
+                if (nonEmptyCells.length > 0) {
+                    const freezeCount = Math.min(
+                        Math.floor(Math.random() * 2) + 2,
+                        nonEmptyCells.length
+                    );
+
+                    const shuffled = [...nonEmptyCells].sort(() => 0.5 - Math.random());
+                    const selectedCells = shuffled.slice(0, freezeCount);
+
+                    selectedCells.forEach(targetCell => {
+                        const effectConfig = ChaosManager.getEffectConfig(effect.type);
+                        if (effectConfig && typeof effectConfig.apply === 'function') {
+                            effectConfig.apply(state.grid, { x: targetCell.x, y: targetCell.y });
+                            commit('ADD_CHAOS_EFFECT', {
+                                effect,
+                                position: { x: targetCell.x, y: targetCell.y }
+                            });
+                        }
+                    });
+                }
+                commit('INCREMENT_EFFECT_CYCLE_COUNTER');
             }
         },
         toggleChaosMode({ commit, state }) {
-            commit('SET_CHAOS_ENABLED', !state.isChaosEnabled);
-            if (!state.isChaosEnabled) {
+            if (state.isActive) {
                 commit('CLEAR_CHAOS_EFFECTS');
             }
+            commit('SET_CHAOS_ACTIVE', !state.isActive);
+        },
+        applyRandomEffect({ commit, state }) {
+            if (!state.isActive) {
+                return;
+            }
+
+            const effect = ChaosManager.getRandomEffect();
+            if (effect.target === 'cell') {
+                const nonEmptyCells = state.grid.flat()
+                    .filter(cell => cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE'));
+                if (nonEmptyCells.length > 0) {
+                    const targetCell = nonEmptyCells[Math.floor(Math.random() * nonEmptyCells.length)];
+                    const effectConfig = ChaosManager.getEffectConfig(effect.type);
+                    if (effectConfig && typeof effectConfig.apply === 'function') {
+                        effectConfig.apply(state.grid, { x: targetCell.x, y: targetCell.y });
+                        commit('ADD_CHAOS_EFFECT', {
+                            effect,
+                            position: { x: targetCell.x, y: targetCell.y }
+                        });
+                    }
+                }
+            }
+        },
+        processTurn({ commit, dispatch }) {
+            commit('UPDATE_CHAOS_EFFECTS');
+            commit('INCREMENT_CHAOS_COUNTER');
+
+            dispatch('applyScheduledChaosEffect');
         },
         setGridSize({ commit }, size) {
             commit('SET_GRID_SIZE', size);
@@ -316,10 +340,8 @@ export default {
             commit('RESET_STATE', gridSize);
             commit('SET_GRID_SIZE', gridSize);
         },
-        restartGame({ dispatch, state, commit }) {
+        restartGame({ dispatch, state}) {
             dispatch('restartGameWithGridSize', state.gridSize).then(() => {
-                commit('SET_CHAOS_ENABLED', false);
-                commit('CLEAR_CHAOS_EFFECTS');
                 return dispatch('addRandomTile');
             }).then(() => dispatch('addRandomTile'));
         },
@@ -416,14 +438,14 @@ export default {
         moveByKeyEvent({ dispatch }, { direction }) {
             dispatch('move', direction);
         },
-        async move({ dispatch, state, commit }, direction) {
+        async move({ dispatch, state, commit, getters }, direction) {
             if (state.isAnimating) return;
             commit('SET_ANIMATING', true);
 
             const previousGrid = JSON.parse(JSON.stringify(state.grid));
             const previousScore = state.score;
             const gridSize = state.gridSize;
-            const frozenTiles = state.chaosEffects.frozenTiles || [];
+            const frozenTiles = getters.frozenCells || [];
 
             let grid = JSON.parse(JSON.stringify(state.grid));
             let scoreIncrease = 0;
@@ -446,27 +468,24 @@ export default {
                     commit('SET_ANIMATING', false);
                     return;
             }
+
             if (!deepEqual(previousGrid, grid)) {
                 commit('SAVE_PREVIOUS_STATE', {
                     grid: previousGrid,
-                    score: previousScore
+                    score: previousScore,
                 });
+
                 commit('SET_CELLS', grid);
                 commit('SET_MOVED_TILES', movedTiles);
+
                 if (scoreIncrease > 0) {
                     commit('ADD_SCORE', scoreIncrease);
                 }
+
                 await dispatch('animateMovement');
                 await dispatch('addRandomTile');
                 dispatch('checkGameState');
-            }
-            commit('CLEAR_EXPIRED_CHAOS');
-            if (state.isChaosEnabled) {
-                commit('INCREMENT_CHAOS_COUNTER');
-                if (state.chaosCounter >= 5) {
-                    await dispatch('applyRandomChaos');
-                    commit('RESET_CHAOS_COUNTER');
-                }
+                await dispatch('processTurn');
             }
             commit('SET_ANIMATING', false);
         },
@@ -486,9 +505,11 @@ export default {
 };
 
 const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-const mergeLine = (line, direction) => {
+const mergeLine = (line, direction, frozenIndices = []) => {
     const size = line.length;
-    let compressed = line.filter(cell => cell.value !== 0);
+    let compressed = line.filter((cell, index) =>
+        cell.value !== 0 && !frozenIndices.includes(index)
+    );
     let scoreIncrease = 0;
     const movements = [];
 
@@ -497,7 +518,7 @@ const mergeLine = (line, direction) => {
     }
 
     for (let i = 0; i < compressed.length - 1; i++) {
-        if (compressed[i].value === compressed[i+1].value) {
+        if (compressed[i].value === compressed[i + 1].value) {
             compressed[i] = {
                 ...compressed[i],
                 value: compressed[i].value * 2,
@@ -505,20 +526,46 @@ const mergeLine = (line, direction) => {
             };
             scoreIncrease += compressed[i].value;
             movements.push({
-                from: i+1,
+                from: i + 1,
                 to: i,
                 value: compressed[i].value
             });
-            compressed.splice(i+1, 1);
+            compressed.splice(i + 1, 1);
         }
     }
 
-    while (compressed.length < size) {
-        compressed.push({ value: 0, x: 0, y: 0 });
+    const result = Array(size).fill(null);
+    line.forEach((cell, index) => {
+        if (frozenIndices.includes(index)) {
+            result[index] = { ...cell };
+        }
+    });
+
+    let pos = direction === 'left' || direction === 'up' ? 0 : size - 1;
+    const step = direction === 'left' || direction === 'up' ? 1 : -1;
+
+    compressed.forEach(cell => {
+        while (result[pos] !== null && result[pos]?.value !== 0) {
+            pos += step;
+        }
+        result[pos] = { ...cell, x: pos };
+        if (cell.x !== pos) {
+            movements.push({
+                from: cell.x,
+                to: pos,
+                value: cell.value
+            });
+        }
+        pos += step;
+    });
+
+    for (let i = 0; i < size; i++) {
+        if (result[i] === null) {
+            result[i] = { value: 0, x: i, y: 0 };
+        }
     }
 
     if (direction === 'right' || direction === 'down') {
-        compressed.reverse();
         movements.forEach(move => {
             move.from = size - 1 - move.from;
             move.to = size - 1 - move.to;
@@ -526,23 +573,27 @@ const mergeLine = (line, direction) => {
     }
 
     return {
-        mergedLine: compressed,
+        mergedLine: result,
         scoreIncrease,
         movements
     };
 };
 
-const moveRow = (grid, direction, gridSize) => {
+const moveRow = (grid, direction, gridSize, frozenTiles = []) => {
     let moved = false;
     let totalScoreIncrease = 0;
     const movedTiles = [];
 
     for (let y = 0; y < gridSize; y++) {
         const row = [...grid[y]];
+        const frozenIndices = frozenTiles
+            .filter(tile => tile.y === y)
+            .map(tile => tile.x);
 
         const { mergedLine, scoreIncrease, movements } = mergeLine(
             row.map(cell => ({ ...cell })),
-            direction
+            direction,
+            frozenIndices
         );
 
         if (!deepEqual(row, mergedLine)) {
@@ -552,8 +603,10 @@ const moveRow = (grid, direction, gridSize) => {
             grid[y] = mergedLine.map((cell, x) => ({
                 ...cell,
                 x,
-                y
+                y,
+                effects: cell.effects || []
             }));
+
             movements.forEach(move => {
                 movedTiles.push({
                     from: { x: move.from, y },
@@ -571,7 +624,7 @@ const moveRow = (grid, direction, gridSize) => {
     };
 };
 
-const moveColumn = (grid, direction, gridSize) => {
+const moveColumn = (grid, direction, gridSize, frozenTiles = []) => {
     let moved = false;
     let totalScoreIncrease = 0;
     const movedTiles = [];
@@ -581,7 +634,15 @@ const moveColumn = (grid, direction, gridSize) => {
         for (let y = 0; y < gridSize; y++) {
             column.push({ ...grid[y][x] });
         }
-        const { mergedLine, scoreIncrease, movements } = mergeLine(column, direction);
+        const frozenIndices = frozenTiles
+            .filter(tile => tile.x === x)
+            .map(tile => tile.y);
+
+        const { mergedLine, scoreIncrease, movements } = mergeLine(
+            column,
+            direction,
+            frozenIndices
+        );
 
         if (!deepEqual(column, mergedLine)) {
             moved = true;
@@ -591,9 +652,11 @@ const moveColumn = (grid, direction, gridSize) => {
                 grid[y][x] = {
                     ...mergedLine[y],
                     x,
-                    y
+                    y,
+                    effects: mergedLine[y].effects || []
                 };
             }
+
             movements.forEach(move => {
                 movedTiles.push({
                     from: { x, y: move.from },
