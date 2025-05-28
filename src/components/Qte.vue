@@ -1,0 +1,148 @@
+<script>
+export default {
+    name: "Qte",
+    props: {
+        percent: {
+            type: Number,
+            default: 0,
+        },
+        perfectRangeLow: {type: Number, default: 90},
+        perfectRangeHigh: {type: Number, default: 100},
+        size: {type: Number, default: 100},
+        stroke: {type: Number, default: 20},
+        color: {type: String, default: '#ff0000'}
+    },
+
+    data() {
+        return {
+            animation: "pulse"
+        }
+    },
+    watch: {
+        percent(_oldValue, newValue) {
+            if (newValue >= 90) {
+                this.animation = "shake";
+            }
+
+            if (newValue >= 100) {
+                this.$emit("failed");
+            }
+        }
+    },
+    methods: {
+        performQte() {
+            if (this.percent < 100) {
+                this.$emit("completed");
+                this.animation = "ok";
+            } else if (this.percent >= this.perfectRangeLow && this.percent <= this.perfectRangeHigh) {
+                this.$emit("perfect");
+                this.animation = "ok";
+            } else {
+                this.$emit("failed");
+                this.animation = "shake";
+            }
+        }
+    },
+    emits: ["perfect", "completed", "failed"],
+    computed: {
+        radius() {
+            return (this.size - this.stroke) / 2;
+        },
+        circumference() {
+            return 2 * Math.PI * this.radius;
+        },
+        dashOffset() {
+            return this.circumference * (1 - this.percent / 100)
+        },
+        perfectDashArray() {
+            const range = this.perfectRangeHigh - this.perfectRangeLow;
+            const visible = this.circumference * (range / 100);
+            const hidden = this.circumference - visible;
+            return `${visible} ${hidden}`;
+        },
+        perfectDashOffset() {
+            const offsetPercent = (-this.perfectRangeLow + 100) % 100;
+            return this.circumference * (offsetPercent / 100);
+        },
+    }
+}
+</script>
+
+<template>
+    <div>
+        <div class="qte" :class="animation" @click="performQte">
+            <svg :width="size" :height="size" :viewBox="`0 0 ${size} ${size}`">
+                <circle
+                    :r="radius"
+                    :cx="size / 2"
+                    :cy="size / 2"
+                    stroke="#eee"
+                    :stroke-width="stroke"
+                    fill="none"
+                />
+                <circle
+                    :r="radius"
+                    :cx="size / 2"
+                    :cy="size / 2"
+                    :stroke="color"
+                    :stroke-width="stroke"
+                    fill="none"
+                    :stroke-dasharray="circumference"
+                    :stroke-dashoffset="dashOffset"
+                    transform="rotate(-90, 50, 50)"
+                />
+                <circle
+                    :r="radius"
+                    :cx="size / 2"
+                    :cy="size / 2"
+                    stroke="#00ff0055"
+                    :stroke-width="stroke"
+                    fill="none"
+                    :stroke-dasharray="perfectDashArray"
+                    :stroke-dashoffset="perfectDashOffset"
+                    transform="rotate(-90, 50, 50)"
+                />
+            </svg>
+            <h1>tap</h1>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes ok {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.5); }
+    100% { transform: scale(0); }
+}
+
+
+.pulse {
+    animation: pulse 200ms ease;
+}
+
+
+.qte {
+    position: relative;
+    width: 100px;
+    display: flex;
+    place-items: center;
+    height: 100px;
+    z-index: 10;
+}
+
+.qte h1 {
+    text-align: center;
+    width: 100%;
+}
+
+.qte svg {
+    position: absolute;
+    z-index: 0;
+}
+</style>
