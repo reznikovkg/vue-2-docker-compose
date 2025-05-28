@@ -1,7 +1,7 @@
 <template>
   <div
       class="game__tile"
-      :class="tileClass"
+      :class="[tileClass, { 'tornado-effect': tornado }]"
       :style="tileStyle"
   >
     {{ formattedValue }}
@@ -40,6 +40,10 @@ export default {
       type: Object,
       default: null
     },
+    tornado: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     ...mapGetters('game', [
@@ -50,10 +54,11 @@ export default {
       return this.getFreezeEffectByPosition({ x: this.position.x, y: this.position.y });
     },
     tileClass() {
-      if (this.tile === 0) return 'game__tile--0';
+      if (this.tile === 0) {
+        return 'game__tile--0';
+      }
       let baseValue = this.tile;
       while (baseValue > 2048) baseValue /= 1024;
-
       const powersOfTwo = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
       const closestPowerOfTwo = powersOfTwo.find(power => power >= baseValue) || 2048;
 
@@ -196,6 +201,17 @@ export default {
     z-index: 1;
     animation: frostGlow 2s infinite alternate;
   }
+  &.tornado-effect {
+    animation: spinShuffle 0.5s ease-in-out infinite alternate;
+    transform-origin: center;
+    z-index: 2;
+  }
+}
+
+@keyframes spinShuffle {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  50% { transform: translate(2px, -2px) rotate(5deg); opacity: 0.8; }
+  100% { transform: translate(-2px, 2px) rotate(-5deg); opacity: 1; }
 }
 
 @keyframes frostGlow {

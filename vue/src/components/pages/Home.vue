@@ -3,9 +3,9 @@
       class="game"
       tabindex="0"
       ref="gameField"
-      @focus="()=>handleFocus()"
-      @blur="()=>handleBlur()"
-      @keydown="(event)=>handleKeyDown(event)"
+      @focus="() => handleFocus()"
+      @blur="() => handleBlur()"
+      @keydown="(event) => handleKeyDown(event)"
   >
     <div class="game__header">
       <div class="game__header__content">
@@ -21,17 +21,17 @@
         <button
             class="game__undo-button"
             :disabled="!canUndo"
-            @click="()=>undoMove()"
+            @click="() => undoMove()"
         >
           <img src="@/utils/restartbtn.png" />
         </button>
         <button
-            @click="()=>addSpecificTiles()"
+            @click="() => addSpecificTiles()"
         >
           Add 1024 Tiles
         </button>
         <div class="game__chaos-toggle">
-          <button @click="()=>testChaosButton()" :aria-pressed="isChaosActive">
+          <button @click="() => testChaosButton()" :aria-pressed="isChaosActive">
             Режим Хаоса: <strong>{{ isChaosActive ? 'Активен' : 'Выключен' }}</strong>
           </button>
         </div>
@@ -45,7 +45,7 @@
             class="game__grid-size-selector__radio"
             type="radio"
             :value="size"
-            @change="()=>updateGridSize()"
+            @change="() => updateGridSize()"
         />
         <span
             class="game__grid-size-selector__button"
@@ -55,8 +55,11 @@
         </span>
       </label>
     </div>
-
-    <div class="game__board" :style="gridStyle">
+    <div
+        class="game__board"
+        :class="{ 'tornado-effect': isTornadoAnimating }"
+        :style="gridStyle"
+    >
       <GameTile
           v-for="cell in animatedTiles"
           :key="`tile-${cell.x}-${cell.y}`"
@@ -65,6 +68,8 @@
           :is-frozen="cell.frozen"
           :position="{ x: cell.x, y: cell.y }"
           :move-from="cell.moveFrom"
+          :tornado="tornadoTiles.some(t => t.x === cell.x && t.y === cell.y)"
+
       />
     </div>
   </div>
@@ -99,6 +104,9 @@ export default {
       'hasPossibleMoves',
       'isChaosActive',
       'frozenCells',
+      'getMovedTiles',
+      'isTornadoAnimating',
+      'tornadoTiles',
 
     ]),
     gridStyle() {
@@ -121,8 +129,7 @@ export default {
       return this.getFormattedCells || [];
     },
     animatedTiles() {
-      //гетер
-      const movedTiles = this.$store.state.game.movedTiles || [];
+      const movedTiles = this.getMovedTiles;
       const frozenCells = this.frozenCells || [];
       const tilesMap = new Map();
 
@@ -268,6 +275,12 @@ export default {
     border-radius: 8px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+
+    &.tornado-effect {
+      animation: spin 1s ease-in-out;
+      background-color: #aeeaff;
+    }
 
     @media (max-width: 600px) {
       width: 100%;
@@ -368,7 +381,7 @@ export default {
     margin-top: 10px;
 
     button {
-      background-color: #f44336; // Красный фон
+      background-color: #f44336;
       color: white;
       border: none;
       padding: 8px 16px;
@@ -398,5 +411,12 @@ export default {
     transform: scale(1);
     opacity: 1;
   }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  50% { transform: rotate(-10deg); }
+  75% { transform: rotate(5deg); }
+  100% { transform: rotate(0deg); }
 }
 </style>

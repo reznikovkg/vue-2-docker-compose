@@ -13,10 +13,31 @@ const ChaosManager = {
                 });
                 return grid;
             }
+        },
+        {
+            type: 'TORNADO',
+            target: 'global',
+            apply(grid) {
+                const nonFrozenCells = grid.flat().filter(cell =>
+                    cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE')
+                );
+                if (nonFrozenCells.length < 2) {
+                    return grid;
+                }
+                const values = nonFrozenCells.map(c => c.value);
+                const shuffledValues = [...values].sort(() => Math.random() - 0.5);
+                nonFrozenCells.forEach((cell, i) => {
+                    cell.value = shuffledValues[i];
+                });
+                return grid;
+            }
         }
     ],
     getRandomEffect() {
-        return this.effects[Math.floor(Math.random() * this.effects.length)];
+        //return this.effects.find(effect => effect.type === 'FREEZE');
+        return this.effects.find(effect => effect.type === 'TORNADO');
+
+        //return this.effects[Math.floor(Math.random() * this.effects.length)];
     },
     getEffectConfig(type) {
         return this.effects.find(e => e.type === type);
@@ -41,11 +62,12 @@ const initialState = (gridSize = 4) => ({
     victoryModalShown: false,
 
     isAnimating: false,
-    movedTiles: [],
     isActive: false,
+    tornadoAnimationActive: false,
+    movedTiles: [],
+    tornadoTiles: [],
     counter: 0,
     effectCycleCounter: 0,
-    notifications: []
 });
 
 export default {
@@ -134,11 +156,24 @@ export default {
         },
         getFreezeEffectByPosition: (state) => ({ x, y }) => {
             const cell = state.grid[y]?.[x];
-            if (!cell) return null;
+            if (!cell) {
+                return null;
+            }
             return cell.effects.find(e => e.type === 'FREEZE') || null;
-        }
+        },
+        isTornadoAnimating: state => state.tornadoAnimationActive,
+        tornadoTiles: state => state.tornadoTiles || [],
     },
     mutations: {
+        SET_TORNADO_TILES(state, tiles) {
+            state.tornadoTiles = tiles;
+        },
+        CLEAR_TORNADO_TILES(state) {
+            state.tornadoTiles = [];
+        },
+        SET_TORNADO_ANIMATION(state, status) {
+            state.tornadoAnimationActive = status;
+        },
         CLEAR_CHAOS_EFFECTS(state) {
             state.grid = state.grid.map(row =>
                 row.map(cell => {
@@ -265,36 +300,39 @@ export default {
             if (!state.isActive) {
                 return;
             }
-            if (
-                state.counter > 0 &&
-                state.counter % cycleInterval === 0
-            ) {
-                const effect = ChaosManager.effects.find(e => e.type === 'FREEZE');
-                if (!effect) {
+
+            if (state.counter > 0 && state.counter % cycleInterval === 0) {
+                const effect = ChaosManager.getRandomEffect();
+                if (!effect || typeof effect.apply !== 'function') {
                     return;
                 }
-                const nonEmptyCells = state.grid.flat()
-                    .filter(cell => cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE'));
+                if (effect.target === 'cell') {
+                    const nonEmptyCells = state.grid.flat()
+                        .filter(cell => cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE'));
 
-                if (nonEmptyCells.length > 0) {
-                    const freezeCount = Math.min(
-                        Math.floor(Math.random() * 2) + 2,
-                        nonEmptyCells.length
+                    if (nonEmptyCells.length === 0) {
+                        return;
+                    }
+
+                    const selectedCell = nonEmptyCells[Math.floor(Math.random() * nonEmptyCells.length)];
+
+                    effect.apply(state.grid, { x: selectedCell.x, y: selectedCell.y });
+                    commit('ADD_CHAOS_EFFECT', {
+                        effect,
+                        position: { x: selectedCell.x, y: selectedCell.y }
+                    });
+                } else if (effect.target === 'global') {
+                    const nonFrozenCells = state.grid.flat().filter(cell =>
+                        cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE')
                     );
 
-                    const shuffled = [...nonEmptyCells].sort(() => 0.5 - Math.random());
-                    const selectedCells = shuffled.slice(0, freezeCount);
+                    commit('SET_TORNADO_TILES', nonFrozenCells.map(c => ({ x: c.x, y: c.y })));
 
-                    selectedCells.forEach(targetCell => {
-                        const effectConfig = ChaosManager.getEffectConfig(effect.type);
-                        if (effectConfig && typeof effectConfig.apply === 'function') {
-                            effectConfig.apply(state.grid, { x: targetCell.x, y: targetCell.y });
-                            commit('ADD_CHAOS_EFFECT', {
-                                effect,
-                                position: { x: targetCell.x, y: targetCell.y }
-                            });
-                        }
-                    });
+                    effect.apply(state.grid);
+
+                    setTimeout(() => {
+                        commit('CLEAR_TORNADO_TILES');
+                    }, 500);
                 }
                 commit('INCREMENT_EFFECT_CYCLE_COUNTER');
             }
