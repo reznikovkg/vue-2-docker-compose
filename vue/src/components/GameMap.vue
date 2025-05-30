@@ -67,30 +67,36 @@
         />
       </div>
     </div>
-    <dialog ref="modal" class="game__modal modal">
+    <dialog
+      ref="modal"
+      class="game__modal modal"
+    >
       <p>{{ gameOver ? "Вы проиграли!" : "Вы поразили врагов!" }}</p>
-      <button class="modal__button modal__button--ok"
+      <button
         v-if="enemyDefeated && !isLastLevel"
+        class="modal__button modal__button--ok"
         @click="() => switchLevel(currentLevel + 1)"
       >
         Следующий уровень
       </button>
       <button
-        class="modal__button modal__button--ok"
         v-if="enemyDefeated && isLastLevel"
+        class="modal__button modal__button--ok"
         @click="() => closeModal()"
       >
         OK
       </button>
-      <button class="modal__button modal__button--ok"
+      <button
         v-if="gameOver"
+        class="modal__button modal__button--ok"
         @click="() => switchLevel(currentLevel)"
       >
         Играть снова
       </button>
     </dialog>
-    <div v-if="message && !gameOver && !enemyDefeated"
-         class="game__message">
+    <div
+      v-if="message && !gameOver && !enemyDefeated"
+      class="game__message">
       {{ message }}
     </div>
   </div>
@@ -123,7 +129,6 @@ export default {
       "levels",
       "enemyDefeated",
       "gameOver",
-      "enemyPosition",
       "enemyHealth",
       "message",
       "canPlaceTower",

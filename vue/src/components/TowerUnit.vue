@@ -4,7 +4,8 @@
       💙{{ tower.health }}
     </div>
     <div class="tower__unit">
-      <button v-if="!gameOver && !enemyDefeated"
+      <button
+        v-if="!gameOver && !enemyDefeated"
         class="tower__delete"
         @click.stop="() => deleteTower(index)"
       >
@@ -42,7 +43,7 @@ export default {
   },
   methods: {
     ...mapActions([
-        "deleteTower"
+      "deleteTower"
     ])
   },
 }
