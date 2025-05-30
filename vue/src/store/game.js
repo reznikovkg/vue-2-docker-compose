@@ -22,6 +22,7 @@ import {
 } from './consts.js'
 
 export default {
+    namespaced: true,
     state: {
         cols,
         cell_size,

@@ -123,24 +123,25 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      "coins",
-      "currentLevel",
-      "levels",
-      "enemyDefeated",
-      "gameOver",
-      "enemyHealth",
-      "message",
-      "canPlaceTower",
-      "path",
-      "buildableCells",
-      "towers",
-      "projectiles",
-      "enemies",
-      "defenders",
-      "unlockedLevels",
-      "inRangeIndices",
-    ]),
+    ...mapGetters(
+      "game", [
+        "coins",
+        "currentLevel",
+        "levels",
+        "enemyDefeated",
+        "gameOver",
+        "message",
+        "canPlaceTower",
+        "path",
+        "buildableCells",
+        "towers",
+        "projectiles",
+        "enemies",
+        "defenders",
+        "unlockedLevels",
+        "inRangeIndices",
+      ]
+    ),
     grid() {
       return new Array(this.rows * this.cols).fill(null)
     },
@@ -163,16 +164,18 @@ export default {
     this.spawnEnemies()
   },
   methods: {
-    ...mapActions([
-      "startTowerAttacks",
-      "placeTower",
-      "upgradeTower",
-      "changeLevel",
-      "handleCellHoverLeave",
-      "setHoveredTowerData",
-      "spawnEnemies",
-      "spawnDefender",
-    ]),
+    ...mapActions(
+      "game", [
+        "startTowerAttacks",
+        "placeTower",
+        "upgradeTower",
+        "changeLevel",
+        "handleCellHoverLeave",
+        "setHoveredTowerData",
+        "spawnEnemies",
+        "spawnDefender"
+      ]
+    ),
     isRoad(index) {
       return this.path.includes(index)
     },
