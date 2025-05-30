@@ -14,7 +14,7 @@
           v-for="(btn, index) in params.buttons"
           :key="index"
           :type="btn.type || 'default'"
-          @click="handleButtonClick(btn)"
+          @click="() => handleButtonClick(btn)"
       >
         {{ btn.text }}
       </button>
@@ -35,7 +35,9 @@ export default {
   },
   methods: {
     handleButtonClick(btn) {
-      if (btn.action) btn.action();
+      if (btn.action) {
+        btn.action();
+      }
       this.$emit('close', btn.afterClick);
     }
   }

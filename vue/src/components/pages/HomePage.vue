@@ -9,7 +9,10 @@
         <p>Ничего страшного, разберетесь на месте.</p>
       </div>
 
-      <button class="start-button" @click="startGame">
+      <button
+          class="start-button"
+          @click="() => startGame"
+      >
         К игре
       </button>
     </div>
@@ -19,6 +22,7 @@
 <script>
 import PageLayout from '../parts/PageLayout'
 import { helpModal } from "@/mixins/modals";
+import {RouteNames} from "@/router/routes";
 
 export default {
   name: 'HomePage',
@@ -28,7 +32,7 @@ export default {
   },
   methods: {
     startGame() {
-      this.$router.push('/game')
+      this.$router.push({ name: RouteNames.GAME })
     }
   }
 }

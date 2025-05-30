@@ -2,20 +2,20 @@
   <PageLayout>
     <div class="game-page">
       <InventoryPanel
-        :items="inventory"
-        :selected-item="selectedItem"
-        @select="handleItemSelect"
+          :items="inventory"
+          :selected-item="selectedItem"
+          @select="() => handleItemSelect"
       />
       <GameSceneView
-        :scene="currentScene"
-        :selected-item="selectedItem"
-        @click-item="handleItemClick"
-        @click-spot="interact"
+          :scene="currentScene"
+          :selected-item="selectedItem"
+          @click-item="() => handleItemClick"
+          @click-spot="() => interact"
       />
       <HelpModal
-        v-if="dialog.show"
-        :params="dialog.params"
-        @close="handleDialogClose"
+          v-if="dialog.show"
+          :params="dialog.params"
+          @close="() => handleDialogClose"
       />
     </div>
   </PageLayout>
@@ -36,11 +36,25 @@ export default {
     HelpModal
   },
   computed: {
-    ...mapGetters('game', ['currentScene', 'inventory', 'selectedItem']),
-    ...mapState('game', ['dialog'])
+    ...mapGetters('game', [
+      'currentScene',
+      'inventory',
+      'selectedItem'
+    ]),
+    ...mapState('game', [
+      'dialog'
+    ])
   },
   methods: {
-    ...mapActions('game', ['selectItem', 'takeItem', 'interactWithSpot', 'restartGame', 'showDialog', 'closeDialog', 'handleGameComplete']),
+    ...mapActions('game', [
+      'selectItem',
+      'takeItem',
+      'interactWithSpot',
+      'restartGame',
+      'showDialog',
+      'closeDialog',
+      'handleGameComplete'
+    ]),
 
     handleItemSelect(item) {
       this.selectItem(item);

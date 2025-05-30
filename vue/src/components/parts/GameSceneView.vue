@@ -2,37 +2,39 @@
   <div
     class="scene"
     :style="{
-    backgroundImage: `url(${currentBackground})`,
-    backgroundColor: '#ddd'
+      backgroundImage: `url(${currentBackground})`,
+      backgroundColor: '#ddd'
     }"
   >
     <div class="game-scene-view">
-    <div
-      v-for="item in scene.items"
-      :key="item.id"
-      class="game-scene-view__item"
-      :class="`game-scene-view__item--${item.id}`"
-      :style="{ left: item.x, top: item.y }"
-      @click="$emit('click-item', item)"
-      :title="item.description"
-    >
-    </div>
-
-    <div
-      v-for="spot in scene.spots"
-      :key="spot.id"
-      class="game-scene-view__spot"
-      :class="`game-scene-view__spot--${spot.id}`"
-      :style="{
-      left: spot.x,
-      top: spot.y,
-      width: `${spot.width}px`,
-      height: `${spot.height}px`
-      }"
-        @click="$emit('click-spot', spot)"
+      <div
+        v-for="item in scene.items"
+        :key="item.id"
+        class="game-scene-view__item"
+        :class="`game-scene-view__item--${item.id}`"
+        :style="{
+          left: item.x,
+          top: item.y
+        }"
+        @click="() => $emit('click-item', item)"
+        :title="item.description"
+      >
+      </div>
+      <div
+        v-for="spot in scene.spots"
+        :key="spot.id"
+        class="game-scene-view__spot"
+        :class="`game-scene-view__spot--${spot.id}`"
+        :style="{
+          left: spot.x,
+          top: spot.y,
+          width: `${spot.width}px`,
+          height: `${spot.height}px`
+        }"
+        @click="() => $emit('click-spot', spot)"
         :title="spot.name"
-    ></div>
-  </div>
+      ></div>
+    </div>
   </div>
 </template>
 

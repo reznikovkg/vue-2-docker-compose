@@ -4,11 +4,13 @@
       v-for="item in items"
       :key="item.id"
       class="inventory-panel__item"
-      :class="{
-      'inventory-panel__item--selected': selectedItem?.id === item.id,
-      [`inventory-panel__item--${item.id}`]: true
-      }"
-      @click="$emit('select', item)"
+      :class="[
+        `inventory-panel__item--${item.id}`,
+          {
+            'inventory-panel__item--selected': selectedItem?.id === item.id
+          }
+      ]"
+      @click="() => $emit('select', item)"
       :title="item.description"
     >
       <img

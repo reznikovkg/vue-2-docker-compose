@@ -2,7 +2,10 @@ import gameScenes from '@/game/gameScenes';
 
 const DEFAULT_DIALOG = {
   title: 'Информация',
-  buttons: [{ text: 'OK', afterClick: 'emitClose' }]
+  buttons: [{
+    text: 'OK',
+    afterClick: 'emitClose'
+  }]
 };
 
 const state = () => ({
@@ -20,23 +23,34 @@ const state = () => ({
 });
 
 const getters = {
-  currentScene: state => state.scenes[state.currentSceneId],
-  inventory: state => state.inventory,
-  selectedItem: state => state.selectedItem,
-  gameCompleted: state => state.gameCompleted
+  currentScene: (state) => {
+    state.scenes[state.currentSceneId]
+  },
+  inventory: (state) => {
+    state.inventory
+  },
+  selectedItem: (state) => {
+    state.selectedItem
+  },
+  gameCompleted: (state) => {
+    state.gameCompleted
+  }
 };
 
 const mutations = {
   setDialog: (state, dialog) => {
     state.dialog = dialog;
   },
-  resetDialog: state => {
+  resetDialog: (state) => {
     state.dialog = {
       show: false,
       params: {
         title: 'Информация',
         message: '',
-        buttons: [{ text: 'OK', afterClick: 'emitClose' }]
+        buttons: [{
+          text: 'OK',
+          afterClick: 'emitClose'
+        }]
       }
     };
   },
@@ -46,10 +60,10 @@ const mutations = {
   setGameFlag: (state, { flag, value }) => {
     state.gameFlags[flag] = value;
   },
-  completeGame: state => {
+  completeGame: (state) => {
     state.gameCompleted = true;
   },
-  resetGame: state => {
+  resetGame: (state) => {
     state.currentSceneId = 'house';
     state.inventory = [];
     state.selectedItem = null;
@@ -66,8 +80,12 @@ const mutations = {
   },
   markItemCollected: (state, itemId) => {
     const scene = state.scenes[state.currentSceneId];
-    const item = scene.items.find(i => i.id === itemId);
-    if (item) item.collected = true;
+    const item = scene.items.find((i) => {
+      return i.id === itemId;
+    });
+    if (item) {
+      item.collected = true;
+    }
   },
   markDoorOpened: (state, doorId) => {
     if (!state.openedDoors.includes(doorId)) {
@@ -95,7 +113,9 @@ const actions = {
     return item.description || 'Описание отсутствует';
   },
   interactWithSpot: ({ commit, state }, spot) => {
-    const hasRequiredItem = state.inventory.some(item => item.id === spot.requires);
+    const hasRequiredItem = state.inventory.some((item) => {
+      return item.id === spot.requires;
+    });
     switch (spot.type) {
       case 'door':
         if (!spot.requires) {
@@ -153,8 +173,9 @@ const actions = {
           return spot.successMessage;
         }
         return spot.description;
-      default:
+      default: {
         return spot.description || 'Ничего интересного';
+      }
     }
   },
   restartGame: ({ commit }) => {
@@ -181,7 +202,10 @@ const actions = {
             text: 'Начать заново',
             action: () => dispatch('restartGame')
           },
-          { text: 'Осмотреться', afterClick: 'emitClose' }
+          {
+            text: 'Осмотреться',
+            afterClick: 'emitClose'
+          }
         ]
       });
     } else {
