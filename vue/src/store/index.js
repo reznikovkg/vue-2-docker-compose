@@ -111,6 +111,11 @@ const state = {
 const getters = {
   enemies: (state) => state.enemies,
   attacks: (state) => state.attacks,
+  playersPos: (state) => {
+    const xPlayer = state.windowWidth/2 - state.xWorld;
+    const yPlayer = state.windowHeight/2 - state.yWorld;
+    return [xPlayer, yPlayer];
+  },
   attackPrototypes: (state) => state.attackPrototypes,
   enemyPrototypes: (state) => state.enemyPrototypes,
   playerPrototype: (state) => state.playerPrototype,

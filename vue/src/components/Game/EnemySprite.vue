@@ -10,6 +10,9 @@
 </template>
  
 <script>
+import {mapGetters} from 'vuex';
+import slimeSprite1 from '@/assets/slime.gif';
+import slimeSprite2 from '@/assets/slime2.gif';
 
 export default{
   name: 'EnemySprite',
@@ -32,8 +35,15 @@ export default{
     }
   },
   computed:{
+    ...mapGetters([
+      'playersPos'
+    ]),
     enemyStyle () {
+      let sprite = slimeSprite1;
+      if (this.playersPos[0] < this.x)
+        sprite = slimeSprite2;
       return {
+        'background-image': `url(${sprite})`,
         width: (this.enemyRadius*2) + 'px',
         height: (this.enemyRadius*2) + 'px',
         top: (this.y-this.enemyRadius)+'px',
@@ -47,7 +57,6 @@ export default{
 <style lang="less" scoped>
 .enemy{
   position: absolute;
-  background-image: url("@/assets/slime.gif");
   background-size: cover;
   background-position: center;
   &__health{
