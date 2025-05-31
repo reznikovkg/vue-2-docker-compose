@@ -1,15 +1,15 @@
 <template>
   <div
-      class="cell"
-      :class="cellClasses"
-      @click="() => handleClick()"
-      @mouseenter="() => handleMouseEnter()"
-      @mouseleave="() => handleMouseLeave()"
+    class="cell"
+    :class="cellClasses"
+    @click="() => handleClick()"
+    @mouseenter="() => handleMouseEnter()"
+    @mouseleave="() => handleMouseLeave()"
   >
     <TowerUnit
-        v-if="isTower"
-        :tower="tower"
-        :index="index"
+      v-if="isTower"
+      :tower="tower"
+      :index="index"
     />
   </div>
 </template>
@@ -17,7 +17,7 @@
 <script>
 import TowerUnit from "@/components/TowerUnit.vue"
 export default {
-  name: "GameCell",
+  name: 'GameCell',
   components: { TowerUnit },
   props: {
     index: Number,
@@ -56,12 +56,13 @@ export default {
 </script>
 
 <style lang="less">
+@import '@/less/const.less';
 .cell.cell--in-range {
   background-image: repeating-linear-gradient(
-      45deg,
-      rgb(200, 1, 1),
-      transparent 2px,
-      transparent 6px
+    45deg,
+    rgb(200, 1, 1),
+    transparent 2px,
+    transparent 6px
   );
 }
 .cell {

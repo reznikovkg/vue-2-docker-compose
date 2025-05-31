@@ -32,7 +32,7 @@ export default {
     enemyStyle() {
       return {
         transform: `translate(${this.enemyPixelPosition.x}px, ${this.enemyPixelPosition.y}px)`,
-        transition: 'transform 0.6s linear, opacity 0.4s ease',
+        transition: 'transform 0.55s linear, opacity 0.4s ease',
         opacity: this.isDead ? 0 : 1,
       }
     },
@@ -52,6 +52,7 @@ export default {
 </script>
 
 <style lang="less">
+@import '@/less/const.less';
 .enemy {
   position: absolute;
   display: flex;
