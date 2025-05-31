@@ -4,8 +4,8 @@
       :class="[tileClass, {
       'game__tile--tornado': tornado && !isBlackhole,
       'game__tile__blackhole': isBlackhole,
-      'game__tile--lightning': isLightningStrike,
-      'game__tile--lightning-neighbor': isLightningNeighbor,
+      'game__tile__lightning-effect': isLightningStrike,
+      'game__tile__lightning-effect-neighbor': isLightningNeighbor,
       'game__tile--with-crack': hasCrack
     }]"
       :style="tileStyle"
@@ -238,7 +238,7 @@ export default {
     }
   }
 
-  &.lightning-effect {
+  &__lightning-effect {
     animation: lightningStrike 0.5s ease-out;
     z-index: 30;
 

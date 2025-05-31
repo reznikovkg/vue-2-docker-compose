@@ -155,9 +155,9 @@ const ChaosManager = {
         //return this.effects.find(effect => effect.type === 'TORNADO');
         //return this.effects.find(effect => effect.type === 'BLACKHOLE');
         //return this.effects.find(effect => effect.type === 'LIGHTNING');
-        //return this.effects.find(effect => effect.type === 'CRACKS');
+        return this.effects.find(effect => effect.type === 'CRACKS');
 
-        return this.effects[Math.floor(Math.random() * this.effects.length)];
+        //return this.effects[Math.floor(Math.random() * this.effects.length)];
     },
     getEffectConfig(type) {
         return this.effects.find(e => e.type === type);
