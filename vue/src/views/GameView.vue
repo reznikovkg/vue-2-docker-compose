@@ -15,10 +15,8 @@
 					<Area v-for="ar in areas[level]" :area="ar" :towers="towers" />
 					<Foe v-for="f in foes" :f="f" :debug="debug" />
 					<Tower v-for="twr in towers" :twr="twr" :towers="towers" :debug="debug" />
-
 				</svg>
 			</div>
-
 		</div>
 	</div>
 </template>
