@@ -15,16 +15,13 @@
           <Area v-for="ar in areas[level]" :area="ar" :towers="towers" />
           <Foe v-for="f in foes" :f="f" :debug="debug" />
           <Tower v-for="twr in towers" :twr="twr" :towers="towers" :debug="debug" />
-
         </svg>
       </div>
-
     </div>
   </div>
 </template>
 
 <script>
-
   import * as cl   from "../classes.js"
   import Tower  from "../components/Tower.vue"
   import Foe    from "../components/Foe.vue"
@@ -68,8 +65,6 @@
             [ { "x": 580, "y": 89 }, { "x": 433, "y": 183 }, { "x": 433, "y": 333 }, { "x": 580, "y": 331 }, ],
           ],
         ],
-
-
       }
     },
 
@@ -80,52 +75,34 @@
       Area
     },
 
-    
-
     mounted: function(){
-
       this.timer = setInterval( this.tick, this.interval )   
-                                  
-
       window.addEventListener("keydown", function(e) {   
         let foe = window.currentFoe            
         if (e.keyCode === 37) {  foe.moveLeft()   }    
         if (e.keyCode === 38) { foe.moveUp()   }    
         if (e.keyCode === 39) {  foe.moveRight() }    
         if (e.keyCode === 40) {  foe.moveDown()   }    
-      });                          
-
+      });
     },
 
-
-    
-
     watch: {
-
-      
       level(newLevel, oldLevel) {
-        
         this.clear_level()
       },
-
     },
 
     
 
     methods: {
-
-      
       flipDebug: function(){
         this.debug = !this.debug
       },
 
-
-      
       flipGame: function(){
         this.running = !this.running        
       },
 
-      
       clk: function(e){
         e.stopPropagation() 
         var x = e.offsetX  
@@ -133,7 +110,6 @@
         this.addFoe( x, y )  
       },
 
-      
       tick: function(){
 
         var ttt = this.userTime              
@@ -141,13 +117,9 @@
         this.dt = this.userTime - ttt          
 
         if( this.foes.length ){    
-
           let selected = false  
-                      
-
           for(var n = 0; n < this.foes.length; n++){
-            selected = selected | this.foes[n].update( this.dt )  
-                                  
+            selected = selected | this.foes[n].update( this.dt )               
             if(this.foes[n].dead){            
               this.foes.splice( n, 1 )        
               this.killed++              
@@ -159,21 +131,17 @@
               this.foes[0].select()  
             }
           }
-
         }
-
         
         if(this.running){
           if( this.towers.length ){                     
             this.lasers = []                      
             for(var n = 0; n < this.towers.length; n++){        
-              var lsrs = this.towers[n].update( this.foes, this.dt )  
-                                          
+              var lsrs = this.towers[n].update( this.foes, this.dt )                          
               this.lasers = this.lasers.concat( lsrs )        
             }
           }
         }
-
       },
 
 
@@ -183,7 +151,6 @@
         this.foes.push( fo )    
         window.currentFoe = fo     
       },
-
       
       clear_level: function () {
         console.log( "Очистка уровня от башен и врагов" )
@@ -191,8 +158,6 @@
         this.foes.length = 0   
         this.killed = 0     
       },
-
     },
   }
-
 </script>
