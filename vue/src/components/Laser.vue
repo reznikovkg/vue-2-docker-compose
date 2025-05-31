@@ -9,7 +9,6 @@
 </script>
 
 <style>
-
   circle{
     stroke: #AAA;
   }
@@ -18,5 +17,4 @@
     stroke: red;
     fill: rgba(255, 0, 0, 0.3);
   }
-
 </style>
