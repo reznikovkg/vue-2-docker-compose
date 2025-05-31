@@ -33,7 +33,6 @@
 </script>
 
 <style>
-
   circle.tower{
     stroke: green;
     fill: rgba(100, 150, 100, 1.0);
@@ -60,5 +59,4 @@
   text{
     font-size: 10px;
   }
-
 </style>
