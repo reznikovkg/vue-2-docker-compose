@@ -1,14 +1,16 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from '../components/pages/HomePage.vue'
-import HeroDetail from '../components/pages/HeroDetail.vue'
+	import Vue from 'vue'
+	import Router from 'vue-router'
+	import Home from '../components/pages/HomePage.vue'
+	import HeroDetail from '../components/pages/HeroDetail.vue'
+	import CascadeGallery from '../components/pages/CascadeGallery.vue'
 
-Vue.use(Router)
+	Vue.use(Router)
 
-export default new Router({
-  mode: 'history', 
-  routes: [
-    { path: '/', name: 'Home', component: Home },
-    { path: '/hero/:name', name: 'HeroDetail', component: HeroDetail, props: true  },
-  ]
-})
+	export default new Router({
+		mode: 'history', 
+		routes: [
+			{ path: '/', name: 'Home', component: Home },
+			{ path: '/hero/:name', name: 'HeroDetail', component: HeroDetail, props: true  },
+			{ path: '/gallery', name: 'CascadeGallery', component: CascadeGallery }
+		]
+	})
