@@ -21,7 +21,6 @@
 </script>
 
 <style>
-
   circle{
     stroke: #AAA;
   }
@@ -42,5 +41,4 @@
     fill: transparent;
     opacity: 0.5;
   }
-
 </style>
