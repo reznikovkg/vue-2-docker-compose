@@ -1,4 +1,4 @@
-import gameScenes from '@/game/gameScenes';
+import gameConfig from '@/game/gameConfig';
 
 const loadState = () => {
   const savedState = localStorage.getItem('gameState');
@@ -72,7 +72,6 @@ const mutations = {
     state.targets = savedState.targets || { currentTarget: null, reachedTargets: [] };
     state.selectedItem = savedState.selectedItem || null;
   },
-
   SAVE_STATE: (state) => {
     saveStateToLocalStorage(state);
   },
