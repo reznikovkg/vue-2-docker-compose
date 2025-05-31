@@ -1,119 +1,100 @@
 <template>
-  <div
-    class="scene"
-    :style="{
-      backgroundImage: `url(${currentBackground})`,
-      backgroundColor: '#ddd'
-    }"
-  >
-    <div class="game-scene-view">
-      <div
-        v-for="item in scene.items"
-        :key="item.id"
-        class="game-scene-view__item"
-        :class="`game-scene-view__item--${item.id}`"
-        :style="{
-          left: item.x,
-          top: item.y
-        }"
-        @click="() => $emit('click-item', item)"
-        :title="item.description"
-      >
-      </div>
-      <div
+  <div class="scene" :style="sceneStyle">
+    <div class="character" :style="characterStyle"/>
+    <div
         v-for="spot in scene.spots"
         :key="spot.id"
-        class="game-scene-view__spot"
-        :class="`game-scene-view__spot--${spot.id}`"
+        class="spot"
         :style="{
           left: spot.x,
           top: spot.y,
-          width: `${spot.width}px`,
-          height: `${spot.height}px`
+          width: spot.width ? `${spot.width}px` : '50px',
+          height: spot.height ? `${spot.height}px` : '50px'
         }"
-        @click="() => $emit('click-spot', spot)"
-        :title="spot.name"
-      ></div>
-    </div>
+        @click="handleSpotClick(spot)"
+        :title="spot.description"
+    />
   </div>
 </template>
 
 <script>
-import roomBg from '@/assets/bedroom.png';
-import hallwayBg from '@/assets/hallway-bg.png';
-import kitchenBg from '@/assets/kitchen.png';
-import houseBg from '@/assets/room-bg.png';
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
-  name: 'GameSceneView',
   props: {
     scene: {
       type: Object,
       required: true
-    },
-    selectedItem: Object
+    }
   },
   computed: {
-    currentBackground() {
-      switch (this.scene.id) {
-        case 'house':
-          return houseBg;
-        case 'hallway':
-          return hallwayBg;
-        case 'kitchen':
-          return kitchenBg;
-        case 'bedroom':
-          return roomBg;
-        default:
-          return houseBg;
-      }
+    ...mapGetters('game', [
+      'character'
+    ]),
+    sceneStyle() {
+      return {
+        backgroundImage: `url(${this.scene.background})`,
+        backgroundSize: 'cover'
+      };
+    },
+    characterStyle() {
+      return {
+        left: `${this.character.x}px`,
+        top: `${this.character.y}px`,
+        transition: 'left 0.1s linear',
+        transform: `scaleX(${this.character.direction})`
+      };
+    }
+  },
+  methods: {
+    ...mapActions('game',[
+      'moveToTarget'
+    ]),
+    handleSpotClick(spot) {
+      const sceneElement = this.$el;
+      const sceneWidth = sceneElement.offsetWidth;
+      const sceneHeight = sceneElement.offsetHeight;
+
+      const targetX = (parseInt(spot.x) / 100) * sceneWidth;
+      const targetY = (parseInt(spot.y) / 100) * sceneHeight;
+
+      this.moveToTarget({
+        id: spot.id,
+        x: targetX,
+        y: targetY
+      });
     }
   }
 };
 </script>
 
 <style lang="less">
-@import '@/less/const.less';
-
-
 .scene {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: 80px;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  bottom: 0;
 }
-.game-scene-view {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
 
-  &__item {
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    background-color: yellow;
-    border-radius: 50%;
-    cursor: pointer;
-    transform: translate(-50%, -50%);
-  }
+.character {
+  position: absolute;
+  width: 40px;
+  height: 60px;
+  background-image: url('@/assets/character.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 10;
+  transition: transform 0.3s ease-out;
+  will-change: transform;
+}
 
-  &__image {
-    width: 32px;
-    height: 32px;
-    pointer-events: none;
-  }
-
-  &__spot {
-    position: absolute;
-    border: 2px dashed @cBaseFour;
-    cursor: pointer;
-    opacity: 0.7;
+.spot {
+  position: absolute;
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  &:hover {
+    border-color: yellow;
   }
 }
 </style>
