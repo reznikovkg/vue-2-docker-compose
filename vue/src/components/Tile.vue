@@ -1,10 +1,15 @@
 <template>
   <div
       class="game__tile"
-      :class="[tileClass, { 'tornado-effect': tornado }]"
+      :class="[tileClass, {
+        'tornado-effect': tornado && !isBlackhole,
+        'game__tile__blackhole': isBlackhole
+      }]"
       :style="tileStyle"
   >
-    {{ formattedValue }}
+    <span v-if="isBlackhole"></span>
+    <span v-else>{{ formattedValue }}</span>
+
     <div v-if="freezeEffect" class="game__tile__frost-effect">
       <div class="freeze-progress" :style="{ width: `${freezeEffect.progress}%` }"></div>
       <span class="freeze-counter" v-if="freezeEffect.expiresIn > 0">
@@ -15,66 +20,63 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: 'GameTile',
   props: {
-    tile: {
-      type: Number,
-      required: true
-    },
-    formattedValue: {
-      type: String,
-      required: true
-    },
-    isFrozen: {
-      type: Boolean,
-      default: false
-    },
-    position: {
-      type: Object,
-      required: true
-    },
-    moveFrom: {
-      type: Object,
-      default: null
-    },
-    tornado: {
-      type: Boolean,
-      default: false
-    }
+    tile: { type: Number, required: true },
+    formattedValue: { type: String, required: true },
+    isFrozen: { type: Boolean, default: false },
+    position: { type: Object, required: true },
+    moveFrom: { type: Object, default: null },
+    tornado: { type: Boolean, default: false }
   },
   computed: {
     ...mapGetters('game', [
-        'getFreezeEffectByPosition',
-        'getGridSize',
-        ]),
+      'getFreezeEffectByPosition',
+      'getBlackholeEffectByPosition',
+      'isTornadoAnimating',
+      'tornadoTiles',
+      'getGridSize',
+    ]),
+
+    blackholeEffect() {
+      return this.getBlackholeEffectByPosition(this.position);
+    },
+    isBlackhole() {
+      return !!this.blackholeEffect;
+    },
     freezeEffect() {
-      return this.getFreezeEffectByPosition({ x: this.position.x, y: this.position.y });
+      return this.getFreezeEffectByPosition(this.position);
     },
     tileClass() {
-      if (this.tile === 0) {
-        return 'game__tile--0';
+      const classes = [];
+      if (this.tornado) {
+        classes.push('tornado-effect');
       }
-      let baseValue = this.tile;
-      while (baseValue > 2048) baseValue /= 1024;
-      const powersOfTwo = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
-      const closestPowerOfTwo = powersOfTwo.find(power => power >= baseValue) || 2048;
-
-      const classes = [
-        `game__tile--${closestPowerOfTwo}`,
-        {
-          'game__tile--frozen': this.isFrozen,
-          'game__tile--moving': this.moveFrom
-        }
-      ];
+      if (this.isBlackhole) {
+        classes.push('game__tile--blackhole');
+      } else if (this.tile === 0) {
+        classes.push('game__tile--0');
+      } else {
+        let baseValue = this.tile;
+        while (baseValue > 2048) baseValue /= 1024;
+        const powersOfTwo = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
+        const closestPowerOfTwo = powersOfTwo.find(power => power >= baseValue) || 2048;
+        classes.push(`game__tile--${closestPowerOfTwo}`);
+      }
+      if (this.isFrozen) {
+        classes.push('game__tile--frozen');
+      }
+      if (this.moveFrom) {
+        classes.push('game__tile--moving');
+      }
       return classes;
     },
     tileStyle() {
       const gridSize = this.getGridSize;
       const cellSize = 100 / gridSize;
-
       return {
         position: 'absolute',
         left: `${this.position.x * cellSize}%`,
@@ -164,6 +166,10 @@ export default {
     background-color: #3c3a32;
   }
 
+  &.tornado-effect {
+    animation: tornadoSpin 0.5s ease-out;
+    z-index: 20;
+  }
   &--frozen {
     position: relative;
     box-shadow: inset 0 0 15px rgba(52, 152, 219, 0.7);
@@ -175,12 +181,10 @@ export default {
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(
-          135deg,
-          rgba(255, 255, 255, 0.3) 0%,
-          rgba(255, 255, 255, 0) 50%,
-          rgba(255, 255, 255, 0.3) 100%
-      );
+      background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0) 50%,
+      rgba(255, 255, 255, 0.3) 100%);
       border-radius: 5px;
     }
   }
@@ -191,28 +195,38 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.4) 0%,
-        rgba(255, 255, 255, 0) 50%,
-        rgba(255, 255, 255, 0.4) 100%
-    );
+    background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.4) 100%);
     border-radius: 5px;
     z-index: 1;
     animation: frostGlow 2s infinite alternate;
   }
-  &.tornado-effect {
-    animation: spinShuffle 0.5s ease-in-out infinite alternate;
-    transform-origin: center;
-    z-index: 2;
+
+  &__blackhole {
+    background-color: #1a1a1a;
+    color: white;
+    font-size: 24px;
+    animation: pulse 1s infinite alternate;
+
+    span {
+      animation: rotate 2s linear infinite;
+    }
   }
 }
 
-@keyframes spinShuffle {
-  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
-  50% { transform: translate(2px, -2px) rotate(5deg); opacity: 0.8; }
-  100% { transform: translate(-2px, 2px) rotate(-5deg); opacity: 1; }
+@keyframes pulse {
+  from {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    transform: scale(1);
+  }
+  to {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    transform: scale(1.05);
+  }
 }
+
 
 @keyframes frostGlow {
   0% {
@@ -231,6 +245,21 @@ export default {
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes tornadoSpin {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    opacity: 1;
   }
 }
 </style>

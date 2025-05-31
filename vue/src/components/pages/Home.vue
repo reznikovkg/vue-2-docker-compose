@@ -57,7 +57,7 @@
     </div>
     <div
         class="game__board"
-        :class="{ 'tornado-effect': isTornadoAnimating }"
+        :class="{ 'tornado-effect-board': isTornadoAnimating }"
         :style="gridStyle"
     >
       <GameTile
@@ -277,16 +277,15 @@ export default {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
 
-    &.tornado-effect {
-      animation: spin 1s ease-in-out;
-      background-color: #aeeaff;
-    }
-
     @media (max-width: 600px) {
       width: 100%;
       padding: 5px;
       --cell-size: clamp(40px, 10vw, 80px);
       --gap-size: 5px;
+    }
+
+    &.tornado-effect-board {
+      animation: boardShake 0.5s ease-in-out;
     }
   }
 
@@ -412,11 +411,12 @@ export default {
     opacity: 1;
   }
 }
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(10deg); }
-  50% { transform: rotate(-10deg); }
-  75% { transform: rotate(5deg); }
-  100% { transform: rotate(0deg); }
+
+
+@keyframes boardShake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  50% { transform: rotate(-1deg); }
+  75% { transform: rotate(1deg); }
 }
 </style>

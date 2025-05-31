@@ -6,17 +6,19 @@ const ChaosManager = {
             type: 'FREEZE',
             target: 'cell',
             duration: 3,
+            appliesTo: 'nonEmpty',
             apply(grid, position) {
-                grid[position.y][position.x].effects.push({
-                    type: 'FREEZE',
-                    expiresIn: this.duration
-                });
-                return grid;
+                const cell = grid[position.y][position.x];
+                if (cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE')) {
+                    cell.effects.push({ type: 'FREEZE', expiresIn: this.duration });
+                }
             }
         },
         {
             type: 'TORNADO',
             target: 'global',
+            duration: 3,
+            appliesTo: 'any',
             apply(grid) {
                 const nonFrozenCells = grid.flat().filter(cell =>
                     cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE')
@@ -24,20 +26,59 @@ const ChaosManager = {
                 if (nonFrozenCells.length < 2) {
                     return grid;
                 }
+
                 const values = nonFrozenCells.map(c => c.value);
                 const shuffledValues = [...values].sort(() => Math.random() - 0.5);
                 nonFrozenCells.forEach((cell, i) => {
                     cell.value = shuffledValues[i];
                 });
-                return grid;
+                return {
+                    newGrid: grid,
+                    tornadoTiles: nonFrozenCells.map(c => ({ x: c.x, y: c.y }))
+                };
+            }
+        },
+        {
+            type: 'BLACKHOLE',
+            target: 'cell',
+            duration: 3,
+            appliesTo: 'empty',
+            apply(grid, position) {
+                const cell = grid[position.y][position.x];
+                if (cell.value === 0 && !cell.effects.some(e => e.type === 'BLACKHOLE')) {
+                    cell.effects.push({ type: 'BLACKHOLE', expiresIn: this.duration });
+                }
+            },
+            onTurn(grid, position) {
+                const cell = grid[position.y][position.x];
+                if (!cell) return;
+
+                const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                for (const [dy, dx] of directions) {
+                    const ny = position.y + dy;
+                    const nx = position.x + dx;
+                    if (ny >= 0 && ny < grid.length && nx >= 0 && nx < grid[ny].length) {
+                        const neighbor = grid[ny][nx];
+                        if (
+                            neighbor.value > 0 &&
+                            !neighbor.effects.some(e => e.type === 'BLACKHOLE')
+                        ) {
+                            neighbor.value = 0;
+                            break;
+                        }
+                    }
+                }
+
+                cell.effects = cell.effects.filter(e => e.expiresIn > 0);
             }
         }
     ],
     getRandomEffect() {
         //return this.effects.find(effect => effect.type === 'FREEZE');
-        return this.effects.find(effect => effect.type === 'TORNADO');
+        //return this.effects.find(effect => effect.type === 'TORNADO');
+        //return this.effects.find(effect => effect.type === 'BLACKHOLE');
 
-        //return this.effects[Math.floor(Math.random() * this.effects.length)];
+        return this.effects[Math.floor(Math.random() * this.effects.length)];
     },
     getEffectConfig(type) {
         return this.effects.find(e => e.type === type);
@@ -163,16 +204,23 @@ export default {
         },
         isTornadoAnimating: state => state.tornadoAnimationActive,
         tornadoTiles: state => state.tornadoTiles || [],
+        getBlackholeEffectByPosition: (state) => ({ x, y }) => {
+            const cell = state.grid[y]?.[x];
+            if (!cell) return null;
+            return cell.effects.find(e => e.type === 'BLACKHOLE') || null;
+        },
     },
     mutations: {
         SET_TORNADO_TILES(state, tiles) {
             state.tornadoTiles = tiles;
         },
-        CLEAR_TORNADO_TILES(state) {
-            state.tornadoTiles = [];
-        },
+
         SET_TORNADO_ANIMATION(state, status) {
             state.tornadoAnimationActive = status;
+        },
+
+        CLEAR_TORNADO_TILES(state) {
+            state.tornadoTiles = [];
         },
         CLEAR_CHAOS_EFFECTS(state) {
             state.grid = state.grid.map(row =>
@@ -193,14 +241,35 @@ export default {
             });
         },
         UPDATE_CHAOS_EFFECTS(state) {
-            state.grid.forEach(row => {
-                row.forEach(cell => {
-                    cell.effects.forEach(effect => {
-                        if (effect.expiresIn !== undefined) {
-                            effect.expiresIn--;
+            state.grid.forEach((row, y) => {
+                row.forEach((cell, x) => {
+                    if (cell.effects.length === 0) return;
+
+                    const blackhole = cell.effects.find(e => e.type === 'BLACKHOLE');
+                    if (blackhole) {
+                        const effectDef = ChaosManager.effects.find(e => e.type === 'BLACKHOLE');
+                        if (effectDef && typeof effectDef.onTurn === 'function') {
+                            effectDef.onTurn(state.grid, { x, y });
                         }
-                    });
+                    }
+
+                    // Уменьшаем expiresIn
+                    cell.effects = cell.effects.map(effect => ({
+                        ...effect,
+                        expiresIn: effect.expiresIn !== undefined ? effect.expiresIn - 1 : undefined
+                    }));
+
+                    // Чистим эффекты
+                    const oldEffects = [...cell.effects];
                     cell.effects = cell.effects.filter(e => e.expiresIn > 0);
+
+                    // Если BLACKHOLE закончился — обнуляем значение
+                    if (
+                        !cell.effects.some(e => e.type === 'BLACKHOLE') &&
+                        oldEffects.some(e => e.type === 'BLACKHOLE')
+                    ) {
+                        cell.value = 0;
+                    }
                 });
             });
         },
@@ -297,46 +366,60 @@ export default {
     actions: {
         applyScheduledChaosEffect({ commit, state }) {
             const cycleInterval = 8;
-            if (!state.isActive) {
+            if (!state.isActive || state.counter % cycleInterval !== 0) {
                 return;
             }
 
-            if (state.counter > 0 && state.counter % cycleInterval === 0) {
-                const effect = ChaosManager.getRandomEffect();
-                if (!effect || typeof effect.apply !== 'function') {
-                    return;
+            const effect = ChaosManager.getRandomEffect();
+            if (!effect || typeof effect.apply !== 'function') {
+                return;
+            }
+
+            if (effect.target === 'cell') {
+                let eligibleCells = [];
+
+                const config = ChaosManager.getEffectConfig(effect.type);
+
+                if (config.appliesTo === 'empty') {
+                    eligibleCells = state.grid.flat().filter(cell =>
+                        cell.value === 0 &&
+                        !cell.effects.some(e => e.type === 'BLACKHOLE')
+                    );
+                } else if (config.appliesTo === 'nonEmpty') {
+                    eligibleCells = state.grid.flat().filter(cell =>
+                        cell.value > 0 &&
+                        !cell.effects.some(e => e.type === 'FREEZE')
+                    );
+                } else {
+                    eligibleCells = state.grid.flat();
                 }
-                if (effect.target === 'cell') {
-                    const nonEmptyCells = state.grid.flat()
-                        .filter(cell => cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE'));
 
-                    if (nonEmptyCells.length === 0) {
-                        return;
-                    }
-
-                    const selectedCell = nonEmptyCells[Math.floor(Math.random() * nonEmptyCells.length)];
-
-                    effect.apply(state.grid, { x: selectedCell.x, y: selectedCell.y });
+                if (eligibleCells.length > 0) {
+                    const targetCell = eligibleCells[Math.floor(Math.random() * eligibleCells.length)];
+                    effect.apply(state.grid, { x: targetCell.x, y: targetCell.y });
                     commit('ADD_CHAOS_EFFECT', {
                         effect,
-                        position: { x: selectedCell.x, y: selectedCell.y }
+                        position: { x: targetCell.x, y: targetCell.y }
                     });
-                } else if (effect.target === 'global') {
-                    const nonFrozenCells = state.grid.flat().filter(cell =>
-                        cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE')
-                    );
+                }
 
-                    commit('SET_TORNADO_TILES', nonFrozenCells.map(c => ({ x: c.x, y: c.y })));
+            } else if (effect.target === 'global') {
+                if (effect.type === 'TORNADO') {
+                    commit('SET_TORNADO_ANIMATION', true);
 
-                    effect.apply(state.grid);
+                    const result = effect.apply(state.grid);
+                    commit('SET_TORNADO_TILES', result.tornadoTiles);
+                    commit('SET_CELLS', result.newGrid);
 
                     setTimeout(() => {
+                        commit('SET_TORNADO_ANIMATION', false);
                         commit('CLEAR_TORNADO_TILES');
                     }, 500);
                 }
-                commit('INCREMENT_EFFECT_CYCLE_COUNTER');
             }
+            commit('INCREMENT_EFFECT_CYCLE_COUNTER');
         },
+
         toggleChaosMode({ commit, state }) {
             if (state.isActive) {
                 commit('CLEAR_CHAOS_EFFECTS');
@@ -347,22 +430,35 @@ export default {
             if (!state.isActive) {
                 return;
             }
-
             const effect = ChaosManager.getRandomEffect();
             if (effect.target === 'cell') {
-                const nonEmptyCells = state.grid.flat()
-                    .filter(cell => cell.value > 0 && !cell.effects.some(e => e.type === 'FREEZE'));
-                if (nonEmptyCells.length > 0) {
-                    const targetCell = nonEmptyCells[Math.floor(Math.random() * nonEmptyCells.length)];
-                    const effectConfig = ChaosManager.getEffectConfig(effect.type);
-                    if (effectConfig && typeof effectConfig.apply === 'function') {
-                        effectConfig.apply(state.grid, { x: targetCell.x, y: targetCell.y });
-                        commit('ADD_CHAOS_EFFECT', {
-                            effect,
-                            position: { x: targetCell.x, y: targetCell.y }
-                        });
-                    }
+                let eligibleCells = [];
+                const config = ChaosManager.getEffectConfig(effect.type);
+
+                if (config.appliesTo === 'empty') {
+                    eligibleCells = state.grid.flat().filter(cell =>
+                        cell.value === 0 &&
+                        !cell.effects.some(e => e.type === 'BLACKHOLE')
+                    );
+                } else if (config.appliesTo === 'nonEmpty') {
+                    eligibleCells = state.grid.flat().filter(cell =>
+                        cell.value > 0 &&
+                        !cell.effects.some(e => e.type === 'FREEZE')
+                    );
+                } else {
+                    eligibleCells = state.grid.flat();
                 }
+                if (eligibleCells.length > 0) {
+                    const targetCell = eligibleCells[Math.floor(Math.random() * eligibleCells.length)];
+                    effect.apply(state.grid, { x: targetCell.x, y: targetCell.y }, this);
+                    commit('ADD_CHAOS_EFFECT', {
+                        effect,
+                        position: { x: targetCell.x, y: targetCell.y }
+                    });
+                }
+            } else if (effect.target === 'global') {
+                effect.apply(state.grid, null, this);
+                commit('SET_CELLS', state.grid);
             }
         },
         processTurn({ commit, dispatch }) {
@@ -449,7 +545,7 @@ export default {
                 params: { title, message, buttons },
             }, { root: true });
         },
-        async addRandomTile({ state, commit }) {
+        addRandomTile({ state, commit }) {
             const emptyCells = state.grid.flat().filter(cell => cell.value === 0);
 
             if (emptyCells.length > 0) {
@@ -476,7 +572,7 @@ export default {
         moveByKeyEvent({ dispatch }, { direction }) {
             dispatch('move', direction);
         },
-        async move({ dispatch, state, commit, getters }, direction) {
+        move({ dispatch, state, commit, getters }, direction) {
             if (state.isAnimating) return;
             commit('SET_ANIMATING', true);
 
@@ -520,10 +616,10 @@ export default {
                     commit('ADD_SCORE', scoreIncrease);
                 }
 
-                await dispatch('animateMovement');
-                await dispatch('addRandomTile');
+                dispatch('animateMovement');
+                dispatch('addRandomTile');
                 dispatch('checkGameState');
-                await dispatch('processTurn');
+                dispatch('processTurn');
             }
             commit('SET_ANIMATING', false);
         },
@@ -543,11 +639,14 @@ export default {
 };
 
 const deepEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-const mergeLine = (line, direction, frozenIndices = []) => {
+const mergeLine = (line, direction, frozenIndices = [], blackholeIndices = []) => {
     const size = line.length;
     let compressed = line.filter((cell, index) =>
-        cell.value !== 0 && !frozenIndices.includes(index)
+        cell.value !== 0 &&
+        !frozenIndices.includes(index) &&
+        !blackholeIndices.includes(index)
     );
+
     let scoreIncrease = 0;
     const movements = [];
 
@@ -573,8 +672,17 @@ const mergeLine = (line, direction, frozenIndices = []) => {
     }
 
     const result = Array(size).fill(null);
+
+    // Восстанавливаем замороженные ячейки
     line.forEach((cell, index) => {
         if (frozenIndices.includes(index)) {
+            result[index] = { ...cell };
+        }
+    });
+
+    // Пропускаем черные дыры — они остаются на месте
+    line.forEach((cell, index) => {
+        if (blackholeIndices.includes(index)) {
             result[index] = { ...cell };
         }
     });
@@ -583,18 +691,31 @@ const mergeLine = (line, direction, frozenIndices = []) => {
     const step = direction === 'left' || direction === 'up' ? 1 : -1;
 
     compressed.forEach(cell => {
-        while (result[pos] !== null && result[pos]?.value !== 0) {
+        while (
+            pos < size &&
+            pos >= 0 &&
+            (result[pos] !== null || line[pos]?.value === 0 && blackholeIndices.includes(pos))
+            ) {
             pos += step;
         }
-        result[pos] = { ...cell, x: pos };
-        if (cell.x !== pos) {
-            movements.push({
-                from: cell.x,
-                to: pos,
-                value: cell.value
-            });
+        if (pos >= 0 && pos < size) {
+            result[pos] = { ...cell, x: pos };
+
+            if (cell.x !== pos) {
+                movements.push({
+                    from: cell.x,
+                    to: pos,
+                    value: cell.value
+                });
+            }
+
+            // Если плитка попала в черную дыру — уничтожаем её
+            if (blackholeIndices.includes(pos)) {
+                result[pos].value = 0;
+            }
+
+            pos += step;
         }
-        pos += step;
     });
 
     for (let i = 0; i < size; i++) {
@@ -622,16 +743,31 @@ const moveRow = (grid, direction, gridSize, frozenTiles = []) => {
     let totalScoreIncrease = 0;
     const movedTiles = [];
 
+    const blackholePositions = [];
+    for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+            if (grid[y][x].effects.some(e => e.type === 'BLACKHOLE')) {
+                blackholePositions.push({ x, y });
+            }
+        }
+    }
+
     for (let y = 0; y < gridSize; y++) {
         const row = [...grid[y]];
+
         const frozenIndices = frozenTiles
+            .filter(tile => tile.y === y)
+            .map(tile => tile.x);
+
+        const blackholeIndices = blackholePositions
             .filter(tile => tile.y === y)
             .map(tile => tile.x);
 
         const { mergedLine, scoreIncrease, movements } = mergeLine(
             row.map(cell => ({ ...cell })),
             direction,
-            frozenIndices
+            frozenIndices,
+            blackholeIndices
         );
 
         if (!deepEqual(row, mergedLine)) {
@@ -654,6 +790,7 @@ const moveRow = (grid, direction, gridSize, frozenTiles = []) => {
             });
         }
     }
+
     return {
         grid,
         moved,
@@ -667,19 +804,34 @@ const moveColumn = (grid, direction, gridSize, frozenTiles = []) => {
     let totalScoreIncrease = 0;
     const movedTiles = [];
 
+    const blackholePositions = [];
+    for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+            if (grid[y][x].effects.some(e => e.type === 'BLACKHOLE')) {
+                blackholePositions.push({ x, y });
+            }
+        }
+    }
+
     for (let x = 0; x < gridSize; x++) {
         const column = [];
         for (let y = 0; y < gridSize; y++) {
             column.push({ ...grid[y][x] });
         }
+
         const frozenIndices = frozenTiles
+            .filter(tile => tile.x === x)
+            .map(tile => tile.y);
+
+        const blackholeIndices = blackholePositions
             .filter(tile => tile.x === x)
             .map(tile => tile.y);
 
         const { mergedLine, scoreIncrease, movements } = mergeLine(
             column,
             direction,
-            frozenIndices
+            frozenIndices,
+            blackholeIndices
         );
 
         if (!deepEqual(column, mergedLine)) {
@@ -704,6 +856,7 @@ const moveColumn = (grid, direction, gridSize, frozenTiles = []) => {
             });
         }
     }
+
     return {
         grid,
         moved,
