@@ -1,4 +1,3 @@
-
 class foe {
 	constructor( x, y ) {
 		this.x = x 				
