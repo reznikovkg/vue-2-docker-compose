@@ -3,7 +3,9 @@
       class="game__tile"
       :class="[tileClass, {
         'tornado-effect': tornado && !isBlackhole,
-        'game__tile__blackhole': isBlackhole
+        'game__tile__blackhole': isBlackhole,
+        'lightning-effect': isLightningStrike,
+        'lightning-effect-neighbor': isLightningNeighbor
       }]"
       :style="tileStyle"
   >
@@ -39,7 +41,20 @@ export default {
       'isTornadoAnimating',
       'tornadoTiles',
       'getGridSize',
+      'getLightningStrike'
     ]),
+    isLightningStrike() {
+      const strike = this.getLightningStrike;
+      return strike && strike.x === this.position.x && strike.y === this.position.y;
+    },
+    isLightningNeighbor() {
+      const strike = this.getLightningStrike;
+      if (!strike) return false;
+
+      const dx = Math.abs(strike.x - this.position.x);
+      const dy = Math.abs(strike.y - this.position.y);
+      return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
+    },
 
     blackholeEffect() {
       return this.getBlackholeEffectByPosition(this.position);
@@ -170,6 +185,7 @@ export default {
     animation: tornadoSpin 0.5s ease-out;
     z-index: 20;
   }
+
   &--frozen {
     position: relative;
     box-shadow: inset 0 0 15px rgba(52, 152, 219, 0.7);
@@ -212,6 +228,16 @@ export default {
 
     span {
       animation: rotate 2s linear infinite;
+    }
+  }
+
+  &.lightning-effect {
+    animation: lightningStrike 0.5s ease-out;
+    z-index: 30;
+
+    &-neighbor {
+      animation: lightningNeighbor 0.5s ease-out;
+      z-index: 20;
     }
   }
 }
@@ -261,5 +287,18 @@ export default {
     transform: rotate(360deg) scale(1);
     opacity: 1;
   }
+}
+
+
+@keyframes lightningStrike {
+  0% { box-shadow: 0 0 10px #ff0; }
+  50% { box-shadow: 0 0 30px #ff0, 0 0 60px #ff0; transform: scale(1.1); }
+  100% { box-shadow: 0 0 10px #ff0; }
+}
+
+@keyframes lightningNeighbor {
+  0% { box-shadow: 0 0 5px #ff0; }
+  50% { box-shadow: 0 0 15px #ff0; transform: scale(1.05); }
+  100% { box-shadow: 0 0 5px #ff0; }
 }
 </style>

@@ -17,7 +17,7 @@ const ChaosManager = {
         {
             type: 'TORNADO',
             target: 'global',
-            duration: 3,
+            duration: 0,
             appliesTo: 'any',
             apply(grid) {
                 const nonFrozenCells = grid.flat().filter(cell =>
@@ -71,14 +71,59 @@ const ChaosManager = {
 
                 cell.effects = cell.effects.filter(e => e.expiresIn > 0);
             }
-        }
+        },
+        {
+            type: 'LIGHTNING',
+            target: 'global',
+            duration: 0,
+            appliesTo: 'nonEmpty',
+            apply(grid) {
+                const nonEmptyCells = grid.flat().filter(cell =>
+                    cell.value >= 2 &&
+                    !cell.effects.some(e => e.type === 'FREEZE')
+                );
+
+                if (nonEmptyCells.length === 0) {
+                    return grid;
+                }
+
+                const targetCell = nonEmptyCells[Math.floor(Math.random() * nonEmptyCells.length)];
+                const { x, y } = targetCell;
+
+                const newValue = Math.max(2, Math.floor(targetCell.value / 4));
+                targetCell.value = newValue;
+
+                const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+                const affectedCells = [];
+
+                directions.forEach(([dx, dy]) => {
+                    const nx = x + dx;
+                    const ny = y + dy;
+                    if (nx >= 0 && nx < grid[0].length && ny >= 0 && ny < grid.length) {
+                        const neighbor = grid[ny][nx];
+                        if (neighbor.value >= 2) {
+                            neighbor.value = Math.max(2, Math.floor(neighbor.value / 2));
+                            affectedCells.push({ x: nx, y: ny });
+                        }
+                    }
+                });
+
+                return {
+                    newGrid: grid,
+                    lightningStrike: { x, y },
+                    affectedCells
+                };
+            }
+        },
     ],
     getRandomEffect() {
         //return this.effects.find(effect => effect.type === 'FREEZE');
         //return this.effects.find(effect => effect.type === 'TORNADO');
         //return this.effects.find(effect => effect.type === 'BLACKHOLE');
+        return this.effects.find(effect => effect.type === 'LIGHTNING');
 
-        return this.effects[Math.floor(Math.random() * this.effects.length)];
+
+        //return this.effects[Math.floor(Math.random() * this.effects.length)];
     },
     getEffectConfig(type) {
         return this.effects.find(e => e.type === type);
@@ -107,6 +152,8 @@ const initialState = (gridSize = 4) => ({
     tornadoAnimationActive: false,
     movedTiles: [],
     tornadoTiles: [],
+    lightningStrike: null,
+    lightningAffectedCells: [],
     counter: 0,
     effectCycleCounter: 0,
 });
@@ -209,8 +256,22 @@ export default {
             if (!cell) return null;
             return cell.effects.find(e => e.type === 'BLACKHOLE') || null;
         },
+        getLightningStrike: (state) => state.lightningStrike,
+        getLightningAffectedCells: (state) => state.lightningAffectedCells || []
     },
     mutations: {
+        SET_LIGHTNING_STRIKE(state, position) {
+            state.lightningStrike = position;
+        },
+        CLEAR_LIGHTNING_STRIKE(state) {
+            state.lightningStrike = null;
+        },
+        SET_AFFECTED_BY_LIGHTNING(state, cells) {
+            state.lightningAffectedCells = cells;
+        },
+        CLEAR_AFFECTED_BY_LIGHTNING(state) {
+            state.lightningAffectedCells = [];
+        },
         SET_TORNADO_TILES(state, tiles) {
             state.tornadoTiles = tiles;
         },
@@ -377,7 +438,6 @@ export default {
 
             if (effect.target === 'cell') {
                 let eligibleCells = [];
-
                 const config = ChaosManager.getEffectConfig(effect.type);
 
                 if (config.appliesTo === 'empty') {
@@ -402,21 +462,42 @@ export default {
                         position: { x: targetCell.x, y: targetCell.y }
                     });
                 }
+            }
 
-            } else if (effect.target === 'global') {
-                if (effect.type === 'TORNADO') {
-                    commit('SET_TORNADO_ANIMATION', true);
+            else if (effect.target === 'global') {
+                let result;
+                switch (effect.type) {
+                    case 'TORNADO':
+                        commit('SET_TORNADO_ANIMATION', true);
+                        result = effect.apply(state.grid);
+                        commit('SET_TORNADO_TILES', result.tornadoTiles);
+                        commit('SET_CELLS', result.newGrid);
+                        setTimeout(() => {
+                            commit('SET_TORNADO_ANIMATION', false);
+                            commit('CLEAR_TORNADO_TILES');
+                        }, 500);
+                        break;
 
-                    const result = effect.apply(state.grid);
-                    commit('SET_TORNADO_TILES', result.tornadoTiles);
-                    commit('SET_CELLS', result.newGrid);
+                    case 'LIGHTNING':
+                        result = effect.apply(state.grid);
+                        commit('SET_CELLS', result.newGrid);
+                        commit('SET_LIGHTNING_STRIKE', result.lightningStrike);
 
-                    setTimeout(() => {
-                        commit('SET_TORNADO_ANIMATION', false);
-                        commit('CLEAR_TORNADO_TILES');
-                    }, 500);
+                        setTimeout(() => {
+                            commit('CLEAR_LIGHTNING_STRIKE');
+                            if (result.affectedCells) {
+                                commit('SET_AFFECTED_BY_LIGHTNING', result.affectedCells);
+                                setTimeout(() => commit('CLEAR_AFFECTED_BY_LIGHTNING'), 300);
+                            }
+                        }, 500);
+                        break;
+
+                    default:
+                        result = effect.apply(state.grid);
+                        commit('SET_CELLS', result.newGrid || state.grid);
                 }
             }
+
             commit('INCREMENT_EFFECT_CYCLE_COUNTER');
         },
 
