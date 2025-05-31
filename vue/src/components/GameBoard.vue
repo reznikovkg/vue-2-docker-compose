@@ -1,115 +1,93 @@
 <template>
   <div class="game-board" ref="gameContainer">
     <GameStatus />
-    <PlayerShip
-        :position="{ x: player.x, y: player.y }"
-        :dimensions="{ width: player.width, height: player.height }"
-        @move="handlePlayerMove"
-    />
-    <StarObject
-        v-for="(star, index) in stars"
-        :key="'star-' + index"
-        :position="star.position"
-        :size="starSize"
-    />
-    <AsteroidObject
-        v-for="(asteroid, index) in asteroids"
-        :key="'asteroid-'+index"
-        :position="asteroid.position"
-        :size="asteroidSize"
-        :health="asteroid.health"
-    />
-    <EnemyShip
-        v-for="(enemy, index) in enemies"
-        :key="'enemy-'+index"
-        :position="enemy.position"
-        :dimensions="{ width: enemySize, height: enemySize }"
-        :health="enemy.health"
-    />
-    <BulletObject
-        v-for="(bullet, index) in playerBullets"
-        :key="'player-bullet-'+index"
-        :position="bullet.position"
-        :size="bulletSize"
-    />
-    <BulletObject
-        v-for="(bullet, index) in enemyBullets"
-        :key="'enemy-bullet-'+index"
-        :position="bullet.position"
-        :size="enemyBulletSize"
-        :is-enemy="true"
+
+    <GameEntity
+        v-for="(entity, index) in gameEntities"
+        :key="`${entity.type}-${index}`"
+        :entity="entity"
+        @move="direction => handlePlayerMove(direction)"
     />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex'
-import PlayerShip from '@/components/parts/PlayerShip.vue'
-import StarObject from '@/components/parts/StarObject.vue'
-import AsteroidObject from '@/components/parts/AsteroidObject.vue'
-import EnemyShip from '@/components/parts/EnemyShip.vue'
-import BulletObject from '@/components/parts/BulletObject.vue'
+import GameEntity from '@/components/core/GameEntity.vue'
 import GameStatus from '@/components/parts/GameStatus.vue'
 
 export default {
   name: 'GameBoard',
   components: {
-    PlayerShip,
-    StarObject,
-    AsteroidObject,
-    EnemyShip,
-    BulletObject,
+    GameEntity,
     GameStatus
   },
   computed: {
     ...mapGetters('game', [
-      'starSize',
-      'asteroidSize',
-      'enemySize',
-      'bulletSize',
-      'enemyBulletSize',
-      'isGameRunning',
       'getPlayer',
       'getStars',
       'getAsteroids',
       'getEnemies',
       'getBullets',
-      'getScore',
-      'getPlayerHealth'
+      'starSize',
+      'asteroidSize',
+      'enemySize',
+      'bulletSize',
+      'enemyBulletSize'
     ]),
-
-    player() {
-      return this.getPlayer
-    },
-    stars() {
-      return this.getStars
-    },
-    asteroids() {
-      return this.getAsteroids
-    },
-    enemies() {
-      return this.getEnemies
-    },
-    playerBullets() {
-      return this.getBullets.filter(b => !b.isEnemy)
-    },
-    enemyBullets() {
-      return this.getBullets.filter(b => b.isEnemy)
+    gameEntities() {
+      return [
+        {
+          type: 'PlayerShip',
+          position: this.getPlayer.position,
+          dimensions: this.getPlayer.dimensions,
+          color: '#3498db'
+        },
+        ...this.getStars.map((star, index) => ({
+          type: 'StarObject',
+          position: star.position,
+          dimensions: { width: this.starSize, height: this.starSize },
+          color: 'gold',
+          key: `star-${index}`
+        })),
+        ...this.getAsteroids.map((asteroid, index) => ({
+          type: 'AsteroidObject',
+          position: asteroid.position,
+          dimensions: { width: this.asteroidSize, height: this.asteroidSize },
+          health: asteroid.health,
+          key: `asteroid-${index}`
+        })),
+        ...this.getEnemies.map((enemy, index) => ({
+          type: 'EnemyShip',
+          position: enemy.position,
+          dimensions: { width: this.enemySize, height: this.enemySize },
+          health: enemy.health,
+          key: `enemy-${index}`
+        })),
+        ...this.getBullets.map((bullet, index) => ({
+          type: 'BulletObject',
+          position: bullet.position,
+          dimensions: {
+            width: bullet.isEnemy ? this.enemyBulletSize : this.bulletSize,
+            height: bullet.isEnemy ? this.enemyBulletSize : this.bulletSize
+          },
+          isEnemy: bullet.isEnemy,
+          key: `bullet-${index}`
+        }))
+      ]
     }
   },
   methods: {
     ...mapActions('game', [
-      'initGame',
       'handlePlayerMove',
       'handleKeyDown',
       'handleKeyUp',
-      'fireBullet',
+      'initGame',
       'stopGame'
     ]),
     ...mapMutations('game', [
       'SET_GAME_DIMENSIONS'
     ]),
-
     handleResize() {
       if (this.$refs.gameContainer) {
         this.SET_GAME_DIMENSIONS({
@@ -117,19 +95,23 @@ export default {
           height: this.$refs.gameContainer.clientHeight
         })
       }
+    },
+    handleKeyPress(e, isKeyDown) {
+      const handler = isKeyDown ? this.handleKeyDown : this.handleKeyUp
+      handler(e.key)
     }
   },
   mounted() {
     this.initGame(this.$refs.gameContainer.clientWidth)
     window.addEventListener('resize', this.handleResize)
-    window.addEventListener('keydown', (e) => this.handleKeyDown(e.key))
-    window.addEventListener('keyup', (e) => this.handleKeyUp(e.key))
+    window.addEventListener('keydown', e => this.handleKeyPress(e, true))
+    window.addEventListener('keyup', e => this.handleKeyPress(e, false))
   },
   beforeDestroy() {
     this.stopGame()
     window.removeEventListener('resize', this.handleResize)
-    window.removeEventListener('keydown', this.handleKeyDown)
-    window.removeEventListener('keyup', this.handleKeyUp)
+    window.removeEventListener('keydown', this.handleKeyPress)
+    window.removeEventListener('keyup', this.handleKeyPress)
   }
 }
 </script>

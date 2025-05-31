@@ -5,10 +5,8 @@ export default {
         gameWidth: 0,
         gameHeight: 0,
         player: {
-            x: 0,
-            y: 0,
-            width: 40,
-            height: 40,
+            position: { x: 0, y: 0 },
+            dimensions: { width: 40, height: 40 },
             speed: 5,
             moving: 0
         },
@@ -43,51 +41,30 @@ export default {
     },
 
     getters: {
-        player: state => state.player,
-        stars: state => state.stars,
-        asteroids: state => state.asteroids,
-        enemies: state => state.enemies,
-        bullets: state => state.bullets,
+        getPlayer: state => ({
+            position: state.player.position,
+            dimensions: state.player.dimensions
+        }),
+        getStars: state => state.stars,
+        getAsteroids: state => state.asteroids,
+        getEnemies: state => state.enemies,
+        getBullets: state => state.bullets,
         starSize: state => state.starSize,
         asteroidSize: state => state.asteroidSize,
         enemySize: state => state.enemySize,
         bulletSize: state => state.bulletSize,
         enemyBulletSize: state => state.enemyBulletSize,
-        score: state => state.score,
-        playerHealth: state => state.playerHealth,
-        isGameRunning: state => state.isGameRunning,
-        getPlayer: state => ({
-            x: state.player.x,
-            y: state.player.y,
-            width: state.player.width,
-            height: state.player.height
-        }),
-        getStars: state => state.stars.map(star => ({
-            position: star.position
-        })),
-        getAsteroids: state => state.asteroids.map(asteroid => ({
-            position: asteroid.position,
-            health: asteroid.health
-        })),
-        getEnemies: state => state.enemies.map(enemy => ({
-            position: enemy.position,
-            health: enemy.health
-        })),
-        getBullets: state => state.bullets,
         getScore: state => state.score,
         getPlayerHealth: state => state.playerHealth,
+        isGameRunning: state => state.isGameRunning
     },
 
     mutations: {
         SET_GAME_DIMENSIONS(state, { width, height }) {
             state.gameWidth = width
             state.gameHeight = height
-            state.player.y = height - state.player.height - 60
-            state.player.x = (width - state.player.width) / 2
-        },
-
-        SET_PLAYER_X(state, x) {
-            state.player.x = Math.max(0, Math.min(state.gameWidth - state.player.width, x))
+            state.player.position.y = height - state.player.dimensions.height - 60
+            state.player.position.x = (width - state.player.dimensions.width) / 2
         },
 
         SET_PLAYER_MOVING(state, direction) {
@@ -95,44 +72,31 @@ export default {
         },
 
         UPDATE_PLAYER_POSITION(state, { x, y }) {
-            state.player.x = x
-            state.player.y = y
+            state.player.position.x = Math.max(0, Math.min(state.gameWidth - state.player.dimensions.width, x))
+            if (y !== undefined) {
+                state.player.position.y = y
+            }
         },
 
         ADD_STAR(state, star) {
             state.stars.push({
-                position: {
-                    x: star.position.x,
-                    y: star.position.y
-                },
-                speed: star.speed,
-                width: state.starSize,
-                height: state.starSize
+                position: star.position,
+                speed: star.speed
             })
         },
 
         ADD_ASTEROID(state, asteroid) {
             state.asteroids.push({
-                position: {
-                    x: asteroid.position.x,
-                    y: asteroid.position.y
-                },
+                position: asteroid.position,
                 speed: asteroid.speed,
-                width: state.asteroidSize,
-                height: state.asteroidSize,
                 health: 3
             })
         },
 
         ADD_ENEMY(state, enemy) {
             state.enemies.push({
-                position: {
-                    x: enemy.position.x,
-                    y: enemy.position.y
-                },
+                position: enemy.position,
                 speed: enemy.speed,
-                width: state.enemySize,
-                height: state.enemySize,
                 health: 2,
                 direction: enemy.direction || 0,
                 fireCounter: Math.floor(Math.random() * state.enemyFireRate.max),
@@ -145,59 +109,24 @@ export default {
 
         ADD_BULLET(state, bullet) {
             state.bullets.push({
-                position: {
-                    x: bullet.position.x,
-                    y: bullet.position.y
-                },
+                position: bullet.position,
                 speed: bullet.speed,
-                width: bullet.isEnemy ? state.enemyBulletSize : state.bulletSize,
-                height: bullet.isEnemy ? state.enemyBulletSize : state.bulletSize,
                 isEnemy: bullet.isEnemy || false
             })
         },
 
-        UPDATE_STAR_POSITION(state, { index, y }) {
-            state.stars[index].position.y = y
-        },
-
-        UPDATE_ASTEROID_POSITION(state, { index, y }) {
-            state.asteroids[index].position.y = y
-        },
-
-        UPDATE_ENEMY_POSITION(state, payload) {
-            const { index, x, y } = payload;
-
-            if (x !== undefined) {
-                state.enemies[index].position.x = x;
-            }
-
-            if (y !== undefined) {
-                state.enemies[index].position.y = y;
-            }
+        UPDATE_OBJECT_POSITION(state, { type, index, x, y }) {
+            const obj = state[type][index]
+            if (x !== undefined) obj.position.x = x
+            if (y !== undefined) obj.position.y = y
         },
 
         UPDATE_ENEMY_DIRECTION(state, { index, direction }) {
             state.enemies[index].direction = direction
         },
 
-        UPDATE_BULLET_POSITION(state, { index, y }) {
-            state.bullets[index].position.y = y
-        },
-
-        REMOVE_STAR(state, index) {
-            state.stars.splice(index, 1)
-        },
-
-        REMOVE_ASTEROID(state, index) {
-            state.asteroids.splice(index, 1)
-        },
-
-        REMOVE_ENEMY(state, index) {
-            state.enemies.splice(index, 1)
-        },
-
-        REMOVE_BULLET(state, index) {
-            state.bullets.splice(index, 1)
+        REMOVE_OBJECT(state, { type, index }) {
+            state[type].splice(index, 1)
         },
 
         DAMAGE_ENEMY(state, index) {
@@ -262,7 +191,7 @@ export default {
             state.enemies = []
             state.bullets = []
             state.score = 0
-            state.player.x = (state.gameWidth - state.player.width) / 2
+            state.player.position.x = (state.gameWidth - state.player.dimensions.width) / 2
             state.starSpawnCounter = 0
             state.asteroidSpawnCounter = 0
             state.enemySpawnCounter = 0
@@ -297,10 +226,10 @@ export default {
 
             const checkCollision = (obj1, obj2) => {
                 return (
-                    obj1.x < obj2.x + obj2.width &&
-                    obj1.x + obj1.width > obj2.x &&
-                    obj1.y < obj2.y + obj2.height &&
-                    obj1.y + obj1.height > obj2.y
+                    obj1.position.x < obj2.position.x + obj2.dimensions.width &&
+                    obj1.position.x + obj1.dimensions.width > obj2.position.x &&
+                    obj1.position.y < obj2.position.y + obj2.dimensions.height &&
+                    obj1.position.y + obj1.dimensions.height > obj2.position.y
                 )
             }
 
@@ -308,10 +237,9 @@ export default {
                 if (!state.isGameRunning) return
 
                 if (state.player.moving !== 0) {
-                    const newX = state.player.x + state.player.speed * state.player.moving
+                    const newX = state.player.position.x + state.player.speed * state.player.moving
                     commit('UPDATE_PLAYER_POSITION', {
-                        x: Math.max(0, Math.min(state.gameWidth - state.player.width, newX)),
-                        y: state.player.y
+                        x: Math.max(0, Math.min(state.gameWidth - state.player.dimensions.width, newX))
                     })
                 }
 
@@ -353,46 +281,44 @@ export default {
                 }
 
                 for (let i = state.stars.length - 1; i >= 0; i--) {
-                    const newY = state.stars[i].position.y + state.stars[i].speed
+                    const star = state.stars[i]
+                    const newY = star.position.y + star.speed
 
-                    if (checkCollision(state.player, {
-                        x: state.stars[i].position.x,
-                        y: newY,
-                        width: state.starSize,
-                        height: state.starSize
-                    })) {
+                    if (checkCollision(
+                        { position: state.player.position, dimensions: state.player.dimensions },
+                        { position: { x: star.position.x, y: newY }, dimensions: { width: state.starSize, height: state.starSize } }
+                    )) {
                         commit('INCREMENT_SCORE', 10)
-                        commit('REMOVE_STAR', i)
+                        commit('REMOVE_OBJECT', { type: 'stars', index: i })
                     } else if (newY > state.gameHeight) {
-                        commit('REMOVE_STAR', i)
+                        commit('REMOVE_OBJECT', { type: 'stars', index: i })
                     } else {
-                        commit('UPDATE_STAR_POSITION', { index: i, y: newY })
+                        commit('UPDATE_OBJECT_POSITION', { type: 'stars', index: i, y: newY })
                     }
                 }
 
                 for (let i = state.asteroids.length - 1; i >= 0; i--) {
-                    const newY = state.asteroids[i].position.y + state.asteroids[i].speed
+                    const asteroid = state.asteroids[i]
+                    const newY = asteroid.position.y + asteroid.speed
 
-                    if (checkCollision(state.player, {
-                        x: state.asteroids[i].position.x,
-                        y: newY,
-                        width: state.asteroidSize,
-                        height: state.asteroidSize
-                    })) {
+                    if (checkCollision(
+                        { position: state.player.position, dimensions: state.player.dimensions },
+                        { position: { x: asteroid.position.x, y: newY }, dimensions: { width: state.asteroidSize, height: state.asteroidSize } }
+                    )) {
                         commit('DAMAGE_PLAYER')
                         if (state.playerHealth <= 0) {
                             commit('SET_GAME_RUNNING', false)
                             cancelAnimationFrame(state.gameLoop)
                             commit('SET_GAME_LOOP', null)
-                            dispatch('game/gameOver', null, { root: true })
-                            break
+                            dispatch('gameOver')
+                            return
                         } else {
-                            commit('REMOVE_ASTEROID', i)
+                            commit('REMOVE_OBJECT', { type: 'asteroids', index: i })
                         }
                     } else if (newY > state.gameHeight) {
-                        commit('REMOVE_ASTEROID', i)
+                        commit('REMOVE_OBJECT', { type: 'asteroids', index: i })
                     } else {
-                        commit('UPDATE_ASTEROID_POSITION', { index: i, y: newY })
+                        commit('UPDATE_OBJECT_POSITION', { type: 'asteroids', index: i, y: newY })
                     }
                 }
 
@@ -407,8 +333,8 @@ export default {
                         dispatch('fireBullet', {
                             isEnemy: true,
                             position: {
-                                x: enemy.position.x + enemy.width / 2 - state.enemyBulletSize / 2,
-                                y: enemy.position.y + enemy.height
+                                x: enemy.position.x + state.enemySize / 2 - state.enemyBulletSize / 2,
+                                y: enemy.position.y + state.enemySize
                             }
                         })
                         enemy.fireCounter = 0
@@ -420,82 +346,65 @@ export default {
 
                     if (enemy.direction !== 0) {
                         newX = enemy.position.x + enemy.speed * enemy.direction
-                        if (newX <= 0 || newX >= state.gameWidth - enemy.width) {
+                        if (newX <= 0 || newX >= state.gameWidth - state.enemySize) {
                             commit('UPDATE_ENEMY_DIRECTION', { index: i, direction: -enemy.direction })
                         }
                     }
 
-                    if (checkCollision(state.player, {
-                        x: newX,
-                        y: newY,
-                        width: enemy.width,
-                        height: enemy.height
-                    })) {
+                    if (checkCollision(
+                        { position: state.player.position, dimensions: state.player.dimensions },
+                        { position: { x: newX, y: newY }, dimensions: { width: state.enemySize, height: state.enemySize } }
+                    )) {
                         commit('DAMAGE_PLAYER')
-                        commit('REMOVE_ENEMY', i)
+                        commit('REMOVE_OBJECT', { type: 'enemies', index: i })
                         if (state.playerHealth <= 0) {
                             commit('SET_GAME_RUNNING', false)
                             cancelAnimationFrame(state.gameLoop)
                             commit('SET_GAME_LOOP', null)
-                            dispatch('game/gameOver', null, { root: true })
-                            break
+                            dispatch('gameOver')
+                            return
                         }
                     } else if (newY > state.gameHeight) {
-                        commit('REMOVE_ENEMY', i)
+                        commit('REMOVE_OBJECT', { type: 'enemies', index: i })
                     } else {
-                        commit('UPDATE_ENEMY_POSITION', { index: i, x: newX, y: newY })
+                        commit('UPDATE_OBJECT_POSITION', { type: 'enemies', index: i, x: newX, y: newY })
                     }
                 }
 
                 for (let i = state.bullets.length - 1; i >= 0; i--) {
                     const bullet = state.bullets[i]
+                    const bulletSize = bullet.isEnemy ? state.enemyBulletSize : state.bulletSize
                     const newY = bullet.position.y + bullet.speed
 
                     if (bullet.isEnemy) {
-                        if (checkCollision({
-                            x: bullet.position.x,
-                            y: newY,
-                            width: bullet.width,
-                            height: bullet.height
-                        }, {
-                            x: state.player.x,
-                            y: state.player.y,
-                            width: state.player.width,
-                            height: state.player.height
-                        })) {
+                        if (checkCollision(
+                            { position: { x: bullet.position.x, y: newY }, dimensions: { width: bulletSize, height: bulletSize } },
+                            { position: state.player.position, dimensions: state.player.dimensions }
+                        )) {
                             commit('DAMAGE_PLAYER')
-                            commit('REMOVE_BULLET', i)
+                            commit('REMOVE_OBJECT', { type: 'bullets', index: i })
                             if (state.playerHealth <= 0) {
                                 commit('SET_GAME_RUNNING', false)
                                 cancelAnimationFrame(state.gameLoop)
                                 commit('SET_GAME_LOOP', null)
-                                dispatch('game/gameOver', null, { root: true })
-                                break
+                                dispatch('gameOver')
+                                return
                             }
                             continue
                         }
-                    }
-
-                    else {
+                    } else {
                         let bulletHit = false
 
                         for (let j = state.enemies.length - 1; j >= 0; j--) {
                             const enemy = state.enemies[j]
-                            if (checkCollision({
-                                x: bullet.position.x,
-                                y: newY,
-                                width: bullet.width,
-                                height: bullet.height
-                            }, {
-                                x: enemy.position.x,
-                                y: enemy.position.y,
-                                width: enemy.width,
-                                height: enemy.height
-                            })) {
+                            if (checkCollision(
+                                { position: { x: bullet.position.x, y: newY }, dimensions: { width: bulletSize, height: bulletSize } },
+                                { position: enemy.position, dimensions: { width: state.enemySize, height: state.enemySize } }
+                            )) {
                                 commit('DAMAGE_ENEMY', j)
                                 if (state.enemies[j].health <= 0) {
                                     commit('INCREMENT_SCORE', 20)
-                                    commit('REMOVE_ENEMY', j)
+                                    commit('REMOVE_OBJECT', { type: 'enemies', index: j })
                                 }
                                 bulletHit = true
                                 break
@@ -505,21 +414,14 @@ export default {
                         if (!bulletHit) {
                             for (let j = state.asteroids.length - 1; j >= 0; j--) {
                                 const asteroid = state.asteroids[j]
-                                if (checkCollision({
-                                    x: bullet.position.x,
-                                    y: newY,
-                                    width: bullet.width,
-                                    height: bullet.height
-                                }, {
-                                    x: asteroid.position.x,
-                                    y: asteroid.position.y,
-                                    width: asteroid.width,
-                                    height: asteroid.height
-                                })) {
+                                if (checkCollision(
+                                    { position: { x: bullet.position.x, y: newY }, dimensions: { width: bulletSize, height: bulletSize } },
+                                    { position: asteroid.position, dimensions: { width: state.asteroidSize, height: state.asteroidSize } }
+                                )) {
                                     commit('DAMAGE_ASTEROID', j)
                                     if (state.asteroids[j].health <= 0) {
                                         commit('INCREMENT_SCORE', 15)
-                                        commit('REMOVE_ASTEROID', j)
+                                        commit('REMOVE_OBJECT', { type: 'asteroids', index: j })
                                     }
                                     bulletHit = true
                                     break
@@ -528,15 +430,15 @@ export default {
                         }
 
                         if (bulletHit) {
-                            commit('REMOVE_BULLET', i)
+                            commit('REMOVE_OBJECT', { type: 'bullets', index: i })
                             continue
                         }
                     }
 
                     if (newY < 0 || newY > state.gameHeight) {
-                        commit('REMOVE_BULLET', i)
+                        commit('REMOVE_OBJECT', { type: 'bullets', index: i })
                     } else {
-                        commit('UPDATE_BULLET_POSITION', { index: i, y: newY })
+                        commit('UPDATE_OBJECT_POSITION', { type: 'bullets', index: i, y: newY })
                     }
                 }
 
@@ -588,8 +490,8 @@ export default {
                     dispatch('fireBullet', {
                         isEnemy: false,
                         position: {
-                            x: state.player.x + state.player.width / 2 - state.bulletSize / 2,
-                            y: state.player.y - state.bulletSize
+                            x: state.player.position.x + state.player.dimensions.width / 2 - state.bulletSize / 2,
+                            y: state.player.position.y - state.bulletSize
                         }
                     })
                     break
@@ -611,10 +513,9 @@ export default {
 
         gameOver({ commit, state, dispatch }) {
             const restartAction = () => {
-                commit('modals/removeAllModals', null, { root: true });
-                dispatch('resetGame');
-                dispatch('startGame');
-            };
+                commit('modals/removeAllModals', null, { root: true })
+                dispatch('resetGame')
+            }
 
             commit('modals/openModal', {
                 component: 'HelpModal',
@@ -627,7 +528,7 @@ export default {
                         click: restartAction
                     }]
                 }
-            }, { root: true });
+            }, { root: true })
         }
     }
 }

@@ -1,28 +1,34 @@
 <template>
   <div
-      class="player-ship"
-      :style="objectStyle"
-      @mousedown="(e) => $emit('move', e.clientX > position.x ? 1 : -1)"
+      class="game-object"
+      :style="{
+      left: `${position.x}px`,
+      top: `${position.y}px`,
+      width: `${dimensions.width}px`,
+      height: `${dimensions.height}px`,
+      backgroundColor: color,
+      position: 'absolute'
+    }"
+      v-on="$listeners"
   ></div>
 </template>
 
 <script>
 export default {
-  name: 'PlayerShip',
+  name: 'GameObject',
   props: {
     position: {
       type: Object,
-      required: true
+      required: true,
+      default: () => ({ x: 0, y: 0 })
     },
     dimensions: {
       type: Object,
       default: () => ({ width: 40, height: 40 })
-    }
-  },
-  data() {
-    return {
-      color: '#3498db',
-      speed: 5
+    },
+    color: {
+      type: String,
+      default: '#ffffff'
     }
   },
   computed: {
@@ -36,22 +42,12 @@ export default {
         position: 'absolute'
       }
     }
-  },
-  methods: {
-    updatePosition(newX, gameWidth) {
-      const boundedX = Math.max(0, Math.min(gameWidth - this.dimensions.width, newX))
-      this.$emit('update-position', {
-        x: boundedX,
-        y: this.position.y
-      })
-    }
   }
 }
 </script>
 
 <style scoped lang="less">
-.player-ship {
+.game-object {
   position: absolute;
-  transition: left 0.1s ease-out;
 }
 </style>

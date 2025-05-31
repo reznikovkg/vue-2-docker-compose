@@ -1,41 +1,27 @@
 <template>
-  <div
+  <GameObject
+      :position="position"
+      :dimensions="dimensions"
+      color="gold"
       class="star-object"
-      :style="starObjectStyle"
-  ></div>
+  />
 </template>
 
 <script>
+import GameObject from '@/components/core/GameObject'
+
 export default {
   name: 'StarObject',
+  components: { GameObject },
   props: {
-    position: {
-      type: Object,
-      required: true,
-      default: () => ({ x: 0, y: 0 })
-    },
-    size: {
-      type: Number,
-      required: true
-    }
-  },
-  computed: {
-    starObjectStyle () {
-      return {
-        left: `${this.position.x}px`,
-        top: `${this.position.y}px`,
-        width: `${this.size}px`,
-        height: `${this.size}px`
-      }
-    }
+    position: Object,
+    dimensions: Object
   }
 }
 </script>
 
 <style scoped lang="less">
 .star-object {
-  position: absolute;
-  background-color: @cStar;
   border-radius: 50%;
 }
 </style>
