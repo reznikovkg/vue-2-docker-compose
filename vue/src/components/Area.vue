@@ -1,10 +1,7 @@
 <template>
-
-
   <g>
     <polygon v-if="area.length" class='area' :points="to_points_aaa( area )" @click="clk"></polygon>
   </g>
-
 </template>
 
 <script>
@@ -29,7 +26,6 @@
   }
 
   import * as cl from "../classes.js"
-
 </script>
 
 <style></style>
