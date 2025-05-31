@@ -1,3 +1,15 @@
+<template>
+	<g @contextmenu="handler($event)" @click="clk">
+		<circle :class="'tower '+twr.cls" :cx="twr.x" :cy="twr.y" :r="9"></circle>		
+		<text :x="twr.x-3" :y="twr.y+4">{{twr.level}}</text>
+		<g v-if="debug">
+			<circle :class="'tower-area '+twr.cls" :cx="twr.x" :cy="twr.y" :r="twr.rad"></circle>
+			<text :x="twr.x+12" :y="twr.y-2">{{twr.total_damage}}</text>
+			<text :x="twr.x+12" :y="twr.y+7" fill="red">{{twr.damage}}</text>
+		</g>
+	</g>
+</template>
+
 <script>
 	export default {
 
@@ -19,18 +31,6 @@
 		}
 	}
 </script>
-
-<template>
-	<g @contextmenu="handler($event)" @click="clk">
-		<circle :class="'tower '+twr.cls" :cx="twr.x" :cy="twr.y" :r="9"></circle>		
-		<text :x="twr.x-3" :y="twr.y+4">{{twr.level}}</text>
-		<g v-if="debug">
-			<circle :class="'tower-area '+twr.cls" :cx="twr.x" :cy="twr.y" :r="twr.rad"></circle>
-			<text :x="twr.x+12" :y="twr.y-2">{{twr.total_damage}}</text>
-			<text :x="twr.x+12" :y="twr.y+7" fill="red">{{twr.damage}}</text>
-		</g>
-	</g>
-</template>
 
 <style>
 

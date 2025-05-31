@@ -1,9 +1,3 @@
-<script>
-	export default {
-
-	}
-</script>
-
 <template>
 	<div id="app">
 		<div>
@@ -18,6 +12,12 @@
 
 	</div>
 </template>
+
+<script>
+	export default {
+		
+	}
+</script>
 
 <style>
 

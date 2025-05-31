@@ -1,3 +1,28 @@
+<template>
+	<div id="game" >
+		<div class="gr" style='text-align: left; min-height1: 500px;'>
+			<div style='text-align: center; background-color: #BBB;'>Убито: <b>{{ killed }}</b></div>
+
+			<button v-on:click="flipGame" style='margin-right: 5px;'>{{ running?"СТОП":"СТАРТ" }}</button>
+			<button v-on:click="flipDebug" style='margin-right: 5px;'>Отладка</button>
+
+			{{ dt }}
+
+			<div>
+				<svg style="width: 600px; height: 400px; border-radius: 4px; border: 1px solid #AAA; margin-top: 5px;" @click="clk">
+					<text x=5 y=10 class='lbl' >Level: #{{ level }}</text> 
+					<Laser v-for="laser in lasers" :start="laser.start" :end="laser.end" />
+					<Area v-for="ar in areas[level]" :area="ar" :towers="towers" />
+					<Foe v-for="f in foes" :f="f" :debug="debug" />
+					<Tower v-for="twr in towers" :twr="twr" :towers="towers" :debug="debug" />
+
+				</svg>
+			</div>
+
+		</div>
+	</div>
+</template>
+
 <script>
 
 	import * as cl 	from "../classes.js"
@@ -17,12 +42,10 @@
 				debug: 		true,	
 				running: 	true,	
 
-				foes: 		[],	
-				towers: 	[], 
-				lasers:   	[], 
-
-								
-				areas: [
+				foes: 	[],	
+				towers: [],
+				lasers: [],				
+				areas: 	[
 					[],
 					[
 						[ { "x": 556, "y": 67 }, { "x": 185, "y": 317 }, { "x": 49, "y": 316 }, { "x": 49, "y": 350 }, { "x": 551, "y": 351 }, { "x": 551, "y": 308 }, { "x": 412, "y": 224 }, { "x": 560, "y": 104 },
@@ -49,8 +72,6 @@
 
 			}
 		},
-
-		
 
 		components: {
 			Tower,
@@ -174,31 +195,4 @@
 		},
 	}
 
-
-
 </script>
-
-<template>
-	<div id="game" >
-		<div class="gr" style='text-align: left; min-height1: 500px;'>
-			<div style='text-align: center; background-color: #BBB;'>Убито: <b>{{ killed }}</b></div>
-
-			<button v-on:click="flipGame" style='margin-right: 5px;'>{{ running?"СТОП":"СТАРТ" }}</button>
-			<button v-on:click="flipDebug" style='margin-right: 5px;'>Отладка</button>
-
-			{{ dt }}
-
-			<div>
-				<svg style="width: 600px; height: 400px; border-radius: 4px; border: 1px solid #AAA; margin-top: 5px;" @click="clk">
-					<text x=5 y=10 class='lbl' >Level: #{{ level }}</text> 
-					<Laser v-for="laser in lasers" :start="laser.start" :end="laser.end" />
-					<Area v-for="ar in areas[level]" :area="ar" :towers="towers" />
-					<Foe v-for="f in foes" :f="f" :debug="debug" />
-					<Tower v-for="twr in towers" :twr="twr" :towers="towers" :debug="debug" />
-
-				</svg>
-			</div>
-
-		</div>
-	</div>
-</template>

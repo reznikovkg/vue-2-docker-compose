@@ -1,3 +1,12 @@
+<template>
+
+
+	<g>
+		<polygon v-if="area.length" class='area' :points="to_points_aaa( area )" @click="clk"></polygon>
+	</g>
+
+</template>
+
 <script>
 	export default {
 		props: [ `area`, `towers` ],
@@ -22,14 +31,5 @@
 	import * as cl from "../classes.js"
 
 </script>
-
-<template>
-
-
-	<g>
-		<polygon v-if="area.length" class='area' :points="to_points_aaa( area )" @click="clk"></polygon>
-	</g>
-
-</template>
 
 <style></style>

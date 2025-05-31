@@ -1,3 +1,11 @@
+<template>
+	<g @click="selectFoe(f)">
+		<circle class="foe-red" :cx="f.x" :cy="f.y" :r="9"></circle>
+		<circle v-if="f.selected" class="foe-selected" :cx="f.x" :cy="f.y" :r="12"></circle>
+		<text :x="f.x+15" :y="f.y+3" v-if="debug">{{ f.life }}</text>
+	</g>
+</template>
+
 <script>
 	export default {
 
@@ -11,14 +19,6 @@
 		},
 	}
 </script>
-
-<template>
-	<g @click="selectFoe(f)">
-		<circle class="foe-red" :cx="f.x" :cy="f.y" :r="9"></circle>
-		<circle v-if="f.selected" class="foe-selected" :cx="f.x" :cy="f.y" :r="12"></circle>
-		<text :x="f.x+15" :y="f.y+3" v-if="debug">{{ f.life }}</text>
-	</g>
-</template>
 
 <style>
 
