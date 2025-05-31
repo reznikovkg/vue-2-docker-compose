@@ -1,9 +1,8 @@
 <template>
-  <GameObject
-      :position="position"
-      :dimensions="dimensions"
-      :color="enemyColor"
+  <div
       class="enemy-ship"
+      :style="objectStyle"
+      v-on="$listeners"
   />
 </template>
 
@@ -12,20 +11,31 @@ import GameObject from '@/components/core/GameObject'
 
 export default {
   name: 'EnemyShip',
-  components: { GameObject },
+  extends: GameObject,
   props: {
-    position: Object,
-    dimensions: Object,
     health: {
       type: Number,
       default: 2
     }
   },
+  data() {
+    return {
+      dimensions: { width: 40, height: 40 }
+    }
+  },
   computed: {
+    objectStyle() {
+      return {
+        ...this.$options.extends.computed.objectStyle.call(this),
+        backgroundColor: this.enemyColor
+      }
+    },
     enemyColor() {
-      switch(this.health) {
-        case 1: return '#a467d5'
-        default: return '#781dc6'
+      switch (this.health) {
+        case 1:
+          return '#a467d5'
+        default:
+          return '#781dc6'
       }
     }
   }

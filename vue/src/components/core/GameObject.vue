@@ -1,16 +1,9 @@
 <template>
   <div
       class="game-object"
-      :style="{
-      left: `${position.x}px`,
-      top: `${position.y}px`,
-      width: `${dimensions.width}px`,
-      height: `${dimensions.height}px`,
-      backgroundColor: color,
-      position: 'absolute'
-    }"
+      :style="objectStyle"
       v-on="$listeners"
-  ></div>
+  />
 </template>
 
 <script>

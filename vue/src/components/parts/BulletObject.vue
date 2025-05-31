@@ -1,9 +1,8 @@
 <template>
-  <GameObject
-      :position="position"
-      :dimensions="dimensions"
-      :color="bulletColor"
+  <div
       class="bullet-object"
+      :style="objectStyle"
+      v-on="$listeners"
   />
 </template>
 
@@ -12,18 +11,24 @@ import GameObject from '@/components/core/GameObject'
 
 export default {
   name: 'BulletObject',
-  components: { GameObject },
+  extends: GameObject,
   props: {
-    position: Object,
-    dimensions: Object,
     isEnemy: {
       type: Boolean,
       default: false
     }
   },
+  data() {
+    return {
+      dimensions: { width: 8, height: 8 }
+    }
+  },
   computed: {
-    bulletColor() {
-      return this.isEnemy ? '#ffc155' : '#ffffff'
+    objectStyle() {
+      return {
+        ...this.$options.extends.computed.objectStyle.call(this),
+        backgroundColor: this.isEnemy ? '#ffc155' : '#ffffff'
+      }
     }
   }
 }

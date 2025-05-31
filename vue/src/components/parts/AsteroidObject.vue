@@ -1,9 +1,8 @@
 <template>
-  <GameObject
-      :position="position"
-      :dimensions="dimensions"
-      :color="asteroidColor"
+  <div
       class="asteroid-object"
+      :style="objectStyle"
+      v-on="$listeners"
   />
 </template>
 
@@ -12,13 +11,16 @@ import GameObject from '@/components/core/GameObject'
 
 export default {
   name: 'AsteroidObject',
-  components: { GameObject },
+  extends: GameObject,
   props: {
-    position: Object,
-    dimensions: Object,
     health: {
       type: Number,
       default: 3
+    }
+  },
+  data() {
+    return {
+      dimensions: { width: 30, height: 30 } // Переопределяем dimensions
     }
   },
   computed: {
@@ -27,6 +29,12 @@ export default {
         case 2: return '#f36812'
         case 1: return '#f1880f'
         default: return '#e74c3c'
+      }
+    },
+    objectStyle() {
+      return {
+        ...this.$options.extends.computed.objectStyle.call(this),
+        backgroundColor: this.asteroidColor
       }
     }
   }

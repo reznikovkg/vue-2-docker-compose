@@ -2,48 +2,20 @@
   <div
       class="player-ship"
       :style="objectStyle"
-      @mousedown="(e) => $emit('move', e.clientX > position.x ? 1 : -1)"
-  ></div>
+      v-on="$listeners"
+  />
 </template>
 
 <script>
+import GameObject from '@/components/core/GameObject'
+
 export default {
   name: 'PlayerShip',
-  props: {
-    position: {
-      type: Object,
-      required: true
-    },
-    dimensions: {
-      type: Object,
-      default: () => ({ width: 40, height: 40 })
-    }
-  },
+  extends: GameObject,
   data() {
     return {
       color: '#3498db',
-      speed: 5
-    }
-  },
-  computed: {
-    objectStyle() {
-      return {
-        left: `${this.position.x}px`,
-        top: `${this.position.y}px`,
-        width: `${this.dimensions.width}px`,
-        height: `${this.dimensions.height}px`,
-        backgroundColor: this.color,
-        position: 'absolute'
-      }
-    }
-  },
-  methods: {
-    updatePosition(newX, gameWidth) {
-      const boundedX = Math.max(0, Math.min(gameWidth - this.dimensions.width, newX))
-      this.$emit('update-position', {
-        x: boundedX,
-        y: this.position.y
-      })
+      dimensions: { width: 40, height: 40 }
     }
   }
 }
@@ -51,7 +23,6 @@ export default {
 
 <style scoped lang="less">
 .player-ship {
-  position: absolute;
   transition: left 0.1s ease-out;
 }
 </style>
