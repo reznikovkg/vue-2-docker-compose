@@ -21,7 +21,7 @@
         <button
             class="game__undo-button"
             :disabled="!canUndo"
-            @click="() => undoMove()"
+            @click="() => handleUndoMove()"
         >
           <img src="@/utils/restartbtn.png" />
         </button>
@@ -37,7 +37,6 @@
         </div>
       </div>
     </div>
-
     <div class="game__grid-size-selector">
       <label v-for="size in gridSizes" :key="size" class="game__grid-size-selector__item">
         <input
@@ -45,7 +44,7 @@
             class="game__grid-size-selector__radio"
             type="radio"
             :value="size"
-            @change="() => updateGridSize()"
+            @change="()=>updateGridSize()"
         />
         <span
             class="game__grid-size-selector__button"
@@ -69,7 +68,6 @@
           :position="{ x: cell.x, y: cell.y }"
           :move-from="cell.moveFrom"
           :tornado="tornadoTiles.some(t => t.x === cell.x && t.y === cell.y)"
-
       />
     </div>
   </div>
@@ -82,15 +80,7 @@ import { KEY_MAP } from "@/utils/keyMap";
 
 export default {
   name: 'HomePage',
-  components: {
-    GameTile,
-  },
-  data() {
-    return {
-      selectedGridSize: 4,
-      gridSizes: [4, 5, 6, 7, 8, 9, 10],
-    };
-  },
+  components: { GameTile },
   computed: {
     ...mapGetters('game', [
       'getCells',
@@ -99,15 +89,14 @@ export default {
       'isGameOver',
       'isVictory',
       'canUndo',
-      'getGridSize',
       'getFormattedCells',
+      'getGridSize',
       'hasPossibleMoves',
       'isChaosActive',
       'frozenCells',
       'getMovedTiles',
       'isTornadoAnimating',
       'tornadoTiles',
-
     ]),
     gridStyle() {
       const gridSize = this.getGridSize;
@@ -121,10 +110,9 @@ export default {
         display: 'grid',
         gap: 'clamp(5px, 1vw, 10px)',
         gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-        gridTemplateRows: `repeat(${gridSize}, 1fr)`
+        gridTemplateRows: `repeat(${gridSize}, 1fr)`,
       };
     },
-
     flatGrid() {
       return this.getFormattedCells || [];
     },
@@ -155,7 +143,11 @@ export default {
       });
 
       return Array.from(tilesMap.values());
-    }
+    },
+  },
+  mounted() {
+    this.restartGame();
+    this.$refs.gameField?.focus();
   },
   methods: {
     ...mapActions('game', [
@@ -163,10 +155,10 @@ export default {
       'restartGame',
       'setFocus',
       'addSpecificTiles',
-      'undoMove',
+      'handleUndoMove',
       'setGridSize',
-      'toggleChaosMode',
       'restartGameWithGridSize',
+      'toggleChaosMode',
       'applyRandomEffect',
     ]),
     testChaosButton() {
@@ -198,10 +190,12 @@ export default {
       });
     },
   },
-  mounted() {
-    this.restartGame();
-    this.$refs.gameField?.focus();
-  }
+  data() {
+    return {
+      selectedGridSize: 4,
+      gridSizes: [4, 5, 6, 7, 8, 9, 10],
+    };
+  },
 };
 </script>
 

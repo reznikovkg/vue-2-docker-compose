@@ -2,13 +2,16 @@
   <div
       class="game__tile"
       :class="[tileClass, {
-        'tornado-effect': tornado && !isBlackhole,
-        'game__tile__blackhole': isBlackhole,
-        'lightning-effect': isLightningStrike,
-        'lightning-effect-neighbor': isLightningNeighbor
-      }]"
+      'game__tile--tornado': tornado && !isBlackhole,
+      'game__tile__blackhole': isBlackhole,
+      'game__tile--lightning': isLightningStrike,
+      'game__tile--lightning-neighbor': isLightningNeighbor,
+      'game__tile--with-crack': hasCrack
+    }]"
       :style="tileStyle"
   >
+    <div v-if="hasCrack" class="game__tile__crack"></div>
+
     <span v-if="isBlackhole"></span>
     <span v-else>{{ formattedValue }}</span>
 
@@ -23,7 +26,6 @@
 
 <script>
 import { mapGetters } from "vuex";
-
 export default {
   name: 'GameTile',
   props: {
@@ -41,16 +43,21 @@ export default {
       'isTornadoAnimating',
       'tornadoTiles',
       'getGridSize',
-      'getLightningStrike'
+      'getLightningStrike',
+      'getCrackEffects'
     ]),
+    hasCrack() {
+      return this.getCrackEffects.some(c => c.x === this.position.x && c.y === this.position.y);
+    },
     isLightningStrike() {
       const strike = this.getLightningStrike;
       return strike && strike.x === this.position.x && strike.y === this.position.y;
     },
     isLightningNeighbor() {
       const strike = this.getLightningStrike;
-      if (!strike) return false;
-
+      if (!strike) {
+        return false;
+      }
       const dx = Math.abs(strike.x - this.position.x);
       const dy = Math.abs(strike.y - this.position.y);
       return (dx === 1 && dy === 0) || (dx === 0 && dy === 1);
@@ -240,6 +247,34 @@ export default {
       z-index: 20;
     }
   }
+  &--with-crack {
+    position: relative;
+    background-color: darken(#cec0b3, 10%);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__crack {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        linear-gradient(45deg, transparent 45%, rgba(0,0,0,0.7) 46%, transparent 47%),
+        linear-gradient(-45deg, transparent 45%, rgba(0,0,0,0.7) 46%, transparent 47%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
 }
 
 @keyframes pulse {
@@ -252,7 +287,6 @@ export default {
     transform: scale(1.05);
   }
 }
-
 
 @keyframes frostGlow {
   0% {
@@ -288,7 +322,6 @@ export default {
     opacity: 1;
   }
 }
-
 
 @keyframes lightningStrike {
   0% { box-shadow: 0 0 10px #ff0; }

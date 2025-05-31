@@ -1,4 +1,4 @@
-import { KEY_MAP } from '@/utils/keyMap';
+import { KEY_MAP } from '@/utils/keyMap.js';
 
 const ChaosManager = {
     effects: [
@@ -115,15 +115,49 @@ const ChaosManager = {
                 };
             }
         },
+        {
+            type: 'CRACKS',
+            target: 'global',
+            duration: 3,
+            appliesTo: 'empty',
+            apply(grid) {
+                const emptyCells = grid.flat().filter(cell => cell.value === 0 && cell.effects.length === 0);
+                if (emptyCells.length === 0) {
+                    return grid;
+                }
+
+                const crackCount = Math.min(Math.max(1, Math.floor(grid.length / 3)), 3);
+                const cracks = [];
+                for (let i = 0; i < crackCount; i++) {
+                    if (emptyCells.length === 0) {
+                        break;
+                    }
+
+                    const randomIndex = Math.floor(Math.random() * emptyCells.length);
+                    const cell = emptyCells[randomIndex];
+                    cell.effects.push({
+                        type: 'CRACKS',
+                        expiresIn: this.duration
+                    });
+                    cracks.push({ x: cell.x, y: cell.y });
+                    emptyCells.splice(randomIndex, 1);
+                }
+
+                return {
+                    newGrid: grid,
+                    cracks
+                };
+            },
+        }
     ],
     getRandomEffect() {
         //return this.effects.find(effect => effect.type === 'FREEZE');
         //return this.effects.find(effect => effect.type === 'TORNADO');
         //return this.effects.find(effect => effect.type === 'BLACKHOLE');
-        return this.effects.find(effect => effect.type === 'LIGHTNING');
+        //return this.effects.find(effect => effect.type === 'LIGHTNING');
+        //return this.effects.find(effect => effect.type === 'CRACKS');
 
-
-        //return this.effects[Math.floor(Math.random() * this.effects.length)];
+        return this.effects[Math.floor(Math.random() * this.effects.length)];
     },
     getEffectConfig(type) {
         return this.effects.find(e => e.type === type);
@@ -257,9 +291,44 @@ export default {
             return cell.effects.find(e => e.type === 'BLACKHOLE') || null;
         },
         getLightningStrike: (state) => state.lightningStrike,
-        getLightningAffectedCells: (state) => state.lightningAffectedCells || []
+        getLightningAffectedCells: (state) => state.lightningAffectedCells || [],
+        getCrackEffects: (state) => {
+            return state.grid.flat()
+                .filter(cell => cell.effects.some(e => e.type === 'CRACKS'))
+                .map(cell => ({ x: cell.x, y: cell.y }));
+        },
     },
     mutations: {
+        SET_CRACKS(state, cracks) {
+            cracks.forEach(pos => {
+                const cell = state.grid[pos.y][pos.x];
+                cell.effects.push({
+                    type: 'CRACKS',
+                    expiresIn: ChaosManager.getEffectConfig('CRACKS').duration
+                });
+            });
+        },
+        CLEAR_EXPIRED_CRACKS(state) {
+            state.grid.forEach(row => {
+                row.forEach(cell => {
+                    cell.effects = cell.effects.filter(effect => {
+                        if (effect.type === 'CRACKS') {
+                            return effect.expiresIn > 0;
+                        }
+                        return true;
+                    });
+                });
+            });
+        },
+        ADD_CRACKS(state, { positions }) {
+            positions.forEach(pos => {
+                const cell = state.grid[pos.y][pos.x];
+                cell.effects.push({
+                    type: 'CRACKS',
+                    expiresIn: ChaosManager.getEffectConfig('CRACKS').duration
+                });
+            });
+        },
         SET_LIGHTNING_STRIKE(state, position) {
             state.lightningStrike = position;
         },
@@ -304,8 +373,9 @@ export default {
         UPDATE_CHAOS_EFFECTS(state) {
             state.grid.forEach((row, y) => {
                 row.forEach((cell, x) => {
-                    if (cell.effects.length === 0) return;
-
+                    if (cell.effects.length === 0) {
+                        return;
+                    }
                     const blackhole = cell.effects.find(e => e.type === 'BLACKHOLE');
                     if (blackhole) {
                         const effectDef = ChaosManager.effects.find(e => e.type === 'BLACKHOLE');
@@ -313,22 +383,15 @@ export default {
                             effectDef.onTurn(state.grid, { x, y });
                         }
                     }
-
-                    // Уменьшаем expiresIn
                     cell.effects = cell.effects.map(effect => ({
                         ...effect,
                         expiresIn: effect.expiresIn !== undefined ? effect.expiresIn - 1 : undefined
                     }));
 
-                    // Чистим эффекты
                     const oldEffects = [...cell.effects];
                     cell.effects = cell.effects.filter(e => e.expiresIn > 0);
 
-                    // Если BLACKHOLE закончился — обнуляем значение
-                    if (
-                        !cell.effects.some(e => e.type === 'BLACKHOLE') &&
-                        oldEffects.some(e => e.type === 'BLACKHOLE')
-                    ) {
+                    if (!cell.effects.some(e => e.type === 'BLACKHOLE') && oldEffects.some(e => e.type === 'BLACKHOLE')) {
                         cell.value = 0;
                     }
                 });
@@ -343,7 +406,6 @@ export default {
         RESET_CHAOS_COUNTER(state) {
             state.counter = 0;
         },
-
         SET_ANIMATING(state, status) {
             state.isAnimating = status;
         },
@@ -425,7 +487,7 @@ export default {
         }
     },
     actions: {
-        applyScheduledChaosEffect({ commit, state }) {
+        applyScheduledChaosEffect ({ commit, state })  {
             const cycleInterval = 8;
             if (!state.isActive || state.counter % cycleInterval !== 0) {
                 return;
@@ -435,6 +497,7 @@ export default {
             if (!effect || typeof effect.apply !== 'function') {
                 return;
             }
+            let effectResult;
 
             if (effect.target === 'cell') {
                 let eligibleCells = [];
@@ -463,15 +526,14 @@ export default {
                     });
                 }
             }
-
             else if (effect.target === 'global') {
-                let result;
+                effectResult = effect.apply(state.grid);
+
                 switch (effect.type) {
                     case 'TORNADO':
                         commit('SET_TORNADO_ANIMATION', true);
-                        result = effect.apply(state.grid);
-                        commit('SET_TORNADO_TILES', result.tornadoTiles);
-                        commit('SET_CELLS', result.newGrid);
+                        commit('SET_TORNADO_TILES', effectResult.tornadoTiles);
+                        commit('SET_CELLS', effectResult.newGrid);
                         setTimeout(() => {
                             commit('SET_TORNADO_ANIMATION', false);
                             commit('CLEAR_TORNADO_TILES');
@@ -479,35 +541,37 @@ export default {
                         break;
 
                     case 'LIGHTNING':
-                        result = effect.apply(state.grid);
-                        commit('SET_CELLS', result.newGrid);
-                        commit('SET_LIGHTNING_STRIKE', result.lightningStrike);
-
+                        commit('SET_CELLS', effectResult.newGrid);
+                        commit('SET_LIGHTNING_STRIKE', effectResult.lightningStrike);
                         setTimeout(() => {
                             commit('CLEAR_LIGHTNING_STRIKE');
-                            if (result.affectedCells) {
-                                commit('SET_AFFECTED_BY_LIGHTNING', result.affectedCells);
+                            if (effectResult.affectedCells) {
+                                commit('SET_AFFECTED_BY_LIGHTNING', effectResult.affectedCells);
                                 setTimeout(() => commit('CLEAR_AFFECTED_BY_LIGHTNING'), 300);
                             }
                         }, 500);
                         break;
 
+                    case 'CRACKS':
+                        commit('SET_CELLS', effectResult.newGrid);
+                        commit('SET_CRACKS', effectResult.cracks);
+                        break;
+
                     default:
-                        result = effect.apply(state.grid);
-                        commit('SET_CELLS', result.newGrid || state.grid);
+                        commit('SET_CELLS', effectResult.newGrid || state.grid);
                 }
             }
 
             commit('INCREMENT_EFFECT_CYCLE_COUNTER');
         },
 
-        toggleChaosMode({ commit, state }) {
+        toggleChaosMode ({ commit, state })  {
             if (state.isActive) {
                 commit('CLEAR_CHAOS_EFFECTS');
             }
             commit('SET_CHAOS_ACTIVE', !state.isActive);
         },
-        applyRandomEffect({ commit, state }) {
+        applyRandomEffect ({ commit, state }) {
             if (!state.isActive) {
                 return;
             }
@@ -542,25 +606,26 @@ export default {
                 commit('SET_CELLS', state.grid);
             }
         },
-        processTurn({ commit, dispatch }) {
+        processTurn ({ commit, dispatch }) {
+            commit('CLEAR_EXPIRED_CRACKS');
             commit('UPDATE_CHAOS_EFFECTS');
             commit('INCREMENT_CHAOS_COUNTER');
 
             dispatch('applyScheduledChaosEffect');
         },
-        setGridSize({ commit }, size) {
+        setGridSize ({ commit }, size) {
             commit('SET_GRID_SIZE', size);
         },
-        restartGameWithGridSize({ commit }, gridSize) {
+        restartGameWithGridSize ({ commit }, gridSize) {
             commit('RESET_STATE', gridSize);
             commit('SET_GRID_SIZE', gridSize);
         },
-        restartGame({ dispatch, state}) {
+        restartGame ({ dispatch, state})  {
             dispatch('restartGameWithGridSize', state.gridSize).then(() => {
                 return dispatch('addRandomTile');
             }).then(() => dispatch('addRandomTile'));
         },
-        checkGameState({ state, commit, dispatch }) {
+        checkGameState ({ state, commit, dispatch })  {
             const { gridSize } = state;
             let hasMoves = false;
 
@@ -620,14 +685,17 @@ export default {
                 });
             }
         },
-        openGameEndModal({ commit }, { title, message, buttons }) {
+        openGameEndModal: ({ commit }, { title, message, buttons }) => {
             commit('modals/openModal', {
                 component: 'GameEndModal',
                 params: { title, message, buttons },
             }, { root: true });
         },
-        addRandomTile({ state, commit }) {
-            const emptyCells = state.grid.flat().filter(cell => cell.value === 0);
+        addRandomTile ({ state, commit }){
+            const emptyCells = state.grid.flat().filter(cell =>
+                cell.value === 0 &&
+                !cell.effects.some(e => e.type === 'CRACKS' || e.type === 'BLACKHOLE')
+            );
 
             if (emptyCells.length > 0) {
                 const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
@@ -638,7 +706,7 @@ export default {
                 commit('SET_CELLS', newGrid);
             }
         },
-        addSpecificTiles({ state, commit }) {
+        addSpecificTiles: ({ state, commit })=> {
             const emptyCells = state.grid.flat().filter(cell => cell.value === 0);
             if (emptyCells.length >= 2) {
                 emptyCells[0].value = 1024;
@@ -647,14 +715,16 @@ export default {
                 commit('SET_CELLS', newGrid);
             }
         },
-        undoMove({ commit }) {
+        handleUndoMove: ({ commit })=> {
             commit('UNDO_MOVE');
         },
-        moveByKeyEvent({ dispatch }, { direction }) {
+        moveByKeyEvent: ({ dispatch }, { direction }) => {
             dispatch('move', direction);
         },
         move({ dispatch, state, commit, getters }, direction) {
-            if (state.isAnimating) return;
+            if (state.isAnimating) {
+                return;
+            }
             commit('SET_ANIMATING', true);
 
             const previousGrid = JSON.parse(JSON.stringify(state.grid));
@@ -705,7 +775,7 @@ export default {
             commit('SET_ANIMATING', false);
         },
 
-        animateMovement({ commit}) {
+        animateMovement ({ commit}) {
             return new Promise(resolve => {
                 setTimeout(() => {
                     commit('SET_MOVED_TILES', []);
@@ -713,7 +783,7 @@ export default {
                 }, 100);
             });
         },
-        setFocus({ commit }, status) {
+        setFocus: ({ commit }, status)=> {
             commit('SET_FOCUS', status);
         },
     },
@@ -753,17 +823,12 @@ const mergeLine = (line, direction, frozenIndices = [], blackholeIndices = []) =
     }
 
     const result = Array(size).fill(null);
+    const crackCells = line
+        .map((cell, idx) => ({ ...cell, originalIndex: idx }))
+        .filter(cell => cell.effects?.some(e => e.type === 'CRACKS'));
 
-    // Восстанавливаем замороженные ячейки
     line.forEach((cell, index) => {
-        if (frozenIndices.includes(index)) {
-            result[index] = { ...cell };
-        }
-    });
-
-    // Пропускаем черные дыры — они остаются на месте
-    line.forEach((cell, index) => {
-        if (blackholeIndices.includes(index)) {
+        if (frozenIndices.includes(index) || blackholeIndices.includes(index)) {
             result[index] = { ...cell };
         }
     });
@@ -772,36 +837,70 @@ const mergeLine = (line, direction, frozenIndices = [], blackholeIndices = []) =
     const step = direction === 'left' || direction === 'up' ? 1 : -1;
 
     compressed.forEach(cell => {
-        while (
-            pos < size &&
-            pos >= 0 &&
-            (result[pos] !== null || line[pos]?.value === 0 && blackholeIndices.includes(pos))
-            ) {
-            pos += step;
-        }
-        if (pos >= 0 && pos < size) {
-            result[pos] = { ...cell, x: pos };
+        const originalX = cell.x;
+        let currentValue = cell.value;
+        let finalPos = pos;
 
-            if (cell.x !== pos) {
+        const path = [];
+        let checkPos = originalX;
+        while (checkPos !== pos) {
+            path.push(checkPos);
+            checkPos += (pos > originalX) ? 1 : -1;
+        }
+        path.push(pos);
+
+        path.forEach(stepPos => {
+            if (line[stepPos].effects?.some(e => e.type === 'CRACKS')) {
+                currentValue = Math.max(2, Math.floor(currentValue / 2));
+            }
+        });
+
+        path.forEach(stepPos => {
+            if (blackholeIndices.includes(stepPos)) {
+                currentValue = 0;
+            }
+        });
+
+        while (
+            finalPos < size &&
+            finalPos >= 0 &&
+            (result[finalPos] !== null || (line[finalPos]?.value === 0 && blackholeIndices.includes(finalPos)))) {
+            finalPos += step;
+        }
+        if (finalPos >= 0 && finalPos < size) {
+            result[finalPos] = {
+                ...cell,
+                value: currentValue,
+                x: finalPos,
+                effects: [...cell.effects]
+            };
+            if (originalX !== finalPos) {
                 movements.push({
-                    from: cell.x,
-                    to: pos,
-                    value: cell.value
+                    from: originalX,
+                    to: finalPos,
+                    value: currentValue
                 });
             }
-
-            // Если плитка попала в черную дыру — уничтожаем её
-            if (blackholeIndices.includes(pos)) {
-                result[pos].value = 0;
-            }
-
-            pos += step;
+            pos = finalPos + step;
         }
     });
-
+    crackCells.forEach(crackCell => {
+        const idx = crackCell.originalIndex;
+        if (result[idx]?.value === 0 || result[idx]?.effects?.some(e => e.type === 'CRACKS')) {
+            result[idx] = {
+                ...result[idx],
+                effects: [...crackCell.effects]
+            };
+        }
+    });
     for (let i = 0; i < size; i++) {
         if (result[i] === null) {
-            result[i] = { value: 0, x: i, y: 0 };
+            result[i] = {
+                value: 0,
+                x: i,
+                y: line[i].y,
+                effects: line[i].effects || []
+            };
         }
     }
 
