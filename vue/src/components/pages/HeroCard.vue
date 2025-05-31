@@ -57,66 +57,66 @@ export default {
 </script>
 
 <style scoped lang="less">
-	@import "@/less/const.less";
+@import "@/less/const.less";
 
-	.carousel {
-		&__item {
-			min-width: 350px;
-			height: 400px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 24px;
-			flex-direction: column;
-			cursor: pointer;
-			position: relative;
+.carousel {
+  &__item {
+    min-width: 350px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-direction: column;
+    cursor: pointer;
+    position: relative;
 
-			&:hover {
-				.carousel__image:not(.carousel__image--highlighted) {
-					transform: scale(1.08);
-				}
+    &:hover {
+      .carousel__image:not(.carousel__image--highlighted) {
+        transform: scale(1.08);
+      }
 
-				.carousel__caption::after {
-					opacity: 1;
-					visibility: visible;
-				}
-			}
-		}
+      .carousel__caption::after {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
 
-		&__image {
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-			transform: scale(1);
-			will-change: transform;
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: scale(1);
+    will-change: transform;
 
-			&--highlighted {
-				transform: scale(1.08);
-				transition: none !important;
-			}
-		}
+    &--highlighted {
+      transform: scale(1.08);
+      transition: none !important;
+    }
+  }
 
-		&__caption {
-			text-align: center;
-			color: white;
-			font-size: 18px;
-			background-color: transparent;
-			padding: 5px 0;
-			position: relative;
+  &__caption {
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    background-color: transparent;
+    padding: 5px 0;
+    position: relative;
 
-			&::after {
-				content: "Подробнее...";
-				position: absolute;
-				bottom: -20px;
-				left: 50%;
-				transform: translateX(-50%);
-				font-size: 16px;
-				color: white;
-				opacity: 0;
-				visibility: hidden;
-				transition: opacity 0.3s ease, visibility 0.3s ease;
-			}
-		}
-	}
-	//
+    &::after {
+      content: "Подробнее...";
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 16px;
+      color: white;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+  }
+}
+//
 </style>
