@@ -1,23 +1,23 @@
 <template>
   <ModalComponent>
-    <div>
-      {{ params.title || 'HelpModal' }}
-    </div>
-    <button @click="() => $emit('close')">
-      Close
-    </button>
-    <div>
-      {{ params.message || 'HelpMessage' }}
-    </div>
-    <div>
-      <button
-        v-for="(btn, index) in params.buttons"
-        :key="index"
-        :type="btn.type || 'default'"
-        @click="() => click(btn)"
-      >
-        {{ btn.text }}
-      </button>
+    <div class="game-over-container">
+      <h2 class="game-over-title">{{ params.title || 'Game Over' }}</h2>
+
+      <div class="score-display">
+        Your score: <span class="score-value">{{ params.score || 0 }}</span>
+      </div>
+
+      <!-- Удалена статичная кнопка и оставлены только кнопки из params -->
+      <div class="custom-buttons">
+        <button
+            v-for="(btn, index) in params.buttons"
+            :key="index"
+            :class="'custom-button ' + (btn.class || '')"
+            @click="() => handleButtonClick(btn)"
+        >
+          {{ btn.text }}
+        </button>
+      </div>
     </div>
   </ModalComponent>
 </template>
@@ -31,31 +31,61 @@ export default {
     ModalComponent
   },
   props: {
-    params: Object
+    params: {
+      type: Object,
+      default: () => ({
+        score: 0,
+        title: '',
+        buttons: [] // Оставляем только buttons
+      })
+    }
   },
   methods: {
-    click (btn) {
-      if (btn.click) {
-        this.clickHandler(btn.click)
+    handleButtonClick(btn) {
+      if (typeof btn.click === 'function') {
+        btn.click();
       }
-
-      if (btn.afterClick) {
-        this.clickHandler(btn.afterClick)
-      }
-    },
-    clickHandler (click) {
-      if (typeof click === 'string') {
-        if (click === 'emitClose') {
-          return this.$emit('close')
-        }
-      }
-
-      return click()
+      this.$emit('close');
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+.game-over-container {
+  text-align: center;
+  padding: 50px;
+  background: @cBaseThree;
+  color: @cBaseOne;
+  min-width: 200px;
+  border-radius: 8px;
+}
 
+.custom-button {
+  background: @cButtonPrimary;
+  color: @cBaseOne;
+  border: none;
+  padding: 10px 20px;
+  margin: 20px 5px 0 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: darken(@cButtonPrimary, 10%);
+  }
+}
+
+.score-display {
+  font-size: 24px;
+  margin: 20px 0;
+}
+
+.score-value {
+  font-weight: bold;
+  color: gold;
+}
 </style>
+
+
