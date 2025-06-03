@@ -1,5 +1,5 @@
 <template>
-  <div class="cascade-gallery" ref="gallery">
+  <div class="cascade-gallery" :style="{ width: totalWidth + 'px' }">
     <div
       v-for="(img, index) in images"
       :key="index"
@@ -8,87 +8,101 @@
       @mouseover="activeIndex = index"
       @mouseleave="activeIndex = null"
     >
-      <img class="cascade-gallery__image" :src="img.src" :alt="img.alt" />
+      <img
+        class="cascade-gallery__image"
+        :src="img.src"
+        :alt="img.alt"
+        @load="updateImageWidths"
+      />
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'CascadeGallery',
   data() {
     return {
       activeIndex: null,
+      imageWidths: [],
+      totalWidth: 0,
       images: [
         { src: '/assets/image1.jpg', alt: 'Image 1' },
         { src: '/assets/image2.jpg', alt: 'Image 2' },
         { src: '/assets/image3.jpg', alt: 'Image 3' },
       ],
-      baseWidths: [45, 35, 20], // начальные ширины в %
     };
   },
   methods: {
+    updateImageWidths() {
+      this.$nextTick(() => {
+        const imgs = this.$el.querySelectorAll('.cascade-gallery__image');
+        this.imageWidths = Array.from(imgs).map(img => img.naturalWidth || 400);
+        this.totalWidth = this.imageWidths.reduce((a, b) => a + b, 0);
+      });
+    },
     getItemStyle(index) {
-      const count = this.images.length;
-      const defaultWidths = [50, 30, 20]; // Без наведения (в сумме 100)
-      const expandedWidth = 75; // Сколько % даём активной
-      const collapsedWidth = (100 - expandedWidth) / (count - 1); // Остальные
+      if (!this.imageWidths.length) return {};
 
-      let width, left = 0;
+      const isActive = this.activeIndex === index;
+      const baseWidths = [...this.imageWidths];
+      const total = this.totalWidth;
+      const activeScale = 1.5;
 
-      if (this.activeIndex !== null) {
-        // Наведена какая-то картинка
-        const widths = this.images.map((_, i) =>
-          i === this.activeIndex ? expandedWidth : collapsedWidth
-        );
+      let adjustedWidths = [];
 
-        // Вычисляем left для текущей картинки
-        for (let i = 0; i < index; i++) {
-          left += widths[i];
-        }
-
-        width = widths[index];
+      if (this.activeIndex === null) {
+        adjustedWidths = baseWidths;
       } else {
-        // Без наведения — стандартные ширины
-        for (let i = 0; i < index; i++) {
-          left += defaultWidths[i];
-        }
-        width = defaultWidths[index];
+        const activeW = baseWidths[this.activeIndex] * activeScale;
+        const others = baseWidths
+          .map((w, i) => i !== this.activeIndex ? w : 0);
+        const sumOthers = others.reduce((a, b) => a + b, 0);
+
+        adjustedWidths = baseWidths.map((w, i) => {
+          if (i === this.activeIndex) return activeW;
+          return (w / sumOthers) * (total - activeW);
+        });
       }
 
+      const left = adjustedWidths.slice(0, index).reduce((a, b) => a + b, 0);
+
       return {
-        width: `${width}%`,
-        left: `${left}%`,
-        zIndex: this.activeIndex === index ? 3 : 1,
+        position: 'absolute',
+        top: '0',
+        left: `${left}px`,
+        width: `${adjustedWidths[index]}px`,
+        height: '100%',
+        zIndex: isActive ? 3 : 1,
+        transition: 'all 0.4s ease',
       };
     },
   },
 };
 </script>
 
-<style scoped lang="less">
+<style scoped>
 .cascade-gallery {
   position: relative;
-  display: flex;
-  height: 600px;
-  width: 90%;
+  height: 500px;
   margin: 0 auto;
-  max-width: 1200px;
+  overflow: hidden;
+  white-space: nowrap;
+}
 
-  &__item {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    transition: all 0.4s ease;
-    border-radius: 8px;
-    overflow: hidden;
-  }
+.cascade-gallery__item {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: #000;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    2px 2px 5px rgba(0, 0, 0, 0.2);
+}
 
-  &__image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-}//
+.cascade-gallery__image {
+  height: 100%;
+  width: auto;
+  display: block;
+}
 </style>
