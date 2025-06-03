@@ -39,10 +39,11 @@ export default {
       'resetGame',
       'closeDialog'
     ]),
-    async handleButtonClick(btn) {
+    handleButtonClick(btn) {
       if (btn.action === 'resetGame') {
-        await this.resetGame();
-        this.$emit('close', true);
+        this.resetGame().then(() => {
+          this.$emit('close', true);
+        });
       } else {
         this.$emit('close', btn.afterClick);
       }
