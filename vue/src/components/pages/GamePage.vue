@@ -3,16 +3,16 @@
     <div class="game-page">
       <InventoryPanel
           :items="inventoryItems"
-          @select="handleItemSelect"
+          @select="() =>handleItemSelect()"
       />
       <GameSceneView
           :scene="currentScene"
-          @click-spot="handleSpotClick"
+          @click-spot="() =>handleSpotClick()"
       />
       <HelpModal
           v-if="dialog && dialog.show"
           :params="dialog.params"
-          @close="handleDialogClose"
+          @close="() =>handleDialogClose()"
       />
     </div>
   </PageLayout>

@@ -11,7 +11,7 @@
           width: spot.width ? `${spot.width}px` : '50px',
           height: spot.height ? `${spot.height}px` : '50px'
         }"
-        @click="handleSpotClick(spot)"
+        @click="() => handleSpotClick(spot)"
         :title="spot.description"
     />
   </div>
@@ -31,13 +31,13 @@ export default {
     ...mapGetters('game', [
       'character'
     ]),
-    sceneStyle() {
+    sceneStyle () {
       return {
         backgroundImage: `url(${this.scene.background})`,
         backgroundSize: 'cover'
       };
     },
-    characterStyle() {
+    characterStyle () {
       return {
         left: `${this.character.x}px`,
         top: `${this.character.y}px`,
@@ -50,7 +50,7 @@ export default {
     ...mapActions('game',[
       'moveToTarget'
     ]),
-    handleSpotClick(spot) {
+    handleSpotClick (spot) {
       const sceneElement = this.$el;
       const sceneWidth = sceneElement.offsetWidth;
       const sceneHeight = sceneElement.offsetHeight;

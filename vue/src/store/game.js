@@ -45,23 +45,23 @@ function saveStateToLocalStorage(state) {
 }
 
 const getters = {
-  currentScene: state => gameConfig.scenes[state.currentSceneId],
-  inventoryItems: state => state.inventory.map(id => ({
+  currentScene: (state) => gameConfig.scenes[state.currentSceneId],
+  inventoryItems: (state) => state.inventory.map(id => ({
     ...gameConfig.items[id],
     id
   })),
-  character: state => state.characters.player,
-  hasItem: state => itemId => state.inventory.includes(itemId),
-  dialog: state => state.dialog,
-  selectedItem: state => state.selectedItem ? {
+  character: (state) => state.characters.player,
+  hasItem: (state) => itemId => state.inventory.includes(itemId),
+  dialog: (state) => state.dialog,
+  selectedItem: (state) => state.selectedItem ? {
     ...gameConfig.items[state.selectedItem],
     id: state.selectedItem
   } : null,
-  isFlagSet: state => flag => state.gameFlags[flag] || false
+  isFlagSet: (state) => flag => state.gameFlags[flag] || false
 };
 
 const mutations = {
-  LOAD_STATE(state, savedState) {
+  LOAD_STATE: (state, savedState) => {
     state.currentSceneId = savedState.currentSceneId || 'house';
     state.inventory = savedState.inventory || [];
     state.characters = savedState.characters || {
@@ -73,53 +73,53 @@ const mutations = {
     state.selectedItem = savedState.selectedItem || null;
   },
 
-  SAVE_STATE(state) {
+  SAVE_STATE: (state) => {
     saveStateToLocalStorage(state);
   },
 
-  SET_SCENE(state, sceneId) {
+  SET_SCENE:(state, sceneId) => {
     state.currentSceneId = sceneId;
     state.characters.player.x = 0;
     saveStateToLocalStorage(state);
   },
 
-  ADD_ITEM(state, itemId) {
+  ADD_ITEM:(state, itemId) => {
     if (!state.inventory.includes(itemId)) {
       state.inventory.push(itemId);
       saveStateToLocalStorage(state);
     }
   },
 
-  REMOVE_ITEM(state, itemId) {
+  REMOVE_ITEM:(state, itemId) => {
     state.inventory = state.inventory.filter(id => id !== itemId);
     saveStateToLocalStorage(state);
   },
 
-  SET_FLAG(state, { flag, value }) {
+  SET_FLAG:(state, { flag, value }) => {
     state.gameFlags[flag] = value;
     saveStateToLocalStorage(state);
   },
 
-  MOVE_CHARACTER(state, { x, direction }) {
+  MOVE_CHARACTER:(state, { x, direction }) => {
     state.characters.player.x = x;
     if (direction !== undefined) {
       state.characters.player.direction = direction;
     }
   },
 
-  SET_DIALOG(state, params) {
+  SET_DIALOG:(state, params)=> {
     state.dialog = {
       show: true,
       params: { ...gameConfig.dialogs.default, ...params }
     };
   },
 
-  HIDE_DIALOG(state) {
+  HIDE_DIALOG:(state) => {
     state.dialog.show = false;
     saveStateToLocalStorage(state);
   },
 
-  RESET_GAME(state) {
+  RESET_GAME:(state) => {
     state.currentSceneId = 'house';
     state.inventory = [];
     state.gameFlags = {};
@@ -130,15 +130,15 @@ const mutations = {
     localStorage.removeItem('gameState');
   },
 
-  SET_TARGET(state, target) {
+  SET_TARGET:(state, target) => {
     state.targets.currentTarget = target;
   },
 
-  REACHED_TARGET(state, targetId) {
+  REACHED_TARGET:(state, targetId) => {
     state.targets.reachedTargets.push(targetId);
   },
 
-  SET_SELECTED_ITEM(state, itemId) {
+  SET_SELECTED_ITEM:(state, itemId) => {
     state.selectedItem = itemId;
   }
 };
@@ -157,7 +157,7 @@ const actions = {
     commit('RESET_GAME');
   },
 
-  moveToTarget({ commit, state, dispatch }, target) {
+  moveToTarget:({ commit, state, dispatch }, target) => {
     commit('SET_TARGET', target);
 
     const moveInterval = setInterval(() => {
@@ -198,7 +198,7 @@ const actions = {
     }, 16);
   },
 
-  interactWithSpot({ commit, getters, state, dispatch }, spot) {
+  interactWithSpot: ({ commit, getters, state, dispatch }, spot) => {
     if (!spot) return;
 
     if (spot.checkFlags && spot.checkFlags.every(flag => getters.isFlagSet(flag))) {
@@ -233,7 +233,7 @@ const actions = {
       switch (spot.action.type) {
         case 'giveItem':
           if (!gameConfig.items[spot.action.item].singleUse ||
-              !state.inventory.includes(spot.action.item)) {
+            !state.inventory.includes(spot.action.item)) {
             commit('ADD_ITEM', spot.action.item);
             commit('SET_DIALOG', {
               ...gameConfig.dialogs.itemTaken,
@@ -260,7 +260,7 @@ const actions = {
             commit('REMOVE_ITEM', spot.action.removeItem);
           }
           if (spot.action.winCondition &&
-              spot.action.winCondition.every(flag => getters.isFlagSet(flag))) {
+            spot.action.winCondition.every(flag => getters.isFlagSet(flag))) {
             dispatch('handleGameComplete', spot.action.message);
           } else if (spot.action.message) {
             commit('SET_DIALOG', { message: spot.action.message });
@@ -272,15 +272,15 @@ const actions = {
     }
   },
 
-  selectItem({ commit }, item) {
+  selectItem: ({ commit }, item) => {
     commit('SET_SELECTED_ITEM', item.id);
   },
 
-  showDialog({ commit }, params) {
+  showDialog: ({ commit }, params) => {
     commit('SET_DIALOG', params);
   },
 
-  closeDialog({ commit }) {
+  closeDialog: ({ commit }) => {
     commit('HIDE_DIALOG');
   },
 
