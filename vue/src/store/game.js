@@ -1,4 +1,4 @@
-import gameConfig from '@/game/gameConfig';
+import gameScenes from '@/game/gameScenes';
 
 const loadState = () => {
   const savedState = localStorage.getItem('gameState');
@@ -7,7 +7,7 @@ const loadState = () => {
   }
   return {
     currentSceneId: 'house',
-    scenes: gameConfig.scenes,
+    scenes: gameScenes.scenes,
     inventory: [],
     characters: {
       player: {
@@ -18,7 +18,7 @@ const loadState = () => {
     },
     dialog: {
       show: false,
-      params: { ...gameConfig.dialogs.default }
+      params: { ...gameScenes.dialogs.default }
     },
     gameFlags: {},
     targets: {
@@ -45,16 +45,16 @@ function saveStateToLocalStorage(state) {
 }
 
 const getters = {
-  currentScene: (state) => gameConfig.scenes[state.currentSceneId],
+  currentScene: (state) => gameScenes.scenes[state.currentSceneId],
   inventoryItems: (state) => state.inventory.map(id => ({
-    ...gameConfig.items[id],
+    ...gameScenes.items[id],
     id
   })),
   character: (state) => state.characters.player,
   hasItem: (state) => itemId => state.inventory.includes(itemId),
   dialog: (state) => state.dialog,
   selectedItem: (state) => state.selectedItem ? {
-    ...gameConfig.items[state.selectedItem],
+    ...gameScenes.items[state.selectedItem],
     id: state.selectedItem
   } : null,
   isFlagSet: (state) => flag => state.gameFlags[flag] || false
@@ -68,7 +68,7 @@ const mutations = {
       player: { x: 0, y: 100, direction: 1 }
     };
     state.gameFlags = savedState.gameFlags || {};
-    state.dialog = savedState.dialog || { show: false, params: { ...gameConfig.dialogs.default } };
+    state.dialog = savedState.dialog || { show: false, params: { ...gameScenes.dialogs.default } };
     state.targets = savedState.targets || { currentTarget: null, reachedTargets: [] };
     state.selectedItem = savedState.selectedItem || null;
   },
@@ -110,7 +110,7 @@ const mutations = {
   SET_DIALOG:(state, params)=> {
     state.dialog = {
       show: true,
-      params: { ...gameConfig.dialogs.default, ...params }
+      params: { ...gameScenes.dialogs.default, ...params }
     };
   },
 
@@ -124,7 +124,7 @@ const mutations = {
     state.inventory = [];
     state.gameFlags = {};
     state.characters.player = { x: 0, y: 100, direction: 1 };
-    state.dialog = { show: false, params: { ...gameConfig.dialogs.default } };
+    state.dialog = { show: false, params: { ...gameScenes.dialogs.default } };
     state.targets = { currentTarget: null, reachedTargets: [] };
     state.selectedItem = null;
     localStorage.removeItem('gameState');
@@ -188,7 +188,7 @@ const actions = {
         clearInterval(moveInterval);
 
         setTimeout(() => {
-          const scene = gameConfig.scenes[state.currentSceneId];
+          const scene = gameScenes.scenes[state.currentSceneId];
           const spot = scene.spots.find(s => s.id === target.id);
           if (spot) {
             dispatch('interactWithSpot', spot);
@@ -218,7 +218,7 @@ const actions = {
 
     if (spot.requiredItem && !getters.hasItem(spot.requiredItem)) {
       commit('SET_DIALOG', {
-        message: `Нужен предмет: ${gameConfig.items[spot.requiredItem].name}`
+        message: `Нужен предмет: ${gameScenes.items[spot.requiredItem].name}`
       });
       return;
     }
@@ -232,11 +232,11 @@ const actions = {
 
       switch (spot.action.type) {
         case 'giveItem':
-          if (!gameConfig.items[spot.action.item].singleUse ||
+          if (!gameScenes.items[spot.action.item].singleUse ||
             !state.inventory.includes(spot.action.item)) {
             commit('ADD_ITEM', spot.action.item);
             commit('SET_DIALOG', {
-              ...gameConfig.dialogs.itemTaken,
+              ...gameScenes.dialogs.itemTaken,
               message: spot.action.message || 'Вы получили предмет!'
             });
           }
@@ -286,8 +286,8 @@ const actions = {
 
   async handleGameComplete({ dispatch }) {
     await dispatch('showDialog', {
-      ...gameConfig.dialogs.gameComplete,
-      buttons: gameConfig.dialogs.gameComplete.buttons.map(btn => ({
+      ...gameScenes.dialogs.gameComplete,
+      buttons: gameScenes.dialogs.gameComplete.buttons.map(btn => ({
         ...btn,
         action: btn.action === 'restartGame' ? 'resetGame' : btn.action
       }))
