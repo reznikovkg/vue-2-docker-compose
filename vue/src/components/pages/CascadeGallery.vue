@@ -1,15 +1,15 @@
 <template>
-  <div class="cascade-gallery" :style="{ width: totalWidth + 'px' }">
+  <div class="gallery" :style="{ width: totalWidth + 'px' }">
     <div
       v-for="(img, index) in images"
       :key="index"
-      class="cascade-gallery__item"
+      class="gallery__item"
       :style="getItemStyle(index)"
       @mouseover="activeIndex = index"
       @mouseleave="activeIndex = null"
     >
       <img
-        class="cascade-gallery__image"
+        class="gallery__image"
         :src="img.src"
         :alt="img.alt"
         @load="updateImageWidths"
@@ -35,7 +35,7 @@ export default {
   methods: {
     updateImageWidths() {
       this.$nextTick(() => {
-        const imgs = this.$el.querySelectorAll('.cascade-gallery__image');
+        const imgs = this.$el.querySelectorAll('.gallery__image');
         this.imageWidths = Array.from(imgs).map(img => img.naturalWidth || 400);
         this.totalWidth = this.imageWidths.reduce((a, b) => a + b, 0);
       });
@@ -54,8 +54,7 @@ export default {
         adjustedWidths = baseWidths;
       } else {
         const activeW = baseWidths[this.activeIndex] * activeScale;
-        const others = baseWidths
-          .map((w, i) => i !== this.activeIndex ? w : 0);
+        const others = baseWidths.map((w, i) => (i !== this.activeIndex ? w : 0));
         const sumOthers = others.reduce((a, b) => a + b, 0);
 
         adjustedWidths = baseWidths.map((w, i) => {
@@ -80,29 +79,31 @@ export default {
 };
 </script>
 
-<style scoped>
-.cascade-gallery {
+<style lang="less" scoped>
+@import "@/less/const.less";
+
+.gallery {
   position: relative;
   height: 500px;
   margin: 0 auto;
   overflow: hidden;
   white-space: nowrap;
-}
 
-.cascade-gallery__item {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  overflow: hidden;
-  background: #000;
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.1),
-    2px 2px 5px rgba(0, 0, 0, 0.2);
-}
+  &__item {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    background: @gallery-bg;
+    box-shadow:
+      @gallery-shadow-default,
+      @gallery-shadow-strong;
+  }
 
-.cascade-gallery__image {
-  height: 100%;
-  width: auto;
-  display: block;
+  &__image {
+    height: 100%;
+    width: auto;
+    display: block;
+  }
 }
 </style>
