@@ -1,19 +1,16 @@
 import Vue from 'vue'
 import App from '@/components/App.vue'
-import router from './router';
-import Vuex from 'vuex'
-import storeRoot from './store'
-import { sync } from "vuex-router-sync";
+import router from './router'
+import store from './store' // Импортируем готовый экземпляр
+import { sync } from 'vuex-router-sync'
 
-Vue.use(Vuex)
 Vue.config.productionTip = false
 
-
-const store = new Vuex.Store(storeRoot)
-sync(store, router);
+// Синхронизация с роутером (не создаём новый экземпляр!)
+sync(store, router)
 
 new Vue({
-  render: h => h(App),
   router,
-  store
+  store, // Используем импортированный экземпляр
+  render: h => h(App)
 }).$mount('#app')
