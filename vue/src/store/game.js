@@ -1,4 +1,4 @@
-import gameConfig from '@/game/gameConfig';
+import gameScenes from '@/game/gameScenes';
 
 const loadState = () => {
   const savedState = localStorage.getItem('gameState');
