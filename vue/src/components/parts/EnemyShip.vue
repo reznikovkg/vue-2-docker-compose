@@ -2,7 +2,6 @@
   <div
       class="enemy-ship"
       :style="objectStyle"
-      v-on="$listeners"
   />
 </template>
 

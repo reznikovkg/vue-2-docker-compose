@@ -2,7 +2,6 @@
   <div
       class="asteroid-object"
       :style="objectStyle"
-      v-on="$listeners"
   />
 </template>
 
@@ -20,7 +19,7 @@ export default {
   },
   data() {
     return {
-      dimensions: { width: 30, height: 30 } // Переопределяем dimensions
+      dimensions: { width: 30, height: 30 }
     }
   },
   computed: {

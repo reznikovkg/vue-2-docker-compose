@@ -2,7 +2,6 @@
   <div
       class="player-ship"
       :style="objectStyle"
-      v-on="$listeners"
   />
 </template>
 

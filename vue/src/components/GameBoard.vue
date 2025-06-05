@@ -6,7 +6,7 @@
         v-for="(entity, index) in gameEntities"
         :key="`${entity.type}-${index}`"
         :entity="entity"
-        @move="direction => handlePlayerMove(direction)"
+        @move="(direction) => handlePlayerMove(direction)"
     />
   </div>
 </template>

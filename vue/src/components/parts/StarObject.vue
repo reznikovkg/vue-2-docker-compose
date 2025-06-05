@@ -2,7 +2,6 @@
   <div
       class="star-object"
       :style="objectStyle"
-      v-on="$listeners"
   />
 </template>
 

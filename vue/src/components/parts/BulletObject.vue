@@ -2,7 +2,6 @@
   <div
       class="bullet-object"
       :style="objectStyle"
-      v-on="$listeners"
   />
 </template>
 
