@@ -187,7 +187,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 40%;
+    width: 450px;
     border: 2px dashed @cBorderOne;
     padding: 55px 30px;
     border-radius: 10px;
@@ -195,19 +195,19 @@ export default {
     &__input {
       font-size: 16px;
       color: gray;
-      width: 100%;
+      width: 450px;
       cursor: pointer;
       font-family: @ffThree;
     }
   }
   &__number {
-    width: 40%;
+    width: 450px;
     border: 2px dashed @cBorderOne;
     padding: 25px 30px;
     border-radius: 10px;
     background-color: @cBaseOne;
     &__input {
-      width: 100%;
+      width: 450px;
       border: none;
       outline: none;
       text-align: center;
@@ -218,14 +218,14 @@ export default {
     }
   }
   &__preview {
-    width: 46%;
+    width: 515px;
     border-radius: 10px;
   }
   &__level-button {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 14%;
+    width: 160px;
     padding: 15px;
     border: none;
     border-radius: 10px;
@@ -242,7 +242,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 45%;
+    width: 515px;
     padding: 20px;
     border: none;
     border-radius: 10px;

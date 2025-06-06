@@ -28,19 +28,15 @@
         }"
         @mousemove="(event) => onMouseMove(event)"
       >
-        <svg
-          width="0"
-          height="0"
-          style="position: absolute"
-        >
+        <svg style="position: absolute">
           <defs>
             <mask
-              v-for="piece in pieces"
-              :key="piece.id"
-              :id="piece.maskId"
+              v-for="(piece) in getPuzzlePieces"
+              :key="'mask-'+piece.id"
+              :id="'mask-'+piece.id"
             >
               <path
-                :d="piece.svgPath"
+                :d="generatePuzzleShape(piece)"
                 fill="white"
               />
             </mask>
@@ -89,6 +85,7 @@ export default {
   computed: {
     ...mapGetters('puzzle', [
       'getPuzzlePieces',
+      'getPiecePadding',
       'getPuzzleContainerWidth',
       'getPuzzleContainerHeight'
     ]),
@@ -96,24 +93,47 @@ export default {
       'getFormattedTime'
     ]),
     pieces () {
-      return this.getPuzzlePieces.map(piece => ({
-        maskId: piece.maskId,
-        svgPath: piece.svgPath,
-        style: {
-          left: piece.x + 'px',
-          top: piece.y + 'px',
-          width: piece.width * 1.2 + 'px',
-          height: piece.height * 1.2 + 'px',
-          position: 'absolute',
-          backgroundImage: 'url(' + piece.src + ')',
-          backgroundPosition: '-' + piece.initialX + 'px -' + piece.initialY + 'px',
-          backgroundSize: this.getPuzzleContainerWidth + 'px ' + this.getPuzzleContainerHeight + 'px',
-          mask: 'url(#' + piece.maskId + ')'
+      return this.getPuzzlePieces.map((piece) => {
+        let peaceLeft = piece.x
+        let peaceTop = piece.y
+        let backgroundPositionX = piece.initialX
+        let backgroundPositionY = piece.initialY
+        if (piece.correctX > 0 && piece.correctY > 0) {
+          peaceLeft -= this.getPiecePadding
+          peaceTop -= this.getPiecePadding
+          backgroundPositionX -= this.getPiecePadding
+          backgroundPositionY -= this.getPiecePadding
         }
-      }))
+        else {
+          if (piece.correctY !== 0) {
+            peaceTop -= this.getPiecePadding
+            backgroundPositionY -= this.getPiecePadding
+          }
+          if (piece.correctX !== 0) {
+            peaceLeft -= this.getPiecePadding
+            backgroundPositionX -= this.getPiecePadding
+          }
+        }
+        return {
+          id: piece.id,
+          style: {
+            left: peaceLeft + 'px',
+            top: peaceTop + 'px',
+            width: 1.4 * piece.width + 'px',
+            height: 1.4 * piece.height + 'px',
+            position: 'absolute',
+            backgroundImage: 'url(' + piece.src + ')',
+            backgroundPosition: `-${backgroundPositionX}px -${backgroundPositionY}px`,
+            backgroundSize: this.getPuzzleContainerWidth + 'px ' + this.getPuzzleContainerHeight + 'px',
+            maskImage: `url(#mask-${piece.id})`,
+            backgroundRepeat: 'no-repeat'
+          }
+        }
+      })
     }
   },
   mounted () {
+    this.resetTimer()
     this.initializePuzzle()
     this.startTimer()
   },
@@ -133,6 +153,55 @@ export default {
       'stopTimer',
       'resetTimer'
     ]),
+    generatePuzzleShape(piece) {
+      const shape = piece.shape || [0, 0, 0, 0]
+      const width = piece.width
+      const height = piece.height
+      const basePadding = this.getPiecePadding
+      const offsetX = (piece.correctX === 0) ? - basePadding : 0
+      const offsetY = (piece.correctY === 0) ? - basePadding : 0
+      const paddingX = basePadding + offsetX
+      const paddingY = basePadding + offsetY
+      let path = `M ${paddingX},${paddingY} `
+      if (shape[0] === 0) {
+        path = `M ${offsetX},${offsetY}`
+        path += `L ${width + paddingX}, ${offsetY} `
+      } else {
+        const dir = shape[0]
+        path += `L ${paddingX + width * 0.3}, ${paddingY} `
+        path += `Q ${paddingX + width * 0.5}, ${paddingY - basePadding * dir} ${paddingX + width * 0.7}, ${paddingY} `
+        path += `L ${paddingX + width}, ${paddingY} `
+      }
+      if (shape[1] === 0) {
+        path += `L ${paddingX + width}, ${paddingY + height} `
+      } else {
+        const dir = shape[1]
+        path += `L ${paddingX + width}, ${paddingY + height * 0.3} `
+        path += `Q ${paddingX + width + basePadding * dir}, ${paddingY + height * 0.5} ${paddingX + width}, ${paddingY + height * 0.7} `
+        path += `L ${paddingX + width}, ${paddingY + height} `
+      }
+      if (shape[2] === 0) {
+        path += `L ${paddingX}, ${paddingY + height} `
+      } else {
+        const dir = shape[2]
+        path += `L ${paddingX + width * 0.7}, ${paddingY + height} `
+        path += `Q ${paddingX + width * 0.5}, ${paddingY + height + basePadding * dir} ${paddingX + width * 0.3}, ${paddingY + height} `
+        path += `L ${paddingX}, ${paddingY + height} `
+      }
+      if (shape[3] === 0) {
+        path += `L ${offsetX}, ${paddingY + height} `
+        path += `L ${offsetX}, ${paddingY} `
+      } else {
+        const dir = shape[3]
+        path += `L ${paddingX}, ${paddingY + height * 0.7} `
+        path += `Q ${paddingX - basePadding * dir}, ${paddingY + height * 0.5} ${paddingX}, ${paddingY + height * 0.3} `
+        path += `L ${paddingX}, ${paddingY} `
+        if (shape[0] === 0) {
+          path += `L ${paddingX}, ${offsetY} `
+        }
+      }
+      return path
+    },
     startDrag (event, index) {
       this.isDragging = true
       this.dragIndex = index
@@ -150,23 +219,25 @@ export default {
       const cellX = Math.round(piece.x / piece.width) * piece.width
       const cellY = Math.round(piece.y / piece.height) * piece.height
       const inContainer = (
-          cellX >= 0 &&
-          cellY >= 0 &&
-          cellX < this.getPuzzleContainerWidth &&
-          cellY < this.getPuzzleContainerHeight
+        cellX >= 0 &&
+        cellY >= 0 &&
+        cellX < this.getPuzzleContainerWidth &&
+        cellY < this.getPuzzleContainerHeight
       )
       const distanceX = Math.abs(piece.x - cellX)
       const distanceY = Math.abs(piece.y - cellY)
-      const distanceXToJoin = piece.width * 0.2
-      const distanceYToJoin = piece.height * 0.2
+      const distanceXToJoin = piece.width * 0.3
+      const distanceYToJoin = piece.height * 0.3
       const isJoin = (
-          distanceX < distanceXToJoin &&
-          distanceY < distanceYToJoin
+        distanceX < distanceXToJoin &&
+        distanceY < distanceYToJoin &&
+        piece.correctX === cellX &&
+        piece.correctY === cellY
       )
       const isBusy = this.getPuzzlePieces.some((otherPiece, i) =>
-          i !== this.dragIndex &&
-          this.getPuzzlePieces[i].x === cellX &&
-          this.getPuzzlePieces[i].y === cellY
+        i !== this.dragIndex &&
+        this.getPuzzlePieces[i].x === cellX &&
+        this.getPuzzlePieces[i].y === cellY
       )
       if (inContainer && !isBusy && isJoin)
       {
@@ -257,7 +328,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 7%;
+    width: 70px;
     padding: 20px 30px;
     border: 1px solid @cBorderOne;
     border-radius: 10px;
@@ -270,7 +341,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 10%;
+    width: 120px;
     padding: 20px 30px;
     border: none;
     border-radius: 10px;
@@ -287,7 +358,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 10%;
+    width: 120px;
     padding: 20px 30px;
     border: none;
     border-radius: 10px;
@@ -304,7 +375,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 34%;
+    width: 390px;
     padding: 25px;
     border: none;
     border-radius: 10px;
