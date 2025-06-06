@@ -1,6 +1,7 @@
 <template>
   <div class="game-board" ref="gameContainer">
     <GameStatus />
+    <ShopPanel />
 
     <GameEntity
         v-for="(entity, index) in gameEntities"
@@ -15,12 +16,14 @@
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import GameEntity from '@/components/core/GameEntity.vue'
 import GameStatus from '@/components/parts/GameStatus.vue'
+import ShopPanel from '@/components/parts/ShopPanel.vue'
 
 export default {
   name: 'GameBoard',
   components: {
     GameEntity,
-    GameStatus
+    GameStatus,
+    ShopPanel
   },
   computed: {
     ...mapGetters('game', [

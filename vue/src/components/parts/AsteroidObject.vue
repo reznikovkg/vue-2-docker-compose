@@ -20,9 +20,12 @@ export default {
   computed: {
     asteroidColor() {
       switch(this.health) {
-        case 2: return '#f36812'
-        case 1: return '#f1880f'
-        default: return '#e74c3c'
+        case 2:
+          return '#f36812'
+        case 1:
+          return '#f1880f'
+        default:
+          return '#e74c3c'
       }
     },
     objectStyle() {

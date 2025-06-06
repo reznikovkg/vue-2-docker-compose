@@ -1,6 +1,6 @@
 <template>
   <div class="game-status">
-    Score: {{ score }} | Health: {{ health }}
+    Score: {{ score }} | Health: {{ health }} | Coins: {{ coins }}
   </div>
 </template>
 
@@ -12,7 +12,8 @@ export default {
   computed: {
     ...mapGetters('game', {
       score: 'getScore',
-      health: 'getPlayerHealth'
+      health: 'getPlayerHealth',
+      coins: 'getCoins'
     })
   }
 }

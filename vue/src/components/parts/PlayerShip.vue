@@ -10,12 +10,13 @@ import GameObject from '@/components/core/GameObject'
 
 export default {
   name: 'PlayerShip',
-  extends: GameObject,
+  extends: GameObject
 }
 </script>
 
 <style scoped lang="less">
 .player-ship {
   transition: left 0.1s ease-out;
+  background-color: @cPlayerShip;
 }
 </style>
