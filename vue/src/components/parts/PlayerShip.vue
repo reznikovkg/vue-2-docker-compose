@@ -11,12 +11,6 @@ import GameObject from '@/components/core/GameObject'
 export default {
   name: 'PlayerShip',
   extends: GameObject,
-  data() {
-    return {
-      color: '#3498db',
-      dimensions: { width: 40, height: 40 }
-    }
-  }
 }
 </script>
 

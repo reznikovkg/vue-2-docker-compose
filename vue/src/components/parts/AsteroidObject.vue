@@ -17,11 +17,6 @@ export default {
       default: 3
     }
   },
-  data() {
-    return {
-      dimensions: { width: 30, height: 30 }
-    }
-  },
   computed: {
     asteroidColor() {
       switch(this.health) {

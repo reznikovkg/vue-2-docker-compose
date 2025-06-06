@@ -17,11 +17,6 @@ export default {
       default: 2
     }
   },
-  data() {
-    return {
-      dimensions: { width: 40, height: 40 }
-    }
-  },
   computed: {
     objectStyle() {
       return {
