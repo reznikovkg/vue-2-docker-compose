@@ -1,0 +1,118 @@
+{
+  "version": "1.2.0",
+  "modal": {
+    "title": "Настройки конфиденциальности",
+    "description": "Мы используем cookies для улучшения работы сайта...",
+    "saveButton": "Сохранить настройки",
+    "acceptAllButton": "Принять все",
+    "rejectAllButton": "Отклонить все",
+    "showOnFirstVisit": true
+  },
+  "sections": [
+    {
+      "id": "essential",
+      "title": "Обязательные файлы cookie",
+      "description": "Эти файлы необходимы для работы сайта",
+      "required": false,
+      "items": [
+        {
+          "id": "security",
+          "title": "Безопасность",
+          "description": "Защита от вредоносных атак",
+          "enabled": false,
+          "immutable": false
+        },
+        {
+          "id": "session",
+          "title": "Сессии",
+          "description": "Хранение данных сессии пользователя",
+          "enabled": false,
+          "immutable": false
+        }
+      ]
+    },
+    {
+      "id": "analytics",
+      "title": "Аналитика",
+      "description": "Помогают нам понять, как используется сайт",
+      "required": false,
+      "items": [
+        {
+          "id": "google_analytics",
+          "title": "Google Analytics",
+          "description": "Сбор статистики посещений",
+          "enabled": false,
+          "immutable": false
+        },
+        {
+          "id": "yandex_metrika",
+          "title": "Яндекс.Метрика",
+          "description": "Анализ поведения пользователей",
+          "enabled": false,
+          "immutable": false
+        }
+      ]
+    },
+    {
+      "id": "marketing",
+      "title": "Маркетинг",
+      "description": "Используются для персонализации рекламы",
+      "required": false,
+      "items": [
+        {
+          "id": "facebook_pixel",
+          "title": "Facebook Pixel",
+          "description": "Отслеживание конверсий",
+          "enabled": false,
+          "immutable": false
+        }
+      ]
+    }
+  ,
+    {
+      "id": "social",
+      "title": "Социальные взаимодействия",
+      "description": "Настройки видимости вашего профиля и активности",
+      "required": false,
+      "items": [
+        {
+          "id": "profile_visibility",
+          "title": "Видимость профиля",
+          "description": "Кто может видеть ваш профиль",
+          "enabled": false,
+          "immutable": false
+        },
+        {
+          "id": "activity_sharing",
+          "title": "Публикация активности",
+          "description": "Автоматическая публикация ваших действий",
+          "enabled": false,
+          "immutable": false
+        }
+      ]
+    },
+    {
+      "id": "notifications",
+      "title": "Уведомления",
+      "description": "Настройки получения уведомлений",
+      "required": false,
+      "items": [
+        {
+          "id": "push_notifications",
+          "title": "Push-уведомления",
+          "description": "Получать уведомления в браузере",
+          "enabled": true,
+          "immutable": false
+        },
+        {
+          "id": "sms_notifications",
+          "title": "SMS-уведомления",
+          "description": "Получать важные уведомления по SMS",
+          "enabled": false,
+          "immutable": false
+        }
+      ]
+    }
+
+  ]
+}

@@ -5,9 +5,12 @@ import agreement from './modules/agreement'
 
 Vue.use(Vuex)
 
+import AgreementModal from '@/components/parts/AgreementModal.vue'
+Vue.component('AgreementModal', AgreementModal)
+
 export default new Vuex.Store({
-  modules: {
-      modals,
-      agreement
-  }
+    modules: {
+        modals,
+        agreement
+    }
 })

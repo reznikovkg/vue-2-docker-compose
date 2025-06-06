@@ -13,6 +13,7 @@
         <div class="modal-header">
           <h2 class="modal-title">
             {{ modalTitle }}
+            <span v-if="hasNewFields" class="new-badge">Условия изменились</span>
           </h2>
           <button
               class="modal-close-button"
@@ -26,6 +27,9 @@
         <div class="modal-body">
           <p v-if="modalDescription" class="modal-description">
             {{ modalDescription }}
+            <span v-if="hasNewFields" class="new-notice">
+              Появились новые настройки конфиденциальности
+            </span>
           </p>
 
           <div class="sections-grid">
@@ -33,6 +37,7 @@
                 v-for="section in visibleSections"
                 :key="`section-${section.id}`"
                 :section="section"
+                :is-new="isNewSection(section.id)"
                 class="agreement-section"
             />
           </div>
@@ -76,62 +81,55 @@ import AgreementSection from './AgreementSection.vue';
 export default {
   name: 'AgreementModal',
   components: { AgreementSection },
-
   props: {
-    persistent: {
+    forceShow: {
       type: Boolean,
       default: false
     }
   },
-
   computed: {
     ...mapGetters('agreement', [
       'getConfig',
       'getSettings',
-      'shouldShowModal'
+      'shouldShowModal',
+      'hasNewFields',
+      'isNewSection',
+      'isNewItem'
     ]),
-
     isVisible() {
       return this.shouldShowModal;
     },
-
     modalConfig() {
-      return this.getConfig?.modal || {};
+      return this.getConfig.modal || {};
     },
-
     modalTitle() {
       return this.modalConfig.title || 'Настройки конфиденциальности';
     },
-
     modalDescription() {
       return this.modalConfig.description || '';
     },
-
     visibleSections() {
       return this.getConfig?.sections?.filter(s => !s.hidden) || [];
     },
-
     acceptAllText() {
       return this.modalConfig.acceptAllButton || 'Принять все';
     },
-
     rejectAllText() {
       return this.modalConfig.rejectAllButton || 'Отклонить все';
     },
-
     saveText() {
       return this.modalConfig.saveButton || 'Сохранить настройки';
     },
-
     isRejectDisabled() {
       return this.visibleSections.every(s => s.required);
     },
-
     isSaveDisabled() {
       return false;
+    },
+    shouldShow() {
+      return this.forceShow || this.$store.getters['agreement/shouldShowModal'];
     }
   },
-
   methods: {
     ...mapActions('agreement', [
       'acceptAll',
@@ -139,44 +137,36 @@ export default {
       'saveSettings',
       'hideModal'
     ]),
-
     closeModal() {
       if (!this.persistent) {
         this.hideModal();
       }
     },
-
     handleOverlayClick() {
       if (!this.persistent) {
-        this.hideModal();
+        this.closeModal();
       }
     },
-
     handleEscape() {
       this.closeModal();
     },
-
     async handleAcceptAll() {
       await this.acceptAll();
       this.$emit('accepted');
     },
-
     async handleRejectAll() {
       await this.rejectAll();
       this.$emit('rejected');
     },
-
     async handleSave() {
       await this.saveSettings();
       this.$emit('saved');
       this.closeModal();
     }
   },
-
   mounted() {
     document.addEventListener('keydown', this.handleEscape);
   },
-
   beforeDestroy() {
     document.removeEventListener('keydown', this.handleEscape);
   }
@@ -185,6 +175,38 @@ export default {
 
 <style lang="less" scoped>
 @import "@/less/const.less";
+.new-badge {
+  background-color: #ff5722;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+.new-notice {
+  display: block;
+  color: #ff5722;
+  font-size: 0.9em;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Анимация для новых элементов */
+@keyframes pulse {
+  0% { background-color: rgba(255, 87, 34, 0.1); }
+  50% { background-color: rgba(255, 87, 34, 0.2); }
+  100% { background-color: rgba(255, 87, 34, 0.1); }
+}
+
+.new-section {
+  animation: pulse 2s infinite;
+  border-left: 3px solid #ff5722;
+  padding-left: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
 
 .modal-fade-enter-active,
 .modal-fade-leave-active {
