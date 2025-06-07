@@ -13,13 +13,7 @@ const router = new VueRouter({
       path: '/',
       name: 'intro',
       component: IntroView,
-      props: false,
-    },
-    {
-      path: '/game/',
-      name: 'intro',
-      component: IntroView,
-      props: false,
+      props: true,
     },
     {
       path: '/game/:level',

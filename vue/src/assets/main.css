@@ -58,6 +58,11 @@ circle.knot_small{
 }
 
 circle.knot:first-of-type {
+  stroke:  green;
+  fill:  lightgreen;
+}
+
+circle.knot:last-of-type {
   stroke:  red;
   fill:  pink;
 }
