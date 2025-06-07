@@ -1,20 +1,19 @@
 <template>
   <div class="inventory-panel">
     <div
-      v-for="item in items"
-      :key="item.id"
-      class="inventory-panel__item"
-      :class="{
-      'inventory-panel__item--selected': selectedItem?.id === item.id,
-      [`inventory-panel__item--${item.id}`]: true
-      }"
-      @click="$emit('select', item)"
-      :title="item.description"
+        v-for="item in items"
+        :key="item.id"
+        class="inventory-panel__item"
+        :class="{
+          'inventory-panel__item--selected': selectedItem?.id === item.id
+        }"
+        @click="() => $emit('select', item)"
+        :title="item.description"
     >
       <img
-        :src="item.image"
-        :alt="item.name"
-        class="inventory-panel__image"
+          :src="item.image"
+          :alt="item.name"
+          class="inventory-panel__image"
       >
     </div>
   </div>
@@ -67,7 +66,6 @@ export default {
       outline: 2px solid @cBaseOne;
       transform: scale(1.1);
     }
-
   }
 
   &__image {

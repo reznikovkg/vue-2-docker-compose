@@ -9,7 +9,10 @@
         <p>Ничего страшного, разберетесь на месте.</p>
       </div>
 
-      <button class="start-button" @click="startGame">
+      <button
+          class="start-button"
+          @click="() => startGame()"
+      >
         К игре
       </button>
     </div>
@@ -17,8 +20,10 @@
 </template>
 
 <script>
-import PageLayout from '../parts/PageLayout'
+import PageLayout from '@/components/parts/PageLayout.vue'
 import { helpModal } from "@/mixins/modals";
+import {RouteNames} from "@/router/routes";
+import {mapActions} from "vuex";
 
 export default {
   name: 'HomePage',
@@ -27,8 +32,13 @@ export default {
     PageLayout
   },
   methods: {
-    startGame() {
-      this.$router.push('/game')
+    ...mapActions('game', [
+      'resetGame'
+    ]),
+    startGame () {
+      this.resetGame().then(() => {
+        this.$router.push({name: RouteNames.GAME});
+      });
     }
   }
 }
@@ -65,3 +75,4 @@ export default {
   cursor: pointer;
 }
 </style>
+

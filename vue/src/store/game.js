@@ -1,192 +1,297 @@
 import gameScenes from '@/game/gameScenes';
 
-const DEFAULT_DIALOG = {
-  title: 'Информация',
-  buttons: [{ text: 'OK', afterClick: 'emitClose' }]
+const loadState = () => {
+  const savedState = localStorage.getItem('gameState');
+  if (savedState) {
+    return JSON.parse(savedState);
+  }
+  return {
+    currentSceneId: 'house',
+    scenes: gameScenes.scenes,
+    inventory: [],
+    characters: {
+      player: {
+        x: 0,
+        y: 100,
+        direction: 1
+      }
+    },
+    dialog: {
+      show: false,
+      params: { ...gameScenes.dialogs.default }
+    },
+    gameFlags: {},
+    targets: {
+      currentTarget: null,
+      reachedTargets: []
+    },
+    selectedItem: null
+  };
 };
 
-const state = () => ({
-  currentSceneId: 'house',
-  inventory: [],
-  selectedItem: null,
-  scenes: gameScenes,
-  openedDoors: [],
-  gameFlags: {},
-  gameCompleted: false,
-  dialog: {
-    show: false,
-    params: { ...DEFAULT_DIALOG }
-  }
-});
+const state = loadState();
+
+function saveStateToLocalStorage(state) {
+  const stateToSave = {
+    currentSceneId: state.currentSceneId,
+    inventory: state.inventory,
+    characters: state.characters,
+    gameFlags: state.gameFlags,
+    dialog: state.dialog,
+    targets: state.targets,
+    selectedItem: state.selectedItem
+  };
+  localStorage.setItem('gameState', JSON.stringify(stateToSave));
+}
 
 const getters = {
-  currentScene: state => state.scenes[state.currentSceneId],
-  inventory: state => state.inventory,
-  selectedItem: state => state.selectedItem,
-  gameCompleted: state => state.gameCompleted
+  currentScene: (state) => gameScenes.scenes[state.currentSceneId],
+  inventoryItems: (state) => state.inventory.map(id => ({
+    ...gameScenes.items[id],
+    id
+  })),
+  character: (state) => state.characters.player,
+  hasItem: (state) => itemId => state.inventory.includes(itemId),
+  dialog: (state) => state.dialog,
+  selectedItem: (state) => state.selectedItem ? {
+    ...gameScenes.items[state.selectedItem],
+    id: state.selectedItem
+  } : null,
+  isFlagSet: (state) => flag => state.gameFlags[flag] || false
 };
 
 const mutations = {
-  setDialog: (state, dialog) => {
-    state.dialog = dialog;
-  },
-  resetDialog: state => {
-    state.dialog = {
-      show: false,
-      params: {
-        title: 'Информация',
-        message: '',
-        buttons: [{ text: 'OK', afterClick: 'emitClose' }]
-      }
+  LOAD_STATE: (state, savedState) => {
+    state.currentSceneId = savedState.currentSceneId || 'house';
+    state.inventory = savedState.inventory || [];
+    state.characters = savedState.characters || {
+      player: { x: 0, y: 100, direction: 1 }
     };
+    state.gameFlags = savedState.gameFlags || {};
+    state.dialog = savedState.dialog || { show: false, params: { ...gameScenes.dialogs.default } };
+    state.targets = savedState.targets || { currentTarget: null, reachedTargets: [] };
+    state.selectedItem = savedState.selectedItem || null;
   },
-  setCurrentScene: (state, sceneId) => {
+
+  SAVE_STATE: (state) => {
+    saveStateToLocalStorage(state);
+  },
+
+  SET_SCENE:(state, sceneId) => {
     state.currentSceneId = sceneId;
+    state.characters.player.x = 0;
+    saveStateToLocalStorage(state);
   },
-  setGameFlag: (state, { flag, value }) => {
-    state.gameFlags[flag] = value;
-  },
-  completeGame: state => {
-    state.gameCompleted = true;
-  },
-  resetGame: state => {
-    state.currentSceneId = 'house';
-    state.inventory = [];
-    state.selectedItem = null;
-    state.scenes = gameScenes;
-    state.openedDoors = [];
-    state.gameFlags = {};
-    state.gameCompleted = false;
-  },
-  addToInventory: (state, item) => {
-    state.inventory.push(item);
-  },
-  removeFromInventory: (state, itemId) => {
-    state.inventory = state.inventory.filter(i => i.id !== itemId);
-  },
-  markItemCollected: (state, itemId) => {
-    const scene = state.scenes[state.currentSceneId];
-    const item = scene.items.find(i => i.id === itemId);
-    if (item) item.collected = true;
-  },
-  markDoorOpened: (state, doorId) => {
-    if (!state.openedDoors.includes(doorId)) {
-      state.openedDoors.push(doorId);
+
+  ADD_ITEM:(state, itemId) => {
+    if (!state.inventory.includes(itemId)) {
+      state.inventory.push(itemId);
+      saveStateToLocalStorage(state);
     }
   },
-  setSelectedItem: (state, item) => {
-    state.selectedItem = item;
+
+  REMOVE_ITEM:(state, itemId) => {
+    state.inventory = state.inventory.filter(id => id !== itemId);
+    saveStateToLocalStorage(state);
+  },
+
+  SET_FLAG:(state, { flag, value }) => {
+    state.gameFlags[flag] = value;
+    saveStateToLocalStorage(state);
+  },
+
+  MOVE_CHARACTER:(state, { x, direction }) => {
+    state.characters.player.x = x;
+    if (direction !== undefined) {
+      state.characters.player.direction = direction;
+    }
+  },
+
+  SET_DIALOG:(state, params)=> {
+    state.dialog = {
+      show: true,
+      params: { ...gameScenes.dialogs.default, ...params }
+    };
+  },
+
+  HIDE_DIALOG:(state) => {
+    state.dialog.show = false;
+    saveStateToLocalStorage(state);
+  },
+
+  RESET_GAME:(state) => {
+    state.currentSceneId = 'house';
+    state.inventory = [];
+    state.gameFlags = {};
+    state.characters.player = { x: 0, y: 100, direction: 1 };
+    state.dialog = { show: false, params: { ...gameScenes.dialogs.default } };
+    state.targets = { currentTarget: null, reachedTargets: [] };
+    state.selectedItem = null;
+    localStorage.removeItem('gameState');
+  },
+
+  SET_TARGET:(state, target) => {
+    state.targets.currentTarget = target;
+  },
+
+  REACHED_TARGET:(state, targetId) => {
+    state.targets.reachedTargets.push(targetId);
+  },
+
+  SET_SELECTED_ITEM:(state, itemId) => {
+    state.selectedItem = itemId;
   }
 };
 
 const actions = {
-  selectItem: ({ commit }, item) => {
-    commit('setSelectedItem', item);
-  },
-  takeItem: ({ commit }, item) => {
-    if (!item.collected) {
-      commit('addToInventory', { ...item, collected: true });
-      commit('markItemCollected', item.id);
-      return true;
+  async initGame({ commit }) {
+    const savedState = localStorage.getItem('gameState');
+    if (savedState) {
+      commit('LOAD_STATE', JSON.parse(savedState));
+    } else {
+      commit('RESET_GAME');
     }
-    return false;
   },
-  showItemDescription: (_, item) => {
-    return item.description || 'Описание отсутствует';
+
+  async resetGame({ commit }) {
+    commit('RESET_GAME');
   },
-  interactWithSpot: ({ commit, state }, spot) => {
-    const hasRequiredItem = state.inventory.some(item => item.id === spot.requires);
-    switch (spot.type) {
-      case 'door':
-        if (!spot.requires) {
-          commit('setCurrentScene', spot.targetScene);
-          return spot.successMessage || `Вы перешли в ${spot.name}`;
-        }
-        if (hasRequiredItem) {
-          commit('setCurrentScene', spot.targetScene);
-          commit('removeFromInventory', spot.requires);
-          commit('markDoorOpened', spot.id);
-          return spot.successMessage || 'Дверь открыта!';
-        }
-        if (state.openedDoors.includes(spot.id)) {
-          commit('setCurrentScene', spot.targetScene);
-          return spot.successMessage;
-        }
-        return spot.description;
-      case 'container':
-        if (!spot.requires && spot.rewards && !state.inventory.some(i => i.id === spot.rewards.id)) {
-          commit('addToInventory', {
-            ...spot.rewards,
-            collected: true
+
+  moveToTarget:({ commit, state, dispatch }, target) => {
+    commit('SET_TARGET', target);
+
+    const moveInterval = setInterval(() => {
+      const char = state.characters.player;
+      const currentTarget = state.targets.currentTarget;
+
+      if (!currentTarget || currentTarget.id !== target.id) {
+        clearInterval(moveInterval);
+        return;
+      }
+
+      const dx = currentTarget.x - char.x;
+      const direction = dx > 0 ? 1 : -1;
+      const speed = 2;
+
+      if (Math.abs(dx) > speed) {
+        commit('MOVE_CHARACTER', {
+          x: char.x + (speed * direction),
+          direction
+        });
+      } else {
+        commit('MOVE_CHARACTER', {
+          x: currentTarget.x,
+          direction
+        });
+        commit('REACHED_TARGET', currentTarget.id);
+        commit('SET_TARGET', null);
+        clearInterval(moveInterval);
+
+        setTimeout(() => {
+          const scene = gameScenes.scenes[state.currentSceneId];
+          const spot = scene.spots.find(s => s.id === target.id);
+          if (spot) {
+            dispatch('interactWithSpot', spot);
+          }
+        }, 300);
+      }
+    }, 16);
+  },
+
+  interactWithSpot: ({ commit, getters, state, dispatch }, spot) => {
+    if (!spot) return;
+
+    if (spot.checkFlags && spot.checkFlags.every(flag => getters.isFlagSet(flag))) {
+      if (spot.action?.type === 'changeScene') {
+        if (spot.action.flags?.set) {
+          spot.action.flags.set.forEach(flag => {
+            commit('SET_FLAG', { flag, value: true });
           });
-          return `Вы нашли ${spot.rewards.name}`;
         }
-        if (hasRequiredItem) {
-          commit('addToInventory', spot.rewards);
-          commit('removeFromInventory', spot.requires);
-          return spot.successMessage || `Вы открыли ${spot.name}`;
+        commit('SET_SCENE', spot.action.target);
+        if (spot.action.message) {
+          commit('SET_DIALOG', { message: spot.action.message });
         }
-        return spot.description || 'Пусто';
-      case 'info':
-        if (!spot.requires) {
-          if (!spot.currentMessageIndex) spot.currentMessageIndex = 0;
-          const message = spot.messages[spot.currentMessageIndex];
-          spot.currentMessageIndex = (spot.currentMessageIndex + 1) % spot.messages.length;
-          return message || 'Что-то написано';
-        }
-        return 'Написанного не разобрать';
-      case 'mechanism':
-        if (spot.requires && hasRequiredItem) {
-          commit('removeFromInventory', spot.requires);
-          if (spot.setFlags) {
-            spot.setFlags.forEach(flag => {
-              commit('setGameFlag', { flag, value: true });
+      }
+      return;
+    }
+
+    if (spot.requiredItem && !getters.hasItem(spot.requiredItem)) {
+      commit('SET_DIALOG', {
+        message: `Нужен предмет: ${gameScenes.items[spot.requiredItem].name}`
+      });
+      return;
+    }
+
+    if (spot.action) {
+      if (spot.action.flags?.set) {
+        spot.action.flags.set.forEach(flag => {
+          commit('SET_FLAG', { flag, value: true });
+        });
+      }
+
+      switch (spot.action.type) {
+        case 'giveItem':
+          if (!gameScenes.items[spot.action.item].singleUse ||
+            !state.inventory.includes(spot.action.item)) {
+            commit('ADD_ITEM', spot.action.item);
+            commit('SET_DIALOG', {
+              ...gameScenes.dialogs.itemTaken,
+              message: spot.action.message || 'Вы получили предмет!'
             });
           }
-          if (spot.winCondition && spot.winCondition.every(flag => state.gameFlags[flag])) {
-            commit('completeGame');
-            return {
-              message: spot.successMessage,
-              gameCompleted: true
-            };
+          break;
+
+        case 'changeScene':
+          if (spot.action.removeItem) {
+            commit('REMOVE_ITEM', spot.action.removeItem);
           }
-          return spot.successMessage;
-        }
-        return spot.description;
-      default:
-        return spot.description || 'Ничего интересного';
+          commit('SET_SCENE', spot.action.target);
+          if (spot.action.message) {
+            commit('SET_DIALOG', { message: spot.action.message });
+          }
+          break;
+
+        case 'setFlags':
+          spot.action.flags.forEach(flag => {
+            commit('SET_FLAG', { flag, value: true });
+          });
+          if (spot.action.removeItem) {
+            commit('REMOVE_ITEM', spot.action.removeItem);
+          }
+          if (spot.action.winCondition &&
+            spot.action.winCondition.every(flag => getters.isFlagSet(flag))) {
+            dispatch('handleGameComplete', spot.action.message);
+          } else if (spot.action.message) {
+            commit('SET_DIALOG', { message: spot.action.message });
+          }
+          break;
+      }
+    } else if (spot.description) {
+      commit('SET_DIALOG', { message: spot.description });
     }
   },
-  restartGame: ({ commit }) => {
-    commit('resetGame');
-    commit('resetDialog');
+
+  selectItem: ({ commit }, item) => {
+    commit('SET_SELECTED_ITEM', item.id);
   },
-  closeDialog: ({ commit }) => {
-    commit('setDialog', { show: false });
-  },
+
   showDialog: ({ commit }, params) => {
-    commit('setDialog', {
-      show: true,
-      params: { ...DEFAULT_DIALOG, ...params }
-    });
+    commit('SET_DIALOG', params);
   },
-  handleGameComplete: ({ dispatch, state }, message) => {
-    console.log('handleGameComplete called', { gameCompleted: state.gameCompleted });
-    if (state.gameCompleted) {
-      dispatch('showDialog', {
-        title: 'Поздравляем!',
-        message: `${message}\n\nИгра завершена!`,
-        buttons: [
-          {
-            text: 'Начать заново',
-            action: () => dispatch('restartGame')
-          },
-          { text: 'Осмотреться', afterClick: 'emitClose' }
-        ]
-      });
-    } else {
-      dispatch('showDialog', { message });
-    }
+
+  closeDialog: ({ commit }) => {
+    commit('HIDE_DIALOG');
+  },
+
+  async handleGameComplete({ dispatch }) {
+    await dispatch('showDialog', {
+      ...gameScenes.dialogs.gameComplete,
+      buttons: gameScenes.dialogs.gameComplete.buttons.map(btn => ({
+        ...btn,
+        action: btn.action === 'restartGame' ? 'resetGame' : btn.action
+      }))
+    });
   }
 };
 

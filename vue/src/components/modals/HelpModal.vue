@@ -4,7 +4,7 @@
       <div>
         {{ params.title || 'HelpModal' }}
       </div>
-      <div >
+      <div>
         {{ params.message || 'HelpMessage' }}
       </div>
     </div>
@@ -14,7 +14,7 @@
           v-for="(btn, index) in params.buttons"
           :key="index"
           :type="btn.type || 'default'"
-          @click="handleButtonClick(btn)"
+          @click="() => handleButtonClick(btn)"
       >
         {{ btn.text }}
       </button>
@@ -24,6 +24,7 @@
 
 <script>
 import ModalComponent from "@/components/parts/Modal";
+import {mapActions} from "vuex";
 
 export default {
   name: "HelpModal",
@@ -34,9 +35,18 @@ export default {
     params: Object
   },
   methods: {
+    ...mapActions('game', [
+      'resetGame',
+      'closeDialog'
+    ]),
     handleButtonClick(btn) {
-      if (btn.action) btn.action();
-      this.$emit('close', btn.afterClick);
+      if (btn.action === 'resetGame') {
+        this.resetGame().then(() => {
+          this.$emit('close', true);
+        });
+      } else {
+        this.$emit('close', btn.afterClick);
+      }
     }
   }
 }
@@ -69,3 +79,4 @@ export default {
   width: @inventory-height;
 }
 </style>
+
