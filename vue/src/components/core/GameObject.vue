@@ -2,7 +2,6 @@
   <div
       class="game-object"
       :style="objectStyle"
-      v-on="$listeners"
   />
 </template>
 
@@ -44,3 +43,5 @@ export default {
   position: absolute;
 }
 </style>
+
+

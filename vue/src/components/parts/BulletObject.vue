@@ -2,7 +2,6 @@
   <div
       class="bullet-object"
       :style="objectStyle"
-      v-on="$listeners"
   />
 </template>
 
@@ -16,11 +15,6 @@ export default {
     isEnemy: {
       type: Boolean,
       default: false
-    }
-  },
-  data() {
-    return {
-      dimensions: { width: 8, height: 8 }
     }
   },
   computed: {

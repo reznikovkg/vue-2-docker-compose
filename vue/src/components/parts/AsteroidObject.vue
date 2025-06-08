@@ -2,7 +2,6 @@
   <div
       class="asteroid-object"
       :style="objectStyle"
-      v-on="$listeners"
   />
 </template>
 
@@ -18,17 +17,15 @@ export default {
       default: 3
     }
   },
-  data() {
-    return {
-      dimensions: { width: 30, height: 30 } // Переопределяем dimensions
-    }
-  },
   computed: {
     asteroidColor() {
       switch(this.health) {
-        case 2: return '#f36812'
-        case 1: return '#f1880f'
-        default: return '#e74c3c'
+        case 2:
+          return '#f36812'
+        case 1:
+          return '#f1880f'
+        default:
+          return '#e74c3c'
       }
     },
     objectStyle() {

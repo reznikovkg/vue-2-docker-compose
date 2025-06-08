@@ -2,7 +2,6 @@
   <div
       class="enemy-ship"
       :style="objectStyle"
-      v-on="$listeners"
   />
 </template>
 
@@ -16,11 +15,6 @@ export default {
     health: {
       type: Number,
       default: 2
-    }
-  },
-  data() {
-    return {
-      dimensions: { width: 40, height: 40 }
     }
   },
   computed: {
