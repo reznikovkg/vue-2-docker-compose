@@ -15,7 +15,14 @@
           :alt="item.name"
           class="inventory-panel__image"
       >
+
     </div>
+    <button
+        class="inventory-panel__craft-button"
+        @click="() => $emit('toggle-craft')"
+    >
+      +
+    </button>
   </div>
 </template>
 
@@ -72,6 +79,19 @@ export default {
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
+  }
+
+  &__craft-button {
+    width: @item-size;
+    height: @item-size;
+    background-color: @cBaseSeven;
+    border: none;
+    border-radius: 3px;
+    color: @cBaseThree;
+    font-size: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-left: auto;
   }
 }
 </style>

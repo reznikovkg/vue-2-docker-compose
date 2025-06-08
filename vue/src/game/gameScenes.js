@@ -23,8 +23,25 @@ export default {
       image: require("@/assets/items/food.png"),
       canTake: true,
       singleUse: true
+    },
+    toy: {
+      id: "toy",
+      name: "Игрушка для кота",
+      description: "Самодельная игрушка из бумаги",
+      image: require("@/assets/items/paper.png"),
+      canTake: true,
+      singleUse: false
     }
   },
+
+  craftingRecipes: [
+    {
+      components: ["list", "list"],
+      result: "toy",
+      successMessage: "Вы сделали игрушку для кота!",
+      failMessage: "Неудачная попытка создать игрушку"
+    }
+  ],
 
   scenes: {
     house: {
