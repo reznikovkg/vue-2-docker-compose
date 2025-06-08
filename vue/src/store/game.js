@@ -58,7 +58,8 @@ const getters = {
     ...gameScenes.items[state.selectedItem],
     id: state.selectedItem
   } : null,
-  isFlagSet: (state) => flag => state.gameFlags[flag] || false
+  isFlagSet: (state) => flag => state.gameFlags[flag] || false,
+  craftingRecipes: () => gameScenes.craftingRecipes
 };
 
 const mutations = {

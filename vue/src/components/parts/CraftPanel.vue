@@ -28,12 +28,20 @@
         >
       </div>
     </div>
-    <button
-        class="craft-panel__craft-button"
-        @click="() => $emit('craft')"
-    >
-      Собрать
-    </button>
+    <div class="craft-panel__buttons">
+      <button
+          class="craft-panel__dictionary-button"
+          @click="() => $emit('show-dictionary')"
+      >
+        Словарь
+      </button>
+      <button
+          class="craft-panel__craft-button"
+          @click="() => $emit('craft')"
+      >
+        Собрать
+      </button>
+    </div>
   </div>
 </template>
 
@@ -60,9 +68,6 @@ export default {
     getItemName(itemId) {
       const item = this.getItemById(itemId);
       return item?.name || '';
-    },
-    tryCraft() {
-      this.$emit('craft');
     }
   }
 };
@@ -113,6 +118,26 @@ export default {
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__dictionary-button {
+    padding: 8px 16px;
+    background-color: @cBaseSeven;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: @cBaseThree;
+    font-weight: bold;
+    flex: 1;
+
+    &:hover {
+      background-color: darken(@cBaseSeven, 10%);
+    }
   }
 
   &__craft-button {

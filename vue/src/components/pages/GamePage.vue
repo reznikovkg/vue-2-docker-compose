@@ -13,7 +13,13 @@
         @add-to-craft="(itemId) =>addToCraft(itemId)"
         @remove-from-craft="(index) =>removeFromCraft(index)"
         @craft="() =>tryCraft()"
+        @show-dictionary="() => showDictionary()"
         @close="() =>closeCraftPanel()"
+      />
+      <CraftDictionary
+          v-if="showDictionaryPanel"
+          :recipes="craftingRecipes"
+          @close="() => closeDictionary()"
       />
       <GameSceneView
         :scene="currentScene"
@@ -36,9 +42,11 @@ import InventoryPanel from '@/components/parts/InventoryPanel.vue';
 import HelpModal from '@/components/modals/HelpModal.vue';
 import {RouteNames} from "@/router/routes";
 import CraftPanel from "@/components/parts/CraftPanel.vue";
+import CraftDictionary from "@/components/parts/CraftDictionary.vue";
 
 export default {
   components: {
+    CraftDictionary,
     CraftPanel,
     PageLayout,
     GameSceneView,
@@ -47,6 +55,7 @@ export default {
   },
   data: () => ({
     showCraftPanel: false,
+    showDictionaryPanel: false,
     selectedCraftItems: []
   }),
   computed: {
@@ -54,7 +63,8 @@ export default {
       'currentScene',
       'inventoryItems',
       'dialog',
-      'getItemId'
+      'getItemId',
+      'craftingRecipes'
     ]),
     availableCraftItems() {
       console.log("Available items:", this.inventoryItems);
@@ -120,6 +130,14 @@ export default {
           this.closeCraftPanel();
         }
       });
+    },
+
+    showDictionary() {
+      this.showDictionaryPanel = true;
+    },
+
+    closeDictionary() {
+      this.showDictionaryPanel = false;
     }
   },
   mounted() {
