@@ -1,30 +1,44 @@
 <template>
   <div class="inventory-panel">
     <div
-        v-for="item in items"
-        :key="item.id"
-        class="inventory-panel__item"
-        :class="{
-          'inventory-panel__item--selected': selectedItem?.id === item.id
-        }"
-        @click="() => $emit('select', item)"
-        :title="item.description"
+      v-for="item in items"
+      :key="item.id"
+      class="inventory-panel__item"
+      :class="{
+        'inventory-panel__item--selected': selectedItem?.id === item.id
+      }"
+      @click="() => $emit('select', item)"
+      :title="item.description"
     >
       <img
-          :src="item.image"
-          :alt="item.name"
-          class="inventory-panel__image"
+        :src="item.image"
+        :alt="item.name"
+        class="inventory-panel__image"
       >
+
     </div>
+    <button
+      class="inventory-panel__craft-button"
+      @click="toggleCraftPanel"
+    >
+      +
+    </button>
   </div>
 </template>
 
 <script>
+import {mapActions} from "vuex";
+
 export default {
   name: 'InventoryPanel',
   props: {
     items: Array,
     selectedItem: Object
+  },
+  methods: {
+    ...mapActions('game', [
+      'toggleCraftPanel'
+    ])
   }
 };
 </script>
@@ -72,6 +86,19 @@ export default {
     max-width: 90%;
     max-height: 90%;
     object-fit: contain;
+  }
+
+  &__craft-button {
+    width: @item-size;
+    height: @item-size;
+    background-color: @cBaseSeven;
+    border: none;
+    border-radius: 3px;
+    color: @cBaseThree;
+    font-size: 24px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-left: auto;
   }
 }
 </style>

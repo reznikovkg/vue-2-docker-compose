@@ -25,7 +25,10 @@ const loadState = () => {
       currentTarget: null,
       reachedTargets: []
     },
-    selectedItem: null
+    selectedItem: null,
+    showCraftPanel: false,
+    showDictionaryPanel: false,
+    selectedCraftItems: []
   };
 };
 
@@ -39,7 +42,10 @@ function saveStateToLocalStorage(state) {
     gameFlags: state.gameFlags,
     dialog: state.dialog,
     targets: state.targets,
-    selectedItem: state.selectedItem
+    selectedItem: state.selectedItem,
+    showCraftPanel: state.showCraftPanel,
+    showDictionaryPanel: state.showDictionaryPanel,
+    selectedCraftItems: state.selectedCraftItems
   };
   localStorage.setItem('gameState', JSON.stringify(stateToSave));
 }
@@ -53,11 +59,16 @@ const getters = {
   character: (state) => state.characters.player,
   hasItem: (state) => itemId => state.inventory.includes(itemId),
   dialog: (state) => state.dialog,
+  getItemById: () => (id) => gameScenes.items[id],
   selectedItem: (state) => state.selectedItem ? {
     ...gameScenes.items[state.selectedItem],
     id: state.selectedItem
   } : null,
-  isFlagSet: (state) => flag => state.gameFlags[flag] || false
+  isFlagSet: (state) => flag => state.gameFlags[flag] || false,
+  craftingRecipes: () => gameScenes.craftingRecipes,
+  showCraftPanel: (state) => state.showCraftPanel,
+  showDictionaryPanel: (state) => state.showDictionaryPanel,
+  selectedCraftItems: (state) => state.selectedCraftItems
 };
 
 const mutations = {
@@ -71,8 +82,10 @@ const mutations = {
     state.dialog = savedState.dialog || { show: false, params: { ...gameScenes.dialogs.default } };
     state.targets = savedState.targets || { currentTarget: null, reachedTargets: [] };
     state.selectedItem = savedState.selectedItem || null;
+    state.showCraftPanel = savedState.showCraftPanel || false;
+    state.showDictionaryPanel = savedState.showDictionaryPanel || false;
+    state.selectedCraftItems = savedState.selectedCraftItems || [];
   },
-
   SAVE_STATE: (state) => {
     saveStateToLocalStorage(state);
   },
@@ -119,6 +132,41 @@ const mutations = {
     saveStateToLocalStorage(state);
   },
 
+  TOGGLE_CRAFT_PANEL: (state) => {
+    console.log('Toggling craft panel. Current state:', state.showCraftPanel);
+    state.showCraftPanel = !state.showCraftPanel;
+    if (!state.showCraftPanel) {
+      state.selectedCraftItems = [];
+    }
+    saveStateToLocalStorage(state);
+  },
+
+  CLOSE_CRAFT_PANEL: (state) => {
+    state.showCraftPanel = false;
+    state.selectedCraftItems = [];
+    saveStateToLocalStorage(state);
+  },
+
+  ADD_TO_CRAFT: (state, itemId) => {
+    state.selectedCraftItems = [...state.selectedCraftItems, itemId];
+    saveStateToLocalStorage(state);
+  },
+
+  REMOVE_FROM_CRAFT: (state, index) => {
+    state.selectedCraftItems = state.selectedCraftItems.filter((_, i) => i !== index);
+    saveStateToLocalStorage(state);
+  },
+
+  TOGGLE_DICTIONARY_PANEL: (state) => {
+    state.showDictionaryPanel = !state.showDictionaryPanel;
+    saveStateToLocalStorage(state);
+  },
+
+  CLOSE_DICTIONARY_PANEL: (state) => {
+    state.showDictionaryPanel = false;
+    saveStateToLocalStorage(state);
+  },
+
   RESET_GAME:(state) => {
     state.currentSceneId = 'house';
     state.inventory = [];
@@ -127,6 +175,9 @@ const mutations = {
     state.dialog = { show: false, params: { ...gameScenes.dialogs.default } };
     state.targets = { currentTarget: null, reachedTargets: [] };
     state.selectedItem = null;
+    state.showCraftPanel = false;
+    state.showDictionaryPanel = false;
+    state.selectedCraftItems = [];
     localStorage.removeItem('gameState');
   },
 
@@ -140,6 +191,11 @@ const mutations = {
 
   SET_SELECTED_ITEM:(state, itemId) => {
     state.selectedItem = itemId;
+  },
+
+  SET_CRAFT_ITEMS: (state, items) => {
+    state.craftItems = items;
+    saveStateToLocalStorage(state);
   }
 };
 
@@ -292,6 +348,57 @@ const actions = {
         action: btn.action === 'restartGame' ? 'resetGame' : btn.action
       }))
     });
+  },
+
+  addItem: ({ commit }, itemId) => {
+    commit('ADD_ITEM', itemId);
+  },
+
+  removeItem: ({ commit }, itemId) => {
+    commit('REMOVE_ITEM', itemId);
+  },
+
+  craftItems: ({ commit, dispatch }, itemIds) => {
+    return new Promise((resolve) => {
+      const recipe = gameScenes.craftingRecipes.find(recipe =>
+        recipe.components.length === itemIds.length &&
+        recipe.components.every(compId =>
+          itemIds.includes(compId))
+      );
+      if (recipe) {
+        itemIds.forEach(id => commit('REMOVE_ITEM', id));
+        commit('ADD_ITEM', recipe.result);
+        dispatch('showDialog', { message: recipe.successMessage });
+        resolve(true);
+      } else {
+        dispatch('showDialog', { message: "Неудачная попытка" });
+        resolve(false);
+      }
+    });
+  },
+
+  toggleCraftPanel: ({ commit }) => {
+    commit('TOGGLE_CRAFT_PANEL');
+  },
+
+  closeCraftPanel: ({ commit }) => {
+    commit('CLOSE_CRAFT_PANEL');
+  },
+
+  addToCraft: ({ commit }, itemId) => {
+    commit('ADD_TO_CRAFT', itemId);
+  },
+
+  removeFromCraft: ({ commit }, index) => {
+    commit('REMOVE_FROM_CRAFT', index);
+  },
+
+  showDictionary: ({ commit }) => {
+    commit('TOGGLE_DICTIONARY_PANEL');
+  },
+
+  closeDictionary: ({ commit }) => {
+    commit('CLOSE_DICTIONARY_PANEL');
   }
 };
 

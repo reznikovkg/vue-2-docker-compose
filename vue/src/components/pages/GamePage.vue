@@ -2,17 +2,27 @@
   <PageLayout>
     <div class="game-page">
       <InventoryPanel
-          :items="inventoryItems"
-          @select="() =>handleItemSelect()"
+        :items="inventoryItems"
+        @select="(item) =>handleItemSelect(item)"
+      />
+      <CraftPanel
+        v-if="showCraftPanel"
+        :selected-items="selectedCraftItems"
+        :available-items="availableCraftItems"
+      />
+      <CraftDictionary
+          v-if="showDictionaryPanel"
+          :recipes="craftingRecipes"
+          @close="() => closeDictionary()"
       />
       <GameSceneView
-          :scene="currentScene"
-          @click-spot="() =>handleSpotClick()"
+        :scene="currentScene"
+        @click-spot="(spot) =>handleSpotClick(spot)"
       />
       <HelpModal
-          v-if="dialog && dialog.show"
-          :params="dialog.params"
-          @close="() =>handleDialogClose()"
+        v-if="dialog && dialog.show"
+        :params="dialog.params"
+        @close="(action) =>handleDialogClose(action)"
       />
     </div>
   </PageLayout>
@@ -25,9 +35,13 @@ import GameSceneView from '@/components/parts/GameSceneView.vue';
 import InventoryPanel from '@/components/parts/InventoryPanel.vue';
 import HelpModal from '@/components/modals/HelpModal.vue';
 import {RouteNames} from "@/router/routes";
+import CraftPanel from "@/components/parts/CraftPanel.vue";
+import CraftDictionary from "@/components/parts/CraftDictionary.vue";
 
 export default {
   components: {
+    CraftDictionary,
+    CraftPanel,
     PageLayout,
     GameSceneView,
     InventoryPanel,
@@ -37,8 +51,18 @@ export default {
     ...mapGetters('game', [
       'currentScene',
       'inventoryItems',
-      'dialog'
-    ])
+      'dialog',
+      'getItemId',
+      'craftingRecipes',
+      'showCraftPanel',
+      'showDictionaryPanel',
+      'selectedCraftItems'
+    ]),
+    availableCraftItems() {
+      return this.inventoryItems.filter(item =>
+          !this.selectedCraftItems.includes(item.id)
+      );
+    }
   },
   methods: {
     ...mapActions('game', [
@@ -46,7 +70,14 @@ export default {
       'interactWithSpot',
       'showDialog',
       'closeDialog',
-      'selectItem'
+      'selectItem',
+      'craftItems',
+      'toggleCraftPanel',
+      'closeCraftPanel',
+      'addToCraft',
+      'removeFromCraft',
+      'showDictionary',
+      'closeDictionary'
     ]),
 
     handleSpotClick(spot) {
@@ -70,6 +101,14 @@ export default {
       if (action === true) {
         this.$router.push({ name: RouteNames.HOME });
       }
+    },
+
+    tryCraft() {
+      this.craftItems(this.selectedCraftItems).then(success => {
+        if (success) {
+          this.closeCraftPanel();
+        }
+      });
     }
   },
   mounted() {
