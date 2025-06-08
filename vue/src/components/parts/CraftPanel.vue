@@ -5,7 +5,7 @@
           v-for="item in availableItems"
           :key="item.id"
           class="craft-panel__item"
-          @click="() => $emit('add-to-craft', item.id)"
+          @click="() => addToCraft(item.id)"
       >
         <img
             :src="item.image"
@@ -19,7 +19,7 @@
           v-for="(itemId, index) in selectedItems"
           :key="index"
           class="craft-panel__item"
-          @click="() => $emit('remove-from-craft', index)"
+          @click="() => removeFromCraft(index)"
       >
         <img
             :src="getItemImage(itemId)"
@@ -31,13 +31,13 @@
     <div class="craft-panel__buttons">
       <button
           class="craft-panel__dictionary-button"
-          @click="() => $emit('show-dictionary')"
+          @click="showDictionary"
       >
         Словарь
       </button>
       <button
           class="craft-panel__craft-button"
-          @click="() => $emit('craft')"
+          @click="() => { craftItems(selectedItems); closeCraftPanel(); }"
       >
         Собрать
       </button>
@@ -47,7 +47,7 @@
 
 <script>
 
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: 'CraftPanel',
@@ -61,6 +61,13 @@ export default {
     ]),
   },
   methods: {
+    ...mapActions('game', [
+      'addToCraft',
+      'removeFromCraft',
+      'showDictionary',
+      'craftItems',
+      'closeCraftPanel'
+    ]),
     getItemImage(itemId) {
       const item = this.getItemById(itemId);
       return item?.image || '';
