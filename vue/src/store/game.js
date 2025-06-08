@@ -53,6 +53,7 @@ const getters = {
   character: (state) => state.characters.player,
   hasItem: (state) => itemId => state.inventory.includes(itemId),
   dialog: (state) => state.dialog,
+  getItemById: () => (id) => gameScenes.items[id],
   selectedItem: (state) => state.selectedItem ? {
     ...gameScenes.items[state.selectedItem],
     id: state.selectedItem
@@ -139,6 +140,11 @@ const mutations = {
 
   SET_SELECTED_ITEM:(state, itemId) => {
     state.selectedItem = itemId;
+  },
+
+  SET_CRAFT_ITEMS: (state, items) => {
+    state.craftItems = items;
+    saveStateToLocalStorage(state);
   }
 };
 
@@ -291,7 +297,37 @@ const actions = {
         action: btn.action === 'restartGame' ? 'resetGame' : btn.action
       }))
     });
-  }
+  },
+
+  addItem: ({ commit }, itemId) => {
+    commit('ADD_ITEM', itemId);
+  },
+
+  removeItem: ({ commit }, itemId) => {
+    commit('REMOVE_ITEM', itemId);
+  },
+
+    craftItems: ({ commit, dispatch }, itemIds) => {
+      return new Promise((resolve) => {
+        const recipe = gameScenes.craftingRecipes.find(recipe =>
+          recipe.components.length === itemIds.length &&
+          recipe.components.every(compId =>
+            itemIds.includes(compId))
+        );
+        if (recipe) {
+          itemIds.forEach(id => commit('REMOVE_ITEM', id));
+          commit('ADD_ITEM', recipe.result);
+          dispatch('showDialog', { message: recipe.successMessage });
+          resolve(true);
+        } else {
+          dispatch('showDialog', { message: "Неудачная попытка" });
+          resolve(false);
+        }
+        console.log("Recipe components:", recipe.components);
+        console.log("Selected items:", itemIds);
+      });
+
+    }
 };
 
 export default {
