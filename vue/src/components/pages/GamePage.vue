@@ -3,26 +3,26 @@
     <div class="game-page">
       <InventoryPanel
         :items="inventoryItems"
-        @select="() =>handleItemSelect()"
+        @select="(item) =>handleItemSelect(item)"
         @toggle-craft="() =>toggleCraftPanel()"
       />
       <CraftPanel
         v-if="showCraftPanel"
         :selected-items="selectedCraftItems"
         :available-items="availableCraftItems"
-        @add-to-craft="addToCraft"
-        @remove-from-craft="() =>removeFromCraft()"
+        @add-to-craft="(itemId) =>addToCraft(itemId)"
+        @remove-from-craft="(index) =>removeFromCraft(index)"
         @craft="() =>tryCraft()"
         @close="() =>closeCraftPanel()"
       />
       <GameSceneView
         :scene="currentScene"
-        @click-spot="() =>handleSpotClick()"
+        @click-spot="(spot) =>handleSpotClick(spot)"
       />
       <HelpModal
         v-if="dialog && dialog.show"
         :params="dialog.params"
-        @close="() =>handleDialogClose()"
+        @close="(action) =>handleDialogClose(action)"
       />
     </div>
   </PageLayout>

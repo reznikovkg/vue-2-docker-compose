@@ -31,12 +31,20 @@ export default {
       image: require("@/assets/items/paper.png"),
       canTake: true,
       singleUse: false
+    },
+    scissors: {
+      id: "scissors",
+      name: "Ножницы",
+      description: "Кухонные ножницы",
+      image: require("@/assets/items/key.png"),
+      canTake: true,
+      singleUse: false
     }
   },
 
   craftingRecipes: [
     {
-      components: ["list", "list"],
+      components: ["list", "scissors"],
       result: "toy",
       successMessage: "Вы сделали игрушку для кота!",
       failMessage: "Неудачная попытка создать игрушку"
@@ -111,7 +119,12 @@ export default {
           y: "85%",
           width: 260,
           height: 66,
-          description: "Под ковриком пусто."
+          description: "Коврик.",
+          action: {
+            type: "giveItem",
+            item: "scissors",
+            message: "Вы нашли ножницы под ковриком!"
+          }
         }
       ]
     },
@@ -261,12 +274,12 @@ export default {
           y: "60%",
           width: 100,
           height: 80,
-          requiredItem: "list",
+          requiredItem: "toy",
           description: "Кот спит под кроватью",
           action: {
             type: "setFlags",
             flags: ["catPlayed"],
-            removeItem: "list",
+            removeItem: "toy",
             message: "Кот играет с бумагой!"
           }
         }

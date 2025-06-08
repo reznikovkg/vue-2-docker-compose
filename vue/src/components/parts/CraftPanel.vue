@@ -5,7 +5,7 @@
           v-for="item in availableItems"
           :key="item.id"
           class="craft-panel__item"
-          @click=" $emit('add-to-craft', item.id)"
+          @click="() => $emit('add-to-craft', item.id)"
       >
         <img
             :src="item.image"
