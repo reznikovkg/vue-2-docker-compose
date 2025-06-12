@@ -1,0 +1,37 @@
+import {getRandomInt} from "@/utils";
+
+export const genHash = (length = 32) => {
+  let hash = "";
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  for (let i = 0; i < length; i++) {
+    hash += chars[getRandomInt(0, chars.length-1)]
+  }
+
+  return hash + Date.now();
+}
+
+export default {
+  namespaced: true,
+  state: {
+    modals: {}
+  },
+  getters: {
+    getModals: (state) => state.modals
+  },
+  mutations: {
+    REMOVE_MODAL: (state, hash) => {
+      delete state.modals[hash]
+      state.modals = { ...state.modals }
+    },
+    OPEN_MODAL: (state, { component, params }) => {
+      const hash = genHash()
+      state.modals[hash] = {
+        component,
+        hash,
+        params
+      }
+      state.modals = { ...state.modals }
+    }
+  }
+}

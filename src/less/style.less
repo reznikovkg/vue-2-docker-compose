@@ -1,0 +1,168 @@
+@import "consts";
+
+@font-face {
+  font-family: "unscii";
+  src: local("unscii"), url("../assets/fonts/unscii-16.woff");
+}
+
+@font-face {
+  font-family: "unscii-tall";
+  src: url("../assets/fonts/unscii-8-tall.ttf");
+}
+
+:root {
+  font-family: "unscii", sans-serif;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: @cBackground;
+  color: @cForeground;
+  font-size: 16px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-family: @ffHeading;
+}
+
+h2 {
+  font-family: @ffTypography;
+  font-size: 2em;
+}
+
+p {
+  margin: 0;
+}
+
+small {
+  font-family: sans-serif;
+  color: @cMuted;
+  line-height: 1.0;
+}
+
+button, .button {
+  background-color: @cBackground2;
+  color: @cForeground;
+  padding: 1em;
+  display: block;
+  font-family: "unscii", sans-serif;
+  font-size: 16px;
+  transition: all 100ms;
+  text-decoration: none;
+  text-align: center;
+  border: 1px solid @cBackground3;
+
+  &:hover {
+    background-color: @cAccent;
+    color: @cForeground;
+    transition: all 100ms;
+  }
+
+  &:disabled {
+    background-color: @cDisabled;
+    border: none;
+  }
+}
+
+.main-container {
+  margin: 1em auto;
+  width: 100%;
+  max-width: 1000px;
+
+  h1 {
+    margin-bottom: 0.5em;
+  }
+}
+
+.inventory-slots {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  text-align: center;
+  justify-content: center;
+}
+
+.overlay-center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.item-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1em;
+}
+
+.inventory-item {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  justify-content: space-around;
+  gap: 1em;
+  place-items: center;
+  background-color: @cBackground2;
+  padding: 1em;
+
+  &.active {
+    background-color: @cAccent;
+  }
+
+  &__img {
+    width: 64px;
+    height: 64px;
+  }
+
+  &__name {
+    color: @cForeground2;
+  }
+
+  &__action-button {
+    display: flex;
+    place-items: center;
+    gap: 0.1em;
+  }
+}
+
+@media (max-width: 1030px) {
+  .main-container {
+    width: unset;
+    max-width: unset;
+    margin: 1em 1em;
+  }
+}
+
+@media (max-width: 800px) {
+  .item-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  li {
+    padding: 0.5em;
+  }
+
+  .inventory-item {
+    &__img {
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
