@@ -46,15 +46,11 @@ export default {
     transform: scale(0.95);
   }
 
-  &.has-mole {
-    //background-color: @color-bg-mole;
-  }
-
-  &.was-hit {
+  &--was-hit {
     background-color: @color-hit;
   }
 
-  &.was-missed {
+  &--was-missed {
     background-color: @color-missed;
   }
 

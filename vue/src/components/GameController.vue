@@ -34,13 +34,13 @@
 
 <script>
 import GridCell from './GridCell.vue';
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'GameController',
   components: { GridCell },
   computed: {
-    ...mapState([
+    ...mapGetters([
       'score',
       'comboCount',
       'misses',
@@ -50,16 +50,15 @@ export default {
       'gameStarted',
       'gameOver',
       'hitIndex',
-      'missedIndex'
+      'missedIndex',
+      'isGameActive'
     ]),
-    ...mapGetters(['isGameActive']),
   },
   methods: {
-    ...mapActions(['handleCellClick', 'startGame', 'restartGame']),
+    ...mapActions(['handleCellClick', 'startGame', 'restartGame', 'clearAllTimeouts']),
   },
   beforeDestroy() {
-    // Очистка таймеров теперь в store, но если надо — можно вызвать action очистки
-    this.$store.dispatch('clearTimeouts');
+    this.clearAllTimeouts();
   },
 };
 </script>
@@ -103,7 +102,6 @@ export default {
   justify-content: center;
 }
 
-/* Общие базовые стили для кнопок */
 .button-base {
   margin-top: 20px;
   padding: @button-padding;
@@ -116,7 +114,6 @@ export default {
   transition: @transition-base;
 }
 
-/* Наследуем базовые стили и добавляем цвета */
 .button {
   .button-base;
   background-color: @color-button-bg;
