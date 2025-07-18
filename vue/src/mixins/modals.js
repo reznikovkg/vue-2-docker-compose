@@ -1,14 +1,28 @@
 import { mapMutations } from "vuex";
-import HelpModal from "@/components/modals/HelpModal";
+import HatsMenuModal from "@/components/modals/HatsMenuModal.vue";
+import TasksMenuModal from "@/components/modals/TasksMenuModal.vue";
 
-export const helpModal = {
+export const hatsMenuModal = {
   methods: {
     ...mapMutations('modals', [
       'openModal'
     ]),
-    openHelpModal (params = {}) {
+    openHatsModal (params = {}) {
       this.openModal({
-        component: HelpModal,
+        component: HatsMenuModal,
+        params
+      })
+    }
+  }
+}
+export const tasksMenuModal = {
+  methods: {
+    ...mapMutations('modals', [
+      'openModal'
+    ]),
+    openTasksModal (params = {}) {
+      this.openModal({
+        component: TasksMenuModal,
         params
       })
     }

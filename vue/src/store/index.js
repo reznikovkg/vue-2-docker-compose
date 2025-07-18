@@ -1,3 +1,4 @@
+import game from './game'
 import modals from './modals'
 
 export default {
@@ -6,6 +7,7 @@ export default {
   getters: {},
   mutations: {},
   modules: {
-    modals
+    modals,
+    game
   }
 }
