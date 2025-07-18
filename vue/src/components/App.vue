@@ -1,26 +1,16 @@
 <template>
   <div>
     <RouterView />
+    <ModalContainer />
   </div>
 </template>
 
 <script>
-import { initialCatChar } from '@/char.js';
+import ModalContainer from "@/components/parts/ModalContainer";
 
 export default {
-  created () {
-    if (!localStorage.charStats || !localStorage.charMultipliers || !localStorage.charActions || !localStorage.charItems) {
-      this.saveCharData(initialCatChar);
-    }
-  },
-  
-  methods: {
-    saveCharData (char) {
-      localStorage.charStats = JSON.stringify(char.stats);
-      localStorage.charMultipliers = JSON.stringify(char.multipliers);
-      localStorage.charActions = JSON.stringify(char.actions);
-      localStorage.charItems = JSON.stringify(char.items);
-    }
+  components: {
+    ModalContainer
   }
 }
 </script>
@@ -29,23 +19,34 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Tektur:wght@400..900&display=swap');
 
 body {
+  margin: 0;
+  padding: 0;
   background-color: @cPrimary;
+  font-family: @ffSecondary;
+  color: @cSecondary;
 }
 
-.text {
-  &__primary {
-    font-family: @ffPrimary;
-    color: @cSecondary;
+a {
+  text-decoration: none;
+}
+
+section {
+  background-color: @cPrimary;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  box-sizing: border-box;
+
+  &:last-child {
+    margin-bottom: 0;
   }
-  
-  &__secondary {
-    font-family: @ffSecondary;
-    color: @cSecondary;
-  }
-  
-  &__highlight {
-    font-weight: 300;
-    color: aqua;
-  }
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: @ffPrimary;
+  margin: 0;
+}
+
+h2 {
+  font-size: @sFontBigger;
 }
 </style>

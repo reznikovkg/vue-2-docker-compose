@@ -1,3 +1,3 @@
 export enum RouteNames {
-  CHAR = "Character"
+  HOME = "HOME"
 }
