@@ -1,5 +1,4 @@
 const { defineConfig } = require('@vue/cli-service');
-const webpack = require('webpack');
 const path = require('path');
 
 module.exports = defineConfig({
@@ -22,7 +21,7 @@ module.exports = defineConfig({
   css: {
     loaderOptions: {
       less: {
-        additionalData: `@import '@/less/const.less';`
+        additionalData: `@import '@/less/consts.less';`
       }
     }
   }
