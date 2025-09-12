@@ -1,11 +1,10 @@
 import modals from './modals'
+import explorer from './explorer'
 
 export default {
   namespaced: true,
-  state: {},
-  getters: {},
-  mutations: {},
   modules: {
-    modals
+    modals,
+    explorer
   }
 }
