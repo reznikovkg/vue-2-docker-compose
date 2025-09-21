@@ -75,7 +75,7 @@
       <div class="guitar-hero__actions">
         <button
             class="guitar-hero__button"
-            :class="{'guitar-hero__button--disabled': isPlaying || gameOver}"
+            :class="{'guitar-hero__button--disabled': !canStartGame}"
             @click="() => startGame()"
         >
           Start
@@ -91,7 +91,9 @@
       <div v-if="gameOver" class="guitar-hero__game-over">
         <h2>Game Over</h2>
         <p>Your Score: {{ score }}</p>
-        <button class="guitar-hero__button guitar-hero__button--restart" @click="() => resetGame()">
+        <button class="guitar-hero__button guitar-hero__button--restart"
+                @click="() => resetGame()"
+        >
           Play Again
         </button>
       </div>
@@ -100,209 +102,44 @@
 </template>
 
 <script>
-import { GAME_CONFIG } from '../store/constants';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'GameView',
-  data() {
-    return {
-      lanes: [
-        { notes: [] },
-        { notes: [] },
-        { notes: [] }
-      ],
-      keys: GAME_CONFIG.KEYS,
-      activeLanes: [false, false, false],
-      isPlaying: false,
-      gameOver: false,
-      score: 0,
-      lives: GAME_CONFIG.INITIAL_LIVES,
-      noteSpeed: GAME_CONFIG.BASE_NOTE_SPEED,
-      baseNoteSpeed: GAME_CONFIG.BASE_NOTE_SPEED,
-      maxNoteSpeed: GAME_CONFIG.MAX_NOTE_SPEED,
-      speedIncreaseRate: GAME_CONFIG.SPEED_INCREASE_RATE,
-      gameStartTime: 0,
-      noteSpawnInterval: null,
-      gameLoop: null,
-      noteId: GAME_CONFIG.DEFAULT_NOTE_ID,
-      hitZonePosition: GAME_CONFIG.HIT_ZONE_POSITION
-    }
-  },
   computed: {
-    speedPercentage() {
-      const minSpeed = GAME_CONFIG.BASE_NOTE_SPEED;
-      const maxSpeed = GAME_CONFIG.MAX_NOTE_SPEED;
-      const currentSpeed = this.noteSpeed;
-      
-      return ((currentSpeed - minSpeed) / (maxSpeed - minSpeed)) * 100;
-    }
+    ...mapGetters([
+      'lanes',
+      'keys',
+      'activeLanes',
+      'gameOver',
+      'score',
+      'lives',
+      'noteSpeed',
+      'speedPercentage',
+      'canStartGame'
+    ])
   },
   methods: {
-    startGame() {
-      if (this.isPlaying || this.gameOver)
-        return;
-
-      this.resetGame();
-      this.isPlaying = true;
-      this.gameOver = false;
-      this.gameStartTime = Date.now();
-
-      this.noteSpawnInterval = setInterval(() => {
-        this.spawnNote();
-      }, GAME_CONFIG.NOTE_SPAWN_INTERVAL);
-
-      this.gameLoop = setInterval(() => {
-        this.updateNotes();
-      }, GAME_CONFIG.GAME_LOOP_INTERVAL);
-
-      window.addEventListener('keydown', this.handleKeyDown);
-      window.addEventListener('keyup', this.handleKeyUp);
-    },
-
-    pauseGame() {
-      if (!this.isPlaying || this.gameOver)
-        return;
-      this.isPlaying = false;
-      clearInterval(this.noteSpawnInterval);
-      clearInterval(this.gameLoop);
-      window.removeEventListener('keydown', this.handleKeyDown);
-      window.removeEventListener('keyup', this.handleKeyUp);
-    },
-
-    resetGame() {
-      this.pauseGame();
-      this.lanes.forEach(lane => lane.notes = []);
-      this.score = 0;
-      this.lives = GAME_CONFIG.INITIAL_LIVES;
-      this.activeLanes = [false, false, false];
-      this.gameOver = false;
-      this.noteSpeed = GAME_CONFIG.BASE_NOTE_SPEED;
-      this.gameStartTime = 0;
-    },
-
-    spawnNote() {
-      if (this.gameOver)
-        return;
-
-      const laneIndex = Math.floor(Math.random() * GAME_CONFIG.LANES_COUNT);
-
-      this.lanes[laneIndex].notes.push({
-        id: this.noteId++,
-        position: GAME_CONFIG.DEFAULT_POSITION,
-        hit: false,
-        miss: false,
-        laneIndex: laneIndex
-      });
-    },
-
-    updateNotes() {
-      if (this.gameOver)
-        return;
-
-      this.updateNoteSpeed();
-
-      this.lanes.forEach((lane) => {
-        lane.notes.forEach(note => {
-          note.position += this.noteSpeed;
-
-          if (note.position > this.hitZonePosition + GAME_CONFIG.HIT_RANGE && !note.hit && !note.miss) {
-            note.miss = true;
-            this.getHurt()
-          }
-        });
-
-        lane.notes = lane.notes.filter(note => note.position < GAME_CONFIG.NOTE_FILTER_POSITION);
-      });
-    },
-
-    updateNoteSpeed() {
-      if (this.gameStartTime === 0)
-        return;
-
-      const currentTime = Date.now();
-      const elapsedTime = (currentTime - this.gameStartTime) / 1000;
-      
-      const speedMultiplier = Math.floor(elapsedTime / GAME_CONFIG.SPEED_INCREASE_INTERVAL);
-      const newSpeed = GAME_CONFIG.BASE_NOTE_SPEED + (speedMultiplier * GAME_CONFIG.SPEED_INCREASE_RATE);
-      
-      this.noteSpeed = Math.min(newSpeed, GAME_CONFIG.MAX_NOTE_SPEED);
-    },
-
-    pressKey(laneIndex) {
-      if (this.gameOver)
-        return;
-
-      this.activeLanes.splice(laneIndex, 1, true);
-      this.checkHits(laneIndex);
-    },
-
-    releaseKey(laneIndex) {
-      if (this.gameOver)
-        return;
-
-      this.activeLanes.splice(laneIndex, 1, false);
-    },
-
-    hitNote(laneIndex) {
-      if (this.gameOver)
-        return;
-      this.pressKey(laneIndex);
-      setTimeout(() => this.releaseKey(laneIndex), GAME_CONFIG.HIT_NOTE_TIMEOUT);
-    },
-
-    checkHits(laneIndex) {
-      const lane = this.lanes[laneIndex];
-      for (let i = 0; i < lane.notes.length; i++) {
-        const note = lane.notes[i];
-        const distance = Math.abs(note.position - this.hitZonePosition);
-        if (!note.hit && !note.miss && distance <= GAME_CONFIG.HIT_RANGE && note.laneIndex === laneIndex) {
-          this.registerHit(note, distance);
-          lane.notes.splice(i, 1);
-          break;
-        }
-      }
-    },
-
-    registerHit(note) {
-      note.hit = true;
-      this.score += GAME_CONFIG.SCORE_PER_HIT;
-    },
-
-    getHurt() {
-      if (this.lives > 0) {
-        this.lives--;
-        if (this.lives <= 0) {
-          this.endGame();
-        }
-      }
-    },
-
-    endGame() {
-      this.gameOver = true;
-      this.pauseGame();
-    },
-
-    handleKeyDown(event) {
-      if (this.gameOver)
-        return;
-
-      // eslint-disable-next-line no-prototype-builtins
-      if (GAME_CONFIG.KEY_MAP.hasOwnProperty(event.key.toLowerCase())) {
-        event.preventDefault();
-        this.pressKey(GAME_CONFIG.KEY_MAP[event.key.toLowerCase()]);
-      }
-    },
-
-    handleKeyUp(event) {
-      if (this.gameOver)
-        return;
-
-      // eslint-disable-next-line no-prototype-builtins
-      if (GAME_CONFIG.KEY_MAP.hasOwnProperty(event.key.toLowerCase())) {
-        event.preventDefault();
-        this.releaseKey(GAME_CONFIG.KEY_MAP[event.key.toLowerCase()]);
-      }
-    }
+    ...mapActions([
+      'startGame',
+      'pauseGame',
+      'resetGame',
+      'pressKey',
+      'releaseKey',
+      'hitNote',
+      'handleKeyDown',
+      'handleKeyUp'
+    ])
+  },
+  
+  mounted() {
+    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keyup', this.handleKeyUp);
+  },
+  
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keyup', this.handleKeyUp);
   }
 }
 </script>
@@ -546,60 +383,4 @@ export default {
   }
 }
 
-@media (max-width: 480px) {
-  .guitar-hero {
-    &__container {
-      padding: 10px;
-    }
-
-    &__track {
-      height: @trackHeightMobile;
-    }
-
-    &__hit-zone {
-      width: @hitZoneSizeMobile;
-      height: @hitZoneSizeMobile;
-    }
-
-    &__note {
-      width: @noteSizeMobile;
-      height: @noteSizeMobile;
-    }
-
-    &__key {
-      height: @keyHeightMobile;
-
-      &-text {
-        font-size: 16px;
-      }
-    }
-
-    &__stat {
-      &-label {
-        font-size: 12px;
-      }
-
-      &-value {
-        font-size: 16px;
-      }
-    }
-
-    &__button {
-      padding: 8px;
-      font-size: 14px;
-    }
-
-    &__game-over {
-      padding: 20px;
-
-      h2 {
-        font-size: 20px;
-      }
-
-      p {
-        font-size: 18px;
-      }
-    }
-  }
-}
 </style>

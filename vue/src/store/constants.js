@@ -36,9 +36,3 @@ export const GAME_STATES = {
   PAUSED: 'paused',
   GAME_OVER: 'game_over'
 };
-
-export const NOTE_STATES = {
-  NORMAL: 'normal',
-  HIT: 'hit',
-  MISS: 'miss'
-};
