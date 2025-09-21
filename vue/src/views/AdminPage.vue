@@ -59,19 +59,17 @@
               @load="onImgLoad"
           >
           <svg
-              v-if="imgBox.width && imgBox.height"
+              v-if="imgNatural.w && imgNatural.h"
               class="admin-page__overlay"
-              :viewBox="`0 0 ${imgBox.width} ${imgBox.height}`"
-              :width="imgBox.width"
-              :height="imgBox.height"
+              :viewBox="`0 0 ${imgNatural.w} ${imgNatural.h}`"
               @click="onOverlayClick"
           >
             <circle
                 v-for="(s, i) in form.spots"
                 :key="i"
-                :cx="toScreenX(s.x)"
-                :cy="toScreenY(s.y)"
-                :r="toScreenR(s.r)"
+                :cx="s.x"
+                :cy="s.y"
+                :r="s.r"
                 fill="rgba(0,0,0,0.0)"
                 stroke="red"
                 stroke-width="2"
@@ -192,18 +190,6 @@ export default {
         y: Math.round(screenY * scaleY)
       }
     },
-    toScreenX(imgX) {
-      const scaleX = this.imgBox.width / this.imgNatural.w
-      return imgX * scaleX
-    },
-    toScreenY(imgY) {
-      const scaleY = this.imgBox.height / this.imgNatural.h
-      return imgY * scaleY
-    },
-    toScreenR(imgR) {
-      const scale = this.imgBox.width / this.imgNatural.w
-      return imgR * scale
-    },
     onOverlayClick(e) {
       const rect = e.currentTarget.getBoundingClientRect()
       const sx = e.clientX - rect.left
@@ -236,112 +222,100 @@ export default {
     removeSpot(i) {
       this.form.spots.splice(i, 1)
     }
-  },
+  }
 }
 </script>
 
 <style lang="less" scoped>
+@primary: #42b983;
+.rounded(@r: 4px) {
+  border-radius: @r;
+}
+
 .admin-page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 16px;
-}
+  padding: 12px;
 
-.admin-page__title {
-  margin: 0 0 12px;
-}
+  &__title {
+    color: @primary;
+    margin: 0 0 10px;
+  }
 
-.admin-page__form {
-  display: block;
-}
+  &__form {
+    display: block;
+  }
 
-.admin-page__field {
-  display: flex;
-  flex-direction: column;
-}
+  &__field {
+    margin: 8px 0;
 
-.admin-page__field--mt-12 {
-  margin-top: 12px;
-}
+    &--mt-12 { margin-top: 12px; }
+    &--mt-16 { margin-top: 16px; }
+  }
 
-.admin-page__field--mt-16 {
-  margin-top: 16px;
-}
+  &__label {
+    margin-bottom: 4px;
+    display: block;
+  }
 
-.admin-page__label {
-  margin-bottom: 6px;
-}
+  &__input,
+  &__file,
+  &__number {
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    .rounded();
+  }
 
-.admin-page__input,
-.admin-page__file,
-.admin-page__number {
-  width: 240px;
-}
+  &__controls {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+  }
 
-.admin-page__controls {
-  align-items: center;
-}
+  &__editors {
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
 
-.admin-page__radio {
-  margin-left: 12px;
-}
+  &__editor, &__image-wrap {
+    position: relative;
+    padding: 0;
+    display: inline-block;
+    img { display: block; width: auto; height: auto; max-width: 100%; }
+  }
 
-.admin-page__editors {
-  display: flex;
-  gap: 20px;
-  margin-top: 12px;
-}
+  &__overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: auto;
+    height: auto;
+    cursor: crosshair;
+  }
 
-.admin-page__editor {
-  position: relative;
-  display: inline-block;
-  border: 1px solid #ccc;
-}
+  &__list {
+    margin: 6px 0 0;
+    padding-left: 18px;
 
-.admin-page__editor img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
+    &-item { margin: 4px 0; }
+  }
 
-.admin-page__editor--secondary {
-  margin-left: 20px;
-}
+  &__btn-delete,
+  &__btn-submit {
+    border: 1px solid @primary;
+    background: @primary;
+    color: #fff;
+    padding: 6px 10px;
+    .rounded();
+  }
 
-.admin-page__overlay {
-  position: absolute;
-  left: 0;
-  top: 0;
-  pointer-events: auto;
-  cursor: crosshair;
-}
+  &__message {
+    margin-top: 8px;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    .rounded();
 
-.admin-page__list {
-  margin: 8px 0 0;
-  padding-left: 18px;
-}
-
-.admin-page__list-item {
-  margin-top: 4px;
-}
-
-.admin-page__btn-submit {
-  margin-top: 16px;
-}
-
-.admin-page__btn-delete {
-  margin-left: 8px;
-}
-
-.admin-page__message {
-  margin-top: 10px;
-}
-
-.admin-page__message--success {
-  color: green;
-}
-
-.admin-page__message--error {
-  color: crimson;
+    &--success { border-color: @primary; color: @primary; }
+    &--error   { border-color: #d33;     color: #d33;     }
+  }
 }
 </style>

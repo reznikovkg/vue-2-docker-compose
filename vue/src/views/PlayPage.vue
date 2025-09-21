@@ -141,50 +141,55 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@primary: #42b983;
+@danger: #e74c3c;
+@text: #333;
+
+.rounded(@r: 6px) { border-radius: @r; }
+
 .play-page {
   padding: 16px;
-}
 
-.play-page__title {
-  margin: 0 0 12px;
-}
+  &__title {
+    color: @primary;
+    margin-bottom: 12px;
+  }
 
-.play-page__empty .play-page__title {
-  margin-bottom: 8px;
-}
+  &__text {
+    color: @text;
+  }
 
-.play-page__text {
-  margin: 0;
-}
+  &__game {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+  }
 
-.play-page__game {
-  display: flex;
-  gap: 20px;
-  margin-top: 20px;
-}
+  &__image-wrap {
+    position: relative;
+    border: 1px solid #ccc;
+    padding: 0;
+    img { display: block; width: 100%; height: auto; }
+  }
 
-.play-page__image-wrap {
-  position: relative
-}
+  &__overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: auto;
+    height: auto;
+    cursor: crosshair;
+  }
 
-.play-page__image-wrap img {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
+  &__win {
+    margin-top: 12px;
+    padding: 6px;
+    border: 1px solid @primary;
+    color: @primary;
+    .rounded(4px);
+  }
 
-.play-page__overlay {
-  position: absolute;
-  left: 0;
-  top: 0;
-  pointer-events: auto;
-  cursor: crosshair;
-}
-
-.play-page__win {
-  margin-top: 20px;
-  font-size: 1.5em;
-  color: green;
-  font-weight: bold;
+  &__empty {
+    color: @danger;
+  }
 }
 </style>

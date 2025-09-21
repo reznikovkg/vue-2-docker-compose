@@ -50,48 +50,55 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@primary: #42b983;
+@text: #333;
+@muted: #777;
+
+.rounded(@r: 6px) { border-radius: @r; }
+
 .levels-page {
   padding: 16px;
-}
 
-.levels-page__title {
-  margin: 0 0 12px;
-}
+  &__title {
+    color: @primary;
+    margin-bottom: 12px;
+  }
 
-.levels-page__empty {
-  color: #555;
-}
+  &__empty {
+    color: @muted;
+  }
 
-.levels-page__list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
 
-.levels-page__card {
-  border: 1px solid #ccc;
-  padding: 8px;
-  width: 200px;
-}
+  &__card {
+    border: 1px solid #ccc;
+    padding: 8px;
+    .rounded(6px);
 
-.levels-page__card-title {
-  margin: 0 0 8px;
-  font-size: 16px;
-}
+    &-title {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+  }
 
-.levels-page__preview {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
+  &__preview {
+    max-width: 100%;
+    display: block;
+  }
 
-.levels-page__actions {
-  margin-top: 8px;
-  display: flex;
-  gap: 8px;
-}
-
-.levels-page__link {
-  text-decoration: none;
+  &__link {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 8px;
+    background: @primary;
+    color: #fff;
+    text-decoration: none;
+    .rounded(4px);
+  }
 }
 </style>
+
