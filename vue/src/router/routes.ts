@@ -1,3 +1,3 @@
-export enum RouteNames {
-  HOME = "HOME"
+export const ROUTER_NAMES = {
+  FISHING_GAME: "FISHING_GAME"
 }
