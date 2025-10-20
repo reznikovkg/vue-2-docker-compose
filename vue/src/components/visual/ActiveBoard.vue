@@ -1,6 +1,6 @@
 <template>
   <div class="board">
-    <div class="board__cards">
+    <div class="board__cards droppable">
       <GameCard 
         v-for="(card, i) in getCardsOnBoard"
         :key="i"

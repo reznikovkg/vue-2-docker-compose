@@ -6,11 +6,60 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import ModalContainer from "@/components/parts/ModalContainer";
+import { axiosInstance } from "@/http-helper/http-config";
 
 export default {
   components: {
     ModalContainer
+  },
+  mounted() {
+    this.loadData()
+  },
+  methods: {
+    ...mapActions('userData', [
+      'setUserData'
+    ]),
+    loadData() {
+      const script = document.createElement('script')
+      script.src = "https://telegram.org/js/telegram-web-app.js?56"
+      document.head.appendChild(script)
+
+      script.onload = async () => {
+        const initData = window.Telegram.WebApp.initData
+        const userData = this.parseInitData(initData).user
+        try {
+          const response = await axiosInstance.post("/check-if-user-authenticated", {
+            initData: initData,
+          });
+          if (!response.data) {
+            window.Telegram.WebApp.close();
+          }
+        } catch (error) {
+          console.log("Cannot verificate user");
+        }
+        if (userData) {
+          this.setUserData(userData)
+        }
+      }
+
+      script.onerror = () => {
+        console.error('Telegram script was not loaded')
+      }
+    },
+    parseInitData(initData) {
+      const params = new URLSearchParams(initData)
+      return {
+          user: JSON.parse(params.get('user')),
+          username: params.get('username'),
+          hash: params.get('hash'),
+          authDate: params.get('auth_date'),
+          startParam: params.get('start_param'),
+          chatType: params.get('chat_type'),
+          chatInstance: params.get('chat_instance'),
+      }
+    },
   }
 }
 </script>

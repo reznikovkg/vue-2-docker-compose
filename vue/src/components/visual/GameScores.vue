@@ -15,12 +15,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import { WinnerStates } from '@/core/constants';
-import { resultGameModal } from '@/mixins/modals';
+import { gameModals } from '@/mixins/modals';
+import axios from 'axios';
 
 export default {
   name: "GameScores",
 
-  mixins: [resultGameModal],
+  mixins: [gameModals],
 
   computed: {
     ...mapGetters('gameEngine', [
@@ -28,15 +29,32 @@ export default {
       'getBotScore',
       'getWinner'
     ]),
+    ...mapGetters('userData', [
+      'getUserId'
+    ]),
 
     gameEnded() {
       return this.getWinner != WinnerStates.NONE;
+    }
+  },
+  methods: {
+    async updatePlayerScore() {
+      axios.defaults.baseURL = 'http://localhost:9992/' // TODO: move to config
+      try {
+        await axios.patch('/updateUserScore',{
+          userId: this.getUserId
+        })
+      }
+      catch (error) {
+        console.error(`Error when updating user score: ${error.message}`);
+      }
     }
   },
 
   watch: {
     gameEnded(ended) {
       if(ended) {
+        this.updatePlayerScore();
         this.openResultGameModal();
       }
     }

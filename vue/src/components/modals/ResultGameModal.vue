@@ -1,31 +1,45 @@
 <template>
-    <ModalComponent>
-      <div class="result-modal">
-        <h2 class="result-text">
-          Результат игры
-        </h2>
-        <p class="winner">
-          {{ getResultMessage }}
-        </p>
-        <button class="restart-button" @click="() => restartGame()">
-          Начать заново
-        </button>
-      </div>
-    </ModalComponent>
+  <ModalComponent>
+    <div class="result-modal scroll-modal">
+      <h2 class="result-modal__winner">
+        {{ getResultMessage }}
+      </h2>
+      <h4 class="result-modal__rating-place">
+        <span v-if="currentUserInRating10">
+          Вы занимаете место в Топ-10 общего рейтинга!
+        </span>
+        <span v-else>
+          Теперь Вы занимаете {{ sortedRating.at(-1).position }} место в общем рейтинге
+        </span>
+      </h4>
+      <button class="button-green" @click="() => restartGame()">
+        Новая игра
+      </button>
+      <UserRating :users="sortedRating" class="rating-container" />
+    </div>
+  </ModalComponent>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { WinnerStates } from "@/core/constants";
 import ModalComponent from "@/components/parts/Modal";
+import UserRating from "../parts/UserRating.vue";
 
 export default {
   name: "ResultGameModal",
   components: {
     ModalComponent,
+    UserRating
   },
   props: {
-    params: Object
+    params: Object,
+    ratingUsers: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
   },
 
   computed: {
@@ -40,13 +54,20 @@ export default {
 
       return resultObj[this.getWinner];
     },
+    sortedRating() {
+      const copy = this.ratingUsers
+      return copy.sort((a, b) => b.scores - a.scores)
+    },
+    currentUserInRating10() {
+      return this.ratingUsers.length <= 10
+    }
   },
 
   methods: {
     ...mapActions('gameEngine', [
       'startNewGame'
     ]),
-    
+
     restartGame() {
       this.startNewGame();
       this.$emit('close');
@@ -55,39 +76,34 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .result-modal {
-  background-color: #c6dabf;
-  border: solid 2px #216652;
-  border-radius: 8px;
-  padding: 15px;
-  min-width: 420px;
-  max-width: 480px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  text-align: center;
-  transform: translate(-50%, -50%);
+  &__winner {
+    color: #17211E;
+    font-size: 38px;
+
+    @media(max-width: 540px) {
+      font-size: 28px;
+    }
+  }
+
+  &__rating-place {
+    color: #17211E;
+    font-size: 21px;
+    margin: 10px 0 20px 0;
+
+    @media(max-width: 540px) {
+      font-size: 18px;
+      margin: 6px 0 12px 0;
+    }
+  }
 }
 
-.result-text {
-  font-weight: 400;
-  font-style: normal;
-  color: #000000;
-  margin: 0;
-}
+.rating-container {
+  margin-top: 40px;
 
-.winner {
-  font-family: "Neucha", cursive;
-}
-
-.restart-button {
-  padding: 10px 15px;
-  background-color: #f3e9d2;
-  border: solid 2px #999488;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  font-family: "Neucha", cursive;
+  @media(max-width: 540px) {
+    margin-top: 32px;
+  }
 }
 </style>

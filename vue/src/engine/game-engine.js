@@ -49,7 +49,7 @@ export class GameEngine {
 
         this.board.push(botCard);
 
-        setTimeout(() => this.CheckIfSomeOneWin(), 1000);
+        setTimeout(() => this.checkIfSomeOneWin(), 1000);
     }
 
     checkIfSomeOneWin() {

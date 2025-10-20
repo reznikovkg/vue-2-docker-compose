@@ -1,0 +1,1 @@
+CREATE TABLE users (user_id INTEGER PRIMARY KEY, username VARCHAR(255), games_win INTEGER);

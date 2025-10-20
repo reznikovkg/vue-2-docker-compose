@@ -1,8 +1,12 @@
 <template>
   <div 
     class="card" 
-    :class="{ 'card--face-down': faceDown, 'card--active': !faceDown && !onBoard }"
-    @click="() => makeMove()"
+    :class="{ 'card--face-down': faceDown, 'card--active': !faceDown && !onBoard }" 
+    draggable="true"
+    @mousedown="(e) => checkMove(e)" 
+    @mousemove="(e) => processDrag(e)" 
+    @mouseup="(e) => stopDrag(e)"
+    @touchstart="makeMove()" 
   >
     <div 
       v-if="!faceDown" 
@@ -46,6 +50,26 @@ export default {
       required: false
     }
   },
+  data() {
+    return {
+      dragInfo: {
+        elem: null,
+        xStart: null,
+        yStart: null,
+        deltaX: 0,
+        deltaY: 0,
+        dragged: false,
+      },
+      oldPosition: {
+        parent: null,
+        nextSibling: null,
+        position: null,
+        left: null,
+        top: null,
+        zIndex: null
+      }
+    }
+  },
   computed: {
     ...mapGetters('gameEngine', [
       'getTurn'
@@ -56,9 +80,108 @@ export default {
       'makePlayerMove'
     ]),
     makeMove() {
-      if (!this.faceDown && !this.onBoard && this.getTurn) {        
+      if (!this.faceDown && !this.onBoard && this.getTurn) {
         this.makePlayerMove(this.card.id)
       }
+    },
+    checkMove(event) {
+      event.preventDefault()
+      if (this.faceDown || this.onBoard || !this.getTurn) {
+        return
+      }
+      
+      this.dragInfo = {
+        elem: event.currentTarget,
+        xStart: event.clientX,
+        yStart: event.clientY
+      }
+
+      // сохраняем положение, с которого началось перетягивание, на случай отмены
+      const elem = this.dragInfo.elem
+      this.oldPosition = {
+        parent: elem.parentNode,
+        nextSibling: elem.nextSibling,
+        position: elem.position || '',
+        left: elem.left || '',
+        top: elem.top || '',
+        zIndex: elem.zIndex || ''
+      }
+    },
+    processDrag(event) {
+      event.preventDefault()
+      if (!this.dragInfo.elem) return;
+
+      // перетаскивание относительно начальной позиции (элемент только начали перетаскивать)
+      if (!this.dragInfo.dragged) {
+        this.dragInfo.dragged = true
+
+        const coords = this.getCoords(this.dragInfo.elem)
+        this.dragInfo.deltaX = this.dragInfo.xStart - coords.left
+        this.dragInfo.deltaY = this.dragInfo.yStart - coords.top
+
+        this.startDrag(); // отобразить начало переноса
+      }
+
+      // продолжение перетаскивания
+      this.dragInfo.elem.style.left = event.pageX - this.dragInfo.deltaX + 'px'
+      this.dragInfo.elem.style.top = event.pageY - this.dragInfo.deltaY + 'px'
+    },
+    getCoords(elem) {
+      const box = elem.getBoundingClientRect()
+      return {
+        top: box.top + window.scrollY,
+        left: box.left + window.scrollX
+      }
+    },
+    startDrag() {
+      const target = this.dragInfo.elem
+
+      document.body.appendChild(target)
+      target.style.zIndex = 9999
+      target.style.position = 'absolute'
+    },
+    stopDrag(event) {
+      event.preventDefault()
+
+      // событие перетягивания
+      if (this.dragInfo.dragged) {
+        const dropElem = this.findDroppable(event) 
+
+        if (dropElem) { // карту перенесли на игровое поле
+          this.dragInfo.elem.style.display = 'none'
+          this.makeMove()
+        } 
+        const old = this.oldPosition
+        old.parent.insertBefore(this.dragInfo.elem, old.nextSibling)
+        this.dragInfo.elem.style = {
+          position: old.position,
+          left: old.left,
+          top: old.top,
+          zIndex: old.zIndex
+        }
+      // событие клика  
+      } else {
+        this.makeMove()
+      }
+
+      this.dragInfo.elem = null
+      this.dragInfo.dragged = false
+    },
+    findDroppable(event) {
+      // спрячем переносимый элемент
+      this.dragInfo.elem.hidden = true
+
+      // получить самый вложенный элемент под курсором мыши
+      const elem = document.elementFromPoint(event.clientX, event.clientY)
+
+      // показать переносимый элемент обратно
+      this.dragInfo.elem.hidden = false;
+
+      if (elem == null) {
+        return null;
+      }
+
+      return elem.closest('.droppable');
     }
   }
 }
@@ -156,6 +279,7 @@ export default {
   .card {
     min-height: 96px;
     max-height: 210px;
+    z-index: 0;
 
     &__content {
       font-size: 20px;
@@ -169,8 +293,10 @@ export default {
       margin-bottom: -32px;
 
       &:hover {
-        min-height: 100px;
-        max-height: 350px;
+        z-index: 0;
+        min-height: 96px;
+        max-height: 210px;
+        margin-top: 4px;
       }
     }
 

@@ -8,3 +8,14 @@ services:
         volumes:
             - ./vue/src:/vue/src
             - ./vue/package.json:/vue/package.json
+        environment:
+            - VUE_APP_SERVER_IP=cardgameamm.duckdns.org
+
+    backend:
+        build: ./express
+        ports:
+            - "9992:9992"
+        volumes:
+            - ./express/src:/express/src
+            - ./express/package.json:/express/package.json
+

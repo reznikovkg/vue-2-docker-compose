@@ -8,12 +8,17 @@
 <script>
 import GameField from "../visual/GameField.vue";
 import GameStatus from "../visual/GameStatusHeader.vue";
+import { gameModals } from "@/mixins/modals";
 
 export default {
   name: 'HomePage',
+  mixins: [gameModals],
   components: {
     GameField,
     GameStatus
+  },
+  mounted() {
+    this.openStartGameModal()
   }
 }
 </script>
@@ -22,8 +27,6 @@ export default {
 .game {
   width: 100%;
   height: 100vh;
-  min-width: 302px;
-  min-height: 438px;
   display: flex;
   flex-direction: column;
 }

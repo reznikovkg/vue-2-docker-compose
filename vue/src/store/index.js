@@ -1,5 +1,6 @@
 import modals from './modals'
 import gameEngine from './game-engine'
+import userData from './user-data'
 
 export default {
   namespaced: true,
@@ -9,5 +10,6 @@ export default {
   modules: {
     modals,
     gameEngine,
+    userData
   }
 }
