@@ -7,8 +7,10 @@
 # Editor directories and files
 .idea
 .vscode
+node_modules
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.json

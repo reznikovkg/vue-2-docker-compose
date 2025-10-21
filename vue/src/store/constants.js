@@ -1,0 +1,38 @@
+export const GAME_CONFIG = {
+  LANES_COUNT: 3,
+  KEYS: ['A', 'S', 'D'],
+  INITIAL_LIVES: 3,
+  HIT_ZONE_POSITION: 85,
+  HIT_RANGE: 12,
+  
+  BASE_NOTE_SPEED: 1.5,
+  MAX_NOTE_SPEED: 4.0,
+  SPEED_INCREASE_RATE: 0.1,
+  SPEED_INCREASE_INTERVAL: 10,
+  
+  NOTE_SPAWN_INTERVAL: 800,
+  GAME_LOOP_INTERVAL: 16,
+  NOTE_FILTER_POSITION: 100,
+  
+  SCORE_PER_HIT: 5,
+  
+  KEY_MAP: {
+    'a': 0, 
+    's': 1, 
+    'd': 2
+  },
+  
+  HIT_NOTE_TIMEOUT: 100,
+  
+  DEFAULT_NOTE_ID: 0,
+  DEFAULT_POSITION: 0,
+  DEFAULT_OPACITY: 0,
+  MISS_OPACITY: 0.5
+};
+
+export const GAME_STATES = {
+  IDLE: 'idle',
+  PLAYING: 'playing',
+  PAUSED: 'paused',
+  GAME_OVER: 'game_over'
+};
